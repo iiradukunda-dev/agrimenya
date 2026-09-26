@@ -2,61 +2,65 @@
 
 **A Data-Driven Decision and Planning Support System for Agricultural Productivity in Rwanda**
 
-Built for the **2026 NISR Big Data Hackathon**
+*Proudly built for the **2026 NISR Big Data Hackathon**.*
 
 ---
 
-## Overview
+## Hello there! 👋 Overview
 
-Agri-Menya helps **planners, agricultural extension officers, and cooperative leaders** make faster, better-informed decisions to improve agricultural productivity across Rwanda. It combines official NISR survey data with machine learning to turn raw agricultural statistics into clear priorities, actionable roadmaps, and real-time alerts.
+Welcome to Agri-Menya! We built this platform to help **planners, agricultural extension officers, and cooperative leaders** make faster, better-informed decisions that actually improve agricultural productivity across Rwanda. 
 
-Rather than leaving planners to manually cross-reference spreadsheets and reports, Agri-Menya surfaces **where to focus, what to do, and how urgent it is** — automatically.
+We take all that incredible (but dense!) official survey data from NISR and combine it with machine learning. The result? A tool that turns raw statistics into clear priorities, actionable roadmaps, and real-time alerts.
+
+Instead of leaving planners to manually cross-reference endless spreadsheets and reports, Agri-Menya automatically surfaces **where to focus, what to do, and how urgent it is**.
 
 ---
 
-## The Problem
+## The Problem We're Solving
 
-Agricultural planning in Rwanda relies on rich survey data (SAS, AHS, EICV, CFSVA) that is powerful but underused in day-to-day decision-making. Turning that data into concrete, local action currently takes significant manual analysis — time that extension officers and planners often don't have. Agri-Menya closes that gap.
+If you've ever looked at agricultural planning in Rwanda, you know it relies on rich, high-quality survey data (like SAS, AHS, EICV, and CFSVA). While this data is powerful, it's often underused in day-to-day decision-making simply because it's hard to digest quickly. 
+
+Turning those datasets into concrete, local action takes significant manual analysis—time that extension officers and busy planners just don't have. We built Agri-Menya to bridge that exact gap.
 
 ---
 
 ## Core Pillars
 
-Agri-Menya is organized around four connected capabilities:
+We organized Agri-Menya around four main capabilities that talk to each other:
 
-| Pillar | What it does |
+| Pillar | What it does for you |
 |---|---|
-| <img src="assets/brain.svg" width="18" align="center"> **Decision Making** | Generates precise, automated, and proactive recommendations for specific areas |
-| <img src="assets/calendar.svg" width="18" align="center"> **Planification** | Builds planning roadmaps and step-by-step action plans |
-| <img src="assets/map.svg" width="18" align="center"> **Segmentation** | Zones and prioritizes areas (Low / Medium / High) based on climate and productivity data |
-| <img src="assets/message.svg" width="18" align="center"> **Efficient Communication** | Shares real-time alerts and plans between planners, officers, and cooperatives |
+| <img src="assets/brain.svg" width="18" align="center"> **Decision Making** | Takes the guesswork out by generating precise, automated, and proactive recommendations for specific areas. |
+| <img src="assets/calendar.svg" width="18" align="center"> **Planification** | Helps you build clear planning roadmaps and step-by-step action plans so everyone knows what's next. |
+| <img src="assets/map.svg" width="18" align="center"> **Segmentation** | Visually zones and prioritizes areas (Low / Medium / High) based on real climate and productivity data. |
+| <img src="assets/message.svg" width="18" align="center"> **Efficient Communication** | Keeps everyone in the loop by sharing real-time alerts and plans across planners, officers, and cooperatives. |
 
 ---
 
 ## Key Features
 
-- Priority ranking of areas (Low / Medium / High urgency)
-- <img src="assets/bot.svg" width="16"> AI-powered recommendations and chat-style assistance
-- Yield and impact prediction
-- Resource estimation (seeds, irrigation, and related inputs)
-- Automated creation of action roadmaps
-- <img src="assets/map.svg" width="16"> Interactive maps and zoning based on climate and productivity data
-- <img src="assets/bell.svg" width="16"> Real-time alerts and cross-team communication
-- Shareable decisions and plans across user groups
+- Priority ranking of areas so you know what's urgent (Low / Medium / High)
+- <img src="assets/bot.svg" width="16"> A friendly, AI-powered assistant ready to chat and offer recommendations
+- Yield and impact predictions you can actually trust
+- Resource estimation (for things like seeds, irrigation, and related inputs)
+- Automated creation of action roadmaps to save you time
+- <img src="assets/map.svg" width="16"> Beautiful interactive maps that zone areas based on climate and productivity data
+- <img src="assets/bell.svg" width="16"> Real-time alerts and cross-team communication tools
+- Easily shareable decisions and plans across different user groups
 
 ---
 
-## Target Users
+## Who is this for?
 
-- **Planners** — national and district-level agricultural planning
-- **Extension Officers** — on-the-ground implementation and monitoring
-- **Cooperative Leaders** — local resource coordination and decision-sharing
+- **Planners** — For folks handling national and district-level agricultural planning.
+- **Extension Officers** — For the heroes doing on-the-ground implementation and monitoring.
+- **Cooperative Leaders** — For local champions coordinating resources and sharing decisions with farmers.
 
 ---
 
-## Data Sources
+## Where does our data come from?
 
-All data comes from **NISR (National Institute of Statistics of Rwanda)**:
+All our core data is proudly sourced from the **National Institute of Statistics of Rwanda (NISR)**:
 
 | Type | Source |
 |---|---|
@@ -66,9 +70,9 @@ All data comes from **NISR (National Institute of Statistics of Rwanda)**:
 
 ---
 
-## Architecture
+## How it works under the hood (Architecture)
 
-```
+```text
 ┌─────────────────────┐       ┌──────────────────┐       ┌──────────────────┐
 │     Frontend         │       │     Backend       │       │     Database      │
 │  Streamlit + Folium  │──────▶│     FastAPI       │──────▶│  Supabase          │
@@ -83,16 +87,16 @@ All data comes from **NISR (National Institute of Statistics of Rwanda)**:
                               └──────────────────┘
 ```
 
-- **Frontend** — Streamlit renders the interface; Folium powers interactive maps; Plotly renders charts.
-- **Backend** — FastAPI exposes REST endpoints consumed by the frontend and handles business logic.
-- **Database** — Supabase (PostgreSQL, free tier) stores survey data, zones, predictions, and plans.
-- **Machine Learning** — scikit-learn and XGBoost models power yield prediction and priority ranking.
+- **Frontend** — We use Streamlit for a snappy interface, Folium for our interactive maps, and Plotly to make our charts pop.
+- **Backend** — A speedy FastAPI backend exposes REST endpoints for the frontend and handles all our heavy business logic.
+- **Database** — Supabase (PostgreSQL) securely stores our survey data, zones, predictions, and plans.
+- **Machine Learning** — scikit-learn and XGBoost models work behind the scenes to predict yields and rank priorities.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
+| Layer | What we use |
 |---|---|
 | Frontend | Streamlit, Folium, Plotly |
 | Backend | FastAPI |
@@ -106,7 +110,9 @@ All data comes from **NISR (National Institute of Statistics of Rwanda)**:
 
 ## Project Structure
 
-```
+If you're poking around the code, here's how we've laid things out:
+
+```text
 agri-menya/
 ├── frontend/
 │   ├── Home.py
@@ -142,21 +148,23 @@ agri-menya/
 
 ## Getting Started
 
+Want to run this yourself? Awesome! Here's how:
+
 ### Prerequisites
-- Python 3.10+
+- Python 3.10 or higher
 - A Supabase account and project
 - Git
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-org>/agri-menya.git
+git clone https://github.com/iiradukunda-dev/agri-menya.git
 cd agri-menya
 ```
 
 ### 2. Set up environment variables
 ```bash
 cp .env.example .env
-# Fill in your Supabase URL, keys, and API base URL
+# Open up .env and pop in your Supabase URL, keys, and API base URL!
 ```
 
 ### 3. Install dependencies
@@ -176,33 +184,37 @@ cd frontend
 streamlit run Home.py
 ```
 
-The API docs will be available at `http://localhost:8000/docs`, and the app at `http://localhost:8501`.
+The API docs will be ready for you at `http://localhost:8000/docs`, and you can view the app at `http://localhost:8501`.
 
 ---
 
 ## Branching Strategy
 
-| Branch | Purpose |
-|---|---|
-| `main` | Always deployable — used for demos |
-| `develop` | Integration branch for all completed features |
-| `feature/*` | Individual work branches (e.g. `feature/backend-api-routes`) |
+If you're contributing, here's how we keep things tidy:
 
-All changes go through a pull request into `develop`; `develop` is periodically merged into `main` at milestones. See [`docs/BACKEND_GUIDELINES.md`](docs/BACKEND_GUIDELINES.md) for full contribution rules.
+| Branch | What it's for |
+|---|---|
+| `main` | Our stable branch. It's always deployable and what we use for demos! |
+| `develop` | Where all our completed features come together. |
+| `feature/*` | Where the magic happens! Individual work branches (e.g., `feature/backend-api-routes`). |
+
+All changes go through a pull request into `develop`, which we periodically merge into `main` at major milestones. Check out [`docs/BACKEND_GUIDELINES.md`](docs/BACKEND_GUIDELINES.md) for full contribution rules.
 
 ---
 
-## Team
+## The Team
 
 | Role | Responsibility |
 |---|---|
-| Project Manager & Frontend | Streamlit, Folium, Plotly interface, repo governance |
-| Backend Developer | FastAPI, database integration, API contract |
-| *(add ML/data role if applicable)* | Model training, data pipeline |
+| Project Manager & Frontend | Building out the Streamlit, Folium, and Plotly interfaces, plus keeping the repo organized. |
+| Backend Developer | Hooking up FastAPI, integrating the database, and defining the API contract. |
+| *(add ML/data role if applicable)* | Training models and smoothing out the data pipeline. |
 
 ---
 
 ## Roadmap
+
+Here's a look at what we've done and where we're heading:
 
 - [x] Requirements defined across all four pillars
 - [x] Technology stack finalized
@@ -223,4 +235,4 @@ All changes go through a pull request into `develop`; `develop` is periodically 
 
 ## Acknowledgments
 
-Data provided by the **National Institute of Statistics of Rwanda (NISR)** as part of the 2026 NISR Big Data Hackathon.
+A huge thank you to the **National Institute of Statistics of Rwanda (NISR)** for providing the data as part of the 2026 NISR Big Data Hackathon. We couldn't have built this without it!
