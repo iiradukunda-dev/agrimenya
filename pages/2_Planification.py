@@ -1,9 +1,11 @@
 import streamlit as st
+from utils.theme import load_theme
 import plotly.express as px
 from utils import api_client
 from components.icons import render_icon_title
 
 st.set_page_config(page_title="Planification", page_icon="assets/calendar.svg", layout="wide")
+load_theme()
 
 render_icon_title("assets/calendar.svg", "Planification", "Roadmaps and execution timelines for agricultural interventions.")
 

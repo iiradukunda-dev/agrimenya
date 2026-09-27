@@ -1,9 +1,11 @@
 import streamlit as st
+from utils.theme import load_theme
 from utils import api_client
 from components.badges import priority_badge
 from components.icons import render_icon_title, render_icon_subheader
 
 st.set_page_config(page_title="Decision Making", page_icon="assets/brain.svg", layout="wide")
+load_theme()
 
 render_icon_title("assets/brain.svg", "Decision Making", "Automated, proactive recommendations based on predictive agricultural data.")
 

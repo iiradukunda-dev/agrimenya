@@ -1,8 +1,10 @@
 import streamlit as st
 from utils import api_client
+from utils.theme import load_theme
 from components.icons import render_icon_title, render_icon_subheader
 
 st.set_page_config(page_title="Agri-Menya", page_icon="assets/wheat.svg", layout="wide")
+load_theme()
 
 render_icon_title("assets/wheat.svg", "Agri-Menya", "Decision and Planning Support System for Agricultural Productivity")
 
@@ -27,9 +29,20 @@ c1, c2, c3, c4 = st.columns(4)
 
 def pillar_card(col, icon, title, desc, btn_text, page_route):
     with col:
+        with open(icon, "r", encoding="utf-8") as f:
+            svg_content = f.read()
+        
         st.markdown(
-            f"""<div style="background-color:#f8f9fa; padding:16px; border-radius:8px; height:120px;">
-            <b>{title}</b><br/><span style="color:#666;">{desc}</span></div>""",
+            f"""
+            <div class="custom-card">
+                <div style="width: 32px; height: 32px; color: #2b6cb0;">
+                    {svg_content}
+                </div>
+                <div class="custom-card-title">{title}</div>
+                <div class="custom-card-desc">{desc}</div>
+            </div>
+            <br/>
+            """,
             unsafe_allow_html=True
         )
         if st.button(btn_text, use_container_width=True, key=f"btn_{title}"):
