@@ -11,18 +11,21 @@ render_icon_title("assets/brain.svg", "Decision Making", "Automated, proactive r
 
 recs = api_client.get_recommendations()
 
-for rec in recs:
-    with st.container(border=True):
-        col1, col2, col3 = st.columns([1, 4, 1])
-        with col1:
-            st.markdown(f"**{rec['area']}**")
-            st.caption(f"Crop: {rec['crop']}")
-        with col2:
-            st.markdown(f"{rec['text']}")
-        with col3:
-            priority_badge(rec['priority'])
-            st.caption(f"Status: {rec['status']}")
-            st.button("Act", key=f"act_{rec['area']}_{rec['crop']}")
+if not recs:
+    st.info("No recommendations currently available or the backend could not be reached.")
+else:
+    for rec in recs:
+        with st.container(border=True):
+            col1, col2, col3 = st.columns([1, 4, 1])
+            with col1:
+                st.markdown(f"**{rec.get('area', 'Unknown Area')}**")
+                st.caption(f"Crop: {rec.get('crop', 'Unknown Crop')}")
+            with col2:
+                st.markdown(f"{rec.get('text', 'No description available.')}")
+            with col3:
+                priority_badge(rec.get('priority', 'Low'))
+                st.caption(f"Status: {rec.get('status', 'Pending')}")
+                st.button("Act", key=f"act_{rec.get('area', 'X')}_{rec.get('crop', 'Y')}")
 
 st.divider()
 

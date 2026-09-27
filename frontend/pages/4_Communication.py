@@ -14,8 +14,11 @@ col1, col2 = st.columns([2, 1])
 with col1:
     st.subheader("Alert Feed")
     alerts = api_client.get_alerts()
-    for alert in alerts:
-        render_alert(alert)
+    if not alerts:
+        st.info("No new alerts or the backend could not be reached.")
+    else:
+        for alert in alerts:
+            render_alert(alert)
 
 with col2:
     st.subheader("Share Information")

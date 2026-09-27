@@ -16,11 +16,13 @@ Welcome to **Agri-Menya**. This platform empowers planners, extension officers, 
 kpis = api_client.get_kpis()
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.metric("Total Farmers Supported", f"{kpis['total_farmers']:,}")
+    val = kpis.get('total_farmers', 'N/A')
+    st.metric("Total Farmers Supported", f"{val:,}" if isinstance(val, (int, float)) else val)
 with col2:
-    st.metric("Avg Yield Increase", kpis['yield_increase'])
+    st.metric("Avg Yield Increase", kpis.get('yield_increase', 'N/A'))
 with col3:
-    st.metric("Active Cooperatives", f"{kpis['active_cooperatives']:,}")
+    val = kpis.get('active_cooperatives', 'N/A')
+    st.metric("Active Cooperatives", f"{val:,}" if isinstance(val, (int, float)) else val)
 
 st.divider()
 
