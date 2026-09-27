@@ -1,13 +1,13 @@
 import streamlit as st
-from components.icons import get_base64_svg
+from frontend.components.icons import get_base64_svg
 
 def render_alert(alert):
     type_icons = {
-        "Warning": "assets/warning.svg",
-        "Info": "assets/info.svg",
-        "Urgent": "assets/urgent.svg"
+        "Warning": "frontend/assets/warning.svg",
+        "Info": "frontend/assets/info.svg",
+        "Urgent": "frontend/assets/urgent.svg"
     }
-    icon_path = type_icons.get(alert.get("type"), "assets/bell.svg")
+    icon_path = type_icons.get(alert.get("type"), "frontend/assets/bell.svg")
     icon_b64 = get_base64_svg(icon_path)
     
     styles = {

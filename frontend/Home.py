@@ -1,12 +1,12 @@
 import streamlit as st
-from utils import api_client
-from utils.theme import load_theme
-from components.icons import render_icon_title, render_icon_subheader
+from frontend.utils import api_client
+from frontend.utils.theme import load_theme
+from frontend.components.icons import render_icon_title, render_icon_subheader
 
-st.set_page_config(page_title="Agri-Menya", page_icon="assets/wheat.svg", layout="wide")
+st.set_page_config(page_title="Agri-Menya", page_icon="frontend/assets/wheat.svg", layout="wide")
 load_theme()
 
-render_icon_title("assets/wheat.svg", "Agri-Menya", "Decision and Planning Support System for Agricultural Productivity")
+render_icon_title("frontend/assets/wheat.svg", "Agri-Menya", "Decision and Planning Support System for Agricultural Productivity")
 
 st.markdown("""
 Welcome to **Agri-Menya**. This platform empowers planners, extension officers, and cooperative leaders with data-driven insights using SAS, AHS, and EICV7 datasets.
@@ -26,7 +26,7 @@ with col3:
 
 st.divider()
 
-render_icon_subheader("assets/compass.svg", "Core Pillars")
+render_icon_subheader("frontend/assets/compass.svg", "Core Pillars")
 c1, c2, c3, c4 = st.columns(4)
 
 def pillar_card(col, icon, title, desc, btn_text, page_route):
@@ -52,10 +52,10 @@ def pillar_card(col, icon, title, desc, btn_text, page_route):
         if st.button(btn_text, use_container_width=True, key=f"btn_{title}"):
             st.switch_page(page_route)
 
-pillar_card(c1, "assets/map.svg", "Segmentation", "Identify high-priority zones based on yield and risk data.", "Go to Segmentation", "pages/3_Segmentation.py")
-pillar_card(c2, "assets/brain.svg", "Decision Making", "Review automated recommendations for timely interventions.", "Go to Decisions", "pages/1_Decision_Making.py")
-pillar_card(c3, "assets/calendar.svg", "Planification", "Plan and track agricultural roadmaps and execution.", "Go to Planification", "pages/2_Planification.py")
-pillar_card(c4, "assets/message.svg", "Communication", "Share alerts, plans, and coordinate with stakeholders.", "Go to Communication", "pages/4_Communication.py")
+pillar_card(c1, "frontend/assets/map.svg", "Segmentation", "Identify high-priority zones based on yield and risk data.", "Go to Segmentation", "frontend/pages/3_Segmentation.py")
+pillar_card(c2, "frontend/assets/brain.svg", "Decision Making", "Review automated recommendations for timely interventions.", "Go to Decisions", "frontend/pages/1_Decision_Making.py")
+pillar_card(c3, "frontend/assets/calendar.svg", "Planification", "Plan and track agricultural roadmaps and execution.", "Go to Planification", "frontend/pages/2_Planification.py")
+pillar_card(c4, "frontend/assets/message.svg", "Communication", "Share alerts, plans, and coordinate with stakeholders.", "Go to Communication", "frontend/pages/4_Communication.py")
 
 st.divider()
 st.caption("Built for the 2026 NISR Big Data Hackathon")

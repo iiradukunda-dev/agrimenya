@@ -1,15 +1,15 @@
 import streamlit as st
-from utils.theme import load_theme
-from utils import api_client
-from components.maps import render_priority_map
-from components.charts import render_yield_chart
-from utils.mock_data import CROPS, SEASONS
-from components.icons import render_icon_title
+from frontend.utils.theme import load_theme
+from frontend.utils import api_client
+from frontend.components.maps import render_priority_map
+from frontend.components.charts import render_yield_chart
+from frontend.utils.mock_data import CROPS, SEASONS
+from frontend.components.icons import render_icon_title
 
-st.set_page_config(page_title="Segmentation", page_icon="assets/map.svg", layout="wide")
+st.set_page_config(page_title="Segmentation", page_icon="frontend/assets/map.svg", layout="wide")
 load_theme()
 
-render_icon_title("assets/map.svg", "Segmentation & Zoning", "Interactive mapping for prioritizing agricultural zones across Rwanda.")
+render_icon_title("frontend/assets/map.svg", "Segmentation & Zoning", "Interactive mapping for prioritizing agricultural zones across Rwanda.")
 
 # Fetch data
 df = api_client.get_priority_data()

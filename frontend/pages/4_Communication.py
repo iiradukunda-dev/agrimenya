@@ -1,13 +1,13 @@
 import streamlit as st
-from utils.theme import load_theme
-from utils import api_client
-from components.alerts import render_alert
-from components.icons import render_icon_title
+from frontend.utils.theme import load_theme
+from frontend.utils import api_client
+from frontend.components.alerts import render_alert
+from frontend.components.icons import render_icon_title
 
-st.set_page_config(page_title="Communication", page_icon="assets/message.svg", layout="wide")
+st.set_page_config(page_title="Communication", page_icon="frontend/assets/message.svg", layout="wide")
 load_theme()
 
-render_icon_title("assets/message.svg", "Efficient Communication", "Real-time alerts, updates, and coordination across stakeholders.")
+render_icon_title("frontend/assets/message.svg", "Efficient Communication", "Real-time alerts, updates, and coordination across stakeholders.")
 
 col1, col2 = st.columns([2, 1])
 
