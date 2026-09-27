@@ -1,6 +1,33 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 def load_theme():
+    # Inject PWA service worker and manifest into the parent window
+    components.html("""
+    <script>
+        const parentWindow = window.parent;
+        
+        // Register Service Worker
+        if ('serviceWorker' in parentWindow.navigator) {
+            parentWindow.navigator.serviceWorker.register('/app/static/sw.js')
+            .then(function(registration) {
+                console.log('PWA Service Worker registered with scope:', registration.scope);
+            })
+            .catch(function(error) {
+                console.error('PWA Service Worker registration failed:', error);
+            });
+        }
+        
+        // Inject Manifest
+        if (!parentWindow.document.querySelector('link[rel="manifest"]')) {
+            const link = parentWindow.document.createElement('link');
+            link.rel = 'manifest';
+            link.href = '/app/static/manifest.json';
+            parentWindow.document.head.appendChild(link);
+        }
+    </script>
+    """, height=0, width=0)
+
     st.markdown("""
         <style>
         /* Import Google Font */
