@@ -25,6 +25,11 @@ fig = px.timeline(
     x_end="End", 
     y="Task", 
     color="Phase",
+    color_discrete_map={
+        "Preparation": "#C4924A",
+        "Execution": "#2D6A4F",
+        "Monitoring": "#52B788"
+    },
     title="Intervention Schedule"
 )
 fig.update_yaxes(autorange="reversed")

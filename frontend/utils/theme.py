@@ -25,6 +25,14 @@ def load_theme():
             link.href = '/app/static/manifest.json';
             parentWindow.document.head.appendChild(link);
         }
+
+        // Inject Theme Color Meta Tag
+        if (!parentWindow.document.querySelector('meta[name="theme-color"]')) {
+            const meta = parentWindow.document.createElement('meta');
+            meta.name = 'theme-color';
+            meta.content = '#2D6A4F';
+            parentWindow.document.head.appendChild(meta);
+        }
     </script>
     """, height=0, width=0)
 
@@ -36,6 +44,7 @@ def load_theme():
         /* Base font and background */
         html, body, [class*="css"]  {
             font-family: 'Inter', sans-serif;
+            color: #1B2A1E;
         }
 
         /* Hide Streamlit default UI elements */
@@ -53,53 +62,70 @@ def load_theme():
         /* Metric Cards */
         [data-testid="stMetric"] {
             background-color: #ffffff;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #DDE7DF;
+            border-top: 3px solid #2D6A4F;
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
         }
         [data-testid="stMetric"]:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: #52B788;
+            border-top-color: #1B4332;
+            box-shadow: 0 10px 15px -3px rgba(45, 106, 79, 0.08), 0 4px 6px -2px rgba(45, 106, 79, 0.04);
         }
         
         /* Metric Label */
         [data-testid="stMetricLabel"] > div:nth-child(1) {
             font-weight: 600;
-            color: #4a5568;
-            font-size: 1rem;
+            color: #4A5D4E;
+            font-size: 0.95rem;
         }
         
         /* Metric Value */
         [data-testid="stMetricValue"] > div {
             font-weight: 700;
-            color: #1a202c;
+            color: #2D6A4F;
             font-size: 2rem;
         }
 
         /* Buttons */
         .stButton>button {
-            background-color: #2b6cb0;
+            background-color: #2D6A4F;
             color: #ffffff;
             border: none;
             border-radius: 8px;
             padding: 10px 24px;
             font-weight: 600;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(43, 108, 176, 0.2);
+            box-shadow: 0 2px 4px rgba(45, 106, 79, 0.2);
         }
         .stButton>button:hover {
-            background-color: #2c5282;
+            background-color: #1B4332;
             color: #ffffff;
-            box-shadow: 0 4px 8px rgba(43, 108, 176, 0.3);
+            box-shadow: 0 4px 8px rgba(27, 67, 50, 0.3);
             transform: translateY(-1px);
+        }
+        .stButton>button:active {
+            background-color: #132A13;
+            transform: translateY(0);
+        }
+
+        /* Primary Form Submit Button */
+        button[kind="primary"] {
+            background-color: #2D6A4F !important;
+            border-color: #2D6A4F !important;
+        }
+        button[kind="primary"]:hover {
+            background-color: #1B4332 !important;
+            border-color: #1B4332 !important;
         }
         
         /* Custom cards for Home page */
         .custom-card {
             background-color: #ffffff;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #DDE7DF;
             border-radius: 12px;
             padding: 24px;
             height: 100%;
@@ -107,20 +133,20 @@ def load_theme():
             transition: all 0.3s ease;
         }
         .custom-card:hover {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
-            border-color: #cbd5e0;
+            box-shadow: 0 10px 18px rgba(45, 106, 79, 0.08);
+            border-color: #52B788;
             transform: translateY(-2px);
         }
         .custom-card-title {
-            font-size: 1.125rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 12px;
-            margin-top: 16px;
+            color: #1B2A1E;
+            margin-bottom: 10px;
+            margin-top: 14px;
         }
         .custom-card-desc {
-            font-size: 0.875rem;
-            color: #718096;
+            font-size: 0.88rem;
+            color: #4A5D4E;
             line-height: 1.5;
         }
 
@@ -128,7 +154,16 @@ def load_theme():
         hr {
             margin-top: 2rem;
             margin-bottom: 2rem;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid #E2EAE3;
+        }
+
+        /* Sidebar accent */
+        [data-testid="stSidebar"] {
+            background-color: #F3F8F3;
+            border-right: 1px solid #E2EAE3;
+        }
+        [data-testid="stSidebarNav"] {
+            padding-top: 1rem;
         }
         </style>
     """, unsafe_allow_html=True)

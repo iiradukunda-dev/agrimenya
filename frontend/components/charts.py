@@ -11,7 +11,7 @@ def render_yield_chart(df):
         x="District", 
         y="Yield_MT_ha",
         color="Priority",
-        color_discrete_map={"High": "#ff4b4b", "Medium": "#ffa500", "Low": "#00cc66"},
+        color_discrete_map={"High": "#DC2626", "Medium": "#D97706", "Low": "#2D6A4F"},
         title="Average Yield by District and Priority",
         barmode="group"
     )

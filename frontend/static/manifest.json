@@ -3,8 +3,8 @@
   "short_name": "Agri-Menya",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2b6cb0",
+  "background_color": "#FAFCFA",
+  "theme_color": "#2D6A4F",
   "description": "Decision and Planning Support System for Agricultural Productivity",
   "icons": [
     {
