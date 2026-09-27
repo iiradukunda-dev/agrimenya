@@ -1,13 +1,13 @@
 import streamlit as st
-from frontend.utils.theme import load_theme
-from frontend.utils import api_client
-from frontend.components.badges import priority_badge
-from frontend.components.icons import render_icon_title, render_icon_subheader
+from utils.theme import load_theme
+from utils import api_client
+from components.badges import priority_badge
+from components.icons import render_icon_title, render_icon_subheader
 
-st.set_page_config(page_title="Decision Making", page_icon="frontend/assets/brain.svg", layout="wide")
+st.set_page_config(page_title="Decision Making", page_icon="assets/brain.svg", layout="wide")
 load_theme()
 
-render_icon_title("frontend/assets/brain.svg", "Decision Making", "Automated, proactive recommendations based on predictive agricultural data.")
+render_icon_title("assets/brain.svg", "Decision Making", "Automated, proactive recommendations based on predictive agricultural data.")
 
 recs = api_client.get_recommendations()
 
@@ -29,7 +29,7 @@ else:
 
 st.divider()
 
-render_icon_subheader("frontend/assets/bot.svg", "AI Assistant")
+render_icon_subheader("assets/bot.svg", "AI Assistant")
 st.markdown("Ask the AI planner for specific context or adjustments to the recommendations.")
 prompt = st.chat_input("E.g., What are the risk factors for Maize in Nyagatare?")
 if prompt:
