@@ -1,0 +1,5 @@
+2026-09-27 21:48:56,671 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-27 21:48:56,704 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-27 21:48:59,464 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-27 21:48:59,501 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-27 21:50:19,680 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/predictions?select=%2A%2Czones%28district%2Csector%2Ccell%29 "HTTP/2 200 OK"
