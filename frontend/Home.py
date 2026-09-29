@@ -1,32 +1,32 @@
 import streamlit as st
 from utils import api_client
 from utils.theme import load_theme
+from utils.i18n import t, render_language_selector
 from components.icons import render_icon_title, render_icon_subheader
 
 st.set_page_config(page_title="Agri-Menya", page_icon="assets/wheat.svg", layout="wide")
 load_theme()
+render_language_selector()
 
-render_icon_title("assets/wheat.svg", "Agri-Menya", "Decision and Planning Support System for Agricultural Productivity")
+render_icon_title("assets/wheat.svg", t("home.app_title"), t("home.subtitle"))
 
-st.markdown("""
-Welcome to **Agri-Menya**. This platform empowers planners, extension officers, and cooperative leaders with data-driven insights using SAS, AHS, and EICV7 datasets.
-""")
+st.markdown(t("home.welcome"))
 
 # High-level KPIs
 kpis = api_client.get_kpis()
 col1, col2, col3 = st.columns(3)
 with col1:
     val = kpis.get('total_farmers', 'N/A')
-    st.metric("Total Farmers Supported", f"{val:,}" if isinstance(val, (int, float)) else val)
+    st.metric(t("home.kpi.farmers"), f"{val:,}" if isinstance(val, (int, float)) else val)
 with col2:
-    st.metric("Avg Yield Increase", kpis.get('yield_increase', 'N/A'))
+    st.metric(t("home.kpi.yield"), kpis.get('yield_increase', 'N/A'))
 with col3:
     val = kpis.get('active_cooperatives', 'N/A')
-    st.metric("Active Cooperatives", f"{val:,}" if isinstance(val, (int, float)) else val)
+    st.metric(t("home.kpi.cooperatives"), f"{val:,}" if isinstance(val, (int, float)) else val)
 
 st.divider()
 
-render_icon_subheader("assets/compass.svg", "Core Pillars")
+render_icon_subheader("assets/compass.svg", t("home.pillars_title"))
 c1, c2, c3, c4 = st.columns(4)
 
 def pillar_card(col, icon, title, desc, btn_text, page_route):
@@ -54,14 +54,41 @@ def pillar_card(col, icon, title, desc, btn_text, page_route):
             """,
             unsafe_allow_html=True
         )
-        if st.button(btn_text, use_container_width=True, key=f"btn_{title}"):
+        if st.button(btn_text, use_container_width=True, key=f"btn_{page_route}"):
             st.switch_page(page_route)
 
-pillar_card(c1, "assets/map.svg", "Segmentation", "Identify high-priority zones based on yield and risk data.", "Go to Segmentation", "pages/3_Segmentation.py")
-pillar_card(c2, "assets/brain.svg", "Decision Making", "Review automated recommendations for timely interventions.", "Go to Decisions", "pages/1_Decision_Making.py")
-pillar_card(c3, "assets/calendar.svg", "Planification", "Plan and track agricultural roadmaps and execution.", "Go to Planification", "pages/2_Planification.py")
-pillar_card(c4, "assets/message.svg", "Communication", "Share alerts, plans, and coordinate with stakeholders.", "Go to Communication", "pages/4_Communication.py")
+pillar_card(
+    c1, 
+    "assets/map.svg", 
+    t("pillar.segmentation.title"), 
+    t("pillar.segmentation.desc"), 
+    t("pillar.segmentation.btn"), 
+    "pages/3_Segmentation.py"
+)
+pillar_card(
+    c2, 
+    "assets/brain.svg", 
+    t("pillar.decisions.title"), 
+    t("pillar.decisions.desc"), 
+    t("pillar.decisions.btn"), 
+    "pages/1_Decision_Making.py"
+)
+pillar_card(
+    c3, 
+    "assets/calendar.svg", 
+    t("pillar.planification.title"), 
+    t("pillar.planification.desc"), 
+    t("pillar.planification.btn"), 
+    "pages/2_Planification.py"
+)
+pillar_card(
+    c4, 
+    "assets/message.svg", 
+    t("pillar.communication.title"), 
+    t("pillar.communication.desc"), 
+    t("pillar.communication.btn"), 
+    "pages/4_Communication.py"
+)
 
 st.divider()
-st.caption("Built for the 2026 NISR Big Data Hackathon")
-
+st.caption(t("common.built_for"))
