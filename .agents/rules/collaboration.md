@@ -1,29 +1,14 @@
-# Collaboration and Branching Rules
+# Collaboration and Branching Guidelines
 
-## Branch Structure
+## Branch Access & Workflow
 
-The project follows a specific branch structure to manage features and integration.
+Direct pushes are permitted for team members and contributors across repository branches:
 
-- **`main`**: The production-ready default branch. Protected.
-  - **AGENT RULE:** Do NOT push directly to the `main` branch unless the user explicitly tells you to do so.
-- **`develop`**: The main integration branch. All features merge here first. Protected.
-  - **AGENT RULE:** Do NOT push directly to the `develop` branch unless the user explicitly tells you to do so.
+- **`main`**: The primary production-ready branch. Team members (User, Dev A) can push directly or merge as appropriate.
+- **`develop`**: The active integration branch for day-to-day development. Direct pushes are allowed.
+- **Feature Branches**: Feature branches can be created, pushed to, and merged freely without blocking restrictions.
 
-Feature Branches:
-- `feature/frontend-segmentation-map`
-- `feature/frontend-decision-page`
-- `feature/frontend-planification-page`
-- `feature/frontend-communication-page`
-- `feature/backend-api-routes`
-- `feature/db-schema`
-- `feature/ml-yield-model`
+## Pull Requests
 
-  - **AGENT RULE:** By default, work should be committed to one of these existing feature branches based on the task. Do NOT create new branches unless explicitly instructed to do so by the user. If you ever must create one, the format is `feature/name-of-new-feature`.
-
-## Branch Protection & PRs
-
-- **Both `main` and `develop` are protected.**
-- **Pull Requests (PRs) are mandatory** for merging into `main` or `develop`.
-- **Review Requirements**: At least one approving pull request review is required before merging.
-
-When creating or modifying code for this repository, make sure you push to the appropriate feature branch and create a PR to merge into `develop`.
+- Pull requests are optional and can be used when formal code review or discussion is desired, but are not mandatory for pushing code.
+- Branch protection rules requiring pull request reviews or blocking direct pushes have been removed.
