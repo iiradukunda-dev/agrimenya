@@ -1,7 +1,8 @@
 import streamlit as st
 import requests
 from utils.theme import load_theme
-from utils.i18n import t, render_language_selector
+from utils.i18n import t
+from components.navbar import render_navbar
 import plotly.express as px
 from utils import api_client
 from components.icons import render_icon_title
@@ -9,7 +10,7 @@ from components.errors import render_error_page
 
 st.set_page_config(page_title=t("plan.page_title"), page_icon="📅", layout="wide")
 load_theme()
-render_language_selector()
+render_navbar()
 
 def main():
     render_icon_title("assets/calendar.svg", t("plan.header"), t("plan.subtitle"))
