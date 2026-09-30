@@ -9,7 +9,7 @@ from utils.mock_data import CROPS, SEASONS
 from components.icons import render_icon_title
 from components.errors import render_error_page
 
-st.set_page_config(page_title=t("seg.page_title"), page_icon="assets/map.svg", layout="wide")
+st.set_page_config(page_title=t("seg.page_title"), page_icon="🗺️", layout="wide")
 load_theme()
 render_language_selector()
 
