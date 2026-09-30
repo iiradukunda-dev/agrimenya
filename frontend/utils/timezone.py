@@ -4,7 +4,7 @@ from datetime import datetime
 try:
     from zoneinfo import ZoneInfo
 except ImportError:
-    from backports.zoneinfo import ZoneInfo
+    from backports.zoneinfo import ZoneInfo  # type: ignore
 
 CAT_TIMEZONE = "Africa/Kigali"
 CAT_TZ = ZoneInfo(CAT_TIMEZONE)
