@@ -23,7 +23,7 @@ def render_alert(alert):
     
     html = f"""
     <div style="background-color: {style['bg']}; border: 1px solid {style['box_border']}; border-left: 4px solid {style['border']}; padding: 16px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: start; gap: 14px;">
-        <img src="{icon_b64}" style="width: 24px; height: 24px; margin-top: 2px;" />
+        <img src="data:image/svg+xml;base64,{icon_b64}" style="width: 24px; height: 24px; margin-top: 2px;" />
         <div style="color: #1B2A1E;">
             <strong style="color: {style['text']};">{translated_type}</strong> • <span style="color: #6B7280; font-size: 0.88rem;">{alert.get('timestamp', '')}</span><br/>
             <span style="font-size: 0.95rem; margin-top: 4px; display: inline-block;">{alert.get('message', 'No details provided.')}</span>

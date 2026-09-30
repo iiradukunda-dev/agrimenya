@@ -1,9 +1,8 @@
 import requests
+from requests.exceptions import RequestException
+import logging
 from .config import API_BASE_URL, USE_MOCK_DATA
 from . import mock_data
-
-import requests
-from requests.exceptions import RequestException
 import logging
 
 def get_kpis():

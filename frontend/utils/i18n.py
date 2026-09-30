@@ -138,6 +138,17 @@ TRANSLATIONS = {
         "comm.alert_type.warning": "Warning",
         "comm.alert_type.info": "Info",
         "comm.alert_type.urgent": "Urgent",
+        
+        # Error Pages
+        "error.404.title": "Page Not Found",
+        "error.404.desc": "The page you are looking for does not exist or has been moved.",
+        "error.network.title": "Network Error",
+        "error.network.desc": "Failed to connect to the backend server. Please check your connection and try again.",
+        "error.validation.title": "Validation Error",
+        "error.validation.desc": "The data provided is invalid. Please review your inputs.",
+        "error.system.title": "System Error",
+        "error.system.desc": "An unexpected system error occurred. Our team has been notified.",
+        "error.go_home": "Return to Home",
     },
 
     "rw": {
@@ -264,6 +275,17 @@ TRANSLATIONS = {
         "comm.alert_type.warning": "Iburira",
         "comm.alert_type.info": "Amakuru",
         "comm.alert_type.urgent": "Byihutirwa",
+        
+        # Error Pages
+        "error.404.title": "Paji Ntibonetse",
+        "error.404.desc": "Paji mwashakaga ntibaho cyangwa yimuwe.",
+        "error.network.title": "Ikibazo cy'Urusobe",
+        "error.network.desc": "Guhuza na seriveri byanze. Nyamuneka reba interineti yawe wongere ugerageze.",
+        "error.validation.title": "Ikibazo cy'Amakuru",
+        "error.validation.desc": "Amakuru mwataye ntabwo ariyo. Nyamuneka suzuma ibyo mwanditse.",
+        "error.system.title": "Ikibazo cya Sisitemu",
+        "error.system.desc": "Habaye ikibazo gitunguranye muri sisitemu. Ikipe yacu yabimenyeshejwe.",
+        "error.go_home": "Subira Ahabanza",
     },
 
     "fr": {
@@ -390,6 +412,17 @@ TRANSLATIONS = {
         "comm.alert_type.warning": "Avertissement",
         "comm.alert_type.info": "Information",
         "comm.alert_type.urgent": "Urgent",
+        
+        # Error Pages
+        "error.404.title": "Page Non Trouvée",
+        "error.404.desc": "La page que vous recherchez n'existe pas ou a été déplacée.",
+        "error.network.title": "Erreur Réseau",
+        "error.network.desc": "Échec de connexion au serveur. Veuillez vérifier votre connexion et réessayer.",
+        "error.validation.title": "Erreur de Validation",
+        "error.validation.desc": "Les données fournies sont invalides. Veuillez vérifier vos saisies.",
+        "error.system.title": "Erreur Système",
+        "error.system.desc": "Une erreur système inattendue s'est produite. Notre équipe en a été informée.",
+        "error.go_home": "Retour à l'Accueil",
     }
 }
 
