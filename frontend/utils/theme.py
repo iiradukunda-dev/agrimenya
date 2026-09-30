@@ -30,7 +30,7 @@ def load_theme():
         if (!parentWindow.document.querySelector('meta[name="theme-color"]')) {
             const meta = parentWindow.document.createElement('meta');
             meta.name = 'theme-color';
-            meta.content = '#2D6A4F';
+            meta.content = '#52B788';
             parentWindow.document.head.appendChild(meta);
         }
     </script>
@@ -64,7 +64,7 @@ def load_theme():
         [data-testid="stMetric"] {
             background-color: #ffffff;
             border: 1px solid #DDE7DF;
-            border-top: 3px solid #2D6A4F;
+            border-top: 3px solid #52B788;
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
@@ -72,9 +72,9 @@ def load_theme():
         }
         [data-testid="stMetric"]:hover {
             transform: translateY(-2px);
-            border-color: #52B788;
-            border-top-color: #1B4332;
-            box-shadow: 0 10px 15px -3px rgba(45, 106, 79, 0.08), 0 4px 6px -2px rgba(45, 106, 79, 0.04);
+            border-color: #74C69D;
+            border-top-color: #40916C;
+            box-shadow: 0 10px 15px -3px rgba(82, 183, 136, 0.15), 0 4px 6px -2px rgba(82, 183, 136, 0.08);
         }
         
         /* Metric Label */
@@ -87,40 +87,40 @@ def load_theme():
         /* Metric Value */
         [data-testid="stMetricValue"] > div {
             font-weight: 700;
-            color: #2D6A4F;
+            color: #40916C;
             font-size: 2rem;
         }
 
         /* Buttons */
         .stButton>button {
-            background-color: #2D6A4F;
+            background-color: #52B788;
             color: #ffffff;
             border: none;
             border-radius: 8px;
             padding: 10px 24px;
             font-weight: 600;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(45, 106, 79, 0.2);
+            box-shadow: 0 2px 4px rgba(82, 183, 136, 0.3);
         }
         .stButton>button:hover {
-            background-color: #1B4332;
+            background-color: #40916C;
             color: #ffffff;
-            box-shadow: 0 4px 8px rgba(27, 67, 50, 0.3);
+            box-shadow: 0 4px 8px rgba(64, 145, 108, 0.4);
             transform: translateY(-1px);
         }
         .stButton>button:active {
-            background-color: #132A13;
+            background-color: #2D6A4F;
             transform: translateY(0);
         }
 
         /* Primary Form Submit Button */
         button[kind="primary"] {
-            background-color: #2D6A4F !important;
-            border-color: #2D6A4F !important;
+            background-color: #52B788 !important;
+            border-color: #52B788 !important;
         }
         button[kind="primary"]:hover {
-            background-color: #1B4332 !important;
-            border-color: #1B4332 !important;
+            background-color: #40916C !important;
+            border-color: #40916C !important;
         }
         
         /* Custom cards for Home page */
@@ -134,8 +134,8 @@ def load_theme():
             transition: all 0.3s ease;
         }
         .custom-card:hover {
-            box-shadow: 0 10px 18px rgba(45, 106, 79, 0.08);
-            border-color: #52B788;
+            box-shadow: 0 10px 18px rgba(82, 183, 136, 0.12);
+            border-color: #74C69D;
             transform: translateY(-2px);
         }
         .custom-card-title {

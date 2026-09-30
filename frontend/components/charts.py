@@ -12,7 +12,7 @@ def render_yield_chart(df):
         x="District", 
         y="Yield_MT_ha",
         color="Priority",
-        color_discrete_map={"High": "#DC2626", "Medium": "#D97706", "Low": "#2D6A4F"},
+        color_discrete_map={"High": "#DC2626", "Medium": "#D97706", "Low": "#52B788"},
         title=t("seg.chart_title"),
         barmode="group"
     )

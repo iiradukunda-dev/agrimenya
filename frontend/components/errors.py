@@ -33,7 +33,7 @@ def render_error_page(error_type: str, details: str = None):
     if not icon_html:
         # Fallback SVG icon in green
         icon_html = """
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -47,7 +47,7 @@ def render_error_page(error_type: str, details: str = None):
             f"""
             <div style="
                 background-color: #ffffff;
-                border: 2px solid #2D6A4F;
+                border: 2px solid #52B788;
                 border-radius: 12px;
                 padding: 40px;
                 text-align: center;

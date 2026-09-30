@@ -15,10 +15,10 @@ def render_alert(alert):
     
     styles = {
         "Warning": {"bg": "#FFFBEB", "border": "#D97706", "box_border": "#FDE68A", "text": "#92400E"},
-        "Info": {"bg": "#EBF5EE", "border": "#2D6A4F", "box_border": "#CBE3D1", "text": "#1B4332"},
+        "Info": {"bg": "#EBF5EE", "border": "#52B788", "box_border": "#CBE3D1", "text": "#1B4332"},
         "Urgent": {"bg": "#FEF2F2", "border": "#DC2626", "box_border": "#FECACA", "text": "#991B1B"}
     }
-    style = styles.get(raw_type, {"bg": "#EBF5EE", "border": "#2D6A4F", "box_border": "#CBE3D1", "text": "#1B4332"})
+    style = styles.get(raw_type, {"bg": "#EBF5EE", "border": "#52B788", "box_border": "#CBE3D1", "text": "#1B4332"})
     translated_type = t(f"comm.alert_type.{raw_type.lower()}", default=raw_type)
     
     html = f"""

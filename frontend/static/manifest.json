@@ -4,7 +4,7 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FAFCFA",
-  "theme_color": "#2D6A4F",
+  "theme_color": "#52B788",
   "description": "Decision and Planning Support System for Agricultural Productivity",
   "icons": [
     {
