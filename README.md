@@ -114,33 +114,32 @@ If you're poking around the code, here's how we've laid things out:
 
 ```text
 agri-menya/
-├── frontend/
-│   ├── Home.py
-│   ├── pages/
-│   │   ├── 1_Segmentation.py
-│   │   ├── 2_Decision_Making.py
-│   │   ├── 3_Planification.py
-│   │   └── 4_Communication.py
+├── backend/                  # Dev A's domain (FastAPI, ML, Database)
+│   ├── app/
+│   │   ├── core/
+│   │   ├── db/
+│   │   ├── ml/
+│   │   ├── models/
+│   │   ├── routers/
+│   │   └── services/
+│   ├── data/
+│   ├── scripts/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── .env.example
+├── frontend/                 # Your domain (Streamlit, UI, Maps)
+│   ├── Home.py               # Main Streamlit app
 │   ├── components/
-│   ├── utils/
-│   └── assets/
-├── backend/
-│   ├── main.py
-│   ├── routers/
-│   ├── services/
-│   ├── models/
-│   └── schemas/
-├── ml/
-│   ├── notebooks/
-│   ├── models/
-│   └── training_scripts/
-├── database/
-│   └── schema.sql
-├── docs/
-│   ├── API_CONTRACT.md
-│   └── BACKEND_GUIDELINES.md
-├── .env.example
-├── requirements.txt
+│   ├── pages/
+│   ├── static/
+│   ├── tests/
+│   ├── requirements.txt      # Frontend specific dependencies
+│   └── .env.example          # Frontend specific env vars
+├── infra/                    # Deployment configs (Docker, Render, etc.)
+├── docs/                     # User & Developer documentation
+├── tests/                    # Global/Integration tests
+├── .github/                  # CI/CD workflows
+├── .gitignore
 └── README.md
 ```
 

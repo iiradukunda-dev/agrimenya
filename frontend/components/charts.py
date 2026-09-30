@@ -1,9 +1,10 @@
 import plotly.express as px
 import streamlit as st
+from utils.i18n import t
 
 def render_yield_chart(df):
     if df.empty:
-        st.info("No data available for chart.")
+        st.info(t("seg.empty"))
         return
         
     fig = px.bar(
@@ -11,9 +12,9 @@ def render_yield_chart(df):
         x="District", 
         y="Yield_MT_ha",
         color="Priority",
-        color_discrete_map={"High": "#ff4b4b", "Medium": "#ffa500", "Low": "#00cc66"},
-        title="Average Yield by District and Priority",
+        color_discrete_map={"High": "#DC2626", "Medium": "#D97706", "Low": "#2D6A4F"},
+        title=t("seg.chart_title"),
         barmode="group"
     )
-    fig.update_layout(xaxis_title="District", yaxis_title="Yield (MT/ha)")
+    fig.update_layout(xaxis_title=t("seg.axis_district"), yaxis_title=t("seg.axis_yield"))
     st.plotly_chart(fig, use_container_width=True)

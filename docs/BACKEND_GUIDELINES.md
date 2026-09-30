@@ -6,9 +6,9 @@ Welcome to the backend development of Agri-Menya! This guide outlines how we are
 
 We follow a structured branching model to keep our work organized and prevent breaking changes.
 
-- **`main`**: The production-ready branch. **Never push directly to this branch.**
-- **`develop`**: The main integration branch. This is where backend and frontend features meet. **Never push directly to this branch.**
-- **Feature Branches**: All your daily work should happen in feature branches created off `develop`. 
+- **`main`**: The production-ready branch. **Never push directly to this branch.** Pull Requests are mandatory.
+- **`develop`**: The main integration branch. This is where backend and frontend features meet. You have full access and can push your completed feature branches directly to `develop`.
+- **Feature Branches**: All your daily work should happen in feature branches created off `develop`.
 
 I've already created some initial backend feature branches for you:
 - `feature/db-schema` (For initial database modeling and migrations)
@@ -40,10 +40,10 @@ When starting work on a new feature or continuing an existing one, please follow
 
 ## 3. Pull Request Rules
 
-To keep the codebase stable, **branch protections are enabled**:
-- You cannot merge a PR into `develop` or `main` without at least **one approved review**.
-- When your backend code is ready (or if you want feedback), open a PR and request a review from me (the frontend/project manager).
-- We will review the code, test the API endpoints if necessary, and approve the merge.
+To keep the codebase stable, **branch protections are enabled for `main`**:
+- You cannot merge into `main` without a Pull Request and at least **one approved review**.
+- However, for `develop`, you have **full access**. Once your feature is ready, you can merge or push it directly into `develop`.
+- We will review features in `develop` and coordinate before moving them to `main`.
 
 ## 4. Frontend-Backend Collaboration
 
