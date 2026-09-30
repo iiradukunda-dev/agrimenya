@@ -44,16 +44,16 @@ def main():
             
             st.markdown(
                 f"""
-                <div class="custom-card">
-                    <div style="width: 44px; height: 44px; border-radius: 10px; background-color: #E8F5E9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-                        <div style="width: 24px; height: 24px; color: #52B788; display: flex; align-items: center; justify-content: center;">
-                            {svg_content}
-                        </div>
-                    </div>
-                    <div class="custom-card-title">{title}</div>
-                    <div class="custom-card-desc">{desc}</div>
-                </div>
-                <br/>
+<div class="custom-card">
+    <div style="width: 44px; height: 44px; border-radius: 10px; background-color: #E8F5E9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+        <div style="width: 24px; height: 24px; color: #52B788; display: flex; align-items: center; justify-content: center;">
+            {svg_content}
+        </div>
+    </div>
+    <div class="custom-card-title">{title}</div>
+    <div class="custom-card-desc">{desc}</div>
+</div>
+<br/>
                 """,
                 unsafe_allow_html=True
             )
