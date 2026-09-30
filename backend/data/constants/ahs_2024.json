@@ -1,0 +1,9 @@
+{
+  "year": 2024,
+  "source": "AHS 2024 (Agricultural Household Survey)",
+  "own_land_share": 0.924,
+  "fertilizer_use_share": 0.665,
+  "irrigation_share": 0.141,
+  "pesticide_use_share": 0.421,
+  "extension_share": 0.671
+}

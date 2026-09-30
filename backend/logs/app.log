@@ -1,0 +1,254 @@
+2026-09-27 21:48:56,671 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-27 21:48:56,704 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-27 21:48:59,464 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-27 21:48:59,501 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-27 21:50:19,680 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/predictions?select=%2A%2Czones%28district%2Csector%2Ccell%29 "HTTP/2 200 OK"
+2026-09-29 11:07:21,962 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:30:03,349 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:30:03,351 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:32:56,581 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:32:56,585 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:32:56,586 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:48:35,172 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:48:35,172 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:48:35,174 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:48:43,703 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:48:43,716 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-29 14:48:43,726 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:34,374 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:34,382 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:34,383 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:47,419 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:47,480 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:47,527 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:52,541 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:52,542 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:55,816 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:55,816 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:02:55,831 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:03:15,525 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:03:15,591 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:03:15,591 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:03:18,935 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:03:18,966 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:03:19,013 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:06:18,952 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:06:18,962 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:06:18,983 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:06:22,466 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:06:22,505 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:06:22,551 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:06:30,274 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:06:30,325 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-09-30 13:06:33,292 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.65273a70-c3b9-496d-9e5a-7ac501037279 "HTTP/2 200 OK"
+2026-09-30 13:06:33,302 INFO httpx HTTP Request: GET http://testserver/planification/plans/65273a70-c3b9-496d-9e5a-7ac501037279 "HTTP/1.1 200 OK"
+2026-09-30 13:08:00,802 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:08:00,849 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-09-30 13:08:03,079 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.d4a7a607-2230-4a44-97ff-bc0bb00db7dc "HTTP/2 200 OK"
+2026-09-30 13:08:03,082 INFO httpx HTTP Request: GET http://testserver/planification/plans/d4a7a607-2230-4a44-97ff-bc0bb00db7dc "HTTP/1.1 200 OK"
+2026-09-30 13:11:06,997 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:11:07,372 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:11:07,392 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:11:10,479 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:11:10,732 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:11:10,760 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:11:46,725 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:11:46,788 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-09-30 13:11:46,799 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=3189e0a0-9fac-40b1-bd7d-01e458ef7e86 "HTTP/1.1 200 OK"
+2026-09-30 13:11:46,812 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-09-30 13:11:46,826 INFO httpx HTTP Request: GET http://testserver/communication/share/b35ccabc-0fcb-4d8d-82a5-5a7e95d1005c "HTTP/1.1 200 OK"
+2026-09-30 13:15:47,786 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:15:47,787 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:15:47,790 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:15:53,159 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:15:53,184 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:15:53,186 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:15:57,742 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:15:57,746 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:15:57,761 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:00,705 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:00,755 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:00,791 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:23,094 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:23,145 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:23,193 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:26,396 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:26,433 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:26,452 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:35,603 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:16:35,663 INFO httpx HTTP Request: POST http://testserver/alignment/compute/477e5871-2d14-4294-9972-a9b1dc13a59e?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&rainfall_mm=&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 422 Unprocessable Entity"
+2026-09-30 13:17:19,796 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:17:19,805 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:17:19,965 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:17:22,959 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:17:22,981 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:17:23,087 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:17:28,395 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:17:28,457 INFO httpx HTTP Request: POST http://testserver/alignment/compute/13c5f0e9-2545-44de-9a9e-f5ae33189b71?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-09-30 13:17:28,467 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/13c5f0e9-2545-44de-9a9e-f5ae33189b71 "HTTP/1.1 200 OK"
+2026-09-30 13:17:28,475 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/13c5f0e9-2545-44de-9a9e-f5ae33189b71 "HTTP/1.1 200 OK"
+2026-09-30 13:17:28,485 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-09-30 13:17:28,497 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-09-30 13:18:52,261 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:18:52,288 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:18:52,914 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:19:01,699 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:19:01,747 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:19:01,779 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:20:40,824 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:20:40,828 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:20:40,844 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:20:57,133 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:20:57,152 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:20:57,182 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:21:00,680 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:21:00,737 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:21:00,751 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:21:22,001 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:21:22,061 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-09-30 13:21:22,076 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-09-30 13:26:31,069 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:26:31,070 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:26:31,071 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:26:34,528 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:26:34,531 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:26:34,601 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:27:36,327 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:27:36,332 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:27:36,333 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:27:39,816 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:27:39,854 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:27:39,869 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:37:07,924 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:37:07,925 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:37:07,926 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:38:47,329 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:38:47,908 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:38:47,970 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:38:54,429 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:38:54,430 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:38:56,870 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:38:57,636 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:38:57,703 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:38:59,901 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:09,395 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:09,475 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:09,491 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:13,332 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:14,196 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:15,268 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:17,325 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:18,267 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:30,824 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:31,919 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:31,923 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:37,430 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:39,400 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:40,635 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:40,896 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:44,783 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:45,027 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:45,058 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:49,274 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:49,415 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:39:49,434 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:30,066 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:30,232 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:30,560 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:33,135 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:34,906 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:34,916 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:36,426 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:38,312 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:38,352 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:40,261 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:42,019 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:43,497 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:44,805 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:46,057 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:47,215 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:50,264 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:50,605 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:53,433 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:54,461 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:40:56,232 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:41:15,364 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:41:15,365 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:41:21,025 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:41:22,278 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:41:25,158 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:41:25,449 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:42:16,739 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:42:16,745 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:42:19,814 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:42:19,850 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:42:22,784 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:42:22,843 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:42:26,334 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:42:26,354 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:44:03,869 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:44:03,957 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-09-30 13:44:03,971 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-09-30 13:44:04,001 INFO httpx HTTP Request: POST http://testserver/alignment/compute/c06688fe-7d7a-4fa3-aae6-939573bbbead?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-09-30 13:44:04,010 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/c06688fe-7d7a-4fa3-aae6-939573bbbead "HTTP/1.1 200 OK"
+2026-09-30 13:44:04,020 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/c06688fe-7d7a-4fa3-aae6-939573bbbead "HTTP/1.1 200 OK"
+2026-09-30 13:44:04,030 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-09-30 13:44:04,040 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-09-30 13:44:04,072 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-09-30 13:44:04,083 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=e10c6df6-9a30-4d32-9449-2d7c219f3afd "HTTP/1.1 200 OK"
+2026-09-30 13:44:04,095 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-09-30 13:44:04,110 INFO httpx HTTP Request: GET http://testserver/communication/share/2d543cf5-ba8b-4533-9e7a-b66f33c32f94 "HTTP/1.1 200 OK"
+2026-09-30 13:44:04,130 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-09-30 13:44:06,247 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.7695595e-8a19-4039-be3e-6c90bf3a49f7 "HTTP/2 200 OK"
+2026-09-30 13:44:06,253 INFO httpx HTTP Request: GET http://testserver/planification/plans/7695595e-8a19-4039-be3e-6c90bf3a49f7 "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,274 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:46:49,345 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,358 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-09-30 13:46:49,384 INFO httpx HTTP Request: POST http://testserver/alignment/compute/19893a52-8146-4b3b-b935-06f4bb1fe646?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,396 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/19893a52-8146-4b3b-b935-06f4bb1fe646 "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,407 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/19893a52-8146-4b3b-b935-06f4bb1fe646 "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,417 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,429 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,454 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,464 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=46e58d77-01db-4ee3-ba6b-1c523226830b "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,476 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-09-30 13:46:49,491 INFO httpx HTTP Request: GET http://testserver/communication/share/855b2e7c-c3cc-4bec-8857-fe39d8ca4da6 "HTTP/1.1 200 OK"
+2026-09-30 13:46:49,507 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-09-30 13:46:52,116 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.0b790750-ba52-47d9-9daf-0211a5d67b48 "HTTP/2 200 OK"
+2026-09-30 13:46:52,121 INFO httpx HTTP Request: GET http://testserver/planification/plans/0b790750-ba52-47d9-9daf-0211a5d67b48 "HTTP/1.1 200 OK"
+2026-09-30 13:48:30,936 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-09-30 13:52:12,323 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A "HTTP/2 200 OK"
+2026-09-30 13:52:39,355 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:40,027 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:40,508 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:40,802 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:41,443 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:41,734 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:42,376 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:42,652 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:42,938 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:43,218 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:43,500 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:43,781 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:44,060 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:44,348 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:44,742 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:45,039 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:45,323 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:45,615 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:45,893 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:46,176 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:46,457 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:46,748 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:47,150 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:47,436 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:47,720 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:48,016 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:48,294 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:48,584 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:48,859 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:52:49,141 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/agri_metrics?select=%2A%2Czones%28district%2Csector%2Ccell%29&season=eq.2026+Season+A&crop=eq.Maize "HTTP/2 200 OK"
+2026-09-30 13:53:20,067 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.f53c3569-7186-4517-b9c7-400a527f1433 "HTTP/2 200 OK"
+2026-09-30 13:53:33,252 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.f53c3569-7186-4517-b9c7-400a527f1433 "HTTP/2 200 OK"
+2026-09-30 13:54:26,391 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.f53c3569-7186-4517-b9c7-400a527f1433 "HTTP/2 200 OK"
+2026-09-30 20:26:07,304 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.f53c3569-7186-4517-b9c7-400a527f1433 "HTTP/2 200 OK"
