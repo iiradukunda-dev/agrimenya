@@ -183,6 +183,10 @@ Before pushing changes:
 * review the commits being pushed,
 * ensure no secrets are included.
 
+**CRITICAL BRANCH POLICY:**
+* **Do not push to the `main` branch unless explicitly instructed by the user.**
+* **Push to the `develop` branch by default for all changes.**
+
 Do not force-push by default.
 
 Use force-push only when explicitly requested and when the consequences are understood.

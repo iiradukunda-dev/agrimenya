@@ -2,13 +2,15 @@ import streamlit as st
 import requests
 from utils import api_client
 from utils.theme import load_theme
-from utils.i18n import t, render_language_selector
+from utils.i18n import t
+from utils.timezone import setup_system_timezone
 from components.icons import render_icon_title, render_icon_subheader
+from components.navbar import render_navbar
 from components.errors import render_error_page
-
-st.set_page_config(page_title="Agri-Menya", page_icon="assets/wheat.svg", layout="wide")
+st.set_page_config(page_title="Agri-Menya", page_icon="🌾", layout="wide")
+setup_system_timezone()
 load_theme()
-render_language_selector()
+render_navbar()
 
 def main():
     render_icon_title("assets/wheat.svg", t("home.app_title"), t("home.subtitle"))
@@ -44,16 +46,16 @@ def main():
             
             st.markdown(
                 f"""
-                <div class="custom-card">
-                    <div style="width: 44px; height: 44px; border-radius: 10px; background-color: #E8F5E9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-                        <div style="width: 24px; height: 24px; color: #52B788; display: flex; align-items: center; justify-content: center;">
-                            {svg_content}
-                        </div>
-                    </div>
-                    <div class="custom-card-title">{title}</div>
-                    <div class="custom-card-desc">{desc}</div>
-                </div>
-                <br/>
+<div class="custom-card">
+    <div style="width: 44px; height: 44px; border-radius: 10px; background-color: #E8F5E9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+        <div style="width: 24px; height: 24px; color: #52B788; display: flex; align-items: center; justify-content: center;">
+            {svg_content}
+        </div>
+    </div>
+    <div class="custom-card-title">{title}</div>
+    <div class="custom-card-desc">{desc}</div>
+</div>
+<br/>
                 """,
                 unsafe_allow_html=True
             )

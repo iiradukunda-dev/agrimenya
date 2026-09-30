@@ -462,7 +462,7 @@ def render_language_selector(sidebar: bool = True) -> None:
     current_code = get_current_language()
     current_idx = list(LANGUAGES.keys()).index(current_code) if current_code in LANGUAGES else 0
 
-    target = st.sidebar if sidebar else st
+    target = st.sidebar if sidebar else st.container()
 
     with target:
         import os
