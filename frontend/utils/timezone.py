@@ -15,8 +15,9 @@ def setup_system_timezone():
     for the application environment.
     """
     os.environ['TZ'] = CAT_TIMEZONE
-    if hasattr(time, 'tzset'):
-        time.tzset()
+    tzset = getattr(time, 'tzset', None)
+    if tzset:
+        tzset()
 
 def get_current_time() -> datetime:
     """Returns the current datetime explicitly in CAT (UTC+2)."""
