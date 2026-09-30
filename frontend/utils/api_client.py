@@ -14,7 +14,7 @@ def get_kpis():
         return response.json()
     except RequestException as e:
         logging.error(f"Error fetching KPIs: {e}")
-        return {"total_farmers": "N/A", "yield_increase": "N/A", "active_cooperatives": "N/A"}
+        raise
 
 def get_priority_data():
     if USE_MOCK_DATA:
@@ -26,8 +26,7 @@ def get_priority_data():
         return pd.DataFrame(response.json())
     except RequestException as e:
         logging.error(f"Error fetching priority data: {e}")
-        import pandas as pd
-        return pd.DataFrame()
+        raise
 
 def get_recommendations():
     if USE_MOCK_DATA:
@@ -38,7 +37,7 @@ def get_recommendations():
         return response.json()
     except RequestException as e:
         logging.error(f"Error fetching recommendations: {e}")
-        return []
+        raise
 
 def get_roadmap():
     if USE_MOCK_DATA:
@@ -50,8 +49,7 @@ def get_roadmap():
         return pd.DataFrame(response.json())
     except RequestException as e:
         logging.error(f"Error fetching roadmap: {e}")
-        import pandas as pd
-        return pd.DataFrame()
+        raise
 
 def get_alerts():
     if USE_MOCK_DATA:
@@ -62,4 +60,4 @@ def get_alerts():
         return response.json()
     except RequestException as e:
         logging.error(f"Error fetching alerts: {e}")
-        return []
+        raise
