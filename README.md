@@ -1,4 +1,4 @@
-# <img src="assets/wheat.svg" width="32" align="center"> Agrimenya
+# <img src="assets/wheat.svg" width="32" align="center"> agrimenya
 
 **A Data-Driven Decision and Planning Support System for Agricultural Productivity in Rwanda**
 
