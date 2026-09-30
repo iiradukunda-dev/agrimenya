@@ -46,15 +46,15 @@ def main():
         phase_colors = {
             # English
             "Preparation": "#C4924A",
-            "Execution": "#2D6A4F",
+            "Execution": "#52B788",
             "Monitoring": "#52B788",
             # Kinyarwanda
             "Imyiteguro": "#C4924A",
-            "Gushyira mu Bikorwa": "#2D6A4F",
+            "Gushyira mu Bikorwa": "#52B788",
             "Gukurikirana": "#52B788",
             # French
             "Préparation": "#C4924A",
-            "Exécution": "#2D6A4F",
+            "Exécution": "#52B788",
             "Suivi & Évaluation": "#52B788",
         }
         

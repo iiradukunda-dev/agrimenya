@@ -46,7 +46,7 @@ def main():
                 f"""
                 <div class="custom-card">
                     <div style="width: 44px; height: 44px; border-radius: 10px; background-color: #E8F5E9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-                        <div style="width: 24px; height: 24px; color: #2D6A4F; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 24px; height: 24px; color: #52B788; display: flex; align-items: center; justify-content: center;">
                             {svg_content}
                         </div>
                     </div>

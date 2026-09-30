@@ -482,7 +482,7 @@ def render_language_selector(sidebar: bool = True) -> None:
             f"""
             <div style="display: flex; align-items: center; margin-bottom: 6px; margin-top: 4px;">
                 {icon_html}
-                <span style="font-size: 0.85rem; font-weight: 600; color: #2D6A4F; text-transform: uppercase; letter-spacing: 0.5px;">
+                <span style="font-size: 0.85rem; font-weight: 600; color: #52B788; text-transform: uppercase; letter-spacing: 0.5px;">
                     {t('common.language')}
                 </span>
             </div>
