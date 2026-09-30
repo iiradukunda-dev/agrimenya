@@ -1,4 +1,5 @@
 import streamlit as st
+import requests
 from utils import api_client
 from utils.theme import load_theme
 from utils.i18n import t, render_language_selector
@@ -97,5 +98,7 @@ def main():
 
 try:
     main()
+except requests.exceptions.RequestException as e:
+    render_error_page("network", str(e))
 except Exception as e:
     render_error_page("system", str(e))
