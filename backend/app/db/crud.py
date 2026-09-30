@@ -62,6 +62,15 @@ def get_zone(zone_id: UUID) -> dict | None:
     return result.data[0] if result.data else None
 
 
+def get_zone_by_district(district: str) -> list[dict]:
+    """Backward-compatible helper: return zones matching a district name.
+
+    Some callers expect a function named `get_zone_by_district`; implement
+    as a thin wrapper around `list_zones` to avoid duplication.
+    """
+    return list_zones(district=district)
+
+
 # ---------- agri_metrics ----------
 
 def list_agri_metrics(zone_id: UUID | None = None, season: str | None = None,

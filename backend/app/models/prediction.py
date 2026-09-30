@@ -23,6 +23,11 @@ class PredictionResult(BaseModel):
     priority_level: PriorityLevel
     confidence: float
     model_version: str
+    # analysis-only fields
+    yield_per_ha: Optional[float] = None
+    benchmark_yield_per_ha: Optional[float] = None
+    yield_gap_kg_ha: Optional[float] = None
+    yield_index: Optional[float] = None
 
 
 class PredictionRecord(PredictionResult):

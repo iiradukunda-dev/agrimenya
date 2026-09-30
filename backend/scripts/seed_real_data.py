@@ -62,7 +62,31 @@ def seed(data_path: Path = DEFAULT_DATA_PATH) -> None:
         zone_ids[district] = get_or_create_zone(district)
     print(f"Ensured {len(zone_ids)} district zones exist.")
 
+    # Seed in batches with retry/backoff to tolerate transient network errors
     seeded, skipped = 0, 0
+    batch_size = 100
+    batch = []
+
+    def flush_batch(b):
+        # Each record upserted individually but with retries to avoid large
+        # transaction rollbacks on intermittent network failures.
+        for rec in b:
+            attempts = 0
+            while True:
+                try:
+                    crud.upsert_agri_metric(rec)
+                    break
+                except Exception as e:
+                    attempts += 1
+                    if attempts >= 3:
+                        print(f"Failed to upsert after {attempts} attempts: {e}")
+                        raise
+                    wait = 0.5 * (2 ** (attempts - 1))
+                    print(f"Transient error upserting, retry {attempts}/3 after {wait}s: {e}")
+                    import time
+
+                    time.sleep(wait)
+
     for _, row in df.iterrows():
         if pd.isna(row["yield_kg_ha"]):
             skipped += 1
@@ -75,8 +99,14 @@ def seed(data_path: Path = DEFAULT_DATA_PATH) -> None:
             "production_mt": float(row["production_mt"]) if pd.notna(row["production_mt"]) else None,
             "area_cultivated": float(row["cultivated_area_ha"]) if pd.notna(row["cultivated_area_ha"]) else None,
         }
-        crud.upsert_agri_metric(record)
+        batch.append(record)
         seeded += 1
+        if len(batch) >= batch_size:
+            flush_batch(batch)
+            batch = []
+
+    if batch:
+        flush_batch(batch)
 
     print(f"Seeded/updated {seeded} agri_metrics rows ({skipped} skipped for missing yield).")
 

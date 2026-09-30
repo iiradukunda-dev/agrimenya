@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.db import crud
 from app.services.alignment_calculator import calculate_alignment_metrics
+from app.ml.predict import get_yield_index
 
 router = APIRouter(prefix="/alignment", tags=["National Alignment"])
 
@@ -8,12 +9,20 @@ router = APIRouter(prefix="/alignment", tags=["National Alignment"])
 @router.post("/compute/{zone_id}")
 def compute_alignment(zone_id: str, season: str, predicted_yield: float,
                        area_cultivated: float | None = None, rainfall_mm: float | None = None,
-                       priority_level: str = "Medium"):
+                       priority_level: str = "Medium", crop: str | None = None, district: str | None = None):
     zone = crud.get_zone(zone_id)
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")
+    # obtain yield_index from predict module (district+crop) instead of
+    # recomputing yield logic here.
+    yield_index = None
+    try:
+        if crop and district:
+            yield_index = get_yield_index(district, crop)
+    except Exception:
+        yield_index = None
 
-    metrics = calculate_alignment_metrics(predicted_yield, area_cultivated, rainfall_mm, priority_level)
+    metrics = calculate_alignment_metrics(predicted_yield, area_cultivated, rainfall_mm, priority_level, yield_index)
     record = {"zone_id": zone_id, "season": season, **metrics}
     return crud.upsert_alignment_metric(record)
 

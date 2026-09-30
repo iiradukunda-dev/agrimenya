@@ -19,6 +19,8 @@ import pickle
 import logging
 import time
 from pathlib import Path
+from statistics import mean
+from typing import List
 
 ARTIFACTS_DIR = Path(__file__).parent / "artifacts"
 YIELD_MODEL_PATH = ARTIFACTS_DIR / "yield_model.pkl"
@@ -102,6 +104,110 @@ def _estimate_yield_per_ha(district: str | None, crop: str, season: str | None,
         return overall, 0.45, "national-baseline-sas2026"
 
     return FLAT_FALLBACK_YIELD_PER_HA, 0.3, FALLBACK_MODEL_VERSION
+
+
+def known_crops() -> List[str]:
+    """Return the list of crops the baseline/model knows about."""
+    crops = set()
+    if _baselines:
+        crops.update(_baselines.get("crop_averages", {}).keys())
+    # try model encoder classes if available
+    try:
+        global _yield_model_bundle
+        if _yield_model_bundle is None:
+            _yield_model_bundle = _load_yield_model()
+        bundle = _yield_model_bundle
+        if bundle is not None and bundle.get("crop_encoder") is not None:
+            crops.update(list(bundle.get("crop_encoder").classes_))
+    except Exception:
+        pass
+    return sorted(crops)
+
+
+def has_data() -> bool:
+    return bool(_baselines) or YIELD_MODEL_PATH.exists()
+
+
+def crop_mean(crop: str) -> float | None:
+    return _baselines.get("crop_averages", {}).get(crop)
+
+
+def get_yield_per_hectare(district: str | None, crop: str) -> float:
+    """Best-effort yield per hectare for a district+crop using baselines."""
+    if district and crop:
+        key = f"{district}|{crop}"
+        v = _baselines.get("district_crop_averages", {}).get(key)
+        if v is not None:
+            return float(v)
+    v = _baselines.get("crop_averages", {}).get(crop)
+    if v is not None:
+        return float(v)
+    v = _baselines.get("overall_average")
+    if v is not None:
+        return float(v)
+    return FLAT_FALLBACK_YIELD_PER_HA
+
+
+def _values_for_crop_across_districts(crop: str) -> List[float]:
+    d = _baselines.get("district_crop_averages", {})
+    vals = [v for k, v in d.items() if k.endswith(f"|{crop}")]
+    return sorted(vals)
+
+
+def _percentile_from_sorted(sorted_vals: List[float], p: float) -> float | None:
+    if not sorted_vals:
+        return None
+    # p in [0,100]
+    if p <= 0:
+        return sorted_vals[0]
+    if p >= 100:
+        return sorted_vals[-1]
+    k = (len(sorted_vals)-1) * (p/100.0)
+    lo = int(k)
+    hi = min(lo+1, len(sorted_vals)-1)
+    frac = k - lo
+    return sorted_vals[lo] * (1-frac) + sorted_vals[hi] * frac
+
+
+def get_yield_percentile(district: str, crop: str) -> float | None:
+    """Return the percentile (0-100) of the district's yield among peers for the crop.
+    Lower percentile means lower-performing district.
+    """
+    vals = _values_for_crop_across_districts(crop)
+    if not vals:
+        return None
+    key = f"{district}|{crop}"
+    district_val = _baselines.get("district_crop_averages", {}).get(key)
+    if district_val is None:
+        return None
+    # percentile rank: percentage of values strictly below district_val
+    below = len([v for v in vals if v < district_val])
+    # include ties roughly in middle; normalized to 0-100
+    return (below / len(vals)) * 100.0
+
+
+def get_yield_index(district: str, crop: str) -> float | None:
+    """district yield / crop mean, or None if crop mean missing."""
+    y = get_yield_per_hectare(district, crop)
+    cm = crop_mean(crop)
+    if cm is None or cm == 0:
+        return None
+    return float(y / cm)
+
+
+def get_yield_gap(district: str, crop: str) -> dict:
+    """Return a dict with yield_per_ha, benchmark_yield_per_ha (75th pct), yield_gap_kg_ha."""
+    y = get_yield_per_hectare(district, crop)
+    vals = _values_for_crop_across_districts(crop)
+    benchmark = _percentile_from_sorted(vals, 75) if vals else None
+    gap = None
+    if benchmark is not None:
+        gap = round(max(0.0, benchmark - y), 1)
+    return {
+        "yield_per_ha": round(y, 1),
+        "benchmark_yield_per_ha": round(benchmark, 1) if benchmark is not None else None,
+        "yield_gap_kg_ha": gap,
+    }
 
 
 def predict_yield(district: str | None, crop: str, season: str | None,
