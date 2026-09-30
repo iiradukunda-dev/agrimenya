@@ -42,9 +42,10 @@ def load_theme():
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         /* Base font and background */
-        html, body, [class*="css"]  {
+        html, body, [class*="css"], .stApp {
             font-family: 'Inter', sans-serif;
             color: #1B2A1E;
+            background-color: #F9FBF9;
         }
 
         /* Hide Streamlit default UI elements */
@@ -159,11 +160,25 @@ def load_theme():
 
         /* Sidebar accent */
         [data-testid="stSidebar"] {
-            background-color: #F3F8F3;
+            background-color: #ffffff !important;
             border-right: 1px solid #E2EAE3;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.02);
         }
         [data-testid="stSidebarNav"] {
-            padding-top: 1rem;
+            padding-top: 1.5rem;
+        }
+        [data-testid="stSidebar"] hr {
+            margin: 1rem 0;
+            border-top: 1px solid #E2EAE3;
+        }
+        [data-testid="stSidebarNav"] span {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #1B2A1E;
+        }
+        [data-testid="stSidebarNav"] a:hover {
+            background-color: #E8F5E9;
+            border-radius: 8px;
         }
         </style>
     """, unsafe_allow_html=True)

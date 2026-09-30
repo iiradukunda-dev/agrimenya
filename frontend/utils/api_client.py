@@ -1,10 +1,12 @@
 import requests
+import streamlit as st
 from requests.exceptions import RequestException
 import logging
 from .config import API_BASE_URL, USE_MOCK_DATA
 from . import mock_data
 import logging
 
+@st.cache_data(ttl=300, show_spinner=False)
 def get_kpis():
     if USE_MOCK_DATA:
         return {"total_farmers": 1450000, "yield_increase": "12%", "active_cooperatives": 3400}
@@ -16,6 +18,7 @@ def get_kpis():
         logging.error(f"Error fetching KPIs: {e}")
         raise
 
+@st.cache_data(ttl=300, show_spinner=False)
 def get_priority_data():
     if USE_MOCK_DATA:
         return mock_data.generate_mock_priority_data()
@@ -28,6 +31,7 @@ def get_priority_data():
         logging.error(f"Error fetching priority data: {e}")
         raise
 
+@st.cache_data(ttl=300, show_spinner=False)
 def get_recommendations():
     if USE_MOCK_DATA:
         return mock_data.generate_mock_recommendations()
@@ -39,6 +43,7 @@ def get_recommendations():
         logging.error(f"Error fetching recommendations: {e}")
         raise
 
+@st.cache_data(ttl=300, show_spinner=False)
 def get_roadmap():
     if USE_MOCK_DATA:
         return mock_data.generate_mock_roadmap()
@@ -51,6 +56,7 @@ def get_roadmap():
         logging.error(f"Error fetching roadmap: {e}")
         raise
 
+@st.cache_data(ttl=300, show_spinner=False)
 def get_alerts():
     if USE_MOCK_DATA:
         return mock_data.generate_mock_alerts()
