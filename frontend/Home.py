@@ -3,10 +3,11 @@ import requests
 from utils import api_client
 from utils.theme import load_theme
 from utils.i18n import t, render_language_selector
+from utils.timezone import setup_system_timezone
 from components.icons import render_icon_title, render_icon_subheader
 from components.errors import render_error_page
-
 st.set_page_config(page_title="Agri-Menya", page_icon="🌾", layout="wide")
+setup_system_timezone()
 load_theme()
 render_language_selector()
 

@@ -58,6 +58,16 @@ Never modify unrelated files unless the change is genuinely required.
 
 ---
 
+## Timezone and Dates
+
+- The system default timezone is strictly **Central Africa Time (CAT) UTC+2**.
+- All backend systems, database schemas, and Python runtimes must be configured to use CAT.
+- Import `setup_system_timezone` and `get_current_time` from `frontend.utils.timezone` whenever interacting with current time in Python.
+- Never use naive `datetime.now()` without explicitly setting or wrapping it in the CAT timezone using `ZoneInfo('Africa/Kigali')`.
+- All timestamps presented to the user must reflect CAT.
+
+---
+
 ## Database and Prisma
 
 - Use Prisma for database access according to the existing project architecture.
