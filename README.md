@@ -6,7 +6,7 @@
 
 ---
 
-## Hello there! Overview
+## Overview
 
 Welcome to Agri-Menya! We built this platform to help **planners, agricultural extension officers, and cooperative leaders** make faster, better-informed decisions that actually improve agricultural productivity across Rwanda. 
 
