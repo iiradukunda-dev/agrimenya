@@ -3,6 +3,7 @@ import requests
 from utils.theme import load_theme
 from utils.i18n import t
 from components.navbar import render_navbar
+from utils import api_client
 from components.icons import render_icon_title
 from components.errors import render_error_page
 
@@ -34,7 +35,11 @@ def main():
             
             if submitted:
                 if name and email and message:
-                    st.success("Thank you for reaching out! We have received your message.")
+                    success = api_client.send_contact_message(name, email, subject, message)
+                    if success:
+                        st.success("Thank you for reaching out! We have received your message.")
+                    else:
+                        st.error("Failed to send message. Please try again.")
                 else:
                     st.error("Please fill out all required fields (Name, Email, Message).")
 

@@ -150,3 +150,15 @@ def send_alert(message: str, target_group: str, is_urgent: bool):
     except Exception as e:
         logging.error(f"Error sending alert to {url}: {e}")
         return False
+
+def send_contact_message(name: str, email: str, subject: str, message: str):
+    # Simulate a backend request for contact since the backend doesn't have a contact endpoint
+    # In a real fullstack app, this would POST to /contact
+    payload = {
+        "name": name,
+        "email": email,
+        "subject": subject,
+        "message": message
+    }
+    logging.info(f"Simulating sending contact message: {payload}")
+    return True
