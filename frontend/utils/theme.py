@@ -1,15 +1,12 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
 def load_theme():
-    # Inject PWA service worker and manifest into the parent window
-    components.html("""
+    # Inject PWA service worker and manifest
+    st.html("""
     <script>
-        const parentWindow = window.parent;
-        
         // Register Service Worker
-        if ('serviceWorker' in parentWindow.navigator) {
-            parentWindow.navigator.serviceWorker.register('/app/static/sw.js')
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/app/static/sw.js')
             .then(function(registration) {
                 console.log('PWA Service Worker registered with scope:', registration.scope);
             })
@@ -19,24 +16,24 @@ def load_theme():
         }
         
         // Inject Manifest
-        if (!parentWindow.document.querySelector('link[rel="manifest"]')) {
-            const link = parentWindow.document.createElement('link');
+        if (!document.querySelector('link[rel="manifest"]')) {
+            const link = document.createElement('link');
             link.rel = 'manifest';
             link.href = '/app/static/manifest.json';
-            parentWindow.document.head.appendChild(link);
+            document.head.appendChild(link);
         }
 
         // Inject Theme Color Meta Tag
-        if (!parentWindow.document.querySelector('meta[name="theme-color"]')) {
-            const meta = parentWindow.document.createElement('meta');
+        if (!document.querySelector('meta[name="theme-color"]')) {
+            const meta = document.createElement('meta');
             meta.name = 'theme-color';
             meta.content = '#52B788';
-            parentWindow.document.head.appendChild(meta);
+            document.head.appendChild(meta);
         }
     </script>
-    """, height=0, width=0)
+    """, unsafe_allow_javascript=True)
 
-    st.markdown("""
+    st.html("""
         <style>
         /* Base font and background */
         html, body, [class*="css"], .stApp {
@@ -223,5 +220,5 @@ def load_theme():
             box-shadow: 0 0 0 2px rgba(82, 183, 136, 0.2) !important;
         }
         </style>
-    """, unsafe_allow_html=True)
+    """)
 

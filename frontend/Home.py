@@ -44,7 +44,7 @@ def main():
             with open(icon, "r", encoding="utf-8") as f:
                 svg_content = f.read()
             
-            st.markdown(
+            st.html(
                 f"""
 <div class="custom-card">
     <div style="width: 44px; height: 44px; border-radius: 10px; background-color: #E8F5E9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
@@ -56,10 +56,9 @@ def main():
     <div class="custom-card-desc">{desc}</div>
 </div>
 <br/>
-                """,
-                unsafe_allow_html=True
+                """
             )
-            if st.button(btn_text, use_container_width=True, key=f"btn_{page_route}"):
+            if st.button(btn_text, key=f"btn_{page_route}"):
                 st.switch_page(page_route)
 
     pillar_card(
