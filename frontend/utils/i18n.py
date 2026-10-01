@@ -6,9 +6,9 @@ Strictly complies with project rules: no emojis, clean modular structure.
 import streamlit as st
 
 LANGUAGES = {
-    "en": "English",
-    "rw": "Ikinyarwanda",
-    "fr": "Français",
+    "en": "en",
+    "rw": "rw",
+    "fr": "Fr",
 }
 
 DEFAULT_LANGUAGE = "en"
