@@ -130,3 +130,23 @@ def get_alerts():
             return mapped
         
     return mock_data.generate_mock_alerts()
+
+def send_alert(message: str, target_group: str, is_urgent: bool):
+    if USE_MOCK_DATA:
+        return True
+    
+    url = f"{API_BASE_URL}/communication/alerts"
+    payload = {
+        "message": message,
+        "target_group": target_group,
+        "is_urgent": is_urgent,
+        "created_by": "System"
+    }
+    try:
+        resp = requests.post(url, json=payload, timeout=10)
+        resp.raise_for_status()
+        get_alerts.clear()
+        return True
+    except Exception as e:
+        logging.error(f"Error sending alert to {url}: {e}")
+        return False

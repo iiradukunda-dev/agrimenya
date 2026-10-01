@@ -42,7 +42,12 @@ def main():
             
             if submitted:
                 if message:
-                    st.success(t("comm.success", group=target_group))
+                    success = api_client.send_alert(message, target_group, is_urgent)
+                    if success:
+                        st.success(t("comm.success", group=target_group))
+                        st.rerun()
+                    else:
+                        st.error("Failed to send alert. Please try again.")
                 else:
                     st.error(t("comm.error_empty"))
 
