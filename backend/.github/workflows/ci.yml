@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          . venv/bin/activate
+          pytest -q
+
+  train:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt
+      - name: Train model
+        run: |
+          . venv/bin/activate
+          python -m app.ml.train_yield_model
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ml-artifacts
+          path: app/ml/artifacts/
+
+  seed:
+    runs-on: ubuntu-latest
+    needs: train
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt
+      - name: Seed Supabase (optional)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          . venv/bin/activate
+          python -m scripts.seed_real_data

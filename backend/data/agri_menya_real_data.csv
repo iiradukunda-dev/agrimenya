@@ -1,0 +1,1254 @@
+season,district,crop,cultivated_area_ha,yield_kg_ha,production_mt
+2026 Season A,Gasabo,Maize,3438.0,1558.0,5351.0
+2026 Season A,Gasabo,Paddy rice,334.0,3848.0,1284.0
+2026 Season A,Gasabo,Cassava,4570.0,12245.0,11975.0
+2026 Season A,Gasabo,Sweet potato,1104.0,8748.0,8155.0
+2026 Season A,Gasabo,Irish potato,519.0,5827.0,3025.0
+2026 Season A,Gasabo,Yams & Taro,584.0,6751.0,568.0
+2026 Season A,Gasabo,Banana,4896.0,11003.0,24815.0
+2026 Season A,Gasabo,Cooking banana,2086.0,12579.0,11243.0
+2026 Season A,Gasabo,Dessert banana,1157.0,7952.0,3617.0
+2026 Season A,Gasabo,Banana for beer,1653.0,10979.0,9955.0
+2026 Season A,Gasabo,Beans,6994.0,635.0,4440.0
+2026 Season A,Gasabo,Bush bean,6822.0,627.0,4279.0
+2026 Season A,Gasabo,Climbing bean,173.0,933.0,161.0
+2026 Season A,Gasabo,Pea,38.0,581.0,22.0
+2026 Season A,Gasabo,Groundnut,111.0,430.0,48.0
+2026 Season A,Gasabo,Soybean,230.0,531.0,122.0
+2026 Season A,Gasabo,Vegetables,805.0,9165.0,7381.0
+2026 Season A,Gasabo,Fruits,20.0,1742.0,28.0
+2026 Season A,Gasabo,Fodder crops,307.0,12597.0,3357.0
+2026 Season A,Gasabo,Other crops,994.0,10912.0,1167.0
+2026 Season A,Rubavu,Maize,2357.0,1753.0,4131.0
+2026 Season A,Rubavu,Sorghum,46.0,613.0,28.0
+2026 Season A,Rubavu,Cassava,549.0,,
+2026 Season A,Rubavu,Sweet potato,924.0,7927.0,6956.0
+2026 Season A,Rubavu,Irish potato,5643.0,13794.0,76867.0
+2026 Season A,Rubavu,Yams & Taro,397.0,5156.0,444.0
+2026 Season A,Rubavu,Banana,2601.0,10932.0,12382.0
+2026 Season A,Rubavu,Cooking banana,944.0,12396.0,5581.0
+2026 Season A,Rubavu,Dessert banana,419.0,6865.0,1010.0
+2026 Season A,Rubavu,Banana for beer,1238.0,10818.0,5792.0
+2026 Season A,Rubavu,Beans,7817.0,696.0,5410.0
+2026 Season A,Rubavu,Bush bean,913.0,520.0,475.0
+2026 Season A,Rubavu,Climbing bean,6904.0,719.0,4936.0
+2026 Season A,Rubavu,Pea,345.0,398.0,138.0
+2026 Season A,Rubavu,Soybean,272.0,393.0,107.0
+2026 Season A,Rubavu,Vegetables,1583.0,8730.0,13662.0
+2026 Season A,Rubavu,Fruits,46.0,6997.0,63.0
+2026 Season A,Rubavu,Fodder crops,201.0,13719.0,2751.0
+2026 Season A,Rubavu,Other crops,1713.0,9013.0,7184.0
+2026 Season A,Muhanga,Maize,2199.0,2081.0,4531.0
+2026 Season A,Muhanga,Paddy rice,133.0,3533.0,470.0
+2026 Season A,Muhanga,Other cereals,198.0,671.0,133.0
+2026 Season A,Muhanga,Cassava,8351.0,16622.0,29609.0
+2026 Season A,Muhanga,Sweet potato,4163.0,8362.0,30551.0
+2026 Season A,Muhanga,Irish potato,402.0,3843.0,1543.0
+2026 Season A,Muhanga,Yams & Taro,2740.0,10975.0,12113.0
+2026 Season A,Muhanga,Banana,18259.0,10957.0,83423.0
+2026 Season A,Muhanga,Cooking banana,3235.0,13292.0,16329.0
+2026 Season A,Muhanga,Dessert banana,2014.0,8511.0,5967.0
+2026 Season A,Muhanga,Banana for beer,13010.0,10754.0,61127.0
+2026 Season A,Muhanga,Beans,7336.0,557.0,4085.0
+2026 Season A,Muhanga,Bush bean,3846.0,445.0,1711.0
+2026 Season A,Muhanga,Climbing bean,3490.0,680.0,2374.0
+2026 Season A,Muhanga,Pea,122.0,853.0,104.0
+2026 Season A,Muhanga,Groundnut,15.0,173.0,3.0
+2026 Season A,Muhanga,Soybean,2208.0,411.0,907.0
+2026 Season A,Muhanga,Vegetables,374.0,6866.0,2228.0
+2026 Season A,Muhanga,Fruits,533.0,4546.0,1352.0
+2026 Season A,Muhanga,Fodder crops,400.0,26282.0,7456.0
+2026 Season A,Muhanga,Other crops,1286.0,5318.0,1655.0
+2026 Season A,Karongi,Maize,7118.0,1517.0,10796.0
+2026 Season A,Karongi,Sorghum,38.0,813.0,31.0
+2026 Season A,Karongi,Cassava,6074.0,8225.0,9465.0
+2026 Season A,Karongi,Sweet potato,5326.0,10969.0,44430.0
+2026 Season A,Karongi,Irish potato,725.0,6726.0,4874.0
+2026 Season A,Karongi,Yams & Taro,1751.0,4937.0,2232.0
+2026 Season A,Karongi,Banana,10639.0,11624.0,54992.0
+2026 Season A,Karongi,Cooking banana,2381.0,13679.0,10461.0
+2026 Season A,Karongi,Dessert banana,1130.0,10099.0,5886.0
+2026 Season A,Karongi,Banana for beer,7128.0,11422.0,38645.0
+2026 Season A,Karongi,Beans,6884.0,951.0,6546.0
+2026 Season A,Karongi,Bush bean,1869.0,752.0,1405.0
+2026 Season A,Karongi,Climbing bean,5015.0,1025.0,5141.0
+2026 Season A,Karongi,Pea,117.0,677.0,79.0
+2026 Season A,Karongi,Groundnut,36.0,387.0,14.0
+2026 Season A,Karongi,Soybean,1633.0,612.0,999.0
+2026 Season A,Karongi,Vegetables,667.0,6848.0,4565.0
+2026 Season A,Karongi,Fruits,161.0,5414.0,848.0
+2026 Season A,Karongi,Fodder crops,536.0,14713.0,7040.0
+2026 Season A,Karongi,Other crops,3062.0,2167.0,309.0
+2026 Season A,Gicumbi,Maize,5699.0,1437.0,8095.0
+2026 Season A,Gicumbi,Sorghum,389.0,1271.0,495.0
+2026 Season A,Gicumbi,Wheat,409.0,1226.0,502.0
+2026 Season A,Gicumbi,Other cereals,6.0,567.0,4.0
+2026 Season A,Gicumbi,Cassava,3074.0,12947.0,9156.0
+2026 Season A,Gicumbi,Sweet potato,8597.0,10530.0,71244.0
+2026 Season A,Gicumbi,Irish potato,3779.0,9500.0,35904.0
+2026 Season A,Gicumbi,Yams & Taro,153.0,3861.0,207.0
+2026 Season A,Gicumbi,Banana,6276.0,11077.0,26466.0
+2026 Season A,Gicumbi,Cooking banana,2927.0,14408.0,13324.0
+2026 Season A,Gicumbi,Dessert banana,1711.0,6189.0,3710.0
+2026 Season A,Gicumbi,Banana for beer,1638.0,10903.0,9433.0
+2026 Season A,Gicumbi,Beans,15416.0,824.0,12700.0
+2026 Season A,Gicumbi,Bush bean,3846.0,656.0,2524.0
+2026 Season A,Gicumbi,Climbing bean,11569.0,880.0,10177.0
+2026 Season A,Gicumbi,Pea,2087.0,656.0,1370.0
+2026 Season A,Gicumbi,Soybean,310.0,446.0,138.0
+2026 Season A,Gicumbi,Vegetables,879.0,7765.0,6333.0
+2026 Season A,Gicumbi,Fruits,185.0,4173.0,667.0
+2026 Season A,Gicumbi,Fodder crops,518.0,12834.0,6647.0
+2026 Season A,Gicumbi,Other crops,1785.0,17369.0,3718.0
+2026 Season A,Ruhango,Maize,4026.0,1382.0,5565.0
+2026 Season A,Ruhango,Sorghum,58.0,1348.0,78.0
+2026 Season A,Ruhango,Paddy rice,935.0,4849.0,4534.0
+2026 Season A,Ruhango,Other cereals,23.0,295.0,7.0
+2026 Season A,Ruhango,Cassava,20524.0,16193.0,75168.0
+2026 Season A,Ruhango,Sweet potato,2012.0,8403.0,14256.0
+2026 Season A,Ruhango,Irish potato,179.0,3192.0,571.0
+2026 Season A,Ruhango,Yams & Taro,1198.0,5206.0,2341.0
+2026 Season A,Ruhango,Banana,7492.0,9948.0,33988.0
+2026 Season A,Ruhango,Cooking banana,1161.0,9449.0,5344.0
+2026 Season A,Ruhango,Dessert banana,1387.0,6334.0,3592.0
+2026 Season A,Ruhango,Banana for beer,4944.0,10969.0,25052.0
+2026 Season A,Ruhango,Beans,10089.0,485.0,4897.0
+2026 Season A,Ruhango,Bush bean,7935.0,469.0,3719.0
+2026 Season A,Ruhango,Climbing bean,2154.0,547.0,1177.0
+2026 Season A,Ruhango,Pea,146.0,610.0,89.0
+2026 Season A,Ruhango,Groundnut,171.0,247.0,42.0
+2026 Season A,Ruhango,Soybean,3170.0,441.0,1397.0
+2026 Season A,Ruhango,Vegetables,475.0,9723.0,4623.0
+2026 Season A,Ruhango,Fruits,191.0,5649.0,67.0
+2026 Season A,Ruhango,Fodder crops,545.0,21430.0,5330.0
+2026 Season A,Ruhango,Other crops,2252.0,2894.0,1249.0
+2026 Season A,Nyabihu,Maize,3257.0,1638.0,5335.0
+2026 Season A,Nyabihu,Sorghum,361.0,925.0,334.0
+2026 Season A,Nyabihu,Wheat,184.0,1362.0,250.0
+2026 Season A,Nyabihu,Cassava,664.0,9337.0,2260.0
+2026 Season A,Nyabihu,Sweet potato,3304.0,8307.0,17882.0
+2026 Season A,Nyabihu,Irish potato,8546.0,12839.0,109107.0
+2026 Season A,Nyabihu,Yams & Taro,19.0,,
+2026 Season A,Nyabihu,Banana,1264.0,9257.0,4935.0
+2026 Season A,Nyabihu,Cooking banana,266.0,12253.0,1245.0
+2026 Season A,Nyabihu,Dessert banana,270.0,6747.0,826.0
+2026 Season A,Nyabihu,Banana for beer,727.0,9267.0,2864.0
+2026 Season A,Nyabihu,Beans,8906.0,1023.0,9112.0
+2026 Season A,Nyabihu,Bush bean,278.0,628.0,175.0
+2026 Season A,Nyabihu,Climbing bean,8628.0,1036.0,8938.0
+2026 Season A,Nyabihu,Pea,616.0,628.0,386.0
+2026 Season A,Nyabihu,Soybean,14.0,249.0,4.0
+2026 Season A,Nyabihu,Vegetables,578.0,9183.0,5307.0
+2026 Season A,Nyabihu,Fruits,194.0,8929.0,1237.0
+2026 Season A,Nyabihu,Fodder crops,139.0,6975.0,971.0
+2026 Season A,Nyabihu,Other crops,2452.0,412.0,835.0
+2026 Season A,Rulindo,Maize,4784.0,2096.0,10028.0
+2026 Season A,Rulindo,Paddy rice,18.0,3493.0,63.0
+2026 Season A,Rulindo,Wheat,26.0,1159.0,30.0
+2026 Season A,Rulindo,Cassava,2830.0,12541.0,7813.0
+2026 Season A,Rulindo,Sweet potato,3028.0,8328.0,24245.0
+2026 Season A,Rulindo,Irish potato,1544.0,6333.0,9781.0
+2026 Season A,Rulindo,Yams & Taro,121.0,6483.0,392.0
+2026 Season A,Rulindo,Banana,6226.0,10453.0,27061.0
+2026 Season A,Rulindo,Cooking banana,1759.0,13117.0,8182.0
+2026 Season A,Rulindo,Dessert banana,1343.0,8980.0,4460.0
+2026 Season A,Rulindo,Banana for beer,3124.0,9819.0,14419.0
+2026 Season A,Rulindo,Beans,8923.0,743.0,6629.0
+2026 Season A,Rulindo,Bush bean,4210.0,590.0,2484.0
+2026 Season A,Rulindo,Climbing bean,4714.0,879.0,4145.0
+2026 Season A,Rulindo,Pea,308.0,481.0,148.0
+2026 Season A,Rulindo,Groundnut,46.0,394.0,18.0
+2026 Season A,Rulindo,Soybean,401.0,603.0,242.0
+2026 Season A,Rulindo,Vegetables,992.0,7900.0,7834.0
+2026 Season A,Rulindo,Fruits,123.0,7920.0,636.0
+2026 Season A,Rulindo,Fodder crops,29.0,14919.0,435.0
+2026 Season A,Rulindo,Other crops,3860.0,17665.0,7684.0
+2026 Season A,Nyanza,Maize,6602.0,1797.0,11863.0
+2026 Season A,Nyanza,Sorghum,564.0,1074.0,606.0
+2026 Season A,Nyanza,Paddy rice,298.0,3819.0,1140.0
+2026 Season A,Nyanza,Other cereals,101.0,555.0,56.0
+2026 Season A,Nyanza,Cassava,20889.0,14145.0,62568.0
+2026 Season A,Nyanza,Sweet potato,1799.0,7639.0,8620.0
+2026 Season A,Nyanza,Irish potato,321.0,5691.0,1828.0
+2026 Season A,Nyanza,Yams & Taro,1765.0,6725.0,2043.0
+2026 Season A,Nyanza,Banana,10024.0,9072.0,31282.0
+2026 Season A,Nyanza,Cooking banana,3337.0,8162.0,9610.0
+2026 Season A,Nyanza,Dessert banana,1378.0,7690.0,3444.0
+2026 Season A,Nyanza,Banana for beer,5309.0,10000.0,18228.0
+2026 Season A,Nyanza,Beans,13427.0,597.0,8011.0
+2026 Season A,Nyanza,Bush bean,11787.0,590.0,6956.0
+2026 Season A,Nyanza,Climbing bean,1641.0,643.0,1055.0
+2026 Season A,Nyanza,Pea,199.0,723.0,144.0
+2026 Season A,Nyanza,Groundnut,395.0,347.0,137.0
+2026 Season A,Nyanza,Soybean,1922.0,383.0,735.0
+2026 Season A,Nyanza,Vegetables,349.0,7680.0,2228.0
+2026 Season A,Nyanza,Fruits,238.0,3208.0,239.0
+2026 Season A,Nyanza,Fodder crops,219.0,23025.0,5053.0
+2026 Season A,Nyanza,Other crops,1562.0,3749.0,332.0
+2026 Season A,Gisagara,Maize,7159.0,1933.0,13835.0
+2026 Season A,Gisagara,Sorghum,1014.0,800.0,811.0
+2026 Season A,Gisagara,Paddy rice,2938.0,3800.0,11163.0
+2026 Season A,Gisagara,Other cereals,196.0,477.0,94.0
+2026 Season A,Gisagara,Cassava,5069.0,13811.0,16345.0
+2026 Season A,Gisagara,Sweet potato,2237.0,7697.0,15991.0
+2026 Season A,Gisagara,Irish potato,283.0,2997.0,848.0
+2026 Season A,Gisagara,Yams & Taro,534.0,5427.0,1576.0
+2026 Season A,Gisagara,Banana,11260.0,9226.0,36339.0
+2026 Season A,Gisagara,Cooking banana,2664.0,7577.0,7845.0
+2026 Season A,Gisagara,Dessert banana,1725.0,7547.0,5403.0
+2026 Season A,Gisagara,Banana for beer,6871.0,10556.0,23092.0
+2026 Season A,Gisagara,Beans,15395.0,625.0,9629.0
+2026 Season A,Gisagara,Bush bean,13775.0,629.0,8659.0
+2026 Season A,Gisagara,Climbing bean,1620.0,598.0,969.0
+2026 Season A,Gisagara,Pea,12.0,470.0,6.0
+2026 Season A,Gisagara,Groundnut,232.0,454.0,105.0
+2026 Season A,Gisagara,Soybean,1808.0,594.0,1073.0
+2026 Season A,Gisagara,Vegetables,574.0,7380.0,4233.0
+2026 Season A,Gisagara,Fruits,463.0,4329.0,69.0
+2026 Season A,Gisagara,Other crops,1177.0,130.0,20.0
+2026 Season A,Gatsibo,Maize,21144.0,1899.0,40155.0
+2026 Season A,Gatsibo,Sorghum,5136.0,983.0,5047.0
+2026 Season A,Gatsibo,Paddy rice,1725.0,4023.0,6940.0
+2026 Season A,Gatsibo,Other cereals,278.0,810.0,225.0
+2026 Season A,Gatsibo,Cassava,8381.0,13110.0,14545.0
+2026 Season A,Gatsibo,Sweet potato,2270.0,8820.0,18763.0
+2026 Season A,Gatsibo,Irish potato,2617.0,5349.0,14001.0
+2026 Season A,Gatsibo,Yams & Taro,119.0,5459.0,499.0
+2026 Season A,Gatsibo,Banana,23031.0,13685.0,142118.0
+2026 Season A,Gatsibo,Cooking banana,12256.0,16448.0,96925.0
+2026 Season A,Gatsibo,Dessert banana,3011.0,7819.0,10678.0
+2026 Season A,Gatsibo,Banana for beer,7764.0,11040.0,34515.0
+2026 Season A,Gatsibo,Beans,19862.0,739.0,14686.0
+2026 Season A,Gatsibo,Bush bean,17418.0,722.0,12569.0
+2026 Season A,Gatsibo,Climbing bean,2444.0,866.0,2117.0
+2026 Season A,Gatsibo,Pea,275.0,654.0,180.0
+2026 Season A,Gatsibo,Groundnut,671.0,491.0,330.0
+2026 Season A,Gatsibo,Soybean,836.0,446.0,373.0
+2026 Season A,Gatsibo,Vegetables,563.0,7998.0,4504.0
+2026 Season A,Gatsibo,Fruits,116.0,4504.0,383.0
+2026 Season A,Gatsibo,Fodder crops,494.0,17204.0,5279.0
+2026 Season A,Gatsibo,Other crops,2927.0,857.0,17.0
+2026 Season A,Rutsiro,Maize,6288.0,1452.0,9130.0
+2026 Season A,Rutsiro,Sorghum,20.0,853.0,17.0
+2026 Season A,Rutsiro,Cassava,1778.0,15229.0,2772.0
+2026 Season A,Rutsiro,Sweet potato,2847.0,10086.0,20404.0
+2026 Season A,Rutsiro,Irish potato,2971.0,7751.0,23030.0
+2026 Season A,Rutsiro,Yams & Taro,2168.0,5268.0,1426.0
+2026 Season A,Rutsiro,Banana,7292.0,11482.0,32174.0
+2026 Season A,Rutsiro,Cooking banana,1911.0,13475.0,8738.0
+2026 Season A,Rutsiro,Dessert banana,1143.0,7905.0,3747.0
+2026 Season A,Rutsiro,Banana for beer,4238.0,11722.0,19689.0
+2026 Season A,Rutsiro,Beans,4469.0,834.0,3725.0
+2026 Season A,Rutsiro,Bush bean,577.0,665.0,384.0
+2026 Season A,Rutsiro,Climbing bean,3892.0,859.0,3341.0
+2026 Season A,Rutsiro,Pea,517.0,617.0,320.0
+2026 Season A,Rutsiro,Soybean,755.0,500.0,377.0
+2026 Season A,Rutsiro,Vegetables,248.0,10337.0,2563.0
+2026 Season A,Rutsiro,Fruits,313.0,5832.0,552.0
+2026 Season A,Rutsiro,Fodder crops,602.0,28747.0,17305.0
+2026 Season A,Rutsiro,Other crops,3707.0,16803.0,10888.0
+2026 Season A,Nyagatare,Maize,31265.0,2887.0,90252.0
+2026 Season A,Nyagatare,Sorghum,14431.0,1507.0,21753.0
+2026 Season A,Nyagatare,Paddy rice,2076.0,4257.0,8830.0
+2026 Season A,Nyagatare,Wheat,41.0,1294.0,52.0
+2026 Season A,Nyagatare,Other cereals,1184.0,944.0,1118.0
+2026 Season A,Nyagatare,Cassava,9683.0,12964.0,11946.0
+2026 Season A,Nyagatare,Sweet potato,1586.0,5892.0,8336.0
+2026 Season A,Nyagatare,Irish potato,825.0,5406.0,4458.0
+2026 Season A,Nyagatare,Yams & Taro,95.0,4832.0,457.0
+2026 Season A,Nyagatare,Banana,11455.0,14177.0,82039.0
+2026 Season A,Nyagatare,Cooking banana,6124.0,17436.0,53319.0
+2026 Season A,Nyagatare,Dessert banana,1634.0,8634.0,7169.0
+2026 Season A,Nyagatare,Banana for beer,3697.0,11352.0,21551.0
+2026 Season A,Nyagatare,Beans,13889.0,807.0,11215.0
+2026 Season A,Nyagatare,Bush bean,12438.0,787.0,9790.0
+2026 Season A,Nyagatare,Climbing bean,1451.0,982.0,1424.0
+2026 Season A,Nyagatare,Pea,163.0,543.0,89.0
+2026 Season A,Nyagatare,Groundnut,881.0,451.0,397.0
+2026 Season A,Nyagatare,Soybean,1116.0,651.0,726.0
+2026 Season A,Nyagatare,Vegetables,487.0,6582.0,3204.0
+2026 Season A,Nyagatare,Fruits,79.0,5320.0,205.0
+2026 Season A,Nyagatare,Fodder crops,324.0,22269.0,7094.0
+2026 Season A,Nyagatare,Other crops,1215.0,5614.0,5786.0
+2026 Season A,Ngororero,Maize,3774.0,1278.0,4822.0
+2026 Season A,Ngororero,Sorghum,197.0,1386.0,274.0
+2026 Season A,Ngororero,Wheat,175.0,654.0,114.0
+2026 Season A,Ngororero,Cassava,6130.0,13547.0,18238.0
+2026 Season A,Ngororero,Sweet potato,6877.0,7866.0,42920.0
+2026 Season A,Ngororero,Irish potato,1812.0,5513.0,9987.0
+2026 Season A,Ngororero,Yams & Taro,2384.0,4927.0,3746.0
+2026 Season A,Ngororero,Banana,11096.0,8495.0,35715.0
+2026 Season A,Ngororero,Cooking banana,2374.0,7976.0,6277.0
+2026 Season A,Ngororero,Dessert banana,1528.0,7832.0,4989.0
+2026 Season A,Ngororero,Banana for beer,7194.0,8794.0,24449.0
+2026 Season A,Ngororero,Beans,12068.0,879.0,10603.0
+2026 Season A,Ngororero,Bush bean,1049.0,610.0,640.0
+2026 Season A,Ngororero,Climbing bean,11019.0,904.0,9963.0
+2026 Season A,Ngororero,Pea,367.0,548.0,201.0
+2026 Season A,Ngororero,Soybean,1418.0,536.0,760.0
+2026 Season A,Ngororero,Vegetables,906.0,7643.0,6924.0
+2026 Season A,Ngororero,Fruits,264.0,4885.0,387.0
+2026 Season A,Ngororero,Fodder crops,151.0,14878.0,2241.0
+2026 Season A,Ngororero,Other crops,1469.0,9541.0,2568.0
+2026 Season A,Kicukiro,Maize,1127.0,1611.0,1816.0
+2026 Season A,Kicukiro,Paddy rice,89.0,4287.0,380.0
+2026 Season A,Kicukiro,Cassava,252.0,10191.0,494.0
+2026 Season A,Kicukiro,Sweet potato,519.0,7812.0,3882.0
+2026 Season A,Kicukiro,Yams & Taro,98.0,5158.0,155.0
+2026 Season A,Kicukiro,Banana,1168.0,11345.0,6067.0
+2026 Season A,Kicukiro,Cooking banana,512.0,11783.0,2477.0
+2026 Season A,Kicukiro,Dessert banana,144.0,10477.0,825.0
+2026 Season A,Kicukiro,Banana for beer,511.0,11247.0,2764.0
+2026 Season A,Kicukiro,Beans,1345.0,555.0,746.0
+2026 Season A,Kicukiro,Bush bean,1330.0,554.0,737.0
+2026 Season A,Kicukiro,Climbing bean,15.0,578.0,9.0
+2026 Season A,Kicukiro,Soybean,60.0,552.0,33.0
+2026 Season A,Kicukiro,Vegetables,47.0,6209.0,290.0
+2026 Season A,Kicukiro,Fruits,168.0,6664.0,310.0
+2026 Season A,Kicukiro,Fodder crops,80.0,16097.0,1072.0
+2026 Season A,Kicukiro,Other crops,108.0,3253.0,81.0
+2026 Season A,Nyaruguru,Maize,4188.0,1881.0,7877.0
+2026 Season A,Nyaruguru,Sorghum,42.0,1545.0,65.0
+2026 Season A,Nyaruguru,Paddy rice,49.0,3195.0,155.0
+2026 Season A,Nyaruguru,Wheat,84.0,1097.0,93.0
+2026 Season A,Nyaruguru,Other cereals,6.0,257.0,2.0
+2026 Season A,Nyaruguru,Cassava,4080.0,12765.0,12896.0
+2026 Season A,Nyaruguru,Sweet potato,5357.0,10993.0,41155.0
+2026 Season A,Nyaruguru,Irish potato,2533.0,6001.0,15202.0
+2026 Season A,Nyaruguru,Yams & Taro,859.0,7956.0,3144.0
+2026 Season A,Nyaruguru,Banana,4872.0,11873.0,19272.0
+2026 Season A,Nyaruguru,Cooking banana,1416.0,15162.0,6662.0
+2026 Season A,Nyaruguru,Dessert banana,781.0,8389.0,2762.0
+2026 Season A,Nyaruguru,Banana for beer,2675.0,11525.0,9848.0
+2026 Season A,Nyaruguru,Beans,8195.0,702.0,5755.0
+2026 Season A,Nyaruguru,Bush bean,1329.0,661.0,878.0
+2026 Season A,Nyaruguru,Climbing bean,6865.0,710.0,4877.0
+2026 Season A,Nyaruguru,Pea,223.0,569.0,127.0
+2026 Season A,Nyaruguru,Soybean,631.0,476.0,300.0
+2026 Season A,Nyaruguru,Vegetables,261.0,8245.0,1729.0
+2026 Season A,Nyaruguru,Fruits,53.0,2934.0,47.0
+2026 Season A,Nyaruguru,Fodder crops,671.0,13298.0,6654.0
+2026 Season A,Nyaruguru,Other crops,4696.0,702.0,1.0
+2026 Season A,Burera,Maize,9224.0,2042.0,18838.0
+2026 Season A,Burera,Sorghum,1316.0,2129.0,2802.0
+2026 Season A,Burera,Wheat,596.0,1662.0,991.0
+2026 Season A,Burera,Cassava,485.0,12736.0,828.0
+2026 Season A,Burera,Sweet potato,4310.0,9558.0,38603.0
+2026 Season A,Burera,Irish potato,4386.0,10878.0,47706.0
+2026 Season A,Burera,Yams & Taro,32.0,4202.0,136.0
+2026 Season A,Burera,Banana,2189.0,10405.0,8410.0
+2026 Season A,Burera,Cooking banana,809.0,12864.0,4324.0
+2026 Season A,Burera,Dessert banana,134.0,7166.0,278.0
+2026 Season A,Burera,Banana for beer,1247.0,8788.0,3808.0
+2026 Season A,Burera,Beans,9503.0,945.0,8979.0
+2026 Season A,Burera,Bush bean,305.0,742.0,226.0
+2026 Season A,Burera,Climbing bean,9198.0,952.0,8753.0
+2026 Season A,Burera,Pea,1443.0,559.0,807.0
+2026 Season A,Burera,Vegetables,624.0,8608.0,5375.0
+2026 Season A,Burera,Fruits,141.0,8744.0,512.0
+2026 Season A,Burera,Fodder crops,701.0,17498.0,12270.0
+2026 Season A,Burera,Other crops,313.0,15876.0,860.0
+2026 Season A,Ngoma,Maize,16007.0,1904.0,30471.0
+2026 Season A,Ngoma,Sorghum,765.0,1475.0,1128.0
+2026 Season A,Ngoma,Paddy rice,951.0,4212.0,4005.0
+2026 Season A,Ngoma,Other cereals,1672.0,568.0,949.0
+2026 Season A,Ngoma,Cassava,14960.0,13498.0,36278.0
+2026 Season A,Ngoma,Sweet potato,2017.0,8145.0,13042.0
+2026 Season A,Ngoma,Irish potato,1719.0,4306.0,7403.0
+2026 Season A,Ngoma,Yams & Taro,292.0,5407.0,647.0
+2026 Season A,Ngoma,Banana,16707.0,13696.0,101460.0
+2026 Season A,Ngoma,Cooking banana,9179.0,15820.0,64835.0
+2026 Season A,Ngoma,Dessert banana,2080.0,9236.0,7572.0
+2026 Season A,Ngoma,Banana for beer,5448.0,11669.0,29053.0
+2026 Season A,Ngoma,Beans,16486.0,659.0,10839.0
+2026 Season A,Ngoma,Bush bean,15239.0,647.0,9825.0
+2026 Season A,Ngoma,Climbing bean,1247.0,813.0,1014.0
+2026 Season A,Ngoma,Pea,70.0,329.0,23.0
+2026 Season A,Ngoma,Groundnut,656.0,374.0,245.0
+2026 Season A,Ngoma,Soybean,546.0,500.0,273.0
+2026 Season A,Ngoma,Vegetables,550.0,5354.0,2946.0
+2026 Season A,Ngoma,Fruits,1997.0,4095.0,5918.0
+2026 Season A,Ngoma,Fodder crops,145.0,18836.0,2715.0
+2026 Season A,Ngoma,Other crops,2546.0,7050.0,657.0
+2026 Season A,Rwamagana,Maize,10398.0,1665.0,17311.0
+2026 Season A,Rwamagana,Paddy rice,539.0,3695.0,1991.0
+2026 Season A,Rwamagana,Other cereals,57.0,495.0,28.0
+2026 Season A,Rwamagana,Cassava,5237.0,13920.0,13466.0
+2026 Season A,Rwamagana,Sweet potato,2630.0,8923.0,15993.0
+2026 Season A,Rwamagana,Irish potato,1141.0,6094.0,6956.0
+2026 Season A,Rwamagana,Yams & Taro,1163.0,13278.0,1913.0
+2026 Season A,Rwamagana,Banana,11633.0,14368.0,79190.0
+2026 Season A,Rwamagana,Cooking banana,6819.0,17168.0,57118.0
+2026 Season A,Rwamagana,Dessert banana,1886.0,8127.0,7238.0
+2026 Season A,Rwamagana,Banana for beer,2928.0,11464.0,14834.0
+2026 Season A,Rwamagana,Beans,13187.0,620.0,8181.0
+2026 Season A,Rwamagana,Bush bean,12939.0,621.0,8036.0
+2026 Season A,Rwamagana,Climbing bean,247.0,587.0,145.0
+2026 Season A,Rwamagana,Pea,29.0,349.0,10.0
+2026 Season A,Rwamagana,Groundnut,953.0,429.0,409.0
+2026 Season A,Rwamagana,Soybean,553.0,462.0,255.0
+2026 Season A,Rwamagana,Vegetables,882.0,8066.0,6891.0
+2026 Season A,Rwamagana,Fruits,279.0,2608.0,448.0
+2026 Season A,Rwamagana,Fodder crops,1288.0,21561.0,27764.0
+2026 Season A,Rwamagana,Other crops,1430.0,7578.0,1874.0
+2026 Season A,Kayonza,Maize,17603.0,1909.0,33611.0
+2026 Season A,Kayonza,Sorghum,5269.0,1256.0,6617.0
+2026 Season A,Kayonza,Paddy rice,1593.0,3155.0,5027.0
+2026 Season A,Kayonza,Wheat,49.0,750.0,37.0
+2026 Season A,Kayonza,Other cereals,1339.0,476.0,638.0
+2026 Season A,Kayonza,Cassava,11570.0,12600.0,37242.0
+2026 Season A,Kayonza,Sweet potato,2802.0,6951.0,10627.0
+2026 Season A,Kayonza,Irish potato,2490.0,3444.0,8575.0
+2026 Season A,Kayonza,Yams & Taro,421.0,4123.0,432.0
+2026 Season A,Kayonza,Banana,12545.0,13878.0,71837.0
+2026 Season A,Kayonza,Cooking banana,8274.0,16149.0,53859.0
+2026 Season A,Kayonza,Dessert banana,1641.0,9452.0,6898.0
+2026 Season A,Kayonza,Banana for beer,2631.0,9968.0,11080.0
+2026 Season A,Kayonza,Beans,15010.0,629.0,9438.0
+2026 Season A,Kayonza,Bush bean,14711.0,627.0,9220.0
+2026 Season A,Kayonza,Climbing bean,298.0,731.0,218.0
+2026 Season A,Kayonza,Pea,114.0,584.0,66.0
+2026 Season A,Kayonza,Groundnut,343.0,281.0,96.0
+2026 Season A,Kayonza,Soybean,683.0,525.0,358.0
+2026 Season A,Kayonza,Vegetables,1100.0,8152.0,8963.0
+2026 Season A,Kayonza,Fruits,2875.0,4071.0,5867.0
+2026 Season A,Kayonza,Fodder crops,747.0,11127.0,8310.0
+2026 Season A,Kayonza,Other crops,1188.0,1051.0,245.0
+2026 Season A,Nyamagabe,Maize,5294.0,1567.0,8273.0
+2026 Season A,Nyamagabe,Paddy rice,29.0,3759.0,109.0
+2026 Season A,Nyamagabe,Cassava,6031.0,12860.0,13377.0
+2026 Season A,Nyamagabe,Sweet potato,5816.0,10062.0,52017.0
+2026 Season A,Nyamagabe,Irish potato,3226.0,7423.0,23949.0
+2026 Season A,Nyamagabe,Yams & Taro,1684.0,7741.0,1783.0
+2026 Season A,Nyamagabe,Banana,7519.0,10116.0,29222.0
+2026 Season A,Nyamagabe,Cooking banana,1827.0,9257.0,4854.0
+2026 Season A,Nyamagabe,Dessert banana,889.0,7463.0,3012.0
+2026 Season A,Nyamagabe,Banana for beer,4803.0,10892.0,21356.0
+2026 Season A,Nyamagabe,Beans,10779.0,704.0,7586.0
+2026 Season A,Nyamagabe,Bush bean,2589.0,620.0,1604.0
+2026 Season A,Nyamagabe,Climbing bean,8191.0,730.0,5982.0
+2026 Season A,Nyamagabe,Pea,1033.0,826.0,853.0
+2026 Season A,Nyamagabe,Soybean,1329.0,558.0,741.0
+2026 Season A,Nyamagabe,Vegetables,628.0,5855.0,3674.0
+2026 Season A,Nyamagabe,Fruits,145.0,6299.0,651.0
+2026 Season A,Nyamagabe,Fodder crops,146.0,16385.0,2398.0
+2026 Season A,Nyamagabe,Other crops,4935.0,,
+2026 Season A,Bugesera,Maize,9869.0,1853.0,18286.0
+2026 Season A,Bugesera,Sorghum,3648.0,988.0,3603.0
+2026 Season A,Bugesera,Paddy rice,1350.0,4855.0,6555.0
+2026 Season A,Bugesera,Other cereals,184.0,516.0,95.0
+2026 Season A,Bugesera,Cassava,18914.0,13039.0,31413.0
+2026 Season A,Bugesera,Sweet potato,3274.0,8005.0,23126.0
+2026 Season A,Bugesera,Irish potato,317.0,3044.0,964.0
+2026 Season A,Bugesera,Yams & Taro,138.0,4370.0,332.0
+2026 Season A,Bugesera,Banana,9893.0,11905.0,50695.0
+2026 Season A,Bugesera,Cooking banana,3419.0,15638.0,22196.0
+2026 Season A,Bugesera,Dessert banana,1883.0,7641.0,5142.0
+2026 Season A,Bugesera,Banana for beer,4591.0,10783.0,23356.0
+2026 Season A,Bugesera,Beans,14889.0,445.0,6627.0
+2026 Season A,Bugesera,Bush bean,14837.0,444.0,6584.0
+2026 Season A,Bugesera,Climbing bean,53.0,809.0,42.0
+2026 Season A,Bugesera,Pea,1.0,456.0,0.0
+2026 Season A,Bugesera,Groundnut,2547.0,379.0,965.0
+2026 Season A,Bugesera,Soybean,684.0,353.0,242.0
+2026 Season A,Bugesera,Vegetables,264.0,4863.0,1284.0
+2026 Season A,Bugesera,Fruits,1133.0,9797.0,3460.0
+2026 Season A,Bugesera,Fodder crops,473.0,9018.0,4262.0
+2026 Season A,Bugesera,Other crops,1089.0,2035.0,352.0
+2026 Season A,Nyamasheke,Maize,5914.0,1641.0,9703.0
+2026 Season A,Nyamasheke,Sorghum,19.0,551.0,11.0
+2026 Season A,Nyamasheke,Paddy rice,384.0,4481.0,1720.0
+2026 Season A,Nyamasheke,Cassava,12260.0,12441.0,38177.0
+2026 Season A,Nyamasheke,Sweet potato,3917.0,5828.0,17605.0
+2026 Season A,Nyamasheke,Irish potato,153.0,4454.0,680.0
+2026 Season A,Nyamasheke,Yams & Taro,6640.0,5378.0,7081.0
+2026 Season A,Nyamasheke,Banana,7557.0,9295.0,26452.0
+2026 Season A,Nyamasheke,Cooking banana,2162.0,10841.0,9964.0
+2026 Season A,Nyamasheke,Dessert banana,885.0,8101.0,2517.0
+2026 Season A,Nyamasheke,Banana for beer,4510.0,8645.0,13971.0
+2026 Season A,Nyamasheke,Beans,7621.0,763.0,5812.0
+2026 Season A,Nyamasheke,Bush bean,1868.0,583.0,1090.0
+2026 Season A,Nyamasheke,Climbing bean,5753.0,821.0,4723.0
+2026 Season A,Nyamasheke,Pea,59.0,642.0,38.0
+2026 Season A,Nyamasheke,Groundnut,481.0,384.0,185.0
+2026 Season A,Nyamasheke,Soybean,980.0,571.0,560.0
+2026 Season A,Nyamasheke,Vegetables,827.0,6329.0,4900.0
+2026 Season A,Nyamasheke,Fruits,474.0,3825.0,758.0
+2026 Season A,Nyamasheke,Fodder crops,102.0,18629.0,1899.0
+2026 Season A,Nyamasheke,Other crops,5987.0,27430.0,6008.0
+2026 Season A,Gakenke,Maize,8446.0,1699.0,14352.0
+2026 Season A,Gakenke,Paddy rice,19.0,3108.0,59.0
+2026 Season A,Gakenke,Wheat,61.0,1070.0,65.0
+2026 Season A,Gakenke,Other cereals,488.0,561.0,273.0
+2026 Season A,Gakenke,Cassava,5562.0,12638.0,15390.0
+2026 Season A,Gakenke,Sweet potato,8029.0,9220.0,54467.0
+2026 Season A,Gakenke,Irish potato,1207.0,6142.0,7416.0
+2026 Season A,Gakenke,Yams & Taro,2727.0,6913.0,6572.0
+2026 Season A,Gakenke,Banana,14128.0,11327.0,68912.0
+2026 Season A,Gakenke,Cooking banana,3171.0,13788.0,17631.0
+2026 Season A,Gakenke,Dessert banana,2037.0,7637.0,6014.0
+2026 Season A,Gakenke,Banana for beer,8920.0,11267.0,45267.0
+2026 Season A,Gakenke,Beans,11066.0,764.0,8450.0
+2026 Season A,Gakenke,Bush bean,2017.0,514.0,1037.0
+2026 Season A,Gakenke,Climbing bean,9049.0,819.0,7413.0
+2026 Season A,Gakenke,Pea,577.0,491.0,283.0
+2026 Season A,Gakenke,Groundnut,202.0,587.0,118.0
+2026 Season A,Gakenke,Soybean,637.0,503.0,320.0
+2026 Season A,Gakenke,Vegetables,705.0,8693.0,5601.0
+2026 Season A,Gakenke,Fruits,611.0,4500.0,2449.0
+2026 Season A,Gakenke,Fodder crops,186.0,8535.0,1042.0
+2026 Season A,Gakenke,Other crops,1852.0,18075.0,7484.0
+2026 Season A,Kirehe,Maize,23307.0,2515.0,58450.0
+2026 Season A,Kirehe,Sorghum,3098.0,1051.0,3255.0
+2026 Season A,Kirehe,Paddy rice,982.0,4837.0,4751.0
+2026 Season A,Kirehe,Other cereals,589.0,438.0,258.0
+2026 Season A,Kirehe,Cassava,11672.0,15097.0,27290.0
+2026 Season A,Kirehe,Sweet potato,2157.0,6464.0,8593.0
+2026 Season A,Kirehe,Irish potato,1785.0,5052.0,9018.0
+2026 Season A,Kirehe,Yams & Taro,785.0,4501.0,789.0
+2026 Season A,Kirehe,Banana,18912.0,14336.0,117226.0
+2026 Season A,Kirehe,Cooking banana,11423.0,16844.0,78800.0
+2026 Season A,Kirehe,Dessert banana,1305.0,9115.0,5229.0
+2026 Season A,Kirehe,Banana for beer,6185.0,11348.0,33197.0
+2026 Season A,Kirehe,Beans,19883.0,616.0,12242.0
+2026 Season A,Kirehe,Bush bean,18221.0,605.0,11015.0
+2026 Season A,Kirehe,Climbing bean,1662.0,738.0,1227.0
+2026 Season A,Kirehe,Pea,241.0,461.0,111.0
+2026 Season A,Kirehe,Groundnut,382.0,444.0,170.0
+2026 Season A,Kirehe,Soybean,951.0,1313.0,1248.0
+2026 Season A,Kirehe,Vegetables,618.0,8927.0,5513.0
+2026 Season A,Kirehe,Fruits,395.0,4859.0,972.0
+2026 Season A,Kirehe,Fodder crops,54.0,5486.0,296.0
+2026 Season A,Kirehe,Other crops,6069.0,574.0,43.0
+2026 Season A,Nyarugenge,Maize,669.0,1300.0,870.0
+2026 Season A,Nyarugenge,Cassava,1156.0,12061.0,2498.0
+2026 Season A,Nyarugenge,Sweet potato,406.0,6290.0,1940.0
+2026 Season A,Nyarugenge,Irish potato,55.0,2580.0,142.0
+2026 Season A,Nyarugenge,Yams & Taro,5.0,4158.0,21.0
+2026 Season A,Nyarugenge,Banana,1703.0,11814.0,8428.0
+2026 Season A,Nyarugenge,Cooking banana,538.0,13389.0,2648.0
+2026 Season A,Nyarugenge,Dessert banana,311.0,9745.0,1298.0
+2026 Season A,Nyarugenge,Banana for beer,853.0,11720.0,4481.0
+2026 Season A,Nyarugenge,Beans,1605.0,531.0,851.0
+2026 Season A,Nyarugenge,Bush bean,1568.0,519.0,813.0
+2026 Season A,Nyarugenge,Climbing bean,37.0,1043.0,38.0
+2026 Season A,Nyarugenge,Groundnut,10.0,367.0,4.0
+2026 Season A,Nyarugenge,Soybean,80.0,421.0,34.0
+2026 Season A,Nyarugenge,Vegetables,138.0,5491.0,743.0
+2026 Season A,Nyarugenge,Fruits,15.0,,
+2026 Season A,Nyarugenge,Fodder crops,15.0,8505.0,126.0
+2026 Season A,Nyarugenge,Other crops,1162.0,,
+2026 Season A,Rusizi,Maize,7982.0,1905.0,15207.0
+2026 Season A,Rusizi,Sorghum,275.0,1131.0,311.0
+2026 Season A,Rusizi,Paddy rice,1553.0,4585.0,7120.0
+2026 Season A,Rusizi,Cassava,17749.0,13287.0,13619.0
+2026 Season A,Rusizi,Sweet potato,1615.0,7543.0,10594.0
+2026 Season A,Rusizi,Irish potato,291.0,5469.0,1593.0
+2026 Season A,Rusizi,Yams & Taro,2056.0,4851.0,5453.0
+2026 Season A,Rusizi,Banana,6862.0,11177.0,26937.0
+2026 Season A,Rusizi,Cooking banana,2669.0,11348.0,9984.0
+2026 Season A,Rusizi,Dessert banana,383.0,8003.0,1760.0
+2026 Season A,Rusizi,Banana for beer,3811.0,11594.0,15193.0
+2026 Season A,Rusizi,Beans,12214.0,738.0,9020.0
+2026 Season A,Rusizi,Bush bean,10555.0,721.0,7608.0
+2026 Season A,Rusizi,Climbing bean,1659.0,851.0,1412.0
+2026 Season A,Rusizi,Pea,51.0,665.0,34.0
+2026 Season A,Rusizi,Groundnut,280.0,568.0,159.0
+2026 Season A,Rusizi,Soybean,453.0,530.0,240.0
+2026 Season A,Rusizi,Vegetables,1128.0,6674.0,7529.0
+2026 Season A,Rusizi,Fruits,1607.0,12023.0,6746.0
+2026 Season A,Rusizi,Fodder crops,179.0,11406.0,1615.0
+2026 Season A,Rusizi,Other crops,4328.0,2714.0,546.0
+2026 Season A,Kamonyi,Maize,5789.0,1863.0,10786.0
+2026 Season A,Kamonyi,Sorghum,29.0,640.0,18.0
+2026 Season A,Kamonyi,Paddy rice,213.0,4666.0,993.0
+2026 Season A,Kamonyi,Other cereals,11.0,780.0,9.0
+2026 Season A,Kamonyi,Cassava,19776.0,13992.0,37411.0
+2026 Season A,Kamonyi,Sweet potato,2595.0,7052.0,14214.0
+2026 Season A,Kamonyi,Irish potato,442.0,4127.0,1824.0
+2026 Season A,Kamonyi,Yams & Taro,854.0,7388.0,2026.0
+2026 Season A,Kamonyi,Banana,10823.0,10411.0,52176.0
+2026 Season A,Kamonyi,Cooking banana,1361.0,12954.0,6751.0
+2026 Season A,Kamonyi,Dessert banana,1662.0,6810.0,4847.0
+2026 Season A,Kamonyi,Banana for beer,7800.0,10738.0,40579.0
+2026 Season A,Kamonyi,Beans,12631.0,454.0,5734.0
+2026 Season A,Kamonyi,Bush bean,10666.0,432.0,4612.0
+2026 Season A,Kamonyi,Climbing bean,1965.0,571.0,1121.0
+2026 Season A,Kamonyi,Pea,55.0,477.0,26.0
+2026 Season A,Kamonyi,Groundnut,790.0,412.0,326.0
+2026 Season A,Kamonyi,Soybean,2963.0,568.0,1684.0
+2026 Season A,Kamonyi,Vegetables,1044.0,9195.0,9600.0
+2026 Season A,Kamonyi,Fruits,200.0,6541.0,444.0
+2026 Season A,Kamonyi,Fodder crops,100.0,23306.0,2339.0
+2026 Season A,Kamonyi,Other crops,3234.0,99.0,58.0
+2026 Season A,Musanze,Maize,5855.0,1929.0,10850.0
+2026 Season A,Musanze,Sorghum,1587.0,1753.0,2783.0
+2026 Season A,Musanze,Wheat,552.0,1660.0,917.0
+2026 Season A,Musanze,Cassava,83.0,5458.0,147.0
+2026 Season A,Musanze,Sweet potato,2034.0,9230.0,15871.0
+2026 Season A,Musanze,Irish potato,4978.0,12556.0,62509.0
+2026 Season A,Musanze,Yams & Taro,80.0,1646.0,102.0
+2026 Season A,Musanze,Banana,1951.0,10812.0,9896.0
+2026 Season A,Musanze,Cooking banana,737.0,14219.0,3908.0
+2026 Season A,Musanze,Dessert banana,600.0,7645.0,2017.0
+2026 Season A,Musanze,Banana for beer,615.0,10544.0,3971.0
+2026 Season A,Musanze,Beans,9123.0,1023.0,9332.0
+2026 Season A,Musanze,Bush bean,299.0,888.0,266.0
+2026 Season A,Musanze,Climbing bean,8824.0,1028.0,9067.0
+2026 Season A,Musanze,Pea,168.0,551.0,92.0
+2026 Season A,Musanze,Soybean,44.0,755.0,33.0
+2026 Season A,Musanze,Vegetables,837.0,9627.0,8062.0
+2026 Season A,Musanze,Fruits,214.0,6055.0,610.0
+2026 Season A,Musanze,Fodder crops,89.0,19776.0,1757.0
+2026 Season A,Musanze,Other crops,1715.0,5591.0,8154.0
+2026 Season A,Huye,Maize,4623.0,1737.0,8029.0
+2026 Season A,Huye,Paddy rice,1003.0,3780.0,3790.0
+2026 Season A,Huye,Other cereals,465.0,406.0,189.0
+2026 Season A,Huye,Cassava,8004.0,14841.0,16725.0
+2026 Season A,Huye,Sweet potato,2664.0,9026.0,21290.0
+2026 Season A,Huye,Irish potato,420.0,4295.0,1804.0
+2026 Season A,Huye,Yams & Taro,504.0,6096.0,1008.0
+2026 Season A,Huye,Banana,7401.0,11263.0,27233.0
+2026 Season A,Huye,Cooking banana,1948.0,13512.0,9811.0
+2026 Season A,Huye,Dessert banana,1657.0,9420.0,6377.0
+2026 Season A,Huye,Banana for beer,3796.0,10884.0,11045.0
+2026 Season A,Huye,Beans,12898.0,629.0,8114.0
+2026 Season A,Huye,Bush bean,8525.0,584.0,4981.0
+2026 Season A,Huye,Climbing bean,4373.0,716.0,3133.0
+2026 Season A,Huye,Pea,189.0,783.0,148.0
+2026 Season A,Huye,Groundnut,62.0,546.0,26.0
+2026 Season A,Huye,Soybean,1861.0,524.0,976.0
+2026 Season A,Huye,Vegetables,502.0,6915.0,3418.0
+2026 Season A,Huye,Fruits,389.0,4514.0,881.0
+2026 Season A,Huye,Fodder crops,46.0,9222.0,424.0
+2026 Season A,Huye,Other crops,1380.0,945.0,203.0
+2026 Season B,Gasabo,Maize,1275.0,1319.0,1682.0
+2026 Season B,Gasabo,Sorghum,3192.0,1042.0,3322.0
+2026 Season B,Gasabo,Paddy rice,312.0,4137.0,1291.0
+2026 Season B,Gasabo,Other cereals,6.0,524.0,3.0
+2026 Season B,Gasabo,Cassava,5061.0,11835.0,7069.0
+2026 Season B,Gasabo,Sweet potato,1522.0,6829.0,9141.0
+2026 Season B,Gasabo,Irish potato,387.0,3570.0,1381.0
+2026 Season B,Gasabo,Yams & Taro,167.0,3607.0,516.0
+2026 Season B,Gasabo,Banana,4688.0,12465.0,19775.0
+2026 Season B,Gasabo,Cooking banana,1827.0,17353.0,9531.0
+2026 Season B,Gasabo,Dessert banana,1130.0,11949.0,5300.0
+2026 Season B,Gasabo,Banana for beer,1732.0,8328.0,4943.0
+2026 Season B,Gasabo,Beans,3828.0,649.0,2485.0
+2026 Season B,Gasabo,Bush bean,3515.0,647.0,2275.0
+2026 Season B,Gasabo,Climbing bean,314.0,671.0,211.0
+2026 Season B,Gasabo,Pea,20.0,631.0,13.0
+2026 Season B,Gasabo,Groundnut,116.0,439.0,51.0
+2026 Season B,Gasabo,Soybean,334.0,348.0,116.0
+2026 Season B,Gasabo,Vegetables,737.0,9557.0,7044.0
+2026 Season B,Gasabo,Fruits,41.0,847.0,8.0
+2026 Season B,Gasabo,Fodder crops,323.0,6406.0,1953.0
+2026 Season B,Gasabo,Other crops,1078.0,2987.0,709.0
+2026 Season B,Rubavu,Maize,1492.0,1446.0,2158.0
+2026 Season B,Rubavu,Sorghum,146.0,905.0,132.0
+2026 Season B,Rubavu,Cassava,402.0,11716.0,3519.0
+2026 Season B,Rubavu,Sweet potato,1725.0,8601.0,14838.0
+2026 Season B,Rubavu,Irish potato,6596.0,8558.0,56444.0
+2026 Season B,Rubavu,Yams & Taro,159.0,5864.0,878.0
+2026 Season B,Rubavu,Banana,2401.0,12972.0,14421.0
+2026 Season B,Rubavu,Cooking banana,947.0,16184.0,5979.0
+2026 Season B,Rubavu,Dessert banana,282.0,12208.0,1751.0
+2026 Season B,Rubavu,Banana for beer,1172.0,11173.0,6691.0
+2026 Season B,Rubavu,Beans,5022.0,874.0,4390.0
+2026 Season B,Rubavu,Bush bean,695.0,541.0,377.0
+2026 Season B,Rubavu,Climbing bean,4326.0,928.0,4014.0
+2026 Season B,Rubavu,Pea,596.0,457.0,272.0
+2026 Season B,Rubavu,Soybean,493.0,476.0,235.0
+2026 Season B,Rubavu,Vegetables,3047.0,13219.0,33413.0
+2026 Season B,Rubavu,Fruits,3047.0,,
+2026 Season B,Rubavu,Fodder crops,311.0,12685.0,3945.0
+2026 Season B,Rubavu,Other crops,1802.0,4575.0,653.0
+2026 Season B,Muhanga,Maize,902.0,1035.0,934.0
+2026 Season B,Muhanga,Sorghum,76.0,1496.0,114.0
+2026 Season B,Muhanga,Paddy rice,82.0,3285.0,269.0
+2026 Season B,Muhanga,Wheat,125.0,1211.0,152.0
+2026 Season B,Muhanga,Other cereals,23.0,639.0,15.0
+2026 Season B,Muhanga,Cassava,10996.0,15818.0,43522.0
+2026 Season B,Muhanga,Sweet potato,4463.0,8063.0,35341.0
+2026 Season B,Muhanga,Irish potato,203.0,4292.0,869.0
+2026 Season B,Muhanga,Yams & Taro,2447.0,7012.0,16893.0
+2026 Season B,Muhanga,Banana,16868.0,10190.0,79439.0
+2026 Season B,Muhanga,Cooking banana,3586.0,14756.0,15471.0
+2026 Season B,Muhanga,Dessert banana,1716.0,10051.0,7046.0
+2026 Season B,Muhanga,Banana for beer,11565.0,9415.0,56922.0
+2026 Season B,Muhanga,Beans,6900.0,579.0,3994.0
+2026 Season B,Muhanga,Bush bean,2569.0,526.0,1351.0
+2026 Season B,Muhanga,Climbing bean,4330.0,610.0,2642.0
+2026 Season B,Muhanga,Pea,161.0,574.0,93.0
+2026 Season B,Muhanga,Groundnut,68.0,307.0,21.0
+2026 Season B,Muhanga,Soybean,2294.0,440.0,1010.0
+2026 Season B,Muhanga,Vegetables,403.0,7602.0,3062.0
+2026 Season B,Muhanga,Fruits,526.0,7845.0,2321.0
+2026 Season B,Muhanga,Fodder crops,600.0,15459.0,9184.0
+2026 Season B,Muhanga,Other crops,1217.0,1684.0,1392.0
+2026 Season B,Karongi,Maize,706.0,1163.0,820.0
+2026 Season B,Karongi,Sorghum,1992.0,1080.0,2152.0
+2026 Season B,Karongi,Wheat,60.0,553.0,33.0
+2026 Season B,Karongi,Cassava,6831.0,13829.0,36771.0
+2026 Season B,Karongi,Sweet potato,3916.0,8321.0,31597.0
+2026 Season B,Karongi,Irish potato,196.0,3590.0,703.0
+2026 Season B,Karongi,Yams & Taro,1144.0,8937.0,8987.0
+2026 Season B,Karongi,Banana,11123.0,11831.0,55007.0
+2026 Season B,Karongi,Cooking banana,2526.0,15586.0,10815.0
+2026 Season B,Karongi,Dessert banana,1196.0,12464.0,5096.0
+2026 Season B,Karongi,Banana for beer,7400.0,11023.0,39096.0
+2026 Season B,Karongi,Beans,8452.0,1017.0,8593.0
+2026 Season B,Karongi,Bush bean,1869.0,620.0,1159.0
+2026 Season B,Karongi,Climbing bean,6584.0,1129.0,7434.0
+2026 Season B,Karongi,Pea,333.0,501.0,167.0
+2026 Season B,Karongi,Groundnut,132.0,617.0,82.0
+2026 Season B,Karongi,Soybean,1650.0,422.0,697.0
+2026 Season B,Karongi,Vegetables,941.0,9329.0,8781.0
+2026 Season B,Karongi,Fruits,175.0,5426.0,948.0
+2026 Season B,Karongi,Fodder crops,483.0,14859.0,7177.0
+2026 Season B,Karongi,Other crops,3048.0,1112.0,771.0
+2026 Season B,Gicumbi,Maize,2331.0,1070.0,2494.0
+2026 Season B,Gicumbi,Sorghum,9365.0,1345.0,12591.0
+2026 Season B,Gicumbi,Wheat,1337.0,1190.0,1590.0
+2026 Season B,Gicumbi,Cassava,4007.0,14777.0,12326.0
+2026 Season B,Gicumbi,Sweet potato,4951.0,8695.0,35840.0
+2026 Season B,Gicumbi,Irish potato,2582.0,6326.0,16334.0
+2026 Season B,Gicumbi,Yams & Taro,170.0,6351.0,1005.0
+2026 Season B,Gicumbi,Banana,6324.0,12468.0,31225.0
+2026 Season B,Gicumbi,Cooking banana,2727.0,16544.0,14775.0
+2026 Season B,Gicumbi,Dessert banana,1675.0,9695.0,6616.0
+2026 Season B,Gicumbi,Banana for beer,1921.0,10586.0,9835.0
+2026 Season B,Gicumbi,Beans,13781.0,856.0,11800.0
+2026 Season B,Gicumbi,Bush bean,3468.0,609.0,2113.0
+2026 Season B,Gicumbi,Climbing bean,10314.0,939.0,9686.0
+2026 Season B,Gicumbi,Pea,726.0,614.0,446.0
+2026 Season B,Gicumbi,Groundnut,184.0,254.0,47.0
+2026 Season B,Gicumbi,Soybean,239.0,523.0,125.0
+2026 Season B,Gicumbi,Vegetables,574.0,7945.0,4564.0
+2026 Season B,Gicumbi,Fruits,291.0,3944.0,534.0
+2026 Season B,Gicumbi,Fodder crops,656.0,14511.0,8919.0
+2026 Season B,Gicumbi,Other crops,1862.0,5375.0,4610.0
+2026 Season B,Ruhango,Maize,1043.0,704.0,734.0
+2026 Season B,Ruhango,Sorghum,2150.0,1093.0,2350.0
+2026 Season B,Ruhango,Paddy rice,1002.0,4901.0,4911.0
+2026 Season B,Ruhango,Other cereals,78.0,603.0,47.0
+2026 Season B,Ruhango,Cassava,16245.0,17974.0,104487.0
+2026 Season B,Ruhango,Sweet potato,3313.0,6308.0,20346.0
+2026 Season B,Ruhango,Irish potato,73.0,2991.0,218.0
+2026 Season B,Ruhango,Yams & Taro,642.0,7639.0,4793.0
+2026 Season B,Ruhango,Banana,7061.0,9649.0,24990.0
+2026 Season B,Ruhango,Cooking banana,1348.0,13758.0,4471.0
+2026 Season B,Ruhango,Dessert banana,1175.0,11068.0,4001.0
+2026 Season B,Ruhango,Banana for beer,4538.0,8678.0,16519.0
+2026 Season B,Ruhango,Beans,11268.0,636.0,7166.0
+2026 Season B,Ruhango,Bush bean,8057.0,635.0,5112.0
+2026 Season B,Ruhango,Climbing bean,3211.0,640.0,2053.0
+2026 Season B,Ruhango,Pea,107.0,524.0,56.0
+2026 Season B,Ruhango,Groundnut,1865.0,420.0,782.0
+2026 Season B,Ruhango,Soybean,3586.0,396.0,1420.0
+2026 Season B,Ruhango,Vegetables,406.0,7743.0,3145.0
+2026 Season B,Ruhango,Fruits,79.0,4558.0,95.0
+2026 Season B,Ruhango,Fodder crops,610.0,9395.0,5734.0
+2026 Season B,Ruhango,Other crops,2186.0,2891.0,4694.0
+2026 Season B,Nyabihu,Maize,4288.0,1403.0,5921.0
+2026 Season B,Nyabihu,Wheat,1348.0,1134.0,1528.0
+2026 Season B,Nyabihu,Cassava,875.0,9441.0,988.0
+2026 Season B,Nyabihu,Sweet potato,2704.0,7241.0,15406.0
+2026 Season B,Nyabihu,Irish potato,8168.0,8290.0,67716.0
+2026 Season B,Nyabihu,Yams & Taro,43.0,6472.0,277.0
+2026 Season B,Nyabihu,Banana,1230.0,9321.0,3516.0
+2026 Season B,Nyabihu,Cooking banana,378.0,15027.0,1416.0
+2026 Season B,Nyabihu,Dessert banana,288.0,9123.0,1068.0
+2026 Season B,Nyabihu,Banana for beer,563.0,6219.0,1032.0
+2026 Season B,Nyabihu,Beans,2741.0,1047.0,2870.0
+2026 Season B,Nyabihu,Bush bean,70.0,653.0,45.0
+2026 Season B,Nyabihu,Climbing bean,2671.0,1058.0,2825.0
+2026 Season B,Nyabihu,Pea,594.0,784.0,466.0
+2026 Season B,Nyabihu,Soybean,46.0,545.0,25.0
+2026 Season B,Nyabihu,Vegetables,970.0,15055.0,14608.0
+2026 Season B,Nyabihu,Fruits,482.0,4590.0,1872.0
+2026 Season B,Nyabihu,Fodder crops,121.0,10087.0,1219.0
+2026 Season B,Nyabihu,Other crops,2438.0,430.0,105.0
+2026 Season B,Rulindo,Maize,1193.0,1087.0,1296.0
+2026 Season B,Rulindo,Sorghum,3323.0,1114.0,3701.0
+2026 Season B,Rulindo,Paddy rice,18.0,3691.0,67.0
+2026 Season B,Rulindo,Wheat,65.0,1449.0,94.0
+2026 Season B,Rulindo,Cassava,3184.0,14114.0,14239.0
+2026 Season B,Rulindo,Sweet potato,3363.0,9745.0,27963.0
+2026 Season B,Rulindo,Irish potato,1302.0,4244.0,5524.0
+2026 Season B,Rulindo,Yams & Taro,138.0,5467.0,754.0
+2026 Season B,Rulindo,Banana,7186.0,12614.0,36492.0
+2026 Season B,Rulindo,Cooking banana,2307.0,17560.0,12499.0
+2026 Season B,Rulindo,Dessert banana,1398.0,12674.0,8057.0
+2026 Season B,Rulindo,Banana for beer,3481.0,10311.0,15937.0
+2026 Season B,Rulindo,Beans,7802.0,811.0,6331.0
+2026 Season B,Rulindo,Bush bean,2884.0,636.0,1834.0
+2026 Season B,Rulindo,Climbing bean,4918.0,914.0,4497.0
+2026 Season B,Rulindo,Pea,343.0,475.0,163.0
+2026 Season B,Rulindo,Groundnut,12.0,534.0,6.0
+2026 Season B,Rulindo,Soybean,152.0,486.0,74.0
+2026 Season B,Rulindo,Vegetables,1058.0,9536.0,9903.0
+2026 Season B,Rulindo,Fruits,321.0,5135.0,519.0
+2026 Season B,Rulindo,Fodder crops,112.0,9129.0,1026.0
+2026 Season B,Rulindo,Other crops,4693.0,1515.0,1398.0
+2026 Season B,Nyanza,Maize,2962.0,1317.0,3901.0
+2026 Season B,Nyanza,Sorghum,5303.0,1095.0,5807.0
+2026 Season B,Nyanza,Paddy rice,688.0,4648.0,3198.0
+2026 Season B,Nyanza,Other cereals,237.0,684.0,162.0
+2026 Season B,Nyanza,Cassava,9497.0,14779.0,36623.0
+2026 Season B,Nyanza,Sweet potato,2129.0,8854.0,18342.0
+2026 Season B,Nyanza,Irish potato,253.0,4209.0,1067.0
+2026 Season B,Nyanza,Yams & Taro,826.0,6452.0,5180.0
+2026 Season B,Nyanza,Banana,7457.0,9804.0,23336.0
+2026 Season B,Nyanza,Cooking banana,2653.0,11264.0,7958.0
+2026 Season B,Nyanza,Dessert banana,1334.0,9904.0,5421.0
+2026 Season B,Nyanza,Banana for beer,3470.0,8839.0,9958.0
+2026 Season B,Nyanza,Beans,14135.0,626.0,8854.0
+2026 Season B,Nyanza,Bush bean,11638.0,591.0,6874.0
+2026 Season B,Nyanza,Climbing bean,2497.0,793.0,1980.0
+2026 Season B,Nyanza,Pea,210.0,883.0,186.0
+2026 Season B,Nyanza,Groundnut,976.0,481.0,469.0
+2026 Season B,Nyanza,Soybean,2221.0,367.0,814.0
+2026 Season B,Nyanza,Vegetables,487.0,7048.0,3430.0
+2026 Season B,Nyanza,Fruits,291.0,3556.0,371.0
+2026 Season B,Nyanza,Fodder crops,161.0,8510.0,1366.0
+2026 Season B,Nyanza,Other crops,1695.0,2077.0,2055.0
+2026 Season B,Gisagara,Maize,2435.0,1034.0,2517.0
+2026 Season B,Gisagara,Sorghum,2914.0,1020.0,2974.0
+2026 Season B,Gisagara,Paddy rice,2977.0,4375.0,13025.0
+2026 Season B,Gisagara,Other cereals,474.0,706.0,335.0
+2026 Season B,Gisagara,Cassava,8505.0,13874.0,64531.0
+2026 Season B,Gisagara,Sweet potato,2721.0,7537.0,20059.0
+2026 Season B,Gisagara,Irish potato,143.0,3890.0,556.0
+2026 Season B,Gisagara,Yams & Taro,452.0,9583.0,4250.0
+2026 Season B,Gisagara,Banana,7815.0,11514.0,29480.0
+2026 Season B,Gisagara,Cooking banana,1770.0,15088.0,9680.0
+2026 Season B,Gisagara,Dessert banana,1611.0,9709.0,6636.0
+2026 Season B,Gisagara,Banana for beer,4434.0,10656.0,13164.0
+2026 Season B,Gisagara,Beans,14326.0,657.0,9406.0
+2026 Season B,Gisagara,Bush bean,12302.0,620.0,7624.0
+2026 Season B,Gisagara,Climbing bean,2023.0,881.0,1782.0
+2026 Season B,Gisagara,Pea,30.0,751.0,23.0
+2026 Season B,Gisagara,Groundnut,856.0,355.0,304.0
+2026 Season B,Gisagara,Soybean,3146.0,385.0,1212.0
+2026 Season B,Gisagara,Vegetables,457.0,7293.0,3334.0
+2026 Season B,Gisagara,Fruits,201.0,14705.0,339.0
+2026 Season B,Gisagara,Other crops,1100.0,1317.0,1040.0
+2026 Season B,Gatsibo,Maize,9307.0,1267.0,11791.0
+2026 Season B,Gatsibo,Sorghum,7910.0,1390.0,10998.0
+2026 Season B,Gatsibo,Paddy rice,1715.0,5312.0,9111.0
+2026 Season B,Gatsibo,Wheat,351.0,568.0,200.0
+2026 Season B,Gatsibo,Other cereals,232.0,712.0,165.0
+2026 Season B,Gatsibo,Cassava,2374.0,17970.0,14829.0
+2026 Season B,Gatsibo,Sweet potato,2911.0,9456.0,24552.0
+2026 Season B,Gatsibo,Irish potato,2335.0,4593.0,10726.0
+2026 Season B,Gatsibo,Yams & Taro,442.0,6699.0,2050.0
+2026 Season B,Gatsibo,Banana,21808.0,14377.0,104771.0
+2026 Season B,Gatsibo,Cooking banana,12646.0,17285.0,66857.0
+2026 Season B,Gatsibo,Dessert banana,2827.0,11805.0,11215.0
+2026 Season B,Gatsibo,Banana for beer,6335.0,10813.0,26699.0
+2026 Season B,Gatsibo,Beans,18859.0,681.0,12836.0
+2026 Season B,Gatsibo,Bush bean,16166.0,645.0,10434.0
+2026 Season B,Gatsibo,Climbing bean,2694.0,892.0,2402.0
+2026 Season B,Gatsibo,Pea,81.0,600.0,49.0
+2026 Season B,Gatsibo,Groundnut,1977.0,341.0,675.0
+2026 Season B,Gatsibo,Soybean,1953.0,544.0,1062.0
+2026 Season B,Gatsibo,Vegetables,844.0,8419.0,7082.0
+2026 Season B,Gatsibo,Fruits,96.0,4377.0,420.0
+2026 Season B,Gatsibo,Fodder crops,608.0,15140.0,8289.0
+2026 Season B,Gatsibo,Other crops,3135.0,1595.0,3560.0
+2026 Season B,Rutsiro,Maize,1583.0,1064.0,1684.0
+2026 Season B,Rutsiro,Sorghum,162.0,881.0,142.0
+2026 Season B,Rutsiro,Cassava,1893.0,14060.0,14342.0
+2026 Season B,Rutsiro,Sweet potato,2873.0,7927.0,21529.0
+2026 Season B,Rutsiro,Irish potato,3677.0,5028.0,18489.0
+2026 Season B,Rutsiro,Yams & Taro,493.0,8729.0,4075.0
+2026 Season B,Rutsiro,Banana,6979.0,11953.0,34743.0
+2026 Season B,Rutsiro,Cooking banana,1914.0,16688.0,9612.0
+2026 Season B,Rutsiro,Dessert banana,1183.0,13156.0,8394.0
+2026 Season B,Rutsiro,Banana for beer,3882.0,9888.0,16736.0
+2026 Season B,Rutsiro,Beans,5725.0,806.0,4616.0
+2026 Season B,Rutsiro,Bush bean,724.0,555.0,401.0
+2026 Season B,Rutsiro,Climbing bean,5001.0,843.0,4215.0
+2026 Season B,Rutsiro,Pea,507.0,479.0,243.0
+2026 Season B,Rutsiro,Soybean,1189.0,418.0,497.0
+2026 Season B,Rutsiro,Vegetables,261.0,8207.0,2145.0
+2026 Season B,Rutsiro,Fruits,221.0,3714.0,357.0
+2026 Season B,Rutsiro,Fodder crops,425.0,8045.0,3416.0
+2026 Season B,Rutsiro,Other crops,4232.0,9035.0,15320.0
+2026 Season B,Nyagatare,Maize,26478.0,1555.0,41184.0
+2026 Season B,Nyagatare,Sorghum,4508.0,1291.0,5817.0
+2026 Season B,Nyagatare,Paddy rice,2158.0,4358.0,9402.0
+2026 Season B,Nyagatare,Wheat,81.0,330.0,27.0
+2026 Season B,Nyagatare,Other cereals,1.0,682.0,1.0
+2026 Season B,Nyagatare,Cassava,2186.0,18849.0,19455.0
+2026 Season B,Nyagatare,Sweet potato,1557.0,5994.0,8140.0
+2026 Season B,Nyagatare,Irish potato,693.0,4367.0,3027.0
+2026 Season B,Nyagatare,Yams & Taro,69.0,7308.0,444.0
+2026 Season B,Nyagatare,Banana,11561.0,14080.0,70794.0
+2026 Season B,Nyagatare,Cooking banana,6352.0,18353.0,44565.0
+2026 Season B,Nyagatare,Dessert banana,1556.0,9219.0,4227.0
+2026 Season B,Nyagatare,Banana for beer,3653.0,10274.0,22002.0
+2026 Season B,Nyagatare,Beans,29338.0,779.0,22841.0
+2026 Season B,Nyagatare,Bush bean,27800.0,778.0,21619.0
+2026 Season B,Nyagatare,Climbing bean,1538.0,795.0,1222.0
+2026 Season B,Nyagatare,Groundnut,926.0,506.0,468.0
+2026 Season B,Nyagatare,Soybean,2312.0,464.0,1073.0
+2026 Season B,Nyagatare,Vegetables,885.0,10443.0,9237.0
+2026 Season B,Nyagatare,Fruits,79.0,7893.0,136.0
+2026 Season B,Nyagatare,Fodder crops,559.0,2725.0,1463.0
+2026 Season B,Nyagatare,Other crops,1028.0,2320.0,557.0
+2026 Season B,Ngororero,Maize,4005.0,1184.0,4740.0
+2026 Season B,Ngororero,Paddy rice,1.0,2356.0,2.0
+2026 Season B,Ngororero,Wheat,1300.0,1049.0,1364.0
+2026 Season B,Ngororero,Cassava,3414.0,9552.0,7804.0
+2026 Season B,Ngororero,Sweet potato,5420.0,6923.0,35337.0
+2026 Season B,Ngororero,Irish potato,1367.0,5389.0,7367.0
+2026 Season B,Ngororero,Yams & Taro,2170.0,8462.0,16729.0
+2026 Season B,Ngororero,Banana,10049.0,11677.0,51109.0
+2026 Season B,Ngororero,Cooking banana,1601.0,15351.0,6714.0
+2026 Season B,Ngororero,Dessert banana,1574.0,11176.0,6277.0
+2026 Season B,Ngororero,Banana for beer,6874.0,11284.0,38118.0
+2026 Season B,Ngororero,Beans,6299.0,824.0,5192.0
+2026 Season B,Ngororero,Bush bean,543.0,474.0,258.0
+2026 Season B,Ngororero,Climbing bean,5755.0,857.0,4935.0
+2026 Season B,Ngororero,Pea,402.0,474.0,191.0
+2026 Season B,Ngororero,Soybean,1604.0,368.0,591.0
+2026 Season B,Ngororero,Vegetables,419.0,9669.0,4054.0
+2026 Season B,Ngororero,Fruits,342.0,3451.0,808.0
+2026 Season B,Ngororero,Fodder crops,307.0,13582.0,4166.0
+2026 Season B,Ngororero,Other crops,1542.0,9641.0,5833.0
+2026 Season B,Kicukiro,Maize,498.0,747.0,372.0
+2026 Season B,Kicukiro,Sorghum,485.0,1230.0,596.0
+2026 Season B,Kicukiro,Paddy rice,102.0,5582.0,570.0
+2026 Season B,Kicukiro,Cassava,1007.0,13329.0,1275.0
+2026 Season B,Kicukiro,Sweet potato,147.0,6757.0,823.0
+2026 Season B,Kicukiro,Yams & Taro,275.0,5562.0,1297.0
+2026 Season B,Kicukiro,Banana,1100.0,12564.0,5351.0
+2026 Season B,Kicukiro,Cooking banana,450.0,16576.0,2232.0
+2026 Season B,Kicukiro,Dessert banana,169.0,11606.0,1104.0
+2026 Season B,Kicukiro,Banana for beer,480.0,10274.0,2015.0
+2026 Season B,Kicukiro,Beans,1346.0,623.0,838.0
+2026 Season B,Kicukiro,Bush bean,1346.0,623.0,838.0
+2026 Season B,Kicukiro,Soybean,75.0,490.0,37.0
+2026 Season B,Kicukiro,Vegetables,145.0,8196.0,1187.0
+2026 Season B,Kicukiro,Fruits,124.0,12312.0,117.0
+2026 Season B,Kicukiro,Fodder crops,51.0,4934.0,253.0
+2026 Season B,Kicukiro,Other crops,81.0,2887.0,50.0
+2026 Season B,Nyaruguru,Maize,263.0,1138.0,300.0
+2026 Season B,Nyaruguru,Sorghum,2781.0,827.0,2301.0
+2026 Season B,Nyaruguru,Paddy rice,50.0,3523.0,175.0
+2026 Season B,Nyaruguru,Wheat,385.0,680.0,262.0
+2026 Season B,Nyaruguru,Other cereals,6.0,203.0,1.0
+2026 Season B,Nyaruguru,Cassava,7073.0,12699.0,23729.0
+2026 Season B,Nyaruguru,Sweet potato,5110.0,9401.0,40123.0
+2026 Season B,Nyaruguru,Irish potato,2083.0,8176.0,17028.0
+2026 Season B,Nyaruguru,Yams & Taro,527.0,8472.0,4139.0
+2026 Season B,Nyaruguru,Banana,3567.0,10330.0,11106.0
+2026 Season B,Nyaruguru,Cooking banana,1114.0,13703.0,4269.0
+2026 Season B,Nyaruguru,Dessert banana,790.0,8968.0,2441.0
+2026 Season B,Nyaruguru,Banana for beer,1663.0,8946.0,4396.0
+2026 Season B,Nyaruguru,Beans,8229.0,798.0,6567.0
+2026 Season B,Nyaruguru,Bush bean,872.0,547.0,477.0
+2026 Season B,Nyaruguru,Climbing bean,7357.0,828.0,6090.0
+2026 Season B,Nyaruguru,Pea,262.0,731.0,192.0
+2026 Season B,Nyaruguru,Soybean,1154.0,387.0,447.0
+2026 Season B,Nyaruguru,Vegetables,691.0,8526.0,5893.0
+2026 Season B,Nyaruguru,Fruits,86.0,3513.0,298.0
+2026 Season B,Nyaruguru,Fodder crops,496.0,12299.0,6099.0
+2026 Season B,Nyaruguru,Other crops,4834.0,1489.0,1066.0
+2026 Season B,Burera,Maize,2469.0,1366.0,3372.0
+2026 Season B,Burera,Sorghum,5105.0,1281.0,6540.0
+2026 Season B,Burera,Wheat,551.0,1330.0,733.0
+2026 Season B,Burera,Other cereals,76.0,517.0,40.0
+2026 Season B,Burera,Cassava,183.0,11640.0,503.0
+2026 Season B,Burera,Sweet potato,3263.0,9070.0,27701.0
+2026 Season B,Burera,Irish potato,5015.0,7238.0,36301.0
+2026 Season B,Burera,Yams & Taro,39.0,5842.0,229.0
+2026 Season B,Burera,Banana,2186.0,13287.0,11010.0
+2026 Season B,Burera,Cooking banana,929.0,17696.0,7071.0
+2026 Season B,Burera,Dessert banana,123.0,13643.0,636.0
+2026 Season B,Burera,Banana for beer,1134.0,8636.0,3302.0
+2026 Season B,Burera,Beans,9947.0,1215.0,12086.0
+2026 Season B,Burera,Bush bean,558.0,651.0,363.0
+2026 Season B,Burera,Climbing bean,9389.0,1249.0,11722.0
+2026 Season B,Burera,Pea,1076.0,547.0,589.0
+2026 Season B,Burera,Soybean,43.0,356.0,15.0
+2026 Season B,Burera,Vegetables,545.0,9482.0,5171.0
+2026 Season B,Burera,Fruits,285.0,9819.0,851.0
+2026 Season B,Burera,Fodder crops,642.0,14486.0,9298.0
+2026 Season B,Burera,Other crops,327.0,11855.0,2448.0
+2026 Season B,Ngoma,Maize,1949.0,856.0,1669.0
+2026 Season B,Ngoma,Sorghum,5916.0,1207.0,7141.0
+2026 Season B,Ngoma,Paddy rice,939.0,4033.0,3786.0
+2026 Season B,Ngoma,Other cereals,1591.0,492.0,782.0
+2026 Season B,Ngoma,Cassava,7103.0,15701.0,28926.0
+2026 Season B,Ngoma,Sweet potato,1220.0,7805.0,7904.0
+2026 Season B,Ngoma,Irish potato,681.0,4858.0,3309.0
+2026 Season B,Ngoma,Yams & Taro,257.0,3764.0,668.0
+2026 Season B,Ngoma,Banana,16077.0,14214.0,102665.0
+2026 Season B,Ngoma,Cooking banana,9237.0,17165.0,68782.0
+2026 Season B,Ngoma,Dessert banana,1761.0,8363.0,5887.0
+2026 Season B,Ngoma,Banana for beer,5080.0,11146.0,27997.0
+2026 Season B,Ngoma,Beans,19293.0,701.0,13531.0
+2026 Season B,Ngoma,Bush bean,16956.0,675.0,11448.0
+2026 Season B,Ngoma,Climbing bean,2337.0,892.0,2084.0
+2026 Season B,Ngoma,Pea,52.0,403.0,21.0
+2026 Season B,Ngoma,Groundnut,1324.0,429.0,568.0
+2026 Season B,Ngoma,Soybean,1324.0,394.0,521.0
+2026 Season B,Ngoma,Vegetables,328.0,6933.0,2275.0
+2026 Season B,Ngoma,Fruits,1381.0,6565.0,9066.0
+2026 Season B,Ngoma,Fodder crops,141.0,18975.0,2607.0
+2026 Season B,Ngoma,Other crops,2219.0,2692.0,3036.0
+2026 Season B,Rwamagana,Maize,3953.0,894.0,3535.0
+2026 Season B,Rwamagana,Sorghum,5957.0,1060.0,6317.0
+2026 Season B,Rwamagana,Paddy rice,524.0,4612.0,2418.0
+2026 Season B,Rwamagana,Other cereals,32.0,776.0,22.0
+2026 Season B,Rwamagana,Cassava,4408.0,17774.0,34143.0
+2026 Season B,Rwamagana,Sweet potato,1568.0,7665.0,11603.0
+2026 Season B,Rwamagana,Irish potato,713.0,3874.0,2762.0
+2026 Season B,Rwamagana,Yams & Taro,307.0,5322.0,1550.0
+2026 Season B,Rwamagana,Banana,11218.0,14543.0,71296.0
+2026 Season B,Rwamagana,Cooking banana,6764.0,18500.0,52563.0
+2026 Season B,Rwamagana,Dessert banana,1738.0,9928.0,8226.0
+2026 Season B,Rwamagana,Banana for beer,2715.0,8525.0,10507.0
+2026 Season B,Rwamagana,Beans,12378.0,542.0,6710.0
+2026 Season B,Rwamagana,Bush bean,12118.0,542.0,6571.0
+2026 Season B,Rwamagana,Climbing bean,260.0,535.0,139.0
+2026 Season B,Rwamagana,Pea,103.0,499.0,51.0
+2026 Season B,Rwamagana,Groundnut,1666.0,395.0,658.0
+2026 Season B,Rwamagana,Soybean,624.0,630.0,393.0
+2026 Season B,Rwamagana,Vegetables,921.0,8575.0,7897.0
+2026 Season B,Rwamagana,Fruits,265.0,3927.0,332.0
+2026 Season B,Rwamagana,Fodder crops,956.0,21925.0,18313.0
+2026 Season B,Rwamagana,Other crops,1406.0,7422.0,5333.0
+2026 Season B,Kayonza,Maize,6908.0,1186.0,8191.0
+2026 Season B,Kayonza,Sorghum,13144.0,1364.0,17924.0
+2026 Season B,Kayonza,Paddy rice,1240.0,4321.0,5357.0
+2026 Season B,Kayonza,Other cereals,924.0,790.0,730.0
+2026 Season B,Kayonza,Cassava,11633.0,16060.0,48829.0
+2026 Season B,Kayonza,Sweet potato,1499.0,7202.0,9380.0
+2026 Season B,Kayonza,Irish potato,2294.0,4212.0,9661.0
+2026 Season B,Kayonza,Yams & Taro,382.0,5326.0,1390.0
+2026 Season B,Kayonza,Banana,12483.0,15818.0,67879.0
+2026 Season B,Kayonza,Cooking banana,8650.0,18571.0,54714.0
+2026 Season B,Kayonza,Dessert banana,1520.0,12349.0,4890.0
+2026 Season B,Kayonza,Banana for beer,2313.0,8720.0,8275.0
+2026 Season B,Kayonza,Beans,20927.0,503.0,10528.0
+2026 Season B,Kayonza,Bush bean,20631.0,496.0,10236.0
+2026 Season B,Kayonza,Climbing bean,296.0,989.0,293.0
+2026 Season B,Kayonza,Pea,90.0,577.0,52.0
+2026 Season B,Kayonza,Groundnut,467.0,337.0,157.0
+2026 Season B,Kayonza,Soybean,563.0,532.0,300.0
+2026 Season B,Kayonza,Vegetables,723.0,7493.0,5421.0
+2026 Season B,Kayonza,Fruits,1874.0,4991.0,3351.0
+2026 Season B,Kayonza,Fodder crops,636.0,1543.0,960.0
+2026 Season B,Kayonza,Other crops,1941.0,3054.0,1754.0
+2026 Season B,Nyamagabe,Maize,1092.0,1260.0,1376.0
+2026 Season B,Nyamagabe,Sorghum,4173.0,985.0,4111.0
+2026 Season B,Nyamagabe,Paddy rice,28.0,3379.0,95.0
+2026 Season B,Nyamagabe,Wheat,2168.0,1261.0,2735.0
+2026 Season B,Nyamagabe,Cassava,5517.0,13474.0,18426.0
+2026 Season B,Nyamagabe,Sweet potato,5826.0,8185.0,46700.0
+2026 Season B,Nyamagabe,Irish potato,1812.0,7939.0,14384.0
+2026 Season B,Nyamagabe,Yams & Taro,1070.0,7143.0,7643.0
+2026 Season B,Nyamagabe,Banana,5655.0,6953.0,15085.0
+2026 Season B,Nyamagabe,Cooking banana,738.0,9476.0,2480.0
+2026 Season B,Nyamagabe,Dessert banana,702.0,11226.0,2198.0
+2026 Season B,Nyamagabe,Banana for beer,4216.0,6078.0,10406.0
+2026 Season B,Nyamagabe,Beans,8046.0,686.0,5517.0
+2026 Season B,Nyamagabe,Bush bean,821.0,496.0,407.0
+2026 Season B,Nyamagabe,Climbing bean,7226.0,707.0,5110.0
+2026 Season B,Nyamagabe,Pea,872.0,562.0,490.0
+2026 Season B,Nyamagabe,Soybean,876.0,455.0,399.0
+2026 Season B,Nyamagabe,Vegetables,386.0,8819.0,3407.0
+2026 Season B,Nyamagabe,Fruits,79.0,5511.0,370.0
+2026 Season B,Nyamagabe,Fodder crops,61.0,5249.0,322.0
+2026 Season B,Nyamagabe,Other crops,4991.0,1565.0,3322.0
+2026 Season B,Bugesera,Maize,6689.0,952.0,6369.0
+2026 Season B,Bugesera,Sorghum,3729.0,1036.0,3865.0
+2026 Season B,Bugesera,Paddy rice,1525.0,5220.0,7958.0
+2026 Season B,Bugesera,Other cereals,97.0,662.0,64.0
+2026 Season B,Bugesera,Cassava,7653.0,13404.0,25722.0
+2026 Season B,Bugesera,Sweet potato,1434.0,5782.0,8289.0
+2026 Season B,Bugesera,Irish potato,364.0,2843.0,1036.0
+2026 Season B,Bugesera,Yams & Taro,725.0,4606.0,1421.0
+2026 Season B,Bugesera,Banana,9784.0,11994.0,57667.0
+2026 Season B,Bugesera,Cooking banana,3619.0,15588.0,23796.0
+2026 Season B,Bugesera,Dessert banana,1675.0,11288.0,9624.0
+2026 Season B,Bugesera,Banana for beer,4489.0,9983.0,24247.0
+2026 Season B,Bugesera,Beans,22139.0,636.0,14078.0
+2026 Season B,Bugesera,Bush bean,21976.0,636.0,13971.0
+2026 Season B,Bugesera,Climbing bean,164.0,650.0,106.0
+2026 Season B,Bugesera,Groundnut,3821.0,479.0,1831.0
+2026 Season B,Bugesera,Soybean,1695.0,318.0,539.0
+2026 Season B,Bugesera,Vegetables,743.0,9220.0,6850.0
+2026 Season B,Bugesera,Fruits,981.0,1622.0,136.0
+2026 Season B,Bugesera,Fodder crops,611.0,13396.0,8113.0
+2026 Season B,Bugesera,Other crops,973.0,1061.0,351.0
+2026 Season B,Nyamasheke,Maize,485.0,991.0,480.0
+2026 Season B,Nyamasheke,Sorghum,11.0,1329.0,15.0
+2026 Season B,Nyamasheke,Paddy rice,368.0,4443.0,1633.0
+2026 Season B,Nyamasheke,Cassava,12529.0,11882.0,55169.0
+2026 Season B,Nyamasheke,Sweet potato,4231.0,7889.0,30452.0
+2026 Season B,Nyamasheke,Irish potato,12.0,4583.0,56.0
+2026 Season B,Nyamasheke,Yams & Taro,1150.0,6707.0,7351.0
+2026 Season B,Nyamasheke,Banana,6601.0,10869.0,22494.0
+2026 Season B,Nyamasheke,Cooking banana,1809.0,12687.0,7252.0
+2026 Season B,Nyamasheke,Dessert banana,911.0,10703.0,2969.0
+2026 Season B,Nyamasheke,Banana for beer,3880.0,10055.0,12273.0
+2026 Season B,Nyamasheke,Beans,7636.0,760.0,5800.0
+2026 Season B,Nyamasheke,Bush bean,1195.0,633.0,757.0
+2026 Season B,Nyamasheke,Climbing bean,6441.0,783.0,5043.0
+2026 Season B,Nyamasheke,Pea,79.0,452.0,36.0
+2026 Season B,Nyamasheke,Groundnut,861.0,433.0,373.0
+2026 Season B,Nyamasheke,Soybean,1526.0,385.0,588.0
+2026 Season B,Nyamasheke,Vegetables,842.0,8974.0,7295.0
+2026 Season B,Nyamasheke,Fruits,717.0,4392.0,1536.0
+2026 Season B,Nyamasheke,Fodder crops,121.0,1888.0,228.0
+2026 Season B,Nyamasheke,Other crops,6329.0,3962.0,12987.0
+2026 Season B,Gakenke,Maize,1505.0,1079.0,1624.0
+2026 Season B,Gakenke,Sorghum,270.0,1208.0,326.0
+2026 Season B,Gakenke,Paddy rice,19.0,5101.0,96.0
+2026 Season B,Gakenke,Wheat,192.0,1379.0,264.0
+2026 Season B,Gakenke,Cassava,6281.0,14120.0,22433.0
+2026 Season B,Gakenke,Sweet potato,6034.0,10179.0,55317.0
+2026 Season B,Gakenke,Irish potato,976.0,5485.0,5356.0
+2026 Season B,Gakenke,Yams & Taro,1452.0,8110.0,11274.0
+2026 Season B,Gakenke,Banana,15351.0,11639.0,75506.0
+2026 Season B,Gakenke,Cooking banana,3841.0,17131.0,19878.0
+2026 Season B,Gakenke,Dessert banana,2225.0,15406.0,16285.0
+2026 Season B,Gakenke,Banana for beer,9285.0,9214.0,39343.0
+2026 Season B,Gakenke,Beans,11328.0,919.0,10408.0
+2026 Season B,Gakenke,Bush bean,943.0,671.0,633.0
+2026 Season B,Gakenke,Climbing bean,10385.0,941.0,9775.0
+2026 Season B,Gakenke,Pea,319.0,592.0,189.0
+2026 Season B,Gakenke,Soybean,676.0,435.0,294.0
+2026 Season B,Gakenke,Vegetables,430.0,9833.0,4225.0
+2026 Season B,Gakenke,Fruits,552.0,6045.0,2237.0
+2026 Season B,Gakenke,Fodder crops,140.0,5222.0,733.0
+2026 Season B,Gakenke,Other crops,1972.0,11637.0,17736.0
+2026 Season B,Kirehe,Maize,2218.0,2092.0,4639.0
+2026 Season B,Kirehe,Sorghum,10519.0,1141.0,12007.0
+2026 Season B,Kirehe,Paddy rice,959.0,5087.0,4880.0
+2026 Season B,Kirehe,Other cereals,599.0,588.0,352.0
+2026 Season B,Kirehe,Cassava,6886.0,14711.0,28340.0
+2026 Season B,Kirehe,Sweet potato,1059.0,7245.0,7671.0
+2026 Season B,Kirehe,Irish potato,1435.0,4477.0,6425.0
+2026 Season B,Kirehe,Yams & Taro,1345.0,4221.0,3942.0
+2026 Season B,Kirehe,Banana,18317.0,14973.0,100140.0
+2026 Season B,Kirehe,Cooking banana,10756.0,19023.0,72266.0
+2026 Season B,Kirehe,Dessert banana,1329.0,10575.0,4219.0
+2026 Season B,Kirehe,Banana for beer,6232.0,9500.0,23654.0
+2026 Season B,Kirehe,Beans,23350.0,692.0,16147.0
+2026 Season B,Kirehe,Bush bean,15260.0,665.0,10147.0
+2026 Season B,Kirehe,Climbing bean,8090.0,742.0,6000.0
+2026 Season B,Kirehe,Pea,342.0,642.0,220.0
+2026 Season B,Kirehe,Groundnut,1324.0,390.0,516.0
+2026 Season B,Kirehe,Soybean,1083.0,662.0,717.0
+2026 Season B,Kirehe,Vegetables,477.0,5569.0,2464.0
+2026 Season B,Kirehe,Fruits,298.0,3923.0,522.0
+2026 Season B,Kirehe,Fodder crops,20.0,2825.0,57.0
+2026 Season B,Kirehe,Other crops,5847.0,1336.0,3894.0
+2026 Season B,Nyarugenge,Maize,574.0,1194.0,686.0
+2026 Season B,Nyarugenge,Sorghum,269.0,797.0,215.0
+2026 Season B,Nyarugenge,Cassava,523.0,11617.0,2673.0
+2026 Season B,Nyarugenge,Sweet potato,212.0,6960.0,1122.0
+2026 Season B,Nyarugenge,Irish potato,22.0,2871.0,64.0
+2026 Season B,Nyarugenge,Yams & Taro,2118.0,8350.0,153.0
+2026 Season B,Nyarugenge,Banana,1876.0,11795.0,8859.0
+2026 Season B,Nyarugenge,Cooking banana,513.0,16532.0,2931.0
+2026 Season B,Nyarugenge,Dessert banana,506.0,8790.0,1602.0
+2026 Season B,Nyarugenge,Banana for beer,858.0,11049.0,4326.0
+2026 Season B,Nyarugenge,Beans,2166.0,605.0,1311.0
+2026 Season B,Nyarugenge,Bush bean,2166.0,605.0,1311.0
+2026 Season B,Nyarugenge,Groundnut,39.0,550.0,21.0
+2026 Season B,Nyarugenge,Soybean,154.0,343.0,53.0
+2026 Season B,Nyarugenge,Vegetables,103.0,7996.0,826.0
+2026 Season B,Nyarugenge,Fruits,5.0,,
+2026 Season B,Nyarugenge,Other crops,1218.0,2811.0,8.0
+2026 Season B,Rusizi,Maize,1142.0,1010.0,1154.0
+2026 Season B,Rusizi,Sorghum,64.0,796.0,51.0
+2026 Season B,Rusizi,Paddy rice,1542.0,4715.0,7271.0
+2026 Season B,Rusizi,Cassava,17704.0,10266.0,110192.0
+2026 Season B,Rusizi,Sweet potato,1976.0,8071.0,15950.0
+2026 Season B,Rusizi,Irish potato,65.0,6867.0,449.0
+2026 Season B,Rusizi,Yams & Taro,529.0,9818.0,5083.0
+2026 Season B,Rusizi,Banana,5560.0,12381.0,22596.0
+2026 Season B,Rusizi,Cooking banana,2105.0,16196.0,11415.0
+2026 Season B,Rusizi,Dessert banana,441.0,11157.0,1993.0
+2026 Season B,Rusizi,Banana for beer,3015.0,9758.0,9188.0
+2026 Season B,Rusizi,Beans,10565.0,784.0,8284.0
+2026 Season B,Rusizi,Bush bean,7677.0,763.0,5854.0
+2026 Season B,Rusizi,Climbing bean,2888.0,841.0,2430.0
+2026 Season B,Rusizi,Pea,38.0,600.0,23.0
+2026 Season B,Rusizi,Groundnut,324.0,593.0,192.0
+2026 Season B,Rusizi,Soybean,1034.0,417.0,431.0
+2026 Season B,Rusizi,Vegetables,585.0,8702.0,5088.0
+2026 Season B,Rusizi,Fruits,1299.0,4816.0,843.0
+2026 Season B,Rusizi,Fodder crops,94.0,16646.0,1569.0
+2026 Season B,Rusizi,Other crops,4379.0,2547.0,7798.0
+2026 Season B,Kamonyi,Maize,1963.0,1156.0,2269.0
+2026 Season B,Kamonyi,Sorghum,3315.0,997.0,3304.0
+2026 Season B,Kamonyi,Paddy rice,266.0,4068.0,1082.0
+2026 Season B,Kamonyi,Other cereals,14.0,321.0,4.0
+2026 Season B,Kamonyi,Cassava,21978.0,13458.0,37275.0
+2026 Season B,Kamonyi,Sweet potato,2813.0,6992.0,18865.0
+2026 Season B,Kamonyi,Irish potato,367.0,5647.0,2073.0
+2026 Season B,Kamonyi,Yams & Taro,871.0,8461.0,7276.0
+2026 Season B,Kamonyi,Banana,10245.0,10404.0,54228.0
+2026 Season B,Kamonyi,Cooking banana,1275.0,15007.0,9524.0
+2026 Season B,Kamonyi,Dessert banana,1555.0,9914.0,7480.0
+2026 Season B,Kamonyi,Banana for beer,7415.0,9736.0,37224.0
+2026 Season B,Kamonyi,Beans,10928.0,595.0,6507.0
+2026 Season B,Kamonyi,Bush bean,9007.0,576.0,5188.0
+2026 Season B,Kamonyi,Climbing bean,1921.0,687.0,1319.0
+2026 Season B,Kamonyi,Pea,107.0,432.0,46.0
+2026 Season B,Kamonyi,Groundnut,870.0,531.0,462.0
+2026 Season B,Kamonyi,Soybean,3975.0,344.0,1368.0
+2026 Season B,Kamonyi,Vegetables,905.0,5861.0,5305.0
+2026 Season B,Kamonyi,Fruits,245.0,10626.0,894.0
+2026 Season B,Kamonyi,Fodder crops,80.0,16179.0,1299.0
+2026 Season B,Kamonyi,Other crops,3898.0,5508.0,10064.0
+2026 Season B,Musanze,Maize,2137.0,1584.0,3308.0
+2026 Season B,Musanze,Sorghum,2042.0,1434.0,2928.0
+2026 Season B,Musanze,Wheat,1175.0,1413.0,1659.0
+2026 Season B,Musanze,Cassava,359.0,11551.0,432.0
+2026 Season B,Musanze,Sweet potato,1915.0,9608.0,18397.0
+2026 Season B,Musanze,Irish potato,4434.0,9459.0,41941.0
+2026 Season B,Musanze,Yams & Taro,181.0,9803.0,1770.0
+2026 Season B,Musanze,Banana,2093.0,9692.0,8307.0
+2026 Season B,Musanze,Cooking banana,924.0,11838.0,4190.0
+2026 Season B,Musanze,Dessert banana,553.0,7288.0,1777.0
+2026 Season B,Musanze,Banana for beer,616.0,9023.0,2341.0
+2026 Season B,Musanze,Beans,7190.0,1079.0,7754.0
+2026 Season B,Musanze,Bush bean,349.0,720.0,251.0
+2026 Season B,Musanze,Climbing bean,6841.0,1097.0,7503.0
+2026 Season B,Musanze,Pea,230.0,653.0,150.0
+2026 Season B,Musanze,Soybean,28.0,459.0,13.0
+2026 Season B,Musanze,Vegetables,1257.0,10000.0,12574.0
+2026 Season B,Musanze,Fruits,205.0,5056.0,610.0
+2026 Season B,Musanze,Fodder crops,66.0,3392.0,222.0
+2026 Season B,Musanze,Other crops,1382.0,14414.0,9344.0
+2026 Season B,Huye,Maize,977.0,1198.0,1171.0
+2026 Season B,Huye,Sorghum,4319.0,1060.0,4578.0
+2026 Season B,Huye,Paddy rice,1020.0,3659.0,3728.0
+2026 Season B,Huye,Other cereals,304.0,527.0,160.0
+2026 Season B,Huye,Cassava,5999.0,17515.0,28393.0
+2026 Season B,Huye,Sweet potato,2901.0,7932.0,22939.0
+2026 Season B,Huye,Irish potato,175.0,3983.0,696.0
+2026 Season B,Huye,Yams & Taro,378.0,9072.0,3306.0
+2026 Season B,Huye,Banana,6110.0,9540.0,17916.0
+2026 Season B,Huye,Cooking banana,2193.0,11052.0,7472.0
+2026 Season B,Huye,Dessert banana,1470.0,10390.0,4408.0
+2026 Season B,Huye,Banana for beer,2446.0,7763.0,6036.0
+2026 Season B,Huye,Beans,9788.0,647.0,6334.0
+2026 Season B,Huye,Bush bean,6181.0,566.0,3498.0
+2026 Season B,Huye,Climbing bean,3607.0,786.0,2835.0
+2026 Season B,Huye,Pea,297.0,549.0,163.0
+2026 Season B,Huye,Groundnut,134.0,458.0,61.0
+2026 Season B,Huye,Soybean,2283.0,403.0,920.0
+2026 Season B,Huye,Vegetables,738.0,7752.0,5724.0
+2026 Season B,Huye,Fruits,946.0,6245.0,191.0
+2026 Season B,Huye,Fodder crops,48.0,6730.0,306.0
+2026 Season B,Huye,Other crops,1189.0,1264.0,726.0
