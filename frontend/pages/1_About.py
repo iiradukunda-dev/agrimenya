@@ -6,16 +6,16 @@ from components.navbar import render_navbar
 from components.icons import render_icon_title
 from components.errors import render_error_page
 
-st.set_page_config(page_title="About Agri-Menya", page_icon="frontend/assets/logo.jpg", layout="wide")
+st.set_page_config(page_title="About agrimenya", page_icon="frontend/assets/logo.jpg", layout="wide")
 load_theme()
 render_navbar()
 
 def main():
-    render_icon_title("assets/info.svg", "About Agri-Menya", "Learn more about our mission and platform")
+    render_icon_title("assets/info.svg", "About agrimenya", "Learn more about our mission and platform")
     
     st.markdown("""
     ### Our Mission
-    Agri-Menya is designed to empower agricultural professionals, cooperatives, and planners with data-driven insights. 
+    agrimenya is designed to empower agricultural professionals, cooperatives, and planners with data-driven insights. 
     By leveraging advanced analytics and seamless communication channels, we aim to optimize resource allocation, enhance crop yields, and foster collaboration across the agricultural ecosystem.
 
     ### Core Pillars

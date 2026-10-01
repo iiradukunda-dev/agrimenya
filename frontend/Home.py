@@ -7,7 +7,7 @@ from utils.timezone import setup_system_timezone
 from components.icons import render_icon_title, render_icon_subheader
 from components.navbar import render_navbar
 from components.errors import render_error_page
-st.set_page_config(page_title="Agri-Menya", page_icon="frontend/assets/logo.jpg", layout="wide")
+st.set_page_config(page_title="agrimenya", page_icon="frontend/assets/logo.jpg", layout="wide")
 setup_system_timezone()
 load_theme()
 render_navbar()

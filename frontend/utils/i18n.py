@@ -1,4 +1,4 @@
-"""Internationalization (i18n) module for Agri-Menya.
+"""Internationalization (i18n) module for agrimenya.
 Provides multi-language support for English (EN), Kinyarwanda (RW), and French (FR).
 Strictly complies with project rules: no emojis, clean modular structure.
 """
@@ -33,9 +33,9 @@ TRANSLATIONS = {
         "priority.low": "Low",
 
         # Home Page
-        "home.app_title": "Agri-Menya",
+        "home.app_title": "agrimenya",
         "home.subtitle": "Decision and Planning Support System for Agricultural Productivity",
-        "home.welcome": "Welcome to **Agri-Menya**. This platform empowers planners, extension officers, and cooperative leaders with data-driven insights using SAS, AHS, and EICV7 datasets.",
+        "home.welcome": "Welcome to **agrimenya**. This platform empowers planners, extension officers, and cooperative leaders with data-driven insights using SAS, AHS, and EICV7 datasets.",
         "home.kpi.farmers": "Total Farmers Supported",
         "home.kpi.yield": "Avg Yield Increase",
         "home.kpi.cooperatives": "Active Cooperatives",
@@ -170,9 +170,9 @@ TRANSLATIONS = {
         "priority.low": "Iri Hasi",
 
         # Home Page
-        "home.app_title": "Agri-Menya",
+        "home.app_title": "agrimenya",
         "home.subtitle": "Sisitemu yo Gufata Ibyemezo no Gutegura Umusaruro w'Ubuhinzi",
-        "home.welcome": "Murakaza neza kuri **Agri-Menya**. Uru rubuga rufasha abategura igenamigambi, abashinzwe ubuhinzi, n'abayobozi b'amakoperative gufata ibyemezo bishingiye ku makuru ya SAS, AHS, na EICV7.",
+        "home.welcome": "Murakaza neza kuri **agrimenya**. Uru rubuga rufasha abategura igenamigambi, abashinzwe ubuhinzi, n'abayobozi b'amakoperative gufata ibyemezo bishingiye ku makuru ya SAS, AHS, na EICV7.",
         "home.kpi.farmers": "Abahinzi Bose Bafashijwe",
         "home.kpi.yield": "Impuzandengo y'Ukwiyongera k'Umusaruro",
         "home.kpi.cooperatives": "Amakoperative Akora",
@@ -307,9 +307,9 @@ TRANSLATIONS = {
         "priority.low": "Faible",
 
         # Home Page
-        "home.app_title": "Agri-Menya",
+        "home.app_title": "agrimenya",
         "home.subtitle": "Système d'Aide à la Décision et à la Planification pour la Productivité Agricole",
-        "home.welcome": "Bienvenue sur **Agri-Menya**. Cette plateforme permet aux planificateurs, agents de vulgarisation et dirigeants de coopératives de prendre des décisions éclairées grâce aux données SAS, AHS et EICV7.",
+        "home.welcome": "Bienvenue sur **agrimenya**. Cette plateforme permet aux planificateurs, agents de vulgarisation et dirigeants de coopératives de prendre des décisions éclairées grâce aux données SAS, AHS et EICV7.",
         "home.kpi.farmers": "Total des Agriculteurs Soutenus",
         "home.kpi.yield": "Augmentation Moyenne du Rendement",
         "home.kpi.cooperatives": "Coopératives Actives",
