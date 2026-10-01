@@ -10,7 +10,7 @@ from utils.mock_data import CROPS, SEASONS
 from components.icons import render_icon_title
 from components.errors import render_error_page
 
-st.set_page_config(page_title=t("seg.page_title"), page_icon="🗺️", layout="wide")
+st.set_page_config(page_title=t("seg.page_title"), page_icon="frontend/assets/logo.jpg", layout="wide")
 load_theme()
 render_navbar()
 
