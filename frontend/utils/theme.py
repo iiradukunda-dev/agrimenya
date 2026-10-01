@@ -177,5 +177,51 @@ def load_theme():
             background-color: #E8F5E9;
             border-radius: 8px;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .block-container {
+                padding-top: 1rem !important;
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            [data-testid="stMetricValue"] > div {
+                font-size: 1.5rem;
+            }
+            .custom-card {
+                padding: 16px;
+            }
+            .custom-card-title {
+                font-size: 1.05rem;
+            }
+        }
+
+        /* Dataframes & Tables Polish */
+        [data-testid="stDataFrame"] {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #E2EAE3;
+        }
+        
+        /* Tabs Polish */
+        [data-baseweb="tab"] {
+            border-radius: 8px 8px 0 0;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        [data-baseweb="tab"]:hover {
+            background-color: #F0F7F2;
+        }
+        
+        /* Form Inputs Polish */
+        .stTextInput>div>div>input, .stSelectbox>div>div>div, .stTextArea>div>div>textarea {
+            border-radius: 8px !important;
+            border: 1px solid #DDE7DF !important;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        .stTextInput>div>div>input:focus, .stSelectbox>div>div>div:focus-within, .stTextArea>div>div>textarea:focus {
+            border-color: #52B788 !important;
+            box-shadow: 0 0 0 2px rgba(82, 183, 136, 0.2) !important;
+        }
         </style>
     """, unsafe_allow_html=True)
+
