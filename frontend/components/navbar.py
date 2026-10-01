@@ -66,15 +66,15 @@ def render_navbar():
     # Render the navbar links horizontally
     cols = st.columns([1.5, 1.5, 1.5, 1.5, 1.5, 0.5, 2])
     with cols[0]:
-        st.page_link("Home.py", label=t("home.app_title"), icon="🌾")
+        st.page_link("Home.py", label=t("home.app_title"), icon=":material/grass:")
     with cols[1]:
-        st.page_link("pages/1_Decision_Making.py", label=t("pillar.decisions.title"), icon="🧠")
+        st.page_link("pages/1_Decision_Making.py", label=t("pillar.decisions.title"), icon=":material/psychology:")
     with cols[2]:
-        st.page_link("pages/2_Planification.py", label=t("pillar.planification.title"), icon="📅")
+        st.page_link("pages/2_Planification.py", label=t("pillar.planification.title"), icon=":material/calendar_month:")
     with cols[3]:
-        st.page_link("pages/3_Segmentation.py", label=t("pillar.segmentation.title"), icon="🗺️")
+        st.page_link("pages/3_Segmentation.py", label=t("pillar.segmentation.title"), icon=":material/map:")
     with cols[4]:
-        st.page_link("pages/4_Communication.py", label=t("pillar.communication.title"), icon="💬")
+        st.page_link("pages/4_Communication.py", label=t("pillar.communication.title"), icon=":material/forum:")
     
     with cols[6]:
         # Language selector inline in the navbar
