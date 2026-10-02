@@ -8,8 +8,12 @@ from components.icons import render_icon_title, render_icon_subheader
 from components.navbar import render_navbar
 from components.errors import render_error_page
 from components.animated_hero import render_react_hero
+import os
 
-st.set_page_config(page_title="agrimenya", page_icon="frontend/assets/logo.jpg", layout="wide")
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
+LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")
+
+st.set_page_config(page_title="agrimenya", page_icon=LOGO_PATH, layout="wide")
 setup_system_timezone()
 load_theme()
 render_navbar()

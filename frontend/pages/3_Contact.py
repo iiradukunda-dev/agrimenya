@@ -1,13 +1,15 @@
 import streamlit as st
-import requests
+import os
 from utils.theme import load_theme
 from utils.i18n import t
 from components.navbar import render_navbar
 from utils import api_client
 from components.icons import render_icon_title
-from components.errors import render_error_page
 
-st.set_page_config(page_title="Contact Us", page_icon="frontend/assets/logo.jpg", layout="wide")
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
+LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")
+
+st.set_page_config(page_title="Contact Us", page_icon=LOGO_PATH, layout="wide")
 load_theme()
 render_navbar()
 
@@ -40,12 +42,7 @@ def main():
                         st.success("Thank you for reaching out! We have received your message.")
                     else:
                         st.error("Failed to send message. Please try again.")
-                else:
                     st.error("Please fill out all required fields (Name, Email, Message).")
 
-try:
+if __name__ == "__main__":
     main()
-except requests.exceptions.RequestException as e:
-    render_error_page("network", str(e))
-except Exception as e:
-    render_error_page("system", str(e))

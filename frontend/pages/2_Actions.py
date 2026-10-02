@@ -1,16 +1,18 @@
 import streamlit as st
-import requests
+import os
 from utils.theme import load_theme
 from utils.i18n import t
 from components.navbar import render_navbar
-from components.errors import render_error_page
 
 from views.decision import render_decision_making
 from views.planification import render_planification
 from views.segmentation import render_segmentation
 from views.communication import render_communication
 
-st.set_page_config(page_title="Actions", page_icon="frontend/assets/logo.jpg", layout="wide")
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
+LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")
+
+st.set_page_config(page_title="Actions", page_icon=LOGO_PATH, layout="wide")
 load_theme()
 render_navbar()
 
@@ -36,9 +38,5 @@ def main():
     with tab4:
         render_communication()
 
-try:
+if __name__ == "__main__":
     main()
-except requests.exceptions.RequestException as e:
-    render_error_page("network", str(e))
-except Exception as e:
-    render_error_page("system", str(e))
