@@ -7,6 +7,8 @@ from utils.timezone import setup_system_timezone
 from components.icons import render_icon_title, render_icon_subheader
 from components.navbar import render_navbar
 from components.errors import render_error_page
+from components.animated_hero import render_react_hero
+
 st.set_page_config(page_title="agrimenya", page_icon="frontend/assets/logo.jpg", layout="wide")
 setup_system_timezone()
 load_theme()
@@ -16,6 +18,9 @@ def main():
     render_icon_title("assets/wheat.svg", t("home.app_title"), t("home.subtitle"))
     
     st.markdown(t("home.welcome"))
+    
+    # Render interactive React Hero with GSAP
+    render_react_hero()
 
     # High-level KPIs
     kpis = api_client.get_kpis()
