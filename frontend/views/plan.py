@@ -7,7 +7,7 @@ from components.icons import render_icon_title
 from components.errors import render_error_page
 from components.charts import AG_PLOTLY_LAYOUT
 
-def render_planification():
+def render_plan():
     try:
         render_icon_title("assets/calendar.svg", t("plan.header"), t("plan.subtitle"))
 

@@ -6,7 +6,7 @@ from components.badges import priority_badge
 from components.icons import render_icon_title, render_icon_subheader
 from components.errors import render_error_page
 
-def render_decision_making():
+def render_decide():
     try:
         render_icon_title("assets/brain.svg", t("decisions.header"), t("decisions.subtitle"))
 

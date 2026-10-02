@@ -8,7 +8,7 @@ from utils.mock_data import CROPS, SEASONS
 from components.icons import render_icon_title
 from components.errors import render_error_page
 
-def render_segmentation():
+def render_segment():
     try:
         render_icon_title("assets/map.svg", t("seg.header"), t("seg.subtitle"))
 

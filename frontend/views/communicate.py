@@ -6,7 +6,7 @@ from components.alerts import render_alert
 from components.icons import render_icon_title
 from components.errors import render_error_page
 
-def render_communication():
+def render_communicate():
     try:
         render_icon_title("assets/message.svg", t("comm.header"), t("comm.subtitle"))
 
