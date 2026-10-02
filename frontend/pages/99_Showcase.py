@@ -1,8 +1,8 @@
 import streamlit as st
-from utils.liquid_glass import inject_liquid_glass_css
+from utils.theme import load_theme
 
 st.set_page_config(page_title="Liquid Glass Showcase", layout="wide", initial_sidebar_state="expanded")
-inject_liquid_glass_css()
+load_theme()
 
 st.title("Liquid Glass UI Showcase")
 st.markdown("A demonstration of the new Apple-style Liquid Glass design system.")
