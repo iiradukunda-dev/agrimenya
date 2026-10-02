@@ -27,7 +27,7 @@ def main():
     - **Communication**: Real-time alerts and unified messaging to connect extension officers, cooperatives, and planners.
     """)
 
-    """)
+
 
 if __name__ == "__main__":
     main()
