@@ -1,8 +1,19 @@
+"""
+Animated hero component for the agrimenya landing page.
+
+Uses React 18 + GSAP to render an interactive 3D glass card hero section
+with climate-themed floating data particles.
+"""
 import streamlit.components.v1 as components
+
 
 def render_react_hero() -> None:
     """
-    Renders an interactive React + GSAP 3D Hero component in Streamlit.
+    Renders a premium interactive hero section with:
+    - 3D perspective glass card that tracks mouse movement
+    - Floating climate data particles (temperature, rain, soil icons)
+    - GSAP entrance animations
+    - Responsive design
     """
     html_code = """
     <!DOCTYPE html>
@@ -14,121 +25,251 @@ def render_react_hero() -> None:
         <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
         <style>
-            body { margin: 0; padding: 0; overflow: hidden; font-family: 'Space Grotesk', sans-serif; }
-            #root { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: transparent; }
-            .hero-container {
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap');
+
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                overflow: hidden;
+                background: transparent;
+            }
+
+            #root {
+                width: 100%;
+                min-height: 380px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+
+            .hero-scene {
+                width: 100%;
+                height: 380px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                perspective: 1200px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            /* Floating data particles */
+            .particle {
+                position: absolute;
+                font-size: 1.6rem;
+                opacity: 0;
+                pointer-events: none;
+                filter: blur(0.5px);
+            }
+
+            .hero-glass {
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.55) 0%,
+                    rgba(255, 255, 255, 0.15) 100%
+                );
+                backdrop-filter: blur(30px) saturate(180%);
+                -webkit-backdrop-filter: blur(30px) saturate(180%);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                border-radius: 28px;
+                padding: 48px 64px;
+                max-width: 620px;
+                width: 90%;
                 text-align: center;
-                perspective: 1000px;
-            }
-            .hero-card {
-                background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
-                backdrop-filter: blur(24px) saturate(180%);
-                -webkit-backdrop-filter: blur(24px) saturate(180%);
-                border: 1px solid rgba(255,255,255,0.4);
-                border-radius: 30px;
-                padding: 40px 60px;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6);
+                box-shadow:
+                    0 20px 60px rgba(0, 0, 0, 0.1),
+                    0 4px 16px rgba(0, 0, 0, 0.05),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
                 transform-style: preserve-3d;
-                cursor: pointer;
+                cursor: default;
+                position: relative;
+                z-index: 2;
             }
+
+            .hero-overline {
+                font-family: 'Inter', sans-serif;
+                font-size: 0.75rem;
+                font-weight: 600;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: #52B788;
+                margin-bottom: 12px;
+                transform: translateZ(20px);
+            }
+
             .hero-title {
-                font-size: 3rem;
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 2.6rem;
                 font-weight: 800;
-                margin: 0 0 10px 0;
-                background: linear-gradient(90deg, #1B2A1E, #2D6A4F);
+                line-height: 1.15;
+                margin-bottom: 14px;
+                background: linear-gradient(135deg, #1B3A2D 30%, #2D6A4F 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 transform: translateZ(50px);
             }
+
             .hero-subtitle {
-                font-size: 1.2rem;
-                color: #4A5D4E;
-                margin: 0 0 30px 0;
+                font-family: 'Inter', sans-serif;
+                font-size: 1.05rem;
+                color: #4B5563;
+                line-height: 1.6;
+                margin-bottom: 28px;
                 transform: translateZ(30px);
+                max-width: 460px;
+                margin-left: auto;
+                margin-right: auto;
             }
-            .hero-button {
-                background: linear-gradient(135deg, #52B788, #2D6A4F);
-                color: white;
-                border: none;
-                padding: 15px 35px;
-                font-size: 1.1rem;
-                font-weight: bold;
-                border-radius: 50px;
-                cursor: pointer;
-                transform: translateZ(40px);
-                box-shadow: 0 10px 20px rgba(82, 183, 136, 0.4);
-                transition: all 0.3s;
+
+            .hero-stats {
+                display: flex;
+                justify-content: center;
+                gap: 32px;
+                transform: translateZ(35px);
             }
-            .hero-button:hover {
-                box-shadow: 0 15px 30px rgba(82, 183, 136, 0.6);
+
+            .hero-stat {
+                text-align: center;
+            }
+
+            .hero-stat-value {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: #2D6A4F;
+            }
+
+            .hero-stat-label {
+                font-size: 0.72rem;
+                font-weight: 500;
+                color: #6B7280;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                margin-top: 2px;
             }
         </style>
     </head>
     <body>
         <div id="root"></div>
         <script type="text/babel">
-            const { useEffect, useRef, useState } = React;
+            const { useEffect, useRef } = React;
+
+            const particles = [
+                { emoji: '🌡️', x: '8%',  y: '15%', delay: 0 },
+                { emoji: '🌧️', x: '85%', y: '20%', delay: 0.3 },
+                { emoji: '🌾', x: '12%', y: '75%', delay: 0.6 },
+                { emoji: '🛰️', x: '88%', y: '70%', delay: 0.9 },
+                { emoji: '🌍', x: '50%', y: '8%',  delay: 1.2 },
+                { emoji: '💧', x: '75%', y: '85%', delay: 1.5 },
+                { emoji: '☀️', x: '20%', y: '40%', delay: 0.4 },
+                { emoji: '🌱', x: '80%', y: '45%', delay: 0.8 },
+            ];
 
             const Hero = () => {
                 const cardRef = useRef(null);
-                const containerRef = useRef(null);
+                const sceneRef = useRef(null);
+                const particleRefs = useRef([]);
 
                 useEffect(() => {
                     const card = cardRef.current;
-                    const container = containerRef.current;
-                    
-                    // Initial entrance animation with GSAP
-                    gsap.fromTo(card, 
-                        { opacity: 0, y: 100, rotationX: -15 }, 
-                        { opacity: 1, y: 0, rotationX: 0, duration: 1.5, ease: "power4.out" }
+                    const scene = sceneRef.current;
+
+                    // Entrance animation
+                    gsap.fromTo(card,
+                        { opacity: 0, y: 80, rotationX: -12, scale: 0.95 },
+                        { opacity: 1, y: 0, rotationX: 0, scale: 1, duration: 1.4, ease: "power4.out", delay: 0.2 }
                     );
 
-                    // 3D Hover Effect
+                    // Animate particles
+                    particleRefs.current.forEach((el, i) => {
+                        if (!el) return;
+                        gsap.fromTo(el,
+                            { opacity: 0, scale: 0.3, y: 20 },
+                            { opacity: 0.6, scale: 1, y: 0, duration: 1, ease: "back.out(2)", delay: 0.8 + particles[i].delay }
+                        );
+                        // Gentle float
+                        gsap.to(el, {
+                            y: `random(-15, 15)`,
+                            x: `random(-10, 10)`,
+                            duration: `random(3, 5)`,
+                            repeat: -1,
+                            yoyo: true,
+                            ease: "sine.inOut",
+                            delay: particles[i].delay
+                        });
+                    });
+
+                    // 3D mouse tracking
                     const handleMouseMove = (e) => {
-                        const rect = container.getBoundingClientRect();
+                        const rect = scene.getBoundingClientRect();
                         const x = e.clientX - rect.left;
                         const y = e.clientY - rect.top;
-                        
-                        const centerX = rect.width / 2;
-                        const centerY = rect.height / 2;
-                        
-                        const rotateX = ((y - centerY) / centerY) * -10;
-                        const rotateY = ((x - centerX) / centerX) * 10;
+                        const cx = rect.width / 2;
+                        const cy = rect.height / 2;
+                        const rotateX = ((y - cy) / cy) * -6;
+                        const rotateY = ((x - cx) / cx) * 6;
 
                         gsap.to(card, {
-                            rotateX: rotateX,
-                            rotateY: rotateY,
-                            duration: 0.5,
+                            rotateX, rotateY,
+                            duration: 0.6,
                             ease: "power2.out"
                         });
                     };
 
                     const handleMouseLeave = () => {
                         gsap.to(card, {
-                            rotateX: 0,
-                            rotateY: 0,
-                            duration: 1,
-                            ease: "elastic.out(1, 0.3)"
+                            rotateX: 0, rotateY: 0,
+                            duration: 1.2,
+                            ease: "elastic.out(1, 0.4)"
                         });
                     };
 
-                    container.addEventListener('mousemove', handleMouseMove);
-                    container.addEventListener('mouseleave', handleMouseLeave);
+                    scene.addEventListener('mousemove', handleMouseMove);
+                    scene.addEventListener('mouseleave', handleMouseLeave);
 
                     return () => {
-                        container.removeEventListener('mousemove', handleMouseMove);
-                        container.removeEventListener('mouseleave', handleMouseLeave);
+                        scene.removeEventListener('mousemove', handleMouseMove);
+                        scene.removeEventListener('mouseleave', handleMouseLeave);
                     };
                 }, []);
 
                 return (
-                    <div className="hero-container" ref={containerRef} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div className="hero-card" ref={cardRef}>
-                            <h1 className="hero-title">Welcome to Agrimenya</h1>
-                            <p className="hero-subtitle">Interactive React + GSAP Component in Streamlit</p>
-                            <button className="hero-button" onClick={() => alert('React Button Clicked!')}>
-                                Get Started
-                            </button>
+                    <div className="hero-scene" ref={sceneRef}>
+                        {particles.map((p, i) => (
+                            <div
+                                key={i}
+                                className="particle"
+                                ref={el => particleRefs.current[i] = el}
+                                style={{ left: p.x, top: p.y }}
+                            >
+                                {p.emoji}
+                            </div>
+                        ))}
+                        <div className="hero-glass" ref={cardRef}>
+                            <div className="hero-overline">Agriculture & Climate Intelligence</div>
+                            <h1 className="hero-title">
+                                Smarter decisions for<br/>Rwanda's agriculture
+                            </h1>
+                            <p className="hero-subtitle">
+                                AI-powered insights for crop planning, climate adaptation, and resource optimisation across every province.
+                            </p>
+                            <div className="hero-stats">
+                                <div className="hero-stat">
+                                    <div className="hero-stat-value">1.45M</div>
+                                    <div className="hero-stat-label">Farmers</div>
+                                </div>
+                                <div className="hero-stat">
+                                    <div className="hero-stat-value">3,400</div>
+                                    <div className="hero-stat-label">Cooperatives</div>
+                                </div>
+                                <div className="hero-stat">
+                                    <div className="hero-stat-value">30</div>
+                                    <div className="hero-stat-label">Districts</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 );
@@ -140,4 +281,4 @@ def render_react_hero() -> None:
     </body>
     </html>
     """
-    components.html(html_code, height=450)
+    components.html(html_code, height=400)
