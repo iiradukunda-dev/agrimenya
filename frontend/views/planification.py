@@ -5,6 +5,7 @@ from utils.i18n import t
 from utils import api_client
 from components.icons import render_icon_title
 from components.errors import render_error_page
+from components.charts import AG_PLOTLY_LAYOUT
 
 def render_planification():
     try:
@@ -64,6 +65,7 @@ def render_planification():
                 title=t("plan.chart_title")
             )
             fig.update_yaxes(autorange="reversed")
+            fig.update_layout(**AG_PLOTLY_LAYOUT)
             st.plotly_chart(fig, use_container_width=True)
             
             st.divider()
