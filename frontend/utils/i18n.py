@@ -42,21 +42,21 @@ TRANSLATIONS = {
         "home.pillars_title": "Core Pillars",
         
         # Pillars Cards
-        "pillar.segmentation.title": "Segmentation",
+        "pillar.segmentation.title": "Segment",
         "pillar.segmentation.desc": "Identify high-priority zones based on yield and risk data.",
-        "pillar.segmentation.btn": "Go to Segmentation",
+        "pillar.segmentation.btn": "Segment",
         
-        "pillar.decisions.title": "Decision Making",
+        "pillar.decisions.title": "Decide",
         "pillar.decisions.desc": "Review automated recommendations for timely interventions.",
-        "pillar.decisions.btn": "Go to Decisions",
+        "pillar.decisions.btn": "Decide",
         
-        "pillar.planification.title": "Planification",
+        "pillar.planification.title": "Plan",
         "pillar.planification.desc": "Plan and track agricultural roadmaps and execution.",
-        "pillar.planification.btn": "Go to Planification",
+        "pillar.planification.btn": "Plan",
         
-        "pillar.communication.title": "Communication",
+        "pillar.communication.title": "Communicate",
         "pillar.communication.desc": "Share alerts, plans, and coordinate with stakeholders.",
-        "pillar.communication.btn": "Go to Communication",
+        "pillar.communication.btn": "Communicate",
 
         # Decision Making Page
         "decisions.page_title": "Decision Making",
@@ -316,21 +316,21 @@ TRANSLATIONS = {
         "home.pillars_title": "Piliers Fondamentaux",
         
         # Pillars Cards
-        "pillar.segmentation.title": "Segmentation",
+        "pillar.segmentation.title": "Segmenter",
         "pillar.segmentation.desc": "Identifier les zones prioritaires selon les rendements et les risques.",
-        "pillar.segmentation.btn": "Aller à la Segmentation",
+        "pillar.segmentation.btn": "Segmenter",
         
-        "pillar.decisions.title": "Prise de Décision",
+        "pillar.decisions.title": "Décider",
         "pillar.decisions.desc": "Consulter les recommandations automatisées pour des interventions rapides.",
-        "pillar.decisions.btn": "Aller aux Décisions",
+        "pillar.decisions.btn": "Décider",
         
-        "pillar.planification.title": "Planification",
+        "pillar.planification.title": "Planifier",
         "pillar.planification.desc": "Planifier et suivre les feuilles de route et l'exécution agricole.",
-        "pillar.planification.btn": "Aller à la Planification",
+        "pillar.planification.btn": "Planifier",
         
-        "pillar.communication.title": "Communication",
+        "pillar.communication.title": "Communiquer",
         "pillar.communication.desc": "Diffuser des alertes, des plans et coordonner les parties prenantes.",
-        "pillar.communication.btn": "Aller à la Communication",
+        "pillar.communication.btn": "Communiquer",
 
         # Decision Making Page
         "decisions.page_title": "Prise de Décision",

@@ -35,13 +35,13 @@ def main() -> None:
     c1, c2, c3, c4 = st.columns(4)
 
     pillar_data = [
-        (c1, "🧠", "Decision Making",
+        (c1, "🧠", "Decide",
          "AI-powered recommendations for interventions based on priority levels and historical data."),
-        (c2, "📅", "Planification",
+        (c2, "📅", "Plan",
          "Interactive roadmaps to track seasonal tasks and ensure timely execution of activities."),
-        (c3, "🗺️", "Segmentation",
+        (c3, "🗺️", "Segment",
          "Geographic insights and yield mapping to identify high-potential areas and allocate resources."),
-        (c4, "📡", "Communication",
+        (c4, "📡", "Communicate",
          "Real-time alerts and unified messaging to connect extension officers, cooperatives, and planners."),
     ]
 
