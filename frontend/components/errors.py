@@ -16,12 +16,10 @@ def render_error_page(error_type: str, details: str = None):
     # Try to use a warning icon if available, otherwise just SVG
     import os
     icon_html = ""
-    icon_path = "assets/alert.svg"
     
-    if not os.path.exists(icon_path):
-        alt_path = os.path.join('frontend', icon_path)
-        if os.path.exists(alt_path):
-            icon_path = alt_path
+    # Properly resolve the assets path based on the current file location
+    ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
+    icon_path = os.path.join(ASSETS_DIR, "alert.svg")
             
     if os.path.exists(icon_path):
         try:
