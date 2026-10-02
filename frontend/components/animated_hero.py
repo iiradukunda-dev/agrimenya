@@ -1,6 +1,9 @@
 import streamlit.components.v1 as components
 
-def render_react_hero():
+def render_react_hero() -> None:
+    """
+    Renders an interactive React + GSAP 3D Hero component in Streamlit.
+    """
     html_code = """
     <!DOCTYPE html>
     <html>
