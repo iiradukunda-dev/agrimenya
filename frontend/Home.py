@@ -7,7 +7,7 @@ from utils.timezone import setup_system_timezone
 from components.icons import render_icon_title, render_icon_subheader
 from components.navbar import render_navbar
 from components.errors import render_error_page
-st.set_page_config(page_title="Agri-Menya", page_icon="frontend/assets/logo.jpg", layout="wide")
+st.set_page_config(page_title="agrimenya", page_icon="frontend/assets/logo.jpg", layout="wide")
 setup_system_timezone()
 load_theme()
 render_navbar()
@@ -44,7 +44,7 @@ def main():
             with open(icon, "r", encoding="utf-8") as f:
                 svg_content = f.read()
             
-            st.markdown(
+            st.html(
                 f"""
 <div class="custom-card">
     <div style="width: 44px; height: 44px; border-radius: 10px; background-color: #E8F5E9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
@@ -56,10 +56,9 @@ def main():
     <div class="custom-card-desc">{desc}</div>
 </div>
 <br/>
-                """,
-                unsafe_allow_html=True
+                """
             )
-            if st.button(btn_text, use_container_width=True, key=f"btn_{page_route}"):
+            if st.button(btn_text, key=f"btn_{page_route}"):
                 st.switch_page(page_route)
 
     pillar_card(

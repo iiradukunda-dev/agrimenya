@@ -1,6 +1,6 @@
 {
-  "name": "Agri-Menya",
-  "short_name": "Agri-Menya",
+  "name": "agrimenya",
+  "short_name": "agrimenya",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FAFCFA",

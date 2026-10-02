@@ -12,7 +12,7 @@ load_theme()
 render_navbar()
 
 def main():
-    render_icon_title("assets/message.svg", "Contact Us", "Get in touch with the Agri-Menya support team")
+    render_icon_title("assets/message.svg", "Contact Us", "Get in touch with the agrimenya support team")
     
     col1, col2 = st.columns([1, 1])
     with col1:
