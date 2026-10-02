@@ -476,34 +476,33 @@ def render_language_selector(sidebar: bool = True) -> None:
         icon_html = ""
         if os.path.exists(globe_icon_path):
             b64 = get_base64_svg(globe_icon_path)
-            icon_html = f'<img src="data:image/svg+xml;base64,{b64}" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 6px;" />'
+            icon_html = f'<img src="data:image/svg+xml;base64,{b64}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; margin-top: 4px;" />'
 
-        if sidebar:
+        col1, col2 = st.columns([1, 4])
+        with col1:
             st.markdown(
                 f"""
-                <div style="display: flex; align-items: center; margin-bottom: 6px; margin-top: 4px;">
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
                     {icon_html}
-                    <span style="font-size: 0.85rem; font-weight: 600; color: #52B788; text-transform: uppercase; letter-spacing: 0.5px;">
-                        {t('common.language')}
-                    </span>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
+        
+        with col2:
+            def _on_lang_change():
+                chosen_label = st.session_state.get("_app_language_select")
+                new_code = reverse_map.get(chosen_label, "en")
+                st.session_state["language"] = new_code
 
-        def _on_lang_change():
-            chosen_label = st.session_state.get("_app_language_select")
-            new_code = reverse_map.get(chosen_label, "en")
-            st.session_state["language"] = new_code
-
-        st.selectbox(
-            label="Language Selection",
-            options=list(LANGUAGES.values()),
-            index=current_idx,
-            key="_app_language_select",
-            on_change=_on_lang_change,
-            label_visibility="collapsed"
-        )
+            st.selectbox(
+                label="Language Selection",
+                options=list(LANGUAGES.values()),
+                index=current_idx,
+                key="_app_language_select",
+                on_change=_on_lang_change,
+                label_visibility="collapsed"
+            )
         
         if sidebar:
             st.markdown("<div style='margin-bottom: 16px; border-bottom: 1px solid #E2EAE3;'></div>", unsafe_allow_html=True)
