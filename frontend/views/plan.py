@@ -81,6 +81,10 @@ def render_plan():
         if st.button(t("plan.save_btn"), type="primary"):
             st.success(f"{t('plan.header')} - {selected_zone_label} ({selected_season_label})")
     except requests.exceptions.RequestException as e:
+        import logging
+        logging.getLogger(__name__).error(f"Network error in plan.py: {e}")
         render_error_page("network", str(e))
     except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Unexpected error in plan.py: {e}", exc_info=True)
         render_error_page("system", str(e))

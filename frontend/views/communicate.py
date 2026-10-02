@@ -47,6 +47,10 @@ def render_communicate():
                     else:
                         st.error(t("comm.error_empty"))
     except requests.exceptions.RequestException as e:
+        import logging
+        logging.getLogger(__name__).error(f"Network error in communicate.py: {e}")
         render_error_page("network", str(e))
     except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Unexpected error in communicate.py: {e}", exc_info=True)
         render_error_page("system", str(e))

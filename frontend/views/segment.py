@@ -55,6 +55,10 @@ def render_segment():
                 else:
                     st.dataframe(filtered_df, use_container_width=True, hide_index=True)
     except requests.exceptions.RequestException as e:
+        import logging
+        logging.getLogger(__name__).error(f"Network error in segment.py: {e}")
         render_error_page("network", str(e))
     except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Unexpected error in segment.py: {e}", exc_info=True)
         render_error_page("system", str(e))

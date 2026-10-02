@@ -42,10 +42,12 @@ agrimenya is organized around four core capabilities that communicate seamlessly
 
 - **Priority Ranking:** Automatic classification of agricultural areas so you know what's urgent.
 - **AI-Powered Insights:** A conversational AI assistant ready to offer contextual recommendations and answer data-driven questions.
-- **Yield & Impact Predictions:** Reliable forecasts powered by XGBoost ML models.
+- **Yield & Impact Predictions:** Reliable forecasts powered by XGBoost ML models and caching via FastAPI lifespan events.
 - **Resource Estimation:** Forecasting needs for seeds, irrigation, and related inputs.
 - **Interactive Zoning:** Beautiful interactive maps (powered by Folium and CartoDB) that zone areas based on climate and productivity.
 - **Unified Alerting:** Real-time alerts and cross-team communication tools.
+- **Seamless Internationalization (i18n):** Native multi-language support (English, Kinyarwanda, French) powered by a robust GNU `gettext` architecture, dynamically managed via `st.session_state`.
+- **Liquid Glass Design System:** A premium, immersive UI featuring refractive translucency, micro-animations, and a nature-forward color palette for a frictionless user experience.
 
 ---
 
@@ -77,20 +79,23 @@ agrimenya uses a modern, scalable microservices architecture orchestrated via Do
 │  Streamlit + React      │──────▶│   FastAPI (Python)     │──────▶│     PostgreSQL      │
 │  Folium + Plotly        │◀──────│                        │◀──────│     (Supabase)      │
 └─────────────────────────┘       └────────────────────────┘       └─────────────────────┘
-                                             │
-                                             ▼
-                                  ┌────────────────────────┐
-                                  │    Machine Learning    │
-                                  │ scikit-learn + XGBoost │
-                                  └────────────────────────┘
+             │                               │
+             ▼                               ▼
+┌─────────────────────────┐       ┌────────────────────────┐
+│ GNU gettext (i18n)      │       │    Machine Learning    │
+│ English / Kinyarwanda   │       │ scikit-learn + XGBoost │
+└─────────────────────────┘       └────────────────────────┘
 ```
 
 ### The Stack
 - **Frontend:** Streamlit, React (custom components), Folium, Plotly, GSAP
-- **Backend:** FastAPI, Uvicorn
+- **Design System:** Liquid Glass (Custom CSS, refractive frosted UI)
+- **Localization:** Python `gettext` with `.mo` binary catalogs
+- **Backend:** FastAPI, Uvicorn (optimized with asynchronous model caching)
 - **Database:** PostgreSQL (via Supabase)
 - **Machine Learning:** scikit-learn, XGBoost
 - **Infrastructure:** Docker, Docker Compose
+- **Code Quality:** Strictly enforced via `ruff` and typed Python 3.12+
 
 ---
 

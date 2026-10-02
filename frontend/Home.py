@@ -40,36 +40,7 @@ def main():
     render_icon_subheader("assets/compass.svg", t("home.pillars_title"))
     c1, c2, c3, c4 = st.columns(4)
 
-    def pillar_card(col, icon, title, desc, btn_text, page_route):
-        with col:
-            import os
-            icon_path = icon
-            if icon_path.startswith("assets/") or icon_path.startswith("assets\\"):
-                assets_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
-                icon_path = os.path.join(assets_dir, os.path.basename(icon_path))
-
-            try:
-                with open(icon_path, "r", encoding="utf-8") as f:
-                    svg_content = f.read()
-            except FileNotFoundError:
-                svg_content = ""
-
-            st.html(
-                f"""
-<div class="ag-card">
-    <div class="ag-card-icon">
-        <div style="width: 26px; height: 26px; color: #40916C; display: flex; align-items: center; justify-content: center;">
-            {svg_content}
-        </div>
-    </div>
-    <div class="ag-card-title">{title}</div>
-    <div class="ag-card-desc">{desc}</div>
-</div>
-<br/>
-                """
-            )
-            if st.button(btn_text, key=f"btn_{page_route}"):
-                st.switch_page(page_route)
+    from components.cards import pillar_card
 
     pillar_card(
         c1, 
@@ -107,9 +78,14 @@ def main():
     st.divider()
     st.caption(t("common.built_for"))
 
-try:
-    main()
-except requests.exceptions.RequestException as e:
-    render_error_page("network", str(e))
-except Exception as e:
-    render_error_page("system", str(e))
+if __name__ == "__main__":
+    try:
+        main()
+    except requests.exceptions.RequestException as e:
+        import logging
+        logging.getLogger(__name__).error(f"Network error in Home.py: {e}")
+        render_error_page("network", str(e))
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Unexpected error in Home.py: {e}", exc_info=True)
+        render_error_page("system", str(e))
