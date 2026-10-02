@@ -70,12 +70,12 @@ def render_react_hero() -> None:
                     rgba(255, 255, 255, 0.55) 0%,
                     rgba(255, 255, 255, 0.15) 100%
                 );
-                backdrop-filter: blur(30px) saturate(180%);
-                -webkit-backdrop-filter: blur(30px) saturate(180%);
+                backdrop-filter: blur(40px) saturate(200%);
+                -webkit-backdrop-filter: blur(40px) saturate(200%);
                 border: 1px solid rgba(255, 255, 255, 0.5);
-                border-radius: 28px;
-                padding: 48px 64px;
-                max-width: 620px;
+                border-radius: 32px;
+                padding: 56px 64px;
+                max-width: 720px;
                 width: 90%;
                 text-align: center;
                 box-shadow:
@@ -87,25 +87,31 @@ def render_react_hero() -> None:
                 cursor: default;
                 position: relative;
                 z-index: 2;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
-            .hero-overline {
-                font-family: 'Inter', sans-serif;
-                font-size: 0.75rem;
-                font-weight: 600;
-                letter-spacing: 0.12em;
-                text-transform: uppercase;
-                color: #52B788;
-                margin-bottom: 12px;
-                transform: translateZ(20px);
+            .hero-icon-container {
+                width: 72px;
+                height: 72px;
+                background: rgba(255, 255, 255, 0.8);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 24px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+                transform: translateZ(40px);
+                border: 1px solid rgba(255, 255, 255, 1);
             }
 
             .hero-title {
                 font-family: 'Space Grotesk', sans-serif;
-                font-size: 2.6rem;
+                font-size: 3rem;
                 font-weight: 800;
                 line-height: 1.15;
-                margin-bottom: 14px;
+                margin-bottom: 12px;
                 background: linear-gradient(135deg, #1B3A2D 30%, #2D6A4F 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -113,42 +119,40 @@ def render_react_hero() -> None:
             }
 
             .hero-subtitle {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 1.4rem;
+                font-weight: 600;
+                color: #2D6A4F;
+                line-height: 1.4;
+                margin-bottom: 24px;
+                transform: translateZ(35px);
+            }
+
+            .hero-text {
                 font-family: 'Inter', sans-serif;
                 font-size: 1.05rem;
                 color: #4B5563;
                 line-height: 1.6;
-                margin-bottom: 28px;
-                transform: translateZ(30px);
-                max-width: 460px;
-                margin-left: auto;
-                margin-right: auto;
+                transform: translateZ(25px);
+                max-width: 600px;
             }
 
-            .hero-stats {
-                display: flex;
-                justify-content: center;
-                gap: 32px;
-                transform: translateZ(35px);
-            }
-
-            .hero-stat {
-                text-align: center;
-            }
-
-            .hero-stat-value {
-                font-family: 'Space Grotesk', sans-serif;
-                font-size: 1.5rem;
-                font-weight: 800;
-                color: #2D6A4F;
-            }
-
-            .hero-stat-label {
-                font-size: 0.72rem;
-                font-weight: 500;
-                color: #6B7280;
+            .bottom-pill {
+                position: absolute;
+                bottom: 20px;
+                background: rgba(255, 255, 255, 0.4);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                padding: 10px 24px;
+                border-radius: 50px;
+                font-family: 'Inter', sans-serif;
+                font-size: 0.8rem;
+                font-weight: 600;
+                letter-spacing: 0.1em;
                 text-transform: uppercase;
-                letter-spacing: 0.06em;
-                margin-top: 2px;
+                color: #1B3A2D;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                z-index: 3;
             }
         </style>
     </head>
@@ -158,29 +162,36 @@ def render_react_hero() -> None:
             const { useEffect, useRef } = React;
 
             const particles = [
-                { emoji: '🌡️', x: '8%',  y: '15%', delay: 0 },
-                { emoji: '🌧️', x: '85%', y: '20%', delay: 0.3 },
-                { emoji: '🌾', x: '12%', y: '75%', delay: 0.6 },
-                { emoji: '🛰️', x: '88%', y: '70%', delay: 0.9 },
-                { emoji: '🌍', x: '50%', y: '8%',  delay: 1.2 },
-                { emoji: '💧', x: '75%', y: '85%', delay: 1.5 },
-                { emoji: '☀️', x: '20%', y: '40%', delay: 0.4 },
-                { emoji: '🌱', x: '80%', y: '45%', delay: 0.8 },
+                { emoji: '🍃', x: '8%',  y: '15%', delay: 0 },
+                { emoji: '🌿', x: '85%', y: '20%', delay: 0.3 },
+                { emoji: '🌱', x: '12%', y: '75%', delay: 0.6 },
+                { emoji: '🌾', x: '88%', y: '70%', delay: 0.9 },
+                { emoji: '🍃', x: '50%', y: '8%',  delay: 1.2 },
+                { emoji: '🌿', x: '75%', y: '85%', delay: 1.5 },
+                { emoji: '🌱', x: '20%', y: '40%', delay: 0.4 },
+                { emoji: '🌾', x: '80%', y: '45%', delay: 0.8 },
             ];
 
             const Hero = () => {
                 const cardRef = useRef(null);
                 const sceneRef = useRef(null);
+                const pillRef = useRef(null);
                 const particleRefs = useRef([]);
 
                 useEffect(() => {
                     const card = cardRef.current;
                     const scene = sceneRef.current;
+                    const pill = pillRef.current;
 
                     // Entrance animation
                     gsap.fromTo(card,
                         { opacity: 0, y: 80, rotationX: -12, scale: 0.95 },
                         { opacity: 1, y: 0, rotationX: 0, scale: 1, duration: 1.4, ease: "power4.out", delay: 0.2 }
+                    );
+
+                    gsap.fromTo(pill,
+                        { opacity: 0, y: 20 },
+                        { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 1 }
                     );
 
                     // Animate particles
@@ -237,39 +248,33 @@ def render_react_hero() -> None:
                 }, []);
 
                 return (
-                    <div className="hero-scene" ref={sceneRef}>
+                    <div className="hero-scene" ref={sceneRef} style={{ height: '500px' }}>
                         {particles.map((p, i) => (
                             <div
                                 key={i}
                                 className="particle"
                                 ref={el => particleRefs.current[i] = el}
-                                style={{ left: p.x, top: p.y }}
+                                style={{ left: p.x, top: p.y, fontSize: '2rem' }}
                             >
                                 {p.emoji}
                             </div>
                         ))}
                         <div className="hero-glass" ref={cardRef}>
-                            <div className="hero-overline">Agriculture & Climate Intelligence</div>
-                            <h1 className="hero-title">
-                                Smarter decisions for<br/>Rwanda's agriculture
-                            </h1>
-                            <p className="hero-subtitle">
-                                AI-powered insights for crop planning, climate adaptation, and resource optimisation across every province.
-                            </p>
-                            <div className="hero-stats">
-                                <div className="hero-stat">
-                                    <div className="hero-stat-value">1.45M</div>
-                                    <div className="hero-stat-label">Farmers</div>
-                                </div>
-                                <div className="hero-stat">
-                                    <div className="hero-stat-value">3,400</div>
-                                    <div className="hero-stat-label">Cooperatives</div>
-                                </div>
-                                <div className="hero-stat">
-                                    <div className="hero-stat-value">30</div>
-                                    <div className="hero-stat-label">Districts</div>
-                                </div>
+                            <div className="hero-icon-container">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M12 2v20M12 12c-3-3-6-3-6-3s3 0 6 3c3-3 6-3 6-3s-3 0-6 3M12 6c-3-3-6-3-6-3s3 0 6 3c3-3 6-3 6-3s-3 0-6 3"/>
+                                </svg>
                             </div>
+                            <h1 className="hero-title">agrimenya</h1>
+                            <div className="hero-subtitle">
+                                Decision and Planning Support System<br/>for Agricultural Productivity
+                            </div>
+                            <p className="hero-text">
+                                A powerful platform designed to empower agricultural planners and decision-makers in Rwanda. Leveraging data from the Seasonal Agricultural Survey (SAS), Agricultural Household Survey (AHS), and EICV7, agrimenya provides actionable insights to improve crop yields, enhance climate resilience, and optimize resource allocation.
+                            </p>
+                        </div>
+                        <div className="bottom-pill" ref={pillRef}>
+                            AGRICULTURE & CLIMATE INTELLIGENCE
                         </div>
                     </div>
                 );
@@ -281,4 +286,4 @@ def render_react_hero() -> None:
     </body>
     </html>
     """
-    components.html(html_code, height=400)
+    components.html(html_code, height=520)

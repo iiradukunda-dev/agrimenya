@@ -23,6 +23,24 @@ def render_navbar() -> None:
 
         .block-container {
             padding-top: 1.5rem !important;
+            padding-bottom: 2rem !important;
+        }
+
+        /* Turn the horizontal column container into a floating glass pill */
+        [data-testid="stHorizontalBlock"] {
+            background: rgba(255, 255, 255, 0.35) !important;
+            backdrop-filter: blur(24px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.45) !important;
+            border-radius: 50px !important;
+            padding: 8px 32px !important;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+            align-items: center !important;
+            margin: 0 auto 2rem auto !important;
+            max-width: 1000px !important;
+            gap: 0 !important;
         }
         </style>
     """, unsafe_allow_html=True)

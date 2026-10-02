@@ -153,26 +153,19 @@ def load_theme() -> None:
         inset: 0;
         z-index: -1;
         overflow: hidden;
-        background: linear-gradient(160deg, #F0F7F2 0%, #EDF5ED 40%, #F5F0E8 100%);
+        background-image: url('https://images.unsplash.com/photo-1592982537447-6f233c46e395?q=80&w=2560&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
     }
-    .ag-orb {
+    
+    /* Overlay to ensure text readability if needed */
+    .ag-ambient::after {
+        content: '';
         position: absolute;
-        border-radius: 50%;
-        filter: blur(100px);
-        opacity: 0.45;
-        animation: orbFloat 30s infinite alternate ease-in-out;
-        will-change: transform;
-    }
-    .ag-orb-1 { width: 650px; height: 650px; background: var(--ag-forest-400); top: -15%; left: -10%; }
-    .ag-orb-2 { width: 550px; height: 550px; background: var(--ag-earth-300);  bottom: -12%; right: -8%; animation-delay: -7s; }
-    .ag-orb-3 { width: 700px; height: 700px; background: var(--ag-forest-200); top: 35%; left: 45%; animation-delay: -14s; }
-    .ag-orb-4 { width: 400px; height: 400px; background: var(--ag-earth-400);  top: 10%; right: 20%; animation-delay: -20s; opacity: 0.25; }
-
-    @keyframes orbFloat {
-        0%   { transform: translate(0, 0) scale(1); }
-        33%  { transform: translate(60px, 30px) scale(1.08); }
-        66%  { transform: translate(-40px, 60px) scale(0.95); }
-        100% { transform: translate(30px, -20px) scale(1.03); }
+        inset: 0;
+        background: linear-gradient(135deg, rgba(27,58,45,0.1) 0%, rgba(27,58,45,0.3) 100%);
+        pointer-events: none;
     }
 
     /* ── Content Entrance Animation ───────────────────────────── */
@@ -558,31 +551,26 @@ def load_theme() -> None:
 
     /* ── Page Link Navbar Styling ──────────────────────────────── */
     div[data-testid="stPageLink-NavLink"] {
-        background: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(209, 213, 219, 0.4);
-        border-radius: var(--ag-radius-sm);
-        padding: 8px 14px;
+        background: transparent !important;
+        border: none !important;
+        border-radius: var(--ag-radius-pill);
+        padding: 6px 16px;
         transition: all 0.25s var(--ag-ease);
         text-align: center;
+        box-shadow: none !important;
     }
     div[data-testid="stPageLink-NavLink"]:hover {
-        background: var(--ag-forest-050);
-        border-color: var(--ag-forest-300);
+        background: rgba(255, 255, 255, 0.4) !important;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(82, 183, 136, 0.1);
     }
     div[data-testid="stPageLink-NavLink"][aria-current="page"],
     div[data-testid="stPageLink-NavLink"][data-active="true"] {
-        background: linear-gradient(135deg, var(--ag-forest-500), var(--ag-forest-700)) !important;
-        border-color: var(--ag-forest-500) !important;
-        box-shadow: 0 4px 14px rgba(82, 183, 136, 0.25);
+        background: rgba(255, 255, 255, 0.65) !important;
     }
-    div[data-testid="stPageLink-NavLink"][aria-current="page"] p,
-    div[data-testid="stPageLink-NavLink"][data-active="true"] p {
-        color: #ffffff !important;
+    div[data-testid="stPageLink-NavLink"] p {
         font-weight: 600;
+        color: var(--ag-forest-800) !important;
+        margin: 0 !important;
     }
 
     /* ── Plotly Chart Containers ───────────────────────────────── */
@@ -637,11 +625,7 @@ def load_theme() -> None:
 
     </style>
 
-    <!-- Ambient Background Orbs -->
+    <!-- Ambient Background -->
     <div class="ag-ambient">
-        <div class="ag-orb ag-orb-1"></div>
-        <div class="ag-orb ag-orb-2"></div>
-        <div class="ag-orb ag-orb-3"></div>
-        <div class="ag-orb ag-orb-4"></div>
     </div>
     """, unsafe_allow_javascript=True)

@@ -19,10 +19,6 @@ load_theme()
 render_navbar()
 
 def main():
-    render_icon_title("assets/wheat.svg", t("home.app_title"), t("home.subtitle"))
-    
-    st.markdown(t("home.welcome"))
-    
     # Render interactive React Hero with GSAP
     render_react_hero()
 
