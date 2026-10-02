@@ -1,9 +1,10 @@
 import uuid
 from unittest.mock import patch
 
+from fastapi.testclient import TestClient
+
 from app.main import app
 from app.services.resource_estimator import estimate_resources
-from fastapi.testclient import TestClient
 
 client = TestClient(app)
 

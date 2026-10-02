@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException
-
 from app.db import crud
-from app.ml.predict import get_yield_index
 from app.services.alignment_calculator import calculate_alignment_metrics
+from app.ml.predict import get_yield_index
 
 router = APIRouter(prefix="/alignment", tags=["National Alignment"])
 

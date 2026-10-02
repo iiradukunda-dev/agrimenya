@@ -1,16 +1,16 @@
+from pydantic import BaseModel, Field
+from typing import Optional
 from uuid import UUID
-
-from pydantic import BaseModel
 
 
 class ZoneCreate(BaseModel):
     district: str
-    sector: str | None = None
-    cell: str | None = None
+    sector: Optional[str] = None
+    cell: Optional[str] = None
     latitude: float
     longitude: float
-    crop_type: str | None = None
-    season: str | None = None
+    crop_type: Optional[str] = None
+    season: Optional[str] = None
 
 
 class Zone(ZoneCreate):
@@ -21,12 +21,12 @@ class AgriMetricCreate(BaseModel):
     zone_id: UUID
     season: str
     crop: str = "All crops"
-    yield_actual: float | None = None
-    production_mt: float | None = None
-    rainfall_mm: float | None = None
-    soil_type: str | None = None
-    area_cultivated: float | None = None
-    household_size: float | None = None
+    yield_actual: Optional[float] = None
+    production_mt: Optional[float] = None
+    rainfall_mm: Optional[float] = None
+    soil_type: Optional[str] = None
+    area_cultivated: Optional[float] = None
+    household_size: Optional[float] = None
 
 
 class AgriMetric(AgriMetricCreate):

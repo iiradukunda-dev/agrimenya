@@ -1,6 +1,6 @@
+from pathlib import Path
 import csv
 import sys
-from pathlib import Path
 
 # Project layout: this script lives in backend/scripts
 project_root = Path(__file__).resolve().parents[1]

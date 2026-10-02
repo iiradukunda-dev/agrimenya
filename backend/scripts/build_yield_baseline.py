@@ -9,11 +9,11 @@ Usage:
     cd backend
     python -m scripts.build_yield_baseline [path/to/agri_menya_real_data.csv]
 """
-import csv
+from pathlib import Path
+import sys
 import json
 import statistics
-import sys
-from pathlib import Path
+import csv
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_CSV = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "data" / "agri_menya_real_data.csv"
@@ -40,7 +40,6 @@ with open(DATA_CSV, newline='', encoding='utf-8') as f:
 
 # collect
 from collections import defaultdict
-
 by_district_crop = defaultdict(list)
 by_crop = defaultdict(list)
 all_vals = []

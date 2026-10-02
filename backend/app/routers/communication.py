@@ -1,7 +1,6 @@
 from fastapi import APIRouter
-
-from app.db import crud
 from app.models.alert import AlertCreate
+from app.db import crud
 
 router = APIRouter(prefix="/communication", tags=["Communication"])
 

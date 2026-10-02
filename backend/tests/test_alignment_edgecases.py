@@ -1,8 +1,8 @@
 from app.services.alignment_calculator import (
-    calculate_alignment_metrics,
-    calculate_climate_risk,
     calculate_credit_insurance_score,
+    calculate_climate_risk,
     calculate_export_readiness,
+    calculate_alignment_metrics,
 )
 
 

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
-
-from app.db import crud
 from app.models.zone import ZoneCreate
+from app.db import crud
 
 router = APIRouter(prefix="/segmentation", tags=["Segmentation"])
 

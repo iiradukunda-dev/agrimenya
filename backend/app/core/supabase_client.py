@@ -3,9 +3,7 @@ Single shared Supabase client. Import `get_supabase()` wherever you need
 to query the database instead of creating new clients everywhere.
 """
 from functools import lru_cache
-
-from supabase import Client, create_client
-
+from supabase import create_client, Client
 from app.core.config import settings
 
 

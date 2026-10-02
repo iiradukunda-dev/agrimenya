@@ -1,8 +1,10 @@
 import uuid
 from unittest.mock import patch
 
-from app.main import app
 from fastapi.testclient import TestClient
+
+from app.main import app
+from app.models.alert import Severity
 
 client = TestClient(app)
 
