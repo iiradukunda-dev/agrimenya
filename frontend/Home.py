@@ -46,23 +46,27 @@ def main():
     def pillar_card(col, icon, title, desc, btn_text, page_route):
         with col:
             import os
-            if not os.path.exists(icon):
-                alt_icon = os.path.join("frontend", icon)
-                if os.path.exists(alt_icon):
-                    icon = alt_icon
-            with open(icon, "r", encoding="utf-8") as f:
-                svg_content = f.read()
-            
+            icon_path = icon
+            if icon_path.startswith("assets/") or icon_path.startswith("assets\\"):
+                assets_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
+                icon_path = os.path.join(assets_dir, os.path.basename(icon_path))
+
+            try:
+                with open(icon_path, "r", encoding="utf-8") as f:
+                    svg_content = f.read()
+            except FileNotFoundError:
+                svg_content = ""
+
             st.html(
                 f"""
-<div class="custom-card">
-    <div style="width: 44px; height: 44px; border-radius: 10px; background-color: #E8F5E9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-        <div style="width: 24px; height: 24px; color: #52B788; display: flex; align-items: center; justify-content: center;">
+<div class="ag-card">
+    <div class="ag-card-icon">
+        <div style="width: 26px; height: 26px; color: #40916C; display: flex; align-items: center; justify-content: center;">
             {svg_content}
         </div>
     </div>
-    <div class="custom-card-title">{title}</div>
-    <div class="custom-card-desc">{desc}</div>
+    <div class="ag-card-title">{title}</div>
+    <div class="ag-card-desc">{desc}</div>
 </div>
 <br/>
                 """
