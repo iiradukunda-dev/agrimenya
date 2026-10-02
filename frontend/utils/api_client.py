@@ -3,10 +3,21 @@ import streamlit as st
 from requests.exceptions import RequestException
 import logging
 import pandas as pd
+from typing import Dict, List, Any, Optional, Union
 from .config import API_BASE_URL, USE_MOCK_DATA
 from . import mock_data
 
-def _get_api(path: str, timeout=10):
+def _get_api(path: str, timeout: int = 10) -> Optional[Union[Dict[str, Any], List[Any]]]:
+    """
+    Internal helper to fetch data from the FastAPI backend.
+    
+    Args:
+        path (str): The API endpoint path (e.g., '/health').
+        timeout (int): Request timeout in seconds.
+        
+    Returns:
+        Optional[Union[Dict, List]]: The JSON response if successful, None otherwise.
+    """
     url = f"{API_BASE_URL}{path}"
     try:
         resp = requests.get(url, timeout=timeout)
@@ -17,7 +28,13 @@ def _get_api(path: str, timeout=10):
         return None
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_kpis():
+def get_kpis() -> Dict[str, Any]:
+    """
+    Fetches high-level Key Performance Indicators (KPIs) for the dashboard.
+    
+    Returns:
+        Dict[str, Any]: A dictionary containing total_farmers, yield_increase, and active_cooperatives.
+    """
     if USE_MOCK_DATA:
         return {"total_farmers": 1450000, "yield_increase": "12%", "active_cooperatives": 3400}
     
@@ -33,7 +50,13 @@ def get_kpis():
     return {"total_farmers": 1450000, "yield_increase": "12%", "active_cooperatives": 3400}
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_priority_data():
+def get_priority_data() -> pd.DataFrame:
+    """
+    Fetches segmentation map data for prioritizing agricultural zones.
+    
+    Returns:
+        pd.DataFrame: DataFrame containing Lat, Lon, Priority, Yield_MT_ha, District, and Crop columns.
+    """
     if USE_MOCK_DATA:
         return mock_data.generate_mock_priority_data()
         
@@ -55,7 +78,13 @@ def get_priority_data():
     return mock_data.generate_mock_priority_data()
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_recommendations():
+def get_recommendations() -> List[Dict[str, Any]]:
+    """
+    Fetches decision-making recommendations based on priority rankings.
+    
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries containing area, crop, priority, text, and status.
+    """
     if USE_MOCK_DATA:
         return mock_data.generate_mock_recommendations()
         
@@ -87,7 +116,13 @@ def get_recommendations():
     return mock_data.generate_mock_recommendations()
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_roadmap():
+def get_roadmap() -> pd.DataFrame:
+    """
+    Fetches the seasonal planification roadmap.
+    
+    Returns:
+        pd.DataFrame: A DataFrame containing Task, Start, End, and Phase columns.
+    """
     if USE_MOCK_DATA:
         return mock_data.generate_mock_roadmap()
     
@@ -113,7 +148,13 @@ def get_roadmap():
     return mock_data.generate_mock_roadmap()
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_alerts():
+def get_alerts() -> List[Dict[str, str]]:
+    """
+    Fetches recent communication alerts.
+    
+    Returns:
+        List[Dict[str, str]]: A list of dictionaries representing alert objects.
+    """
     if USE_MOCK_DATA:
         return mock_data.generate_mock_alerts()
         
@@ -131,7 +172,18 @@ def get_alerts():
         
     return mock_data.generate_mock_alerts()
 
-def send_alert(message: str, target_group: str, is_urgent: bool):
+def send_alert(message: str, target_group: str, is_urgent: bool) -> bool:
+    """
+    Sends a new communication alert to the backend.
+    
+    Args:
+        message (str): The alert content.
+        target_group (str): The intended recipient group.
+        is_urgent (bool): Whether the alert is urgent.
+        
+    Returns:
+        bool: True if successfully sent, False otherwise.
+    """
     if USE_MOCK_DATA:
         return True
     
@@ -151,7 +203,19 @@ def send_alert(message: str, target_group: str, is_urgent: bool):
         logging.error(f"Error sending alert to {url}: {e}")
         return False
 
-def send_contact_message(name: str, email: str, subject: str, message: str):
+def send_contact_message(name: str, email: str, subject: str, message: str) -> bool:
+    """
+    Simulates sending a contact message from the frontend.
+    
+    Args:
+        name (str): Sender's name.
+        email (str): Sender's email.
+        subject (str): Subject line.
+        message (str): Message content.
+        
+    Returns:
+        bool: True if successfully simulated.
+    """
     # Simulate a backend request for contact since the backend doesn't have a contact endpoint
     # In a real fullstack app, this would POST to /contact
     payload = {
