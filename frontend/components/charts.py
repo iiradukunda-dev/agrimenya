@@ -4,10 +4,8 @@ Chart components for the Segmentation pillar.
 Uses Plotly Express with the agrimenya color palette.
 """
 import plotly.express as px
-import plotly.graph_objects as go
 import streamlit as st
 from utils.i18n import t
-
 
 # Shared Plotly layout settings matching the agrimenya design system
 AG_PLOTLY_LAYOUT = dict(

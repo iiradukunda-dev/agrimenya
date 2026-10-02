@@ -15,12 +15,10 @@ Run `python -m app.ml.train_yield_model` to generate tiers 1 and 2 from
 real data; without that, everything still works via tier 3.
 """
 import json
-import pickle
 import logging
+import pickle
 import time
 from pathlib import Path
-from statistics import mean
-from typing import List
 
 ARTIFACTS_DIR = Path(__file__).parent / "artifacts"
 YIELD_MODEL_PATH = ARTIFACTS_DIR / "yield_model.pkl"
@@ -106,7 +104,7 @@ def _estimate_yield_per_ha(district: str | None, crop: str, season: str | None,
     return FLAT_FALLBACK_YIELD_PER_HA, 0.3, FALLBACK_MODEL_VERSION
 
 
-def known_crops() -> List[str]:
+def known_crops() -> list[str]:
     """Return the list of crops the baseline/model knows about."""
     crops = set()
     if _baselines:
@@ -148,13 +146,13 @@ def get_yield_per_hectare(district: str | None, crop: str) -> float:
     return FLAT_FALLBACK_YIELD_PER_HA
 
 
-def _values_for_crop_across_districts(crop: str) -> List[float]:
+def _values_for_crop_across_districts(crop: str) -> list[float]:
     d = _baselines.get("district_crop_averages", {})
     vals = [v for k, v in d.items() if k.endswith(f"|{crop}")]
     return sorted(vals)
 
 
-def _percentile_from_sorted(sorted_vals: List[float], p: float) -> float | None:
+def _percentile_from_sorted(sorted_vals: list[float], p: float) -> float | None:
     if not sorted_vals:
         return None
     # p in [0,100]

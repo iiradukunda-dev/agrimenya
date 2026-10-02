@@ -1,13 +1,13 @@
-import streamlit as st
 import os
-from utils.theme import load_theme
-from utils.i18n import t
-from components.navbar import render_navbar
 
+import streamlit as st
+from components.navbar import render_navbar
+from utils.i18n import t
+from utils.theme import load_theme
+from views.communicate import render_communicate
 from views.decide import render_decide
 from views.plan import render_plan
 from views.segment import render_segment
-from views.communicate import render_communicate
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
 LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")

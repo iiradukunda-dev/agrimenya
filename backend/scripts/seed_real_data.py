@@ -20,7 +20,6 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-
 from app.db import crud
 from app.db.rwanda_districts import DISTRICT_LOOKUP
 

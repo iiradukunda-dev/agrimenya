@@ -1,10 +1,11 @@
-import streamlit as st
 import requests
-from utils.i18n import t
-from utils import api_client
+import streamlit as st
 from components.alerts import render_alert
-from components.icons import render_icon_title
 from components.errors import render_error_page
+from components.icons import render_icon_title
+from utils import api_client
+from utils.i18n import t
+
 
 def render_communicate():
     try:

@@ -1,5 +1,6 @@
-import pandas as pd
 import random
+
+import pandas as pd
 
 # Realistic mock data for Rwandan districts/sectors
 DISTRICTS = [

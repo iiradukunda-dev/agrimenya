@@ -1,20 +1,21 @@
-from pydantic import BaseModel
-from typing import Optional, Literal
+from typing import Literal
 from uuid import UUID
+
+from pydantic import BaseModel
 
 RiskLevel = Literal["Low", "Medium", "High"]
 
 
 class AlignmentMetric(BaseModel):
-    id: Optional[UUID] = None
+    id: UUID | None = None
     zone_id: UUID
     season: str
     irrigation_ha: float = 0
     terraces_ha: float = 0
-    credit_insurance_score: Optional[float] = None
-    nutrition_risk_level: Optional[RiskLevel] = None
-    climate_risk_level: Optional[RiskLevel] = None
-    female_managed_share: Optional[float] = None
+    credit_insurance_score: float | None = None
+    nutrition_risk_level: RiskLevel | None = None
+    climate_risk_level: RiskLevel | None = None
+    female_managed_share: float | None = None
     export_readiness_flag: bool = False
     estimated_jobs_supported: int = 0
 

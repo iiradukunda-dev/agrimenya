@@ -1,12 +1,12 @@
 """
 About page — mission, team, and platform overview.
 """
-import streamlit as st
 import os
-from utils.theme import load_theme
-from utils.i18n import t
-from components.navbar import render_navbar
+
+import streamlit as st
 from components.icons import render_icon_title
+from components.navbar import render_navbar
+from utils.theme import load_theme
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
 LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")

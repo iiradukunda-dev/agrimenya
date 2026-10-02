@@ -1,12 +1,13 @@
-import streamlit as st
 import requests
-from utils.i18n import t
-from utils import api_client
-from components.maps import render_priority_map
+import streamlit as st
 from components.charts import render_yield_chart
-from utils.mock_data import CROPS, SEASONS
-from components.icons import render_icon_title
 from components.errors import render_error_page
+from components.icons import render_icon_title
+from components.maps import render_priority_map
+from utils import api_client
+from utils.i18n import t
+from utils.mock_data import CROPS, SEASONS
+
 
 def render_segment():
     try:

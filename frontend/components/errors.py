@@ -1,10 +1,11 @@
 """
 Error page component — renders user-friendly error states.
 """
-import streamlit as st
 import os
-from utils.i18n import t
+
+import streamlit as st
 from components.icons import get_base64_svg
+from utils.i18n import t
 
 
 def render_error_page(error_type: str, details: str = None) -> None:

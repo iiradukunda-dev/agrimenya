@@ -1,13 +1,15 @@
+import logging
+from typing import Any
+
+import pandas as pd
 import requests
 import streamlit as st
-from requests.exceptions import RequestException
-import logging
-import pandas as pd
-from typing import Dict, List, Any, Optional, Union
-from .config import API_BASE_URL, USE_MOCK_DATA
-from . import mock_data
 
-def _get_api(path: str, timeout: int = 10) -> Optional[Union[Dict[str, Any], List[Any]]]:
+from . import mock_data
+from .config import API_BASE_URL, USE_MOCK_DATA
+
+
+def _get_api(path: str, timeout: int = 10) -> dict[str, Any] | list[Any] | None:
     """
     Internal helper to fetch data from the FastAPI backend.
     
@@ -28,7 +30,7 @@ def _get_api(path: str, timeout: int = 10) -> Optional[Union[Dict[str, Any], Lis
         return None
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_kpis() -> Dict[str, Any]:
+def get_kpis() -> dict[str, Any]:
     """
     Fetches high-level Key Performance Indicators (KPIs) for the dashboard.
     
@@ -78,7 +80,7 @@ def get_priority_data() -> pd.DataFrame:
     return mock_data.generate_mock_priority_data()
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_recommendations() -> List[Dict[str, Any]]:
+def get_recommendations() -> list[dict[str, Any]]:
     """
     Fetches decision-making recommendations based on priority rankings.
     
@@ -148,7 +150,7 @@ def get_roadmap() -> pd.DataFrame:
     return mock_data.generate_mock_roadmap()
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_alerts() -> List[Dict[str, str]]:
+def get_alerts() -> list[dict[str, str]]:
     """
     Fetches recent communication alerts.
     

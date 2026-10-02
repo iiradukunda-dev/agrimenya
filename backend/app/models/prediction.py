@@ -1,6 +1,7 @@
-from pydantic import BaseModel
-from typing import Optional, Literal
+from typing import Literal
 from uuid import UUID
+
+from pydantic import BaseModel
 
 PriorityLevel = Literal["Low", "Medium", "High"]
 
@@ -9,10 +10,10 @@ class PredictionRequest(BaseModel):
     zone_id: UUID
     season: str
     crop: str = "All crops"
-    rainfall_mm: Optional[float] = None
-    area_cultivated: Optional[float] = None
-    soil_type: Optional[str] = None
-    household_size: Optional[float] = None
+    rainfall_mm: float | None = None
+    area_cultivated: float | None = None
+    soil_type: str | None = None
+    household_size: float | None = None
 
 
 class PredictionResult(BaseModel):
@@ -24,10 +25,10 @@ class PredictionResult(BaseModel):
     confidence: float
     model_version: str
     # analysis-only fields
-    yield_per_ha: Optional[float] = None
-    benchmark_yield_per_ha: Optional[float] = None
-    yield_gap_kg_ha: Optional[float] = None
-    yield_index: Optional[float] = None
+    yield_per_ha: float | None = None
+    benchmark_yield_per_ha: float | None = None
+    yield_gap_kg_ha: float | None = None
+    yield_index: float | None = None
 
 
 class PredictionRecord(PredictionResult):

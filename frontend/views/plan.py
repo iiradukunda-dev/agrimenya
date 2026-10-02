@@ -1,11 +1,12 @@
-import streamlit as st
-import requests
 import plotly.express as px
-from utils.i18n import t
-from utils import api_client
-from components.icons import render_icon_title
-from components.errors import render_error_page
+import requests
+import streamlit as st
 from components.charts import AG_PLOTLY_LAYOUT
+from components.errors import render_error_page
+from components.icons import render_icon_title
+from utils import api_client
+from utils.i18n import t
+
 
 def render_plan():
     try:

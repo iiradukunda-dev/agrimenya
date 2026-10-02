@@ -1,7 +1,8 @@
-from pathlib import Path
-from dotenv import load_dotenv
 import os
+from pathlib import Path
+
 import httpx
+from dotenv import load_dotenv
 
 # Load .env from backend folder
 env_path = Path(__file__).resolve().parents[1] / ".env"
@@ -23,7 +24,7 @@ try:
     print('Status:', r.status_code)
     print('Body (first 1000 chars):')
     print(r.text[:1000])
-except Exception as e:
+except Exception:
     print('Exception during request:')
     import traceback
     traceback.print_exc()

@@ -1,14 +1,15 @@
-import streamlit as st
-import requests
-from utils import api_client
-from utils.theme import load_theme
-from utils.i18n import t
-from utils.timezone import setup_system_timezone
-from components.icons import render_icon_title, render_icon_subheader
-from components.navbar import render_navbar
-from components.errors import render_error_page
-from components.animated_hero import render_react_hero
 import os
+
+import requests
+import streamlit as st
+from components.animated_hero import render_react_hero
+from components.errors import render_error_page
+from components.icons import render_icon_subheader
+from components.navbar import render_navbar
+from utils import api_client
+from utils.i18n import t
+from utils.theme import load_theme
+from utils.timezone import setup_system_timezone
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
 LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")

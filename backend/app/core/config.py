@@ -3,6 +3,7 @@ Central configuration loaded from environment variables (.env).
 Import `settings` anywhere you need config instead of calling os.getenv directly.
 """
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()

@@ -4,9 +4,9 @@ Navigation bar component for agrimenya.
 Renders a floating glass navigation bar with branding, page links,
 and an inline language selector.
 """
+
 import streamlit as st
-import os
-from utils.i18n import t, render_language_selector
+from utils.i18n import render_language_selector
 
 
 def render_navbar() -> None:

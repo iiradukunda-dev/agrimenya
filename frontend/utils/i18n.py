@@ -466,6 +466,7 @@ def render_language_selector(sidebar: bool = True) -> None:
 
     with target:
         import os
+
         from components.icons import get_base64_svg
         globe_icon_path = "assets/globe.svg"
         if not os.path.exists(globe_icon_path):

@@ -14,14 +14,14 @@ Produces two artifacts in app/ml/artifacts/:
 Both are consumed by app/ml/predict.py.
 """
 import json
+import logging
 import pickle
 from pathlib import Path
 
-import logging
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 # Prefer XGBoost when available (better performance). If the import fails
 # (e.g. wheel/C library mismatch on the host), fall back to a RandomForest
@@ -31,7 +31,6 @@ try:
     _USE_XGB = True
 except Exception:
     logging.exception("XGBoost import failed; falling back to RandomForestRegressor")
-    from sklearn.ensemble import RandomForestRegressor
     XGBRegressor = None  # keep name absent
     _USE_XGB = False
 

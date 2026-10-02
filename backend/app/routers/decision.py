@@ -1,13 +1,14 @@
 from fastapi import APIRouter, HTTPException
-from app.models.prediction import PredictionRequest, PredictionResult
+
 from app.db import crud
 from app.ml.predict import (
-    predict_yield,
     classify_priority,
-    known_crops,
     get_yield_gap,
     get_yield_index,
+    known_crops,
+    predict_yield,
 )
+from app.models.prediction import PredictionRequest, PredictionResult
 from app.services.recommendation_engine import get_recommendations
 
 router = APIRouter(prefix="/decision", tags=["Decision Making"])

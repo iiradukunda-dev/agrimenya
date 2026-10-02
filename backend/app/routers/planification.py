@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from app.models.plan import PlanCreate
+
 from app.db import crud
+from app.models.plan import PlanCreate
 from app.services.resource_estimator import estimate_resources
 
 router = APIRouter(prefix="/planification", tags=["Planification"])

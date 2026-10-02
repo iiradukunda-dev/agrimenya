@@ -6,8 +6,6 @@ priority zones with semantic color coding.
 """
 import folium
 from streamlit_folium import st_folium
-import streamlit as st
-
 
 # Priority zone color palette — matches the design system semantic colors
 PRIORITY_COLORS = {

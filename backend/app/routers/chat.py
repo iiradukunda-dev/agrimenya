@@ -1,6 +1,8 @@
+from uuid import UUID
+
 from fastapi import APIRouter
 from pydantic import BaseModel
-from uuid import UUID
+
 from app.services.ai_assistant import ask_assistant
 
 router = APIRouter(prefix="/chat", tags=["AI Assistant"])

@@ -3,7 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.logging import configure_logging
-from app.routers import decision, planification, segmentation, communication, chat, alignment
+from app.routers import (
+    alignment,
+    chat,
+    communication,
+    decision,
+    planification,
+    segmentation,
+)
 
 app = FastAPI(
     title="Agri-Menya API",
@@ -30,6 +37,7 @@ app.include_router(alignment.router)
 # Configure logging early and mount debug router in non-production
 LOG_PATH = configure_logging()
 import logging
+
 logging.getLogger(__name__).info("Application starting up, logs -> %s", LOG_PATH)
 if settings.APP_ENV != "production":
     from app.routers import debug

@@ -1,6 +1,8 @@
-import streamlit as st
 import base64
 import os
+
+import streamlit as st
+
 
 def get_base64_svg(file_path):
     # If it's a relative path starting with 'assets/', resolve it correctly

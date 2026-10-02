@@ -3,12 +3,14 @@ All direct Supabase table access lives here. Routers and services call
 these functions rather than touching the Supabase client directly -
 keeps query logic in one place if the schema changes.
 """
-from uuid import UUID
 import logging
 import time
-from fastapi import HTTPException
+from uuid import UUID
+
 import httpx
+from fastapi import HTTPException
 from postgrest import exceptions as postgrest_exceptions
+
 from app.core.supabase_client import get_supabase
 
 

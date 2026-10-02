@@ -72,7 +72,7 @@ def _call_llm(prompt: str, context: str) -> str:
             text = data["choices"][0].get("text")
         return text or f"(LLM returned no text)\n\n{context}"
     except Exception as e:
-        return f"(LLM call failed: {repr(e)})\n\n{context}"
+        return f"(LLM call failed: {e!r})\n\n{context}"
 
 
 def ask_assistant(zone_id, question: str) -> str:

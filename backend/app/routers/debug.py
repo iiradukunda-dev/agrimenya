@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException
 from pathlib import Path
+
+from fastapi import APIRouter, HTTPException
+
 from app.core.config import settings
 
 router = APIRouter(prefix="/debug", tags=["debug"])

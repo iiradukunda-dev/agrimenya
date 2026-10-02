@@ -1,13 +1,13 @@
 """
 Contact page — user support and feedback form.
 """
-import streamlit as st
 import os
-from utils.theme import load_theme
-from utils.i18n import t
+
+import streamlit as st
+from components.icons import render_icon_title
 from components.navbar import render_navbar
 from utils import api_client
-from components.icons import render_icon_title
+from utils.theme import load_theme
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
 LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")
