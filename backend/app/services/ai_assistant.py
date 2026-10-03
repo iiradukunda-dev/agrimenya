@@ -18,6 +18,37 @@ from app.core.config import settings
 from app.db import crud
 
 
+def _normalize_question(question: str) -> str:
+    """Normalize and validate user input before it reaches the LLM.
+
+    We keep the contract intentionally strict: empty input is rejected,
+    prompt-injection attempts are blocked, and oversized prompts are trimmed
+    to a production-safe limit.
+    """
+    if question is None:
+        raise HTTPException(status_code=400, detail="Question is required")
+
+    normalized = str(question).strip()
+    if not normalized:
+        raise HTTPException(status_code=400, detail="Question cannot be empty")
+
+    if len(normalized) > 500:
+        raise HTTPException(status_code=400, detail="Question is too long")
+
+    blocked_patterns = (
+        "ignore previous instructions",
+        "system prompt",
+        "developer message",
+        "jailbreak",
+        "pretend you are",
+    )
+    lower = normalized.lower()
+    if any(pattern in lower for pattern in blocked_patterns):
+        raise HTTPException(status_code=400, detail="Question contains unsupported instructions")
+
+    return normalized
+
+
 def _build_context(zone_id) -> str:
     zone = crud.get_zone(zone_id)
     predictions = crud.list_predictions(zone_id)
@@ -81,5 +112,6 @@ def ask_assistant(zone_id, question: str) -> str:
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")
 
+    safe_question = _normalize_question(question)
     context = _build_context(zone_id)
-    return _call_llm(question, context)
+    return _call_llm(safe_question, context)

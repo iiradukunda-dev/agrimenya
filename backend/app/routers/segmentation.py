@@ -25,8 +25,8 @@ def get_map_data(district: str | None = None):
         latest = predictions[0] if predictions else None
         enriched.append({
             **zone,
-            "predicted_yield": latest["predicted_yield"] if latest else None,
-            "priority_level": latest["priority_level"] if latest else None,
+            "predicted_yield": latest.get("predicted_yield") if latest else None,
+            "priority_level": latest.get("priority_level") if latest else None,
         })
     return enriched
 

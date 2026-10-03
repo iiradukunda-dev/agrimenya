@@ -1,5 +1,5 @@
 import uuid
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from fastapi.testclient import TestClient
 
@@ -50,3 +50,25 @@ def test_compute_alignment_and_endpoints():
 
         r5 = client.get("/alignment/dashboard")
         assert r5.status_code == 200
+
+
+def test_alignment_upsert_is_duplicate_safe():
+    metric = {
+        "zone_id": "123e4567-e89b-12d3-a456-426614174000",
+        "season": "2026-S1",
+        "credit_insurance_score": 88.5,
+        "nutrition_risk_level": "Low",
+        "climate_risk_level": "Medium",
+        "export_readiness_flag": True,
+    }
+
+    mock_client = MagicMock()
+    mock_result = MagicMock()
+    mock_result.data = [metric]
+    mock_client.table.return_value.upsert.return_value.execute.return_value = mock_result
+
+    with patch("app.db.crud.get_supabase", return_value=mock_client):
+        result = __import__("app.db.crud", fromlist=["upsert_alignment_metric"]).upsert_alignment_metric(metric)
+
+    assert result == metric
+    mock_client.table.return_value.upsert.assert_called_once_with(metric, on_conflict="zone_id,season")

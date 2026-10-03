@@ -40,6 +40,29 @@ def _exec_query_get_data(query, max_retries: int = 3, backoff: float = 0.5):
             raise HTTPException(status_code=503, detail="Unexpected error connecting to the database")
 
 
+def _update_record(table_name: str, record_id: UUID | str, payload: dict) -> dict | None:
+    """Standard admin update helper for a single record.
+
+    Returns the updated row or None when no matching row exists.
+    """
+    if not payload:
+        return None
+    sb = get_supabase()
+    result = sb.table(table_name).update(payload).eq("id", str(record_id)).execute()
+    return result.data[0] if result.data else None
+
+
+def _delete_record(table_name: str, record_id: UUID | str) -> dict | None:
+    """Standard admin delete helper for a single record."""
+    sb = get_supabase()
+    result = sb.table(table_name).delete().eq("id", str(record_id)).execute()
+    if not result.data:
+        return None
+    deleted = result.data[0].copy()
+    deleted["deleted"] = True
+    return deleted
+
+
 # ---------- zones ----------
 
 def list_zones(district: str | None = None) -> list[dict]:
@@ -60,6 +83,14 @@ def get_zone(zone_id: UUID) -> dict | None:
     sb = get_supabase()
     result = sb.table("zones").select("*").eq("id", str(zone_id)).execute()
     return result.data[0] if result.data else None
+
+
+def update_zone(zone_id: UUID | str, payload: dict) -> dict | None:
+    return _update_record("zones", zone_id, payload)
+
+
+def delete_zone(zone_id: UUID | str) -> dict | None:
+    return _delete_record("zones", zone_id)
 
 
 def get_zone_by_district(district: str) -> list[dict]:
@@ -97,6 +128,14 @@ def create_agri_metric(metric: dict) -> dict:
     return result.data[0]
 
 
+def update_agri_metric(metric_id: UUID | str, payload: dict) -> dict | None:
+    return _update_record("agri_metrics", metric_id, payload)
+
+
+def delete_agri_metric(metric_id: UUID | str) -> dict | None:
+    return _delete_record("agri_metrics", metric_id)
+
+
 def upsert_agri_metric(metric: dict) -> dict:
     """Insert-or-update on (zone_id, season, crop) - what the seeding script uses
     so re-running it never creates duplicate rows."""
@@ -117,16 +156,38 @@ def crop_comparison(district: str, season: str | None = None) -> list[dict]:
         return []
     zone_ids = {z["id"] for z in zones}
     metrics = list_agri_metrics(season=season)
-    rows = [m for m in metrics if m["zone_id"] in zone_ids]
+    rows = [m for m in metrics if m.get("zone_id") in zone_ids]
     return sorted(rows, key=lambda r: r.get("yield_actual") or 0, reverse=True)
 
 
 # ---------- predictions ----------
 
+_PREDICTION_INSERT_COLUMNS = {
+    "id",
+    "zone_id",
+    "season",
+    "crop",
+    "predicted_yield",
+    "priority_level",
+    "confidence",
+    "model_version",
+    "created_at",
+}
+
+
 def save_prediction(prediction: dict) -> dict:
     sb = get_supabase()
-    result = sb.table("predictions").insert(prediction).execute()
+    payload = {key: value for key, value in prediction.items() if key in _PREDICTION_INSERT_COLUMNS}
+    result = sb.table("predictions").insert(payload).execute()
     return result.data[0]
+
+
+def update_prediction(prediction_id: UUID | str, payload: dict) -> dict | None:
+    return _update_record("predictions", prediction_id, payload)
+
+
+def delete_prediction(prediction_id: UUID | str) -> dict | None:
+    return _delete_record("predictions", prediction_id)
 
 
 def list_predictions(zone_id: UUID | None = None) -> list[dict]:
@@ -151,9 +212,22 @@ def priority_ranking(season: str | None = None) -> list[dict]:
 # ---------- alignment_metrics ----------
 
 def upsert_alignment_metric(metric: dict) -> dict:
+    """Insert-or-update on (zone_id, season) so repeated alignment runs remain idempotent."""
     sb = get_supabase()
-    result = sb.table("alignment_metrics").insert(metric).execute()
+    result = (
+        sb.table("alignment_metrics")
+        .upsert(metric, on_conflict="zone_id,season")
+        .execute()
+    )
     return result.data[0]
+
+
+def update_alignment_metric(metric_id: UUID | str, payload: dict) -> dict | None:
+    return _update_record("alignment_metrics", metric_id, payload)
+
+
+def delete_alignment_metric(metric_id: UUID | str) -> dict | None:
+    return _delete_record("alignment_metrics", metric_id)
 
 
 def get_alignment_metric(zone_id: UUID) -> dict | None:
@@ -182,6 +256,14 @@ def create_plan(plan: dict) -> dict:
     return result.data[0]
 
 
+def update_plan(plan_id: UUID | str, payload: dict) -> dict | None:
+    return _update_record("plans", plan_id, payload)
+
+
+def delete_plan(plan_id: UUID | str) -> dict | None:
+    return _delete_record("plans", plan_id)
+
+
 def list_plans(zone_id: UUID | None = None) -> list[dict]:
     sb = get_supabase()
     query = sb.table("plans").select("*")
@@ -196,6 +278,14 @@ def create_alert(alert: dict) -> dict:
     sb = get_supabase()
     result = sb.table("alerts").insert(alert).execute()
     return result.data[0]
+
+
+def update_alert(alert_id: UUID | str, payload: dict) -> dict | None:
+    return _update_record("alerts", alert_id, payload)
+
+
+def delete_alert(alert_id: UUID | str) -> dict | None:
+    return _delete_record("alerts", alert_id)
 
 
 def list_alerts(zone_id: UUID | None = None) -> list[dict]:
