@@ -46,7 +46,8 @@ def render_navbar() -> None:
     """, unsafe_allow_html=True)
 
     # Render branded navbar row
-    cols = st.columns([1.8, 0.8, 0.9, 0.8, 0.6, 0.8, 0.9, 0.8, 0.5, 1.2])
+    # 1 logo + 9 links + 1 lang selector = 11 cols
+    cols = st.columns([1.6, 0.6, 0.8, 0.6, 1.0, 0.6, 0.4, 0.6, 0.6, 0.6, 0.5])
 
     with cols[0]:
         st.markdown(
@@ -65,18 +66,19 @@ def render_navbar() -> None:
     with cols[3]:
         st.page_link("pages/4_Zones.py", label="Zones", icon=":material/map:")
     with cols[4]:
-        st.page_link("pages/2_Actions.py", label="Actions", icon=":material/bolt:")
+        st.page_link("pages/5_Segmentation.py", label="Segment", icon=":material/layers:")
     with cols[5]:
-        st.page_link("pages/5_AI_Assistant.py", label="AI", icon=":material/smart_toy:")
+        st.page_link("pages/6_Decision_Making.py", label="Decide", icon=":material/bolt:")
     with cols[6]:
-        st.page_link("pages/6_Planning.py", label="Planning", icon=":material/edit_calendar:")
+        st.page_link("pages/7_AI_Assistant.py", label="AI", icon=":material/smart_toy:")
     with cols[7]:
-        st.page_link("pages/7_Communication.py", label="Alerts", icon=":material/campaign:")
+        st.page_link("pages/8_Planning.py", label="Plan", icon=":material/edit_calendar:")
     with cols[8]:
-        st.page_link("pages/8_Admin.py", label="Admin", icon=":material/admin_panel_settings:")
-
+        st.page_link("pages/9_Communication.py", label="Alerts", icon=":material/campaign:")
     with cols[9]:
+        st.page_link("pages/10_Admin.py", label="Admin", icon=":material/admin_panel_settings:")
+
+    with cols[10]:
         render_language_selector(sidebar=False)
 
     st.divider()
-
