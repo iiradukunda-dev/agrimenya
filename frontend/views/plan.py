@@ -1,12 +1,14 @@
-import streamlit as st
-import requests
 import plotly.express as px
-from utils.i18n import t
-from utils import api_client
-from components.icons import render_icon_title
+import requests
+import streamlit as st
+from components.charts import AG_PLOTLY_LAYOUT
 from components.errors import render_error_page
+from components.icons import render_icon_title
+from utils import api_client
+from utils.i18n import t
 
-def render_planification():
+
+def render_plan():
     try:
         render_icon_title("assets/calendar.svg", t("plan.header"), t("plan.subtitle"))
 
@@ -64,6 +66,7 @@ def render_planification():
                 title=t("plan.chart_title")
             )
             fig.update_yaxes(autorange="reversed")
+            fig.update_layout(**AG_PLOTLY_LAYOUT)
             st.plotly_chart(fig, use_container_width=True)
             
             st.divider()
@@ -78,6 +81,10 @@ def render_planification():
         if st.button(t("plan.save_btn"), type="primary"):
             st.success(f"{t('plan.header')} - {selected_zone_label} ({selected_season_label})")
     except requests.exceptions.RequestException as e:
+        import logging
+        logging.getLogger(__name__).error(f"Network error in plan.py: {e}")
         render_error_page("network", str(e))
     except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Unexpected error in plan.py: {e}", exc_info=True)
         render_error_page("system", str(e))

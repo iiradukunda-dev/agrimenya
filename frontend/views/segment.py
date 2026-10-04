@@ -1,14 +1,15 @@
-import streamlit as st
 import requests
-from utils.i18n import t
-from utils import api_client
-from components.maps import render_priority_map
+import streamlit as st
 from components.charts import render_yield_chart
-from utils.mock_data import CROPS, SEASONS
-from components.icons import render_icon_title
 from components.errors import render_error_page
+from components.icons import render_icon_title
+from components.maps import render_priority_map
+from utils import api_client
+from utils.i18n import t
+from utils.mock_data import CROPS, SEASONS
 
-def render_segmentation():
+
+def render_segment():
     try:
         render_icon_title("assets/map.svg", t("seg.header"), t("seg.subtitle"))
 
@@ -54,6 +55,10 @@ def render_segmentation():
                 else:
                     st.dataframe(filtered_df, use_container_width=True, hide_index=True)
     except requests.exceptions.RequestException as e:
+        import logging
+        logging.getLogger(__name__).error(f"Network error in segment.py: {e}")
         render_error_page("network", str(e))
     except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Unexpected error in segment.py: {e}", exc_info=True)
         render_error_page("system", str(e))

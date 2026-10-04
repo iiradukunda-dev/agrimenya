@@ -1,21 +1,27 @@
-import streamlit as st
+import os
+
 import requests
-from utils import api_client
-from utils.theme import load_theme
-from utils.i18n import t
-from utils.timezone import setup_system_timezone
-from components.icons import render_icon_title, render_icon_subheader
-from components.navbar import render_navbar
+import streamlit as st
+from components.animated_hero import render_react_hero
 from components.errors import render_error_page
-st.set_page_config(page_title="agrimenya", page_icon="frontend/assets/logo.jpg", layout="wide")
+from components.icons import render_icon_subheader
+from components.navbar import render_navbar
+from utils import api_client
+from utils.i18n import t
+from utils.theme import load_theme
+from utils.timezone import setup_system_timezone
+
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
+LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")
+
+st.set_page_config(page_title="agrimenya", page_icon=LOGO_PATH, layout="wide")
 setup_system_timezone()
 load_theme()
 render_navbar()
 
 def main():
-    render_icon_title("assets/wheat.svg", t("home.app_title"), t("home.subtitle"))
-    
-    st.markdown(t("home.welcome"))
+    # Render interactive React Hero with GSAP
+    render_react_hero()
 
     # High-level KPIs
     kpis = api_client.get_kpis()
@@ -34,32 +40,7 @@ def main():
     render_icon_subheader("assets/compass.svg", t("home.pillars_title"))
     c1, c2, c3, c4 = st.columns(4)
 
-    def pillar_card(col, icon, title, desc, btn_text, page_route):
-        with col:
-            import os
-            if not os.path.exists(icon):
-                alt_icon = os.path.join("frontend", icon)
-                if os.path.exists(alt_icon):
-                    icon = alt_icon
-            with open(icon, "r", encoding="utf-8") as f:
-                svg_content = f.read()
-            
-            st.html(
-                f"""
-<div class="custom-card">
-    <div style="width: 44px; height: 44px; border-radius: 10px; background-color: #E8F5E9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-        <div style="width: 24px; height: 24px; color: #52B788; display: flex; align-items: center; justify-content: center;">
-            {svg_content}
-        </div>
-    </div>
-    <div class="custom-card-title">{title}</div>
-    <div class="custom-card-desc">{desc}</div>
-</div>
-<br/>
-                """
-            )
-            if st.button(btn_text, key=f"btn_{page_route}"):
-                st.switch_page(page_route)
+    from components.cards import pillar_card
 
     pillar_card(
         c1, 
@@ -67,7 +48,7 @@ def main():
         t("pillar.segmentation.title"), 
         t("pillar.segmentation.desc"), 
         t("pillar.segmentation.btn"), 
-        "pages/3_Segmentation.py"
+        "pages/4_Zones.py"
     )
     pillar_card(
         c2, 
@@ -75,7 +56,7 @@ def main():
         t("pillar.decisions.title"), 
         t("pillar.decisions.desc"), 
         t("pillar.decisions.btn"), 
-        "pages/1_Decision_Making.py"
+        "pages/5_AI_Assistant.py"
     )
     pillar_card(
         c3, 
@@ -83,7 +64,7 @@ def main():
         t("pillar.planification.title"), 
         t("pillar.planification.desc"), 
         t("pillar.planification.btn"), 
-        "pages/2_Planification.py"
+        "pages/6_Planning.py"
     )
     pillar_card(
         c4, 
@@ -91,15 +72,21 @@ def main():
         t("pillar.communication.title"), 
         t("pillar.communication.desc"), 
         t("pillar.communication.btn"), 
-        "pages/4_Communication.py"
+        "pages/7_Communication.py"
     )
     
     st.divider()
     st.caption(t("common.built_for"))
 
-try:
-    main()
-except requests.exceptions.RequestException as e:
-    render_error_page("network", str(e))
-except Exception as e:
-    render_error_page("system", str(e))
+if __name__ == "__main__":
+    import logging
+    logger = logging.getLogger(__name__)
+    try:
+        main()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Network error in Home.py: {e}")
+        render_error_page("network", str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error in Home.py: {e}", exc_info=True)
+        render_error_page("system", str(e))
+

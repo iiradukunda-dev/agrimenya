@@ -252,3 +252,837 @@
 2026-09-30 13:53:33,252 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.f53c3569-7186-4517-b9c7-400a527f1433 "HTTP/2 200 OK"
 2026-09-30 13:54:26,391 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.f53c3569-7186-4517-b9c7-400a527f1433 "HTTP/2 200 OK"
 2026-09-30 20:26:07,304 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.f53c3569-7186-4517-b9c7-400a527f1433 "HTTP/2 200 OK"
+2026-09-30 22:00:50,085 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 14:26:03,720 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 14:26:03,963 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 14:26:03,988 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 14:26:04,072 INFO httpx HTTP Request: POST http://testserver/alignment/compute/61eb8305-d5e8-4906-b05b-977242681d49?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 14:26:04,088 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/61eb8305-d5e8-4906-b05b-977242681d49 "HTTP/1.1 200 OK"
+2026-10-03 14:26:04,107 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/61eb8305-d5e8-4906-b05b-977242681d49 "HTTP/1.1 200 OK"
+2026-10-03 14:26:04,131 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 14:26:04,148 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 14:26:04,254 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 14:26:04,281 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=1aef9c13-4d3e-4e4f-8e03-421d0a13ea2e "HTTP/1.1 200 OK"
+2026-10-03 14:26:04,341 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 14:26:04,418 INFO httpx HTTP Request: GET http://testserver/communication/share/4d3cfafd-4654-4784-9dfc-c99f86c55ae3 "HTTP/1.1 200 OK"
+2026-10-03 14:26:04,512 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 14:26:21,305 WARNING root Transient network error connecting to Supabase (attempt 1/3): ConnectError('[Errno 11001] getaddrinfo failed')
+2026-10-03 14:26:33,862 WARNING root Transient network error connecting to Supabase (attempt 2/3): ConnectError('[Errno 11001] getaddrinfo failed')
+2026-10-03 14:26:34,868 WARNING root Transient network error connecting to Supabase (attempt 3/3): ConnectError('[Errno 11001] getaddrinfo failed')
+2026-10-03 14:26:34,869 ERROR root Max retries reached for Supabase network error: ConnectError('[Errno 11001] getaddrinfo failed')
+Traceback (most recent call last):
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\fabri\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\app\db\crud.py", line 25, in _exec_query_get_data
+    return query.execute().data
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\postgrest\_sync\request_builder.py", line 90, in execute
+    r = send_with_retry(self.request)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\postgrest\_sync\request_builder.py", line 51, in send_with_retry
+    resp = req.send(headers)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\postgrest\base_request_builder.py", line 90, in send
+    return self.session.request(
+           ~~~~~~~~~~~~~~~~~~~~^
+        self.http_method,
+        ^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        auth=self.auth,
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\fabri\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-10-03 14:26:35,552 INFO httpx HTTP Request: GET http://testserver/planification/plans/1d45c23f-9ad2-4a42-a694-0ff5aa56f1d5 "HTTP/1.1 503 Service Unavailable"
+2026-10-03 14:34:00,781 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 14:34:00,974 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 14:34:00,996 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 14:34:01,058 INFO httpx HTTP Request: POST http://testserver/alignment/compute/54636cbb-71ee-4b76-aa3e-734ba0fee830?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 14:34:01,071 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/54636cbb-71ee-4b76-aa3e-734ba0fee830 "HTTP/1.1 200 OK"
+2026-10-03 14:34:01,088 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/54636cbb-71ee-4b76-aa3e-734ba0fee830 "HTTP/1.1 200 OK"
+2026-10-03 14:34:01,106 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 14:34:01,123 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 14:34:01,186 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 14:34:01,203 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=cef02c07-b07c-452b-8ea8-e376fc7b08d2 "HTTP/1.1 200 OK"
+2026-10-03 14:34:01,228 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 14:34:01,261 INFO httpx HTTP Request: GET http://testserver/communication/share/bfd03ecc-3e54-4194-9179-d4616f3eae98 "HTTP/1.1 200 OK"
+2026-10-03 14:34:01,306 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 14:34:17,961 WARNING root Transient network error connecting to Supabase (attempt 1/3): ConnectError('[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1081)')
+2026-10-03 14:34:44,536 WARNING root Transient network error connecting to Supabase (attempt 2/3): ConnectError('[WinError 10053] An established connection was aborted by the software in your host machine')
+2026-10-03 14:34:45,555 WARNING root Transient network error connecting to Supabase (attempt 3/3): ConnectError('[Errno 11001] getaddrinfo failed')
+2026-10-03 14:34:45,565 ERROR root Max retries reached for Supabase network error: ConnectError('[Errno 11001] getaddrinfo failed')
+Traceback (most recent call last):
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\fabri\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\app\db\crud.py", line 25, in _exec_query_get_data
+    return query.execute().data
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\postgrest\_sync\request_builder.py", line 90, in execute
+    r = send_with_retry(self.request)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\postgrest\_sync\request_builder.py", line 51, in send_with_retry
+    resp = req.send(headers)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\postgrest\base_request_builder.py", line 90, in send
+    return self.session.request(
+           ~~~~~~~~~~~~~~~~~~~~^
+        self.http_method,
+        ^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        auth=self.auth,
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\fabri\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-10-03 14:34:45,698 INFO httpx HTTP Request: GET http://testserver/planification/plans/725da1fe-45b2-4065-b281-3c4dc071b3d1 "HTTP/1.1 503 Service Unavailable"
+2026-10-03 14:45:33,055 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 14:45:55,599 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 14:45:55,864 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 14:45:55,904 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 14:45:55,981 INFO httpx HTTP Request: POST http://testserver/alignment/compute/5f1f0b9c-4e6d-451f-8156-f72cb753f4f9?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 14:45:56,003 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/5f1f0b9c-4e6d-451f-8156-f72cb753f4f9 "HTTP/1.1 200 OK"
+2026-10-03 14:45:56,021 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/5f1f0b9c-4e6d-451f-8156-f72cb753f4f9 "HTTP/1.1 200 OK"
+2026-10-03 14:45:56,039 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 14:45:56,061 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 14:45:56,150 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 14:45:56,170 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=cafc3db5-9838-41e1-a5fd-32cc356a9dbe "HTTP/1.1 200 OK"
+2026-10-03 14:45:56,201 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 14:45:56,235 INFO httpx HTTP Request: GET http://testserver/communication/share/fa7ded4a-c6b4-4adc-9b2c-4c223eb114f2 "HTTP/1.1 200 OK"
+2026-10-03 14:45:56,306 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 14:46:03,936 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.da7cc661-58e8-435a-8c75-85cabb4a049b "HTTP/2 200 OK"
+2026-10-03 14:46:03,947 INFO httpx HTTP Request: GET http://testserver/planification/plans/da7cc661-58e8-435a-8c75-85cabb4a049b "HTTP/1.1 200 OK"
+2026-10-03 14:46:43,537 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 14:46:54,887 INFO httpx HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,182 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 14:47:46,267 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,279 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 14:47:46,298 INFO httpx HTTP Request: POST http://testserver/alignment/compute/1b9271b5-3fbb-4b5c-be70-6c8f6cb262cd?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,307 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/1b9271b5-3fbb-4b5c-be70-6c8f6cb262cd "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,315 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/1b9271b5-3fbb-4b5c-be70-6c8f6cb262cd "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,324 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,337 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,364 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,374 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=d10e5ba2-a58a-4d41-867a-276f5105ae57 "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,384 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 14:47:46,396 INFO httpx HTTP Request: GET http://testserver/communication/share/48421bd6-3849-4af2-86c1-67cb5eb8b536 "HTTP/1.1 200 OK"
+2026-10-03 14:47:46,413 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 14:47:48,594 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.34c05e19-d1ca-4af6-af53-42277d8fc6bc "HTTP/2 200 OK"
+2026-10-03 14:47:48,597 INFO httpx HTTP Request: GET http://testserver/planification/plans/34c05e19-d1ca-4af6-af53-42277d8fc6bc "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,194 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:12:23,274 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,286 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:12:23,305 INFO httpx HTTP Request: POST http://testserver/alignment/compute/b61ac06b-599a-477d-862d-e06ab1cf5976?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,314 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/b61ac06b-599a-477d-862d-e06ab1cf5976 "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,324 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/b61ac06b-599a-477d-862d-e06ab1cf5976 "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,331 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,340 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,365 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,373 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=c6da498e-c0e7-4db0-a246-0e8784008e68 "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,384 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 15:12:23,399 INFO httpx HTTP Request: GET http://testserver/communication/share/792d9933-02d1-412e-b86e-6c1e0e9509c1 "HTTP/1.1 200 OK"
+2026-10-03 15:12:23,416 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:12:27,338 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.bfbcf437-cacd-4918-b5c6-3ab01a36d43c "HTTP/2 200 OK"
+2026-10-03 15:12:27,342 INFO httpx HTTP Request: GET http://testserver/planification/plans/bfbcf437-cacd-4918-b5c6-3ab01a36d43c "HTTP/1.1 200 OK"
+2026-10-03 15:12:44,628 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:12:48,990 INFO httpx HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,399 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:14:24,465 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,479 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:14:24,497 INFO httpx HTTP Request: POST http://testserver/alignment/compute/a74297ea-d818-49ec-9566-f3b3db152ad3?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,505 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/a74297ea-d818-49ec-9566-f3b3db152ad3 "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,512 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/a74297ea-d818-49ec-9566-f3b3db152ad3 "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,520 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,530 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,550 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,557 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=92a07e9a-c756-4214-9079-b3e3eedd0bcb "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,566 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 15:14:24,576 INFO httpx HTTP Request: GET http://testserver/communication/share/52b7d881-133f-4218-8b1c-91a1290bffb2 "HTTP/1.1 200 OK"
+2026-10-03 15:14:24,590 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:14:28,603 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.16943c4e-39c0-4947-a86f-680b760aae78 "HTTP/2 200 OK"
+2026-10-03 15:14:28,606 INFO httpx HTTP Request: GET http://testserver/planification/plans/16943c4e-39c0-4947-a86f-680b760aae78 "HTTP/1.1 200 OK"
+2026-10-03 15:22:02,400 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:22:35,775 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:22:35,839 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:22:35,852 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/ca2cd830-1294-4681-88ba-bc7941424580 "HTTP/1.1 200 OK"
+2026-10-03 15:22:35,860 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/ca2cd830-1294-4681-88ba-bc7941424580 "HTTP/1.1 200 OK"
+2026-10-03 15:22:35,867 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:22:35,875 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/1b8b0d16-ce87-473b-8c3e-70028f77f2f7 "HTTP/1.1 200 OK"
+2026-10-03 15:22:35,884 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/1b8b0d16-ce87-473b-8c3e-70028f77f2f7 "HTTP/1.1 200 OK"
+2026-10-03 15:22:35,896 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:22:35,909 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:22:35,925 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:22:38,828 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.c64d2acd-7720-42df-a757-44eac8c6a2d1 "HTTP/2 200 OK"
+2026-10-03 15:22:38,831 INFO httpx HTTP Request: GET http://testserver/planification/plans/c64d2acd-7720-42df-a757-44eac8c6a2d1 "HTTP/1.1 200 OK"
+2026-10-03 15:22:49,879 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:22:49,974 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:22:49,985 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/11070620-3837-46e0-8d19-e5c9692a3c5d "HTTP/1.1 200 OK"
+2026-10-03 15:22:49,992 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/11070620-3837-46e0-8d19-e5c9692a3c5d "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,000 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,008 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/a912b720-8fbe-4d36-a13e-fc6a388149f8 "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,020 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/a912b720-8fbe-4d36-a13e-fc6a388149f8 "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,035 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,045 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:22:50,061 INFO httpx HTTP Request: POST http://testserver/alignment/compute/112d5cc3-fa5d-4e5a-9c74-e6b1567c363f?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,069 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/112d5cc3-fa5d-4e5a-9c74-e6b1567c363f "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,077 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/112d5cc3-fa5d-4e5a-9c74-e6b1567c363f "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,084 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,092 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,110 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,120 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=08e29e7c-45fe-4ae6-bec9-b4577d573550 "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,127 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 15:22:50,140 INFO httpx HTTP Request: GET http://testserver/communication/share/43f6f1f7-0ee7-49df-ad41-11ca9bca9b90 "HTTP/1.1 200 OK"
+2026-10-03 15:22:50,155 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:22:52,431 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.709c1c96-4bac-4e5c-a7ef-9986f11688e1 "HTTP/2 200 OK"
+2026-10-03 15:22:52,434 INFO httpx HTTP Request: GET http://testserver/planification/plans/709c1c96-4bac-4e5c-a7ef-9986f11688e1 "HTTP/1.1 200 OK"
+2026-10-03 15:24:03,139 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:24:06,222 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:24:06,226 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:24:07,009 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:24:07,014 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:24:40,649 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:24:40,734 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:24:41,091 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:24:41,102 INFO admin.audit {"timestamp": "2026-10-03T13:24:41.102055+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:24:43,443 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:24:43,446 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,459 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,471 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:24:43,485 INFO httpx HTTP Request: POST http://testserver/alignment/compute/8263a07b-a374-4297-b6db-29e9d037a7e7?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,494 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/8263a07b-a374-4297-b6db-29e9d037a7e7 "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,502 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/8263a07b-a374-4297-b6db-29e9d037a7e7 "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,510 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,521 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,543 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,551 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=46871f8f-3827-4e51-af3d-a93410240602 "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,560 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 15:24:43,572 INFO httpx HTTP Request: GET http://testserver/communication/share/0b25ca6a-4f43-4c51-bc6c-51f714b4a9e2 "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,590 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:24:43,895 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.e21bce6a-293f-4ebc-9fb3-a003482b4805 "HTTP/2 200 OK"
+2026-10-03 15:24:43,899 INFO httpx HTTP Request: GET http://testserver/planification/plans/e21bce6a-293f-4ebc-9fb3-a003482b4805 "HTTP/1.1 200 OK"
+2026-10-03 15:25:05,474 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:25:05,576 INFO admin.audit {"timestamp": "2026-10-03T13:25:05.575900+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:25:05,580 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:25:05,589 INFO admin.audit {"timestamp": "2026-10-03T13:25:05.589612+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "eea3f16e-554c-4c39-becb-ea652e8770b9", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 15:25:05,592 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/eea3f16e-554c-4c39-becb-ea652e8770b9 "HTTP/1.1 200 OK"
+2026-10-03 15:25:05,601 INFO admin.audit {"timestamp": "2026-10-03T13:25:05.601329+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "eea3f16e-554c-4c39-becb-ea652e8770b9"}, "client": "testclient"}
+2026-10-03 15:25:05,604 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/eea3f16e-554c-4c39-becb-ea652e8770b9 "HTTP/1.1 200 OK"
+2026-10-03 15:25:05,610 INFO admin.audit {"timestamp": "2026-10-03T13:25:05.610689+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 15:25:05,613 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:25:05,621 INFO admin.audit {"timestamp": "2026-10-03T13:25:05.621491+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "0b806727-2ff1-46b9-9505-9fc3ee448dbe", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 15:25:05,624 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/0b806727-2ff1-46b9-9505-9fc3ee448dbe "HTTP/1.1 200 OK"
+2026-10-03 15:25:05,632 INFO admin.audit {"timestamp": "2026-10-03T13:25:05.632096+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "0b806727-2ff1-46b9-9505-9fc3ee448dbe"}, "client": "testclient"}
+2026-10-03 15:25:05,634 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/0b806727-2ff1-46b9-9505-9fc3ee448dbe "HTTP/1.1 200 OK"
+2026-10-03 15:25:05,646 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:25:05,656 INFO admin.audit {"timestamp": "2026-10-03T13:25:05.656618+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:25:08,344 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:25:08,348 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,367 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,379 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:25:08,395 INFO httpx HTTP Request: POST http://testserver/alignment/compute/64084e14-1577-4d38-a7cc-9631b9b52aa0?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,406 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/64084e14-1577-4d38-a7cc-9631b9b52aa0 "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,414 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/64084e14-1577-4d38-a7cc-9631b9b52aa0 "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,423 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,434 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,460 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,469 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=5a4859d6-03fa-47aa-a658-f1cd5e43c0b6 "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,480 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 15:25:08,494 INFO httpx HTTP Request: GET http://testserver/communication/share/dd17a3ad-83db-4d28-9a9b-4322bab9eb65 "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,509 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:25:08,805 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.d7f71a7d-fdb0-4ae8-9953-407e1322425d "HTTP/2 200 OK"
+2026-10-03 15:25:08,809 INFO httpx HTTP Request: GET http://testserver/planification/plans/d7f71a7d-fdb0-4ae8-9953-407e1322425d "HTTP/1.1 200 OK"
+2026-10-03 15:26:37,557 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:26:37,649 INFO admin.audit {"timestamp": "2026-10-03T13:26:37.649214+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:26:37,653 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:26:37,661 INFO admin.audit {"timestamp": "2026-10-03T13:26:37.661287+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "c53e1ea5-7148-489d-a537-909540db21be", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 15:26:37,664 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/c53e1ea5-7148-489d-a537-909540db21be "HTTP/1.1 200 OK"
+2026-10-03 15:26:37,675 INFO admin.audit {"timestamp": "2026-10-03T13:26:37.675233+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "c53e1ea5-7148-489d-a537-909540db21be"}, "client": "testclient"}
+2026-10-03 15:26:37,677 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/c53e1ea5-7148-489d-a537-909540db21be "HTTP/1.1 200 OK"
+2026-10-03 15:26:37,684 INFO admin.audit {"timestamp": "2026-10-03T13:26:37.684401+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 15:26:37,686 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:26:37,694 INFO admin.audit {"timestamp": "2026-10-03T13:26:37.693994+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "78ed1e44-6f9b-45e2-b4f1-6a703be46a61", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 15:26:37,697 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/78ed1e44-6f9b-45e2-b4f1-6a703be46a61 "HTTP/1.1 200 OK"
+2026-10-03 15:26:37,704 INFO admin.audit {"timestamp": "2026-10-03T13:26:37.704187+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "78ed1e44-6f9b-45e2-b4f1-6a703be46a61"}, "client": "testclient"}
+2026-10-03 15:26:37,706 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/78ed1e44-6f9b-45e2-b4f1-6a703be46a61 "HTTP/1.1 200 OK"
+2026-10-03 15:26:37,718 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:26:37,729 INFO admin.audit {"timestamp": "2026-10-03T13:26:37.729817+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:26:39,884 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:26:39,887 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:26:39,902 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:26:39,913 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:26:39,927 INFO httpx HTTP Request: POST http://testserver/alignment/compute/5840c535-94b5-40b5-99bd-965e46c9f2cd?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 15:26:39,936 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/5840c535-94b5-40b5-99bd-965e46c9f2cd "HTTP/1.1 200 OK"
+2026-10-03 15:26:39,944 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/5840c535-94b5-40b5-99bd-965e46c9f2cd "HTTP/1.1 200 OK"
+2026-10-03 15:26:39,952 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 15:26:39,961 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 15:26:39,987 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:26:39,995 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=c7d221e2-00e5-47e9-9772-b5b77240e190 "HTTP/1.1 200 OK"
+2026-10-03 15:26:40,005 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 15:26:40,018 INFO httpx HTTP Request: GET http://testserver/communication/share/d07ba424-6a84-4868-bd41-1ada0458cf40 "HTTP/1.1 200 OK"
+2026-10-03 15:26:40,036 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:26:40,321 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.4a7e1f42-463c-430c-a754-e79ab036ccd9 "HTTP/2 200 OK"
+2026-10-03 15:26:40,326 INFO httpx HTTP Request: GET http://testserver/planification/plans/4a7e1f42-463c-430c-a754-e79ab036ccd9 "HTTP/1.1 200 OK"
+2026-10-03 15:26:45,031 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:26:45,038 INFO admin.audit {"timestamp": "2026-10-03T13:26:45.038101+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:26:45,312 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:26:45,316 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:27:58,691 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:27:58,787 INFO admin.audit {"timestamp": "2026-10-03T13:27:58.787262+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:28:02,575 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:28:02,579 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:28:02,586 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:28:02,596 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:28:02,604 INFO admin.audit {"timestamp": "2026-10-03T13:28:02.604552+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:28:02,875 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:28:02,879 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:28:02,890 INFO admin.audit {"timestamp": "2026-10-03T13:28:02.890463+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:28:02,894 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:28:02,901 INFO admin.audit {"timestamp": "2026-10-03T13:28:02.901101+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "25e15c48-aec1-4b7c-b7fd-4ba06f99e218", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 15:28:02,903 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/25e15c48-aec1-4b7c-b7fd-4ba06f99e218 "HTTP/1.1 200 OK"
+2026-10-03 15:28:02,910 INFO admin.audit {"timestamp": "2026-10-03T13:28:02.910788+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "25e15c48-aec1-4b7c-b7fd-4ba06f99e218"}, "client": "testclient"}
+2026-10-03 15:28:02,913 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/25e15c48-aec1-4b7c-b7fd-4ba06f99e218 "HTTP/1.1 200 OK"
+2026-10-03 15:28:02,918 INFO admin.audit {"timestamp": "2026-10-03T13:28:02.918725+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 15:28:02,921 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:28:02,928 INFO admin.audit {"timestamp": "2026-10-03T13:28:02.928354+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "578daa4a-c359-4967-921c-0749fb4fcb65", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 15:28:02,931 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/578daa4a-c359-4967-921c-0749fb4fcb65 "HTTP/1.1 200 OK"
+2026-10-03 15:28:02,936 INFO admin.audit {"timestamp": "2026-10-03T13:28:02.936084+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "578daa4a-c359-4967-921c-0749fb4fcb65"}, "client": "testclient"}
+2026-10-03 15:28:02,938 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/578daa4a-c359-4967-921c-0749fb4fcb65 "HTTP/1.1 200 OK"
+2026-10-03 15:28:12,900 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:28:13,011 INFO admin.audit {"timestamp": "2026-10-03T13:28:13.010890+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:28:13,014 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:28:13,022 INFO admin.audit {"timestamp": "2026-10-03T13:28:13.022076+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "ea133b51-22e9-493e-a76c-6ad311f87d71", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 15:28:13,024 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/ea133b51-22e9-493e-a76c-6ad311f87d71 "HTTP/1.1 200 OK"
+2026-10-03 15:28:13,035 INFO admin.audit {"timestamp": "2026-10-03T13:28:13.034905+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "ea133b51-22e9-493e-a76c-6ad311f87d71"}, "client": "testclient"}
+2026-10-03 15:28:13,037 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/ea133b51-22e9-493e-a76c-6ad311f87d71 "HTTP/1.1 200 OK"
+2026-10-03 15:28:13,045 INFO admin.audit {"timestamp": "2026-10-03T13:28:13.045168+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 15:28:13,048 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:28:13,055 INFO admin.audit {"timestamp": "2026-10-03T13:28:13.055109+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "f0c16547-c391-4a23-a9bb-d019086baff6", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 15:28:13,057 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/f0c16547-c391-4a23-a9bb-d019086baff6 "HTTP/1.1 200 OK"
+2026-10-03 15:28:13,064 INFO admin.audit {"timestamp": "2026-10-03T13:28:13.064864+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "f0c16547-c391-4a23-a9bb-d019086baff6"}, "client": "testclient"}
+2026-10-03 15:28:13,067 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/f0c16547-c391-4a23-a9bb-d019086baff6 "HTTP/1.1 200 OK"
+2026-10-03 15:28:13,078 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:28:13,089 INFO admin.audit {"timestamp": "2026-10-03T13:28:13.089202+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:28:15,284 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:28:15,288 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,304 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,318 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:28:15,332 INFO httpx HTTP Request: POST http://testserver/alignment/compute/a588d156-6899-4ad2-bd3f-fcb70b9e2029?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,340 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/a588d156-6899-4ad2-bd3f-fcb70b9e2029 "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,348 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/a588d156-6899-4ad2-bd3f-fcb70b9e2029 "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,355 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,364 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,386 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,396 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=47e13378-46c1-47ec-92ac-6882661cbe2e "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,408 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 15:28:15,420 INFO httpx HTTP Request: GET http://testserver/communication/share/98a27ffc-d5e4-46bb-b5ab-fa0c641150d7 "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,431 INFO admin.audit {"timestamp": "2026-10-03T13:28:15.431276+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:28:15,735 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:28:15,738 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:28:15,746 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:28:15,760 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:28:16,400 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.3c0ad8c1-5bee-436e-bc62-ab8daf3f68bb "HTTP/2 200 OK"
+2026-10-03 15:28:16,405 INFO httpx HTTP Request: GET http://testserver/planification/plans/3c0ad8c1-5bee-436e-bc62-ab8daf3f68bb "HTTP/1.1 200 OK"
+2026-10-03 15:28:20,889 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:28:20,896 INFO admin.audit {"timestamp": "2026-10-03T13:28:20.896634+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:28:21,179 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:28:21,183 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:29:13,340 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:29:13,446 INFO admin.audit {"timestamp": "2026-10-03T13:29:13.446180+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:29:13,449 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:29:13,457 INFO admin.audit {"timestamp": "2026-10-03T13:29:13.457215+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "8c3d0f0a-c8c7-498f-bc93-971132d3f051", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 15:29:13,460 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/8c3d0f0a-c8c7-498f-bc93-971132d3f051 "HTTP/1.1 200 OK"
+2026-10-03 15:29:13,467 INFO admin.audit {"timestamp": "2026-10-03T13:29:13.467519+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "8c3d0f0a-c8c7-498f-bc93-971132d3f051"}, "client": "testclient"}
+2026-10-03 15:29:13,469 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/8c3d0f0a-c8c7-498f-bc93-971132d3f051 "HTTP/1.1 200 OK"
+2026-10-03 15:29:13,476 INFO admin.audit {"timestamp": "2026-10-03T13:29:13.476162+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 15:29:13,479 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:29:13,486 INFO admin.audit {"timestamp": "2026-10-03T13:29:13.486025+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "77cbe571-fc37-49a4-a7b3-840450490dab", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 15:29:13,488 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/77cbe571-fc37-49a4-a7b3-840450490dab "HTTP/1.1 200 OK"
+2026-10-03 15:29:13,495 INFO admin.audit {"timestamp": "2026-10-03T13:29:13.495525+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "77cbe571-fc37-49a4-a7b3-840450490dab"}, "client": "testclient"}
+2026-10-03 15:29:13,497 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/77cbe571-fc37-49a4-a7b3-840450490dab "HTTP/1.1 200 OK"
+2026-10-03 15:29:13,510 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:29:13,519 INFO admin.audit {"timestamp": "2026-10-03T13:29:13.519294+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:29:15,760 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:29:15,763 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,776 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,785 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:29:15,797 INFO httpx HTTP Request: POST http://testserver/alignment/compute/3df2782e-ed7b-4003-9abd-103a1dbfadab?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,803 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/3df2782e-ed7b-4003-9abd-103a1dbfadab "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,809 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/3df2782e-ed7b-4003-9abd-103a1dbfadab "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,816 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,823 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,843 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,849 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=5485efa0-de38-489c-8ac8-643cd5501225 "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,857 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 15:29:15,871 INFO httpx HTTP Request: GET http://testserver/communication/share/4e040d28-ecaa-48d4-84ea-8609874fbfce "HTTP/1.1 200 OK"
+2026-10-03 15:29:15,881 INFO admin.audit {"timestamp": "2026-10-03T13:29:15.881475+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:29:16,150 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:29:16,152 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:29:16,158 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:29:16,170 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:29:16,447 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.8d570f29-9acf-4a57-908a-92c93f6bce98 "HTTP/2 200 OK"
+2026-10-03 15:29:16,450 INFO httpx HTTP Request: GET http://testserver/planification/plans/8d570f29-9acf-4a57-908a-92c93f6bce98 "HTTP/1.1 200 OK"
+2026-10-03 15:29:20,694 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:29:20,701 INFO admin.audit {"timestamp": "2026-10-03T13:29:20.701325+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:29:20,973 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:29:20,977 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:35:12,979 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:35:13,089 INFO admin.audit {"timestamp": "2026-10-03T13:35:13.089499+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:35:13,093 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:35:13,101 INFO admin.audit {"timestamp": "2026-10-03T13:35:13.100853+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "07d99174-de5c-4395-b90d-828078d5a36e", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 15:35:13,103 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/07d99174-de5c-4395-b90d-828078d5a36e "HTTP/1.1 200 OK"
+2026-10-03 15:35:13,113 INFO admin.audit {"timestamp": "2026-10-03T13:35:13.113625+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "07d99174-de5c-4395-b90d-828078d5a36e"}, "client": "testclient"}
+2026-10-03 15:35:13,115 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/07d99174-de5c-4395-b90d-828078d5a36e "HTTP/1.1 200 OK"
+2026-10-03 15:35:13,122 INFO admin.audit {"timestamp": "2026-10-03T13:35:13.122127+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 15:35:13,125 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:35:13,133 INFO admin.audit {"timestamp": "2026-10-03T13:35:13.133249+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "0a0f9c30-e4d7-401d-90f0-2f867418ea52", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 15:35:13,135 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/0a0f9c30-e4d7-401d-90f0-2f867418ea52 "HTTP/1.1 200 OK"
+2026-10-03 15:35:13,142 INFO admin.audit {"timestamp": "2026-10-03T13:35:13.142184+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "0a0f9c30-e4d7-401d-90f0-2f867418ea52"}, "client": "testclient"}
+2026-10-03 15:35:13,145 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/0a0f9c30-e4d7-401d-90f0-2f867418ea52 "HTTP/1.1 200 OK"
+2026-10-03 15:35:13,157 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:35:13,167 INFO admin.audit {"timestamp": "2026-10-03T13:35:13.167828+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:35:15,983 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:35:15,987 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:35:15,998 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,008 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 15:35:16,020 INFO httpx HTTP Request: POST http://testserver/alignment/compute/af3b7fd7-df0a-47ab-86fd-4c3241966a69?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,027 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/af3b7fd7-df0a-47ab-86fd-4c3241966a69 "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,035 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/af3b7fd7-df0a-47ab-86fd-4c3241966a69 "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,041 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,049 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,071 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,078 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=34d9fa5a-2a3a-4108-84a0-360f2f510f28 "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,087 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 15:35:16,098 INFO httpx HTTP Request: GET http://testserver/communication/share/50476f79-eb1e-4c01-a267-ec39b757e440 "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,109 INFO admin.audit {"timestamp": "2026-10-03T13:35:16.109626+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:35:16,399 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:35:16,404 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,411 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:35:16,424 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 15:35:16,708 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.fae2bbeb-3f00-45a4-b65c-10e226439750 "HTTP/2 200 OK"
+2026-10-03 15:35:16,712 INFO httpx HTTP Request: GET http://testserver/planification/plans/fae2bbeb-3f00-45a4-b65c-10e226439750 "HTTP/1.1 200 OK"
+2026-10-03 15:35:21,038 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 15:35:21,045 INFO admin.audit {"timestamp": "2026-10-03T13:35:21.045787+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 15:35:21,319 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:35:21,323 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 15:47:16,644 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 15:58:41,078 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:58:53,047 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:58:53,460 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/alignment_metrics?select=%2A&zone_id=eq.008f3f09-59eb-499a-b7c8-28a90f81376f&order=created_at.desc&limit=1 "HTTP/2 200 OK"
+2026-10-03 15:59:14,193 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A "HTTP/2 200 OK"
+2026-10-03 15:59:14,562 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.008f3f09-59eb-499a-b7c8-28a90f81376f "HTTP/2 200 OK"
+2026-10-03 15:59:15,075 INFO httpx HTTP Request: POST https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/predictions "HTTP/2 400 Bad Request"
+2026-10-03 16:09:24,015 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A "HTTP/2 200 OK"
+2026-10-03 16:09:24,340 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.008f3f09-59eb-499a-b7c8-28a90f81376f "HTTP/2 200 OK"
+2026-10-03 16:09:24,662 INFO httpx HTTP Request: POST https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/predictions "HTTP/2 400 Bad Request"
+2026-10-03 16:10:35,709 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:12:26,676 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:13:07,536 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:15:01,040 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A "HTTP/2 200 OK"
+2026-10-03 16:15:03,489 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/zones?select=%2A&id=eq.008f3f09-59eb-499a-b7c8-28a90f81376f "HTTP/2 200 OK"
+2026-10-03 16:15:10,545 INFO httpx HTTP Request: POST https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/predictions "HTTP/2 201 Created"
+2026-10-03 16:15:54,172 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:15:54,270 INFO admin.audit {"timestamp": "2026-10-03T14:15:54.269870+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 16:15:54,274 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 16:15:54,284 INFO admin.audit {"timestamp": "2026-10-03T14:15:54.283863+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "cc5b5bb9-5481-4b32-8d66-bdf77b108cc5", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 16:15:54,286 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/cc5b5bb9-5481-4b32-8d66-bdf77b108cc5 "HTTP/1.1 200 OK"
+2026-10-03 16:15:54,294 INFO admin.audit {"timestamp": "2026-10-03T14:15:54.294113+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "cc5b5bb9-5481-4b32-8d66-bdf77b108cc5"}, "client": "testclient"}
+2026-10-03 16:15:54,297 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/cc5b5bb9-5481-4b32-8d66-bdf77b108cc5 "HTTP/1.1 200 OK"
+2026-10-03 16:15:54,303 INFO admin.audit {"timestamp": "2026-10-03T14:15:54.303494+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 16:15:54,306 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 16:15:54,314 INFO admin.audit {"timestamp": "2026-10-03T14:15:54.314541+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "6aa702c5-2d3c-4365-a111-98bc4731d3ac", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 16:15:54,317 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/6aa702c5-2d3c-4365-a111-98bc4731d3ac "HTTP/1.1 200 OK"
+2026-10-03 16:15:54,324 INFO admin.audit {"timestamp": "2026-10-03T14:15:54.324414+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "6aa702c5-2d3c-4365-a111-98bc4731d3ac"}, "client": "testclient"}
+2026-10-03 16:15:54,327 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/6aa702c5-2d3c-4365-a111-98bc4731d3ac "HTTP/1.1 200 OK"
+2026-10-03 16:15:54,339 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 16:15:54,350 INFO admin.audit {"timestamp": "2026-10-03T14:15:54.350086+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 16:16:03,173 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 16:16:03,177 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,193 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,204 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 16:16:03,218 INFO httpx HTTP Request: POST http://testserver/alignment/compute/d7833a95-58a2-46fe-b5a0-416213e0fc06?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,226 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/d7833a95-58a2-46fe-b5a0-416213e0fc06 "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,233 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/d7833a95-58a2-46fe-b5a0-416213e0fc06 "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,241 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,250 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,275 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,284 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=bbb95b80-5b6b-4604-a355-7bbb5cb772d3 "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,296 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 16:16:03,308 INFO httpx HTTP Request: GET http://testserver/communication/share/067393ef-33db-4a58-85f3-2c6c58c98aa6 "HTTP/1.1 200 OK"
+2026-10-03 16:16:03,318 INFO admin.audit {"timestamp": "2026-10-03T14:16:03.318346+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 16:16:04,737 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 16:16:04,747 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 16:16:04,753 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 16:16:04,767 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 16:16:06,122 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.650ad256-b3ff-4849-b427-0529fb290213 "HTTP/2 200 OK"
+2026-10-03 16:16:06,735 INFO httpx HTTP Request: GET http://testserver/planification/plans/650ad256-b3ff-4849-b427-0529fb290213 "HTTP/1.1 200 OK"
+2026-10-03 16:16:10,889 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 16:16:10,910 INFO admin.audit {"timestamp": "2026-10-03T14:16:10.909953+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 16:16:11,322 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 16:16:12,537 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 16:29:58,693 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:29:58,731 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 16:29:58,744 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 16:29:58,768 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 404 Not Found"
+2026-10-03 16:30:51,374 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:30:51,428 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 16:30:51,440 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 16:30:51,621 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 16:30:51,641 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 16:30:55,070 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.62e49d4f-7538-4ba0-b02c-cfb13a17dda8 "HTTP/2 200 OK"
+2026-10-03 16:30:55,074 INFO httpx HTTP Request: GET http://testserver/planification/plans/62e49d4f-7538-4ba0-b02c-cfb13a17dda8 "HTTP/1.1 200 OK"
+2026-10-03 16:31:29,974 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:31:30,027 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 16:31:30,041 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 16:31:30,222 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 16:31:30,245 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 404 Not Found"
+2026-10-03 16:33:27,487 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:33:27,531 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 16:33:27,545 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 16:33:27,659 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 16:33:27,680 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 16:33:27,694 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 16:33:30,005 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.67066e57-7955-4263-821c-5a863403acc3 "HTTP/2 200 OK"
+2026-10-03 16:33:30,009 INFO httpx HTTP Request: GET http://testserver/planification/plans/67066e57-7955-4263-821c-5a863403acc3 "HTTP/1.1 200 OK"
+2026-10-03 16:50:31,346 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:50:31,395 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 16:50:31,408 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 16:50:31,535 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 16:50:31,593 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 16:50:31,611 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 16:50:38,268 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.d47e8454-55a9-4401-8736-f8fe587660ff "HTTP/2 200 OK"
+2026-10-03 16:50:38,319 INFO httpx HTTP Request: GET http://testserver/planification/plans/d47e8454-55a9-4401-8736-f8fe587660ff "HTTP/1.1 200 OK"
+2026-10-03 16:57:07,934 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 16:57:07,998 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 16:57:08,011 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 16:57:08,112 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 16:57:08,134 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 16:57:08,149 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 16:57:11,634 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.30173fc9-b28b-40b4-88ca-53ccadfcfdc3 "HTTP/2 200 OK"
+2026-10-03 16:57:11,670 INFO httpx HTTP Request: GET http://testserver/planification/plans/30173fc9-b28b-40b4-88ca-53ccadfcfdc3 "HTTP/1.1 200 OK"
+2026-10-03 17:00:28,757 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 17:02:51,732 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 17:29:33,117 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 17:29:33,218 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:29:33,229 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=c8630a19-7f22-4c4c-b1bb-778fa42eaf79 "HTTP/1.1 200 OK"
+2026-10-03 17:29:33,240 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 17:29:33,251 INFO httpx HTTP Request: GET http://testserver/communication/share/f279ac07-dbf1-4397-accd-6d3a40178aee "HTTP/1.1 200 OK"
+2026-10-03 17:32:41,939 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 17:32:41,998 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:32:42,011 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=cf29e151-f151-4954-8954-02d98b2f7949 "HTTP/1.1 200 OK"
+2026-10-03 17:32:42,023 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 17:32:42,037 INFO httpx HTTP Request: GET http://testserver/communication/share/ca2abf50-7dda-4bb5-a3bc-5a925169d3e3 "HTTP/1.1 200 OK"
+2026-10-03 17:32:42,052 INFO httpx HTTP Request: POST http://testserver/communication/notify "HTTP/1.1 200 OK"
+2026-10-03 17:32:42,067 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:33:04,963 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 17:33:05,065 INFO admin.audit {"timestamp": "2026-10-03T15:33:05.064870+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 17:33:05,068 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 17:33:05,077 INFO admin.audit {"timestamp": "2026-10-03T15:33:05.077571+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "326f95c1-c70f-4c9d-a098-0697a3ca2ad5", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 17:33:05,080 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/326f95c1-c70f-4c9d-a098-0697a3ca2ad5 "HTTP/1.1 200 OK"
+2026-10-03 17:33:05,088 INFO admin.audit {"timestamp": "2026-10-03T15:33:05.087876+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "326f95c1-c70f-4c9d-a098-0697a3ca2ad5"}, "client": "testclient"}
+2026-10-03 17:33:05,090 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/326f95c1-c70f-4c9d-a098-0697a3ca2ad5 "HTTP/1.1 200 OK"
+2026-10-03 17:33:05,097 INFO admin.audit {"timestamp": "2026-10-03T15:33:05.097017+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 17:33:05,099 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:33:05,107 INFO admin.audit {"timestamp": "2026-10-03T15:33:05.107097+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "227646fa-d8d1-48c5-9f03-12c3cdb48c93", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 17:33:05,109 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/227646fa-d8d1-48c5-9f03-12c3cdb48c93 "HTTP/1.1 200 OK"
+2026-10-03 17:33:05,116 INFO admin.audit {"timestamp": "2026-10-03T15:33:05.116191+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "227646fa-d8d1-48c5-9f03-12c3cdb48c93"}, "client": "testclient"}
+2026-10-03 17:33:05,118 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/227646fa-d8d1-48c5-9f03-12c3cdb48c93 "HTTP/1.1 200 OK"
+2026-10-03 17:33:05,129 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 17:33:05,138 INFO admin.audit {"timestamp": "2026-10-03T15:33:05.138243+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 17:33:08,611 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 17:33:08,617 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,631 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,642 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 17:33:08,745 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,769 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,785 INFO httpx HTTP Request: POST http://testserver/alignment/compute/a1aa71f0-0ee5-4116-af39-71d167dc6421?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,793 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/a1aa71f0-0ee5-4116-af39-71d167dc6421 "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,802 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/a1aa71f0-0ee5-4116-af39-71d167dc6421 "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,810 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,819 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,839 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,848 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=4a5d39d1-da14-4f2b-aaee-d2c38afd1075 "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,857 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 17:33:08,870 INFO httpx HTTP Request: GET http://testserver/communication/share/5128cb59-7caa-44eb-939c-3f05ee88e00e "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,881 INFO httpx HTTP Request: POST http://testserver/communication/notify "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,893 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:33:08,904 INFO admin.audit {"timestamp": "2026-10-03T15:33:08.904624+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 17:33:09,230 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 17:33:09,243 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 17:33:09,251 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 17:33:09,266 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 17:33:10,904 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.ed1b9434-9cfe-4639-be07-9b4eb25da6d9 "HTTP/2 200 OK"
+2026-10-03 17:33:10,915 INFO httpx HTTP Request: GET http://testserver/planification/plans/ed1b9434-9cfe-4639-be07-9b4eb25da6d9 "HTTP/1.1 200 OK"
+2026-10-03 17:33:11,000 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 17:33:11,006 INFO admin.audit {"timestamp": "2026-10-03T15:33:11.006014+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 17:33:12,556 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 17:33:12,566 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 17:40:55,510 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 17:40:55,575 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 17:40:55,589 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 17:40:55,673 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 17:40:55,696 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 17:40:55,712 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 17:40:59,745 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.f6a3a573-bc30-4828-8635-6575f5dbddfa "HTTP/2 200 OK"
+2026-10-03 17:40:59,748 INFO httpx HTTP Request: GET http://testserver/planification/plans/f6a3a573-bc30-4828-8635-6575f5dbddfa "HTTP/1.1 200 OK"
+2026-10-03 17:40:59,760 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:40:59,769 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=664d8691-469c-4e90-b832-4051c5cbc5fb "HTTP/1.1 200 OK"
+2026-10-03 17:40:59,777 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 17:40:59,788 INFO httpx HTTP Request: GET http://testserver/communication/share/89e10fa5-5b4b-4e87-9d8a-403cc51e7de6 "HTTP/1.1 200 OK"
+2026-10-03 17:40:59,799 INFO httpx HTTP Request: POST http://testserver/communication/notify "HTTP/1.1 200 OK"
+2026-10-03 17:40:59,810 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:42:32,721 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 17:42:32,785 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 17:42:32,798 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 17:42:32,887 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 17:42:32,911 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 17:42:32,927 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 17:42:35,096 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.a2e74e6e-3722-408e-83a3-898aac890f6b "HTTP/2 200 OK"
+2026-10-03 17:42:35,102 INFO httpx HTTP Request: GET http://testserver/planification/plans/a2e74e6e-3722-408e-83a3-898aac890f6b "HTTP/1.1 200 OK"
+2026-10-03 17:42:35,117 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:42:35,126 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=b81d9fee-1fa6-49b5-84d0-aa30dda34c6a "HTTP/1.1 200 OK"
+2026-10-03 17:42:35,136 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 17:42:35,148 INFO httpx HTTP Request: GET http://testserver/communication/share/63c48012-26ba-423f-8ee7-5615c8d9fd59 "HTTP/1.1 200 OK"
+2026-10-03 17:42:35,160 INFO httpx HTTP Request: POST http://testserver/communication/notify "HTTP/1.1 200 OK"
+2026-10-03 17:42:35,172 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:55:35,898 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 17:55:35,955 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 17:55:35,969 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 17:55:36,062 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 17:55:36,085 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 17:55:36,100 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 17:55:39,337 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.d46c3c26-8082-43c7-9942-6a38e48f8f3d "HTTP/2 200 OK"
+2026-10-03 17:55:39,340 INFO httpx HTTP Request: GET http://testserver/planification/plans/d46c3c26-8082-43c7-9942-6a38e48f8f3d "HTTP/1.1 200 OK"
+2026-10-03 17:55:39,351 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 17:55:39,359 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=675e48ce-89c2-4ad0-83b0-5cfc1e0566ad "HTTP/1.1 200 OK"
+2026-10-03 17:55:39,366 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 17:55:39,378 INFO httpx HTTP Request: GET http://testserver/communication/share/3aa36060-4bb7-4106-8bf6-1c1919126361 "HTTP/1.1 200 OK"
+2026-10-03 17:55:39,390 INFO httpx HTTP Request: POST http://testserver/communication/notify "HTTP/1.1 200 OK"
+2026-10-03 17:55:39,400 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:04:30,824 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 19:04:30,909 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 19:04:30,922 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 19:04:31,063 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 19:04:31,089 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 19:04:31,108 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 19:04:35,587 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.1a83638d-3547-4df2-9dbb-295118d33daa "HTTP/2 200 OK"
+2026-10-03 19:04:35,594 INFO httpx HTTP Request: GET http://testserver/planification/plans/1a83638d-3547-4df2-9dbb-295118d33daa "HTTP/1.1 200 OK"
+2026-10-03 19:04:35,611 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:04:35,624 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=b35c0dfc-1134-4897-be6a-de89495f95bb "HTTP/1.1 200 OK"
+2026-10-03 19:04:35,635 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 19:04:35,649 INFO httpx HTTP Request: GET http://testserver/communication/share/ca4a3b0b-ae64-4722-b5a2-08abe5d06bb5 "HTTP/1.1 200 OK"
+2026-10-03 19:04:35,661 INFO httpx HTTP Request: POST http://testserver/communication/notify "HTTP/1.1 200 OK"
+2026-10-03 19:04:35,674 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:04:38,788 INFO httpx HTTP Request: GET https://api.open-meteo.com/v1/forecast?latitude=-1.9441&longitude=30.0619&current=temperature_2m%2Crelative_humidity_2m%2Cprecipitation%2Crain%2Cwind_speed_10m&timezone=auto "HTTP/1.1 200 OK"
+2026-10-03 19:04:41,545 INFO httpx HTTP Request: GET https://api.open-meteo.com/v1/forecast?latitude=-1.9441&longitude=30.0619&current=temperature_2m%2Crelative_humidity_2m%2Cprecipitation%2Crain%2Cwind_speed_10m&timezone=auto "HTTP/1.1 200 OK"
+2026-10-03 19:05:13,025 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 19:05:13,094 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 19:05:13,109 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 19:05:13,266 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 19:05:13,290 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 19:05:13,304 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 19:05:16,094 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.c024355d-a40e-42f3-881e-8852c0bcde1d "HTTP/2 200 OK"
+2026-10-03 19:05:16,097 INFO httpx HTTP Request: GET http://testserver/planification/plans/c024355d-a40e-42f3-881e-8852c0bcde1d "HTTP/1.1 200 OK"
+2026-10-03 19:05:16,110 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:05:16,120 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=0f030549-b623-4fef-80cc-adb8c096555f "HTTP/1.1 200 OK"
+2026-10-03 19:05:16,129 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 19:05:16,144 INFO httpx HTTP Request: GET http://testserver/communication/share/ee47fe5d-f64f-47ef-b1cd-a57333391b80 "HTTP/1.1 200 OK"
+2026-10-03 19:05:16,156 INFO httpx HTTP Request: POST http://testserver/communication/notify "HTTP/1.1 200 OK"
+2026-10-03 19:05:16,167 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:05:19,289 INFO httpx HTTP Request: GET https://api.open-meteo.com/v1/forecast?latitude=-1.9441&longitude=30.0619&current=temperature_2m%2Crelative_humidity_2m%2Cprecipitation%2Crain%2Cwind_speed_10m&timezone=auto "HTTP/1.1 200 OK"
+2026-10-03 19:05:21,539 INFO httpx HTTP Request: GET https://api.open-meteo.com/v1/forecast?latitude=-1.9441&longitude=30.0619&current=temperature_2m%2Crelative_humidity_2m%2Cprecipitation%2Crain%2Cwind_speed_10m&timezone=auto "HTTP/1.1 200 OK"
+2026-10-03 19:18:35,008 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 19:18:35,158 INFO admin.audit {"timestamp": "2026-10-03T17:18:35.157991+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 19:18:35,162 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 19:18:35,173 INFO admin.audit {"timestamp": "2026-10-03T17:18:35.173195+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "c7a3f9a5-1885-404a-9884-25ce94000c3f", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 19:18:35,176 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/c7a3f9a5-1885-404a-9884-25ce94000c3f "HTTP/1.1 200 OK"
+2026-10-03 19:18:35,184 INFO admin.audit {"timestamp": "2026-10-03T17:18:35.183928+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "c7a3f9a5-1885-404a-9884-25ce94000c3f"}, "client": "testclient"}
+2026-10-03 19:18:35,186 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/c7a3f9a5-1885-404a-9884-25ce94000c3f "HTTP/1.1 200 OK"
+2026-10-03 19:18:35,192 INFO admin.audit {"timestamp": "2026-10-03T17:18:35.192033+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 19:18:35,194 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:18:35,203 INFO admin.audit {"timestamp": "2026-10-03T17:18:35.203073+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "42438a42-3ac9-4dfe-8a87-42902095af8d", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 19:18:35,205 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/42438a42-3ac9-4dfe-8a87-42902095af8d "HTTP/1.1 200 OK"
+2026-10-03 19:18:35,212 INFO admin.audit {"timestamp": "2026-10-03T17:18:35.212693+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "42438a42-3ac9-4dfe-8a87-42902095af8d"}, "client": "testclient"}
+2026-10-03 19:18:35,215 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/42438a42-3ac9-4dfe-8a87-42902095af8d "HTTP/1.1 200 OK"
+2026-10-03 19:18:35,227 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 19:18:35,237 INFO admin.audit {"timestamp": "2026-10-03T17:18:35.237049+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 19:18:48,530 WARNING root Transient network error connecting to Supabase (attempt 1/3): ConnectError('[Errno 11001] getaddrinfo failed')
+2026-10-03 19:18:55,840 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 19:18:55,843 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 19:18:55,858 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 19:18:55,869 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 19:18:55,974 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 19:18:55,995 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,020 INFO httpx HTTP Request: POST http://testserver/alignment/compute/63cc6d8a-3cae-4353-b111-986fbe6e6748?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,029 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/63cc6d8a-3cae-4353-b111-986fbe6e6748 "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,038 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/63cc6d8a-3cae-4353-b111-986fbe6e6748 "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,046 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,057 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,077 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,084 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=2e502c32-28cb-43fa-a22e-3e7a70c434e2 "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,093 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 19:18:56,105 INFO httpx HTTP Request: GET http://testserver/communication/share/615cd69e-8dbb-4b48-835c-bc5ed700c5ac "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,116 INFO httpx HTTP Request: POST http://testserver/communication/notify "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,126 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,137 INFO admin.audit {"timestamp": "2026-10-03T17:18:56.136931+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 19:18:56,502 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 19:18:56,505 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 19:18:56,513 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 19:18:58,491 INFO httpx HTTP Request: GET https://api.open-meteo.com/v1/forecast?latitude=-1.9441&longitude=30.0619&current=temperature_2m%2Crelative_humidity_2m%2Cprecipitation%2Crain%2Cwind_speed_10m&timezone=auto "HTTP/1.1 200 OK"
+2026-10-03 19:19:00,210 INFO httpx HTTP Request: GET https://api.open-meteo.com/v1/forecast?latitude=-1.9441&longitude=30.0619&current=temperature_2m%2Crelative_humidity_2m%2Cprecipitation%2Crain%2Cwind_speed_10m&timezone=auto "HTTP/1.1 200 OK"
+2026-10-03 19:19:00,226 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 19:19:01,120 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.3fb646a5-b96e-4ab4-a578-9477bdb89f0d "HTTP/2 200 OK"
+2026-10-03 19:19:01,124 INFO httpx HTTP Request: GET http://testserver/planification/plans/3fb646a5-b96e-4ab4-a578-9477bdb89f0d "HTTP/1.1 200 OK"
+2026-10-03 19:19:01,198 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 19:19:01,204 INFO admin.audit {"timestamp": "2026-10-03T17:19:01.204254+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 19:19:02,194 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 19:19:02,197 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 19:25:55,200 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 19:25:55,401 INFO admin.audit {"timestamp": "2026-10-03T17:25:55.401483+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 19:25:55,406 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 19:25:55,415 INFO admin.audit {"timestamp": "2026-10-03T17:25:55.415750+00:00", "action": "update_plan", "resource": "plans", "payload": {"plan_id": "6352c200-8509-44c5-9204-60d007845157", "changes": {"title": "Updated"}}, "client": "testclient"}
+2026-10-03 19:25:55,420 INFO httpx HTTP Request: PATCH http://testserver/admin/plans/6352c200-8509-44c5-9204-60d007845157 "HTTP/1.1 200 OK"
+2026-10-03 19:25:55,429 INFO admin.audit {"timestamp": "2026-10-03T17:25:55.429693+00:00", "action": "delete_plan", "resource": "plans", "payload": {"plan_id": "6352c200-8509-44c5-9204-60d007845157"}, "client": "testclient"}
+2026-10-03 19:25:55,433 INFO httpx HTTP Request: DELETE http://testserver/admin/plans/6352c200-8509-44c5-9204-60d007845157 "HTTP/1.1 200 OK"
+2026-10-03 19:25:55,441 INFO admin.audit {"timestamp": "2026-10-03T17:25:55.441251+00:00", "action": "list_alerts", "resource": "alerts", "payload": {}, "client": null}
+2026-10-03 19:25:55,444 INFO httpx HTTP Request: GET http://testserver/admin/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:25:55,453 INFO admin.audit {"timestamp": "2026-10-03T17:25:55.453685+00:00", "action": "update_alert", "resource": "alerts", "payload": {"alert_id": "f3ee35bb-ce61-4fd1-a90f-fdff63c0abfa", "changes": {"message": "Updated alert"}}, "client": "testclient"}
+2026-10-03 19:25:55,456 INFO httpx HTTP Request: PATCH http://testserver/admin/alerts/f3ee35bb-ce61-4fd1-a90f-fdff63c0abfa "HTTP/1.1 200 OK"
+2026-10-03 19:25:55,465 INFO admin.audit {"timestamp": "2026-10-03T17:25:55.465185+00:00", "action": "delete_alert", "resource": "alerts", "payload": {"alert_id": "f3ee35bb-ce61-4fd1-a90f-fdff63c0abfa"}, "client": "testclient"}
+2026-10-03 19:25:55,469 INFO httpx HTTP Request: DELETE http://testserver/admin/alerts/f3ee35bb-ce61-4fd1-a90f-fdff63c0abfa "HTTP/1.1 200 OK"
+2026-10-03 19:25:55,482 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 19:25:55,494 INFO admin.audit {"timestamp": "2026-10-03T17:25:55.494683+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 19:26:00,337 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 19:26:00,342 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,355 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,368 INFO httpx HTTP Request: POST http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-03 19:26:00,461 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,488 INFO httpx HTTP Request: POST http://testserver/chat/disease-detect-upload "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,504 INFO httpx HTTP Request: POST http://testserver/alignment/compute/dd54e646-9cc6-400a-8d07-c2d618f6a68f?season=2026-S1&predicted_yield=2000.0&area_cultivated=1.0&priority_level=Low&crop=maize&district=Gasabo "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,514 INFO httpx HTTP Request: GET http://testserver/alignment/finance-readiness/dd54e646-9cc6-400a-8d07-c2d618f6a68f "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,524 INFO httpx HTTP Request: GET http://testserver/alignment/nutrition-risk/dd54e646-9cc6-400a-8d07-c2d618f6a68f "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,533 INFO httpx HTTP Request: GET http://testserver/alignment/export-flags "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,544 INFO httpx HTTP Request: GET http://testserver/alignment/dashboard "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,577 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,586 INFO httpx HTTP Request: GET http://testserver/communication/alerts?zone_id=1bdebccb-0d36-4081-a7c5-b24552335aa0 "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,597 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 422 Unprocessable Entity"
+2026-10-03 19:26:00,608 INFO httpx HTTP Request: GET http://testserver/communication/share/32a84dd0-b489-4ffc-a595-03090f76fe87 "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,621 INFO httpx HTTP Request: POST http://testserver/communication/notify "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,635 INFO httpx HTTP Request: POST http://testserver/communication/alerts "HTTP/1.1 200 OK"
+2026-10-03 19:26:00,646 INFO admin.audit {"timestamp": "2026-10-03T17:26:00.646157+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 19:26:01,588 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 19:26:01,618 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 19:26:01,626 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 19:26:09,507 INFO httpx HTTP Request: GET https://api.open-meteo.com/v1/forecast?latitude=-1.9441&longitude=30.0619&current=temperature_2m%2Crelative_humidity_2m%2Cprecipitation%2Crain%2Cwind_speed_10m&timezone=auto "HTTP/1.1 200 OK"
+2026-10-03 19:26:15,214 INFO httpx HTTP Request: GET https://api.open-meteo.com/v1/forecast?latitude=-1.9441&longitude=30.0619&current=temperature_2m%2Crelative_humidity_2m%2Cprecipitation%2Crain%2Cwind_speed_10m&timezone=auto "HTTP/1.1 200 OK"
+2026-10-03 19:26:15,232 INFO httpx HTTP Request: POST http://testserver/planification/roadmap "HTTP/1.1 200 OK"
+2026-10-03 19:26:18,554 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A&zone_id=eq.c7fd7a4d-1bfa-4047-90ae-fd35e28e0ea9 "HTTP/2 200 OK"
+2026-10-03 19:26:18,557 INFO httpx HTTP Request: GET http://testserver/planification/plans/c7fd7a4d-1bfa-4047-90ae-fd35e28e0ea9 "HTTP/1.1 200 OK"
+2026-10-03 19:26:18,624 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 401 Unauthorized"
+2026-10-03 19:26:18,630 INFO admin.audit {"timestamp": "2026-10-03T17:26:18.630544+00:00", "action": "list_plans", "resource": "plans", "payload": {}, "client": null}
+2026-10-03 19:26:20,334 INFO httpx HTTP Request: GET https://qnchdsskyzzglwbddcdl.supabase.co/rest/v1/plans?select=%2A "HTTP/2 200 OK"
+2026-10-03 19:26:20,337 INFO httpx HTTP Request: GET http://testserver/admin/plans "HTTP/1.1 200 OK"
+2026-10-03 19:28:21,833 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log
+2026-10-03 19:29:15,409 INFO app.main Application starting up, logs -> C:\Users\fabri\Downloads\agri-menya-backend-updated\agri-menya\backend\logs\app.log

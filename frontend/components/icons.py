@@ -1,13 +1,14 @@
-import streamlit as st
 import base64
 import os
 
+import streamlit as st
+
+
 def get_base64_svg(file_path):
-    if not os.path.exists(file_path):
-        # Fallback for running from root
-        alt_path = os.path.join('frontend', file_path)
-        if os.path.exists(alt_path):
-            file_path = alt_path
+    # If it's a relative path starting with 'assets/', resolve it correctly
+    if file_path.startswith("assets/") or file_path.startswith("assets\\"):
+        ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
+        file_path = os.path.join(ASSETS_DIR, os.path.basename(file_path))
 
     with open(file_path, "r", encoding="utf-8") as f:
         svg_content = f.read()

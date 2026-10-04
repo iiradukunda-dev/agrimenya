@@ -1,32 +1,53 @@
+"""
+Alert / notification card component for the Communication pillar.
+"""
 import streamlit as st
 from components.icons import get_base64_svg
-
 from utils.i18n import t
 
-def render_alert(alert):
+
+def render_alert(alert: dict) -> None:
+    """
+    Renders a single alert card using the ag-alert design system classes.
+
+    Args:
+        alert: Dictionary with 'type', 'message', and 'timestamp' keys.
+    """
     type_icons = {
         "Warning": "assets/warning.svg",
-        "Info": "assets/info.svg",
-        "Urgent": "assets/urgent.svg"
+        "Info":    "assets/info.svg",
+        "Urgent":  "assets/urgent.svg",
     }
     raw_type = alert.get("type", "Info")
     icon_path = type_icons.get(raw_type, "assets/bell.svg")
-    icon_b64 = get_base64_svg(icon_path)
-    
-    styles = {
-        "Warning": {"bg": "#FFFBEB", "border": "#D97706", "box_border": "#FDE68A", "text": "#92400E"},
-        "Info": {"bg": "#EBF5EE", "border": "#52B788", "box_border": "#CBE3D1", "text": "#1B4332"},
-        "Urgent": {"bg": "#FEF2F2", "border": "#DC2626", "box_border": "#FECACA", "text": "#991B1B"}
+
+    try:
+        icon_b64 = get_base64_svg(icon_path)
+        icon_html = (
+            f'<img src="data:image/svg+xml;base64,{icon_b64}" '
+            f'style="width: 22px; height: 22px; margin-top: 2px; flex-shrink: 0;" />'
+        )
+    except FileNotFoundError:
+        icon_html = ""
+
+    css_class_map = {
+        "Warning": "ag-alert ag-alert-warning",
+        "Info":    "ag-alert ag-alert-info",
+        "Urgent":  "ag-alert ag-alert-urgent",
     }
-    style = styles.get(raw_type, {"bg": "#EBF5EE", "border": "#52B788", "box_border": "#CBE3D1", "text": "#1B4332"})
+    css_class = css_class_map.get(raw_type, "ag-alert ag-alert-info")
     translated_type = t(f"comm.alert_type.{raw_type.lower()}", default=raw_type)
-    
+
     html = f"""
-    <div style="background-color: {style['bg']}; border: 1px solid {style['box_border']}; border-left: 4px solid {style['border']}; padding: 16px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: start; gap: 14px;">
-        <img src="data:image/svg+xml;base64,{icon_b64}" style="width: 24px; height: 24px; margin-top: 2px;" />
-        <div style="color: #1B2A1E;">
-            <strong style="color: {style['text']};">{translated_type}</strong> • <span style="color: #6B7280; font-size: 0.88rem;">{alert.get('timestamp', '')}</span><br/>
-            <span style="font-size: 0.95rem; margin-top: 4px; display: inline-block;">{alert.get('message', 'No details provided.')}</span>
+    <div class="{css_class}">
+        {icon_html}
+        <div>
+            <strong style="color: inherit; font-size: 0.88rem;">{translated_type}</strong>
+            <span style="color: #9CA3AF; font-size: 0.8rem; margin-left: 8px;">{alert.get('timestamp', '')}</span>
+            <br/>
+            <span style="font-size: 0.92rem; margin-top: 4px; display: inline-block; color: #374151; line-height: 1.5;">
+                {alert.get('message', 'No details provided.')}
+            </span>
         </div>
     </div>
     """

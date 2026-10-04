@@ -1,16 +1,18 @@
+import os
+
 import streamlit as st
-import requests
-from utils.theme import load_theme
-from utils.i18n import t
 from components.navbar import render_navbar
-from components.errors import render_error_page
+from utils.i18n import t
+from utils.theme import load_theme
+from views.communicate import render_communicate
+from views.decide import render_decide
+from views.plan import render_plan
+from views.segment import render_segment
 
-from views.decision import render_decision_making
-from views.planification import render_planification
-from views.segmentation import render_segmentation
-from views.communication import render_communication
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
+LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")
 
-st.set_page_config(page_title="Actions", page_icon="frontend/assets/logo.jpg", layout="wide")
+st.set_page_config(page_title="Actions", page_icon=LOGO_PATH, layout="wide")
 load_theme()
 render_navbar()
 
@@ -25,20 +27,16 @@ def main():
     ])
     
     with tab1:
-        render_decision_making()
+        render_decide()
         
     with tab2:
-        render_planification()
+        render_plan()
         
     with tab3:
-        render_segmentation()
+        render_segment()
         
     with tab4:
-        render_communication()
+        render_communicate()
 
-try:
+if __name__ == "__main__":
     main()
-except requests.exceptions.RequestException as e:
-    render_error_page("network", str(e))
-except Exception as e:
-    render_error_page("system", str(e))

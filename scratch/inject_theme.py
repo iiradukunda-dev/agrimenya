@@ -1,5 +1,4 @@
 import glob
-import os
 
 for file in glob.glob('pages/*.py'):
     with open(file, 'r', encoding='utf-8') as f:

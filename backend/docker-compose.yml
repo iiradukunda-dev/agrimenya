@@ -1,0 +1,23 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agri-menya-api
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: production
+    restart: unless-stopped
+
+  vision-train:
+    build:
+      context: .
+      dockerfile: Dockerfile.train
+    container_name: agri-menya-vision-train
+    volumes:
+      - ./data:/app/data
+      - ./app/ml/artifacts:/app/app/ml/artifacts
+    profiles:
+      - train
+    restart: "no"

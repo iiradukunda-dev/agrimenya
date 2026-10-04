@@ -1,2 +1,2 @@
 # utils package
-from utils.i18n import t, render_language_selector, get_current_language, set_language
+from utils.i18n import get_current_language, render_language_selector, set_language, t
