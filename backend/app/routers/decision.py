@@ -8,6 +8,7 @@ from app.ml.predict import (
     get_yield_gap,
     get_yield_index,
 )
+from app.services.disease_detector import detect_crop_disease
 from app.services.recommendation_engine import get_recommendations
 
 router = APIRouter(prefix="/decision", tags=["Decision Making"])
@@ -28,7 +29,7 @@ def predict(request: PredictionRequest):
     gap = get_yield_gap(zone.get("district"), request.crop)
     yi = get_yield_index(zone.get("district"), request.crop)
 
-    priority = classify_priority(predicted_yield, request.area_cultivated, zone.get("district"), request.crop)
+    priority = classify_priority(predicted_yield, request.area_cultivated)
 
     result = PredictionResult(
         zone_id=request.zone_id,
@@ -112,4 +113,21 @@ def recommendations(zone_id: str, rainfall_mm: float | None = None, soil_type: s
         "zone_id": zone_id,
         "priority_level": latest["priority_level"],
         "recommendations": get_recommendations(latest["priority_level"], rainfall_mm, soil_type),
+    }
+
+
+@router.post("/disease-risk")
+def disease_risk(zone_id: str, crop: str, symptoms: str, image_description: str | None = None):
+    zone = crud.get_zone(zone_id)
+    if not zone:
+        raise HTTPException(status_code=404, detail="Zone not found")
+
+    assessment = detect_crop_disease(crop, symptoms, image_description)
+    return {
+        "zone_id": zone_id,
+        "crop": assessment["crop"],
+        "predicted_disease": assessment["predicted_disease"],
+        "confidence": assessment["confidence"],
+        "risk_level": assessment["risk_level"],
+        "recommended_actions": assessment["recommended_actions"],
     }

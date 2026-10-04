@@ -40,3 +40,38 @@ def test_share_plan(mock_list_plans):
     r = client.get(f"/communication/share/{plan_id}")
     assert r.status_code == 200
     assert r.json()["id"] == plan_id
+
+
+@patch("app.routers.communication.send_notification")
+def test_send_notification_route(mock_send):
+    mock_send.return_value = {
+        "status": "queued",
+        "channels": ["sms", "whatsapp"],
+        "message": "Alert queued for delivery",
+        "simulated": True,
+    }
+
+    payload = {
+        "phone": "+250788123456",
+        "email": "farmer@example.com",
+        "message": "Rain expected in 2 hours.",
+        "channels": ["sms", "whatsapp", "email"],
+    }
+
+    r = client.post("/communication/notify", json=payload)
+    assert r.status_code == 200
+    assert r.json()["status"] == "queued"
+    assert mock_send.called
+
+
+@patch("app.routers.communication.send_notification")
+@patch("app.db.crud.create_alert")
+def test_alert_creation_triggers_notification(mock_create_alert, mock_send):
+    zone_id = uuid.uuid4()
+    payload = {"zone_id": str(zone_id), "message": "Flood risk detected.", "severity": "Critical", "created_by": "tester"}
+    mock_create_alert.return_value = {"id": str(uuid.uuid4()), **payload}
+    mock_send.return_value = {"status": "queued", "channels": ["sms"], "simulated": True}
+
+    r = client.post("/communication/alerts", json=payload)
+    assert r.status_code == 200
+    assert mock_send.called
