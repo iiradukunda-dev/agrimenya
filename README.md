@@ -7,71 +7,71 @@
 
 ---
 
-## 🌾 Overview
+## Overview
 
 **agrimenya** is an intelligent platform designed to help **planners, agricultural extension officers, and cooperative leaders** make faster, better-informed decisions to improve agricultural productivity across Rwanda.
 
 By aggregating dense official survey data from the National Institute of Statistics of Rwanda (NISR) and augmenting it with machine learning, agrimenya transforms raw statistics into clear priorities, actionable roadmaps, and real-time alerts.
 
-Instead of leaving planners to manually cross-reference endless spreadsheets and reports, agrimenya automatically surfaces **where to focus, what to do, and how urgent it is**.
+Instead of leaving planners to manually cross-reference complex spreadsheets and reports, agrimenya automatically surfaces **where to focus, what to do, and how urgent the action is**.
 
 ---
 
-## 🎯 The Problem We're Solving
+## The Problem We Are Solving
 
 Agricultural planning in Rwanda relies on rich, high-quality survey data (SAS, AHS, EICV, and CFSVA). While this data is powerful, it is often underutilized in day-to-day decision-making simply because it is difficult to digest quickly.
 
-Turning those datasets into concrete, local action takes significant manual analysis—time that extension officers and busy planners just don't have. We built agrimenya to bridge that exact gap.
+Turning those datasets into concrete, local action takes significant manual analysis—time that extension officers and busy planners lack. We built agrimenya to bridge this exact gap, ensuring that data directly drives operational action.
 
 ---
 
-## 🏗️ Core Pillars
+## Core Pillars
 
 agrimenya is organized around four core capabilities that communicate seamlessly with each other:
 
 | Pillar | Capability | Description |
-|:---:|:---|:---|
-| 🧠 | **Decide** | Takes the guesswork out by generating precise, automated, and proactive recommendations for specific agricultural zones. |
-| 📅 | **Plan** | Helps you build clear planning roadmaps and step-by-step action plans so stakeholders know exactly what's next. |
-| 🗺️ | **Segment** | Visually zones and prioritizes areas (Low / Medium / High) based on real climate, yield, and productivity data. |
-| 📡 | **Communicate** | Keeps everyone in the loop by sharing real-time alerts and plans across planners, officers, and cooperatives. |
+|:---|:---|:---|
+| **Decide** | Decision Engine | Generates precise, automated, and proactive recommendations for specific agricultural zones based on predictive models. |
+| **Plan** | Roadmapping | Facilitates the creation of clear planning roadmaps and step-by-step action plans to coordinate stakeholder activities. |
+| **Segment** | Geographic Analysis | Visually zones and prioritizes areas (Low / Medium / High) based on climate, yield, and productivity metrics. |
+| **Communicate** | Alert System | Maintains operational alignment by sharing real-time alerts and plans across planners, officers, and cooperatives. |
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-- **Priority Ranking:** Automatic classification of agricultural areas so you know what's urgent.
-- **AI-Powered Insights:** A conversational AI assistant ready to offer contextual recommendations and answer data-driven questions.
-- **Yield & Impact Predictions:** Reliable forecasts powered by XGBoost ML models and caching via FastAPI lifespan events.
-- **Resource Estimation:** Forecasting needs for seeds, irrigation, and related inputs.
-- **Interactive Zoning:** Beautiful interactive maps (powered by Folium and CartoDB) that zone areas based on climate and productivity.
-- **Unified Alerting:** Real-time alerts and cross-team communication tools.
-- **Seamless Internationalization (i18n):** Native multi-language support (English, Kinyarwanda, French) powered by a robust GNU `gettext` architecture, dynamically managed via `st.session_state`.
-- **Liquid Glass Design System:** A premium, immersive UI featuring refractive translucency, micro-animations, and a nature-forward color palette for a frictionless user experience.
-
----
-
-## 👥 Target Audience
-
-- **Planners:** For officials handling national and district-level agricultural planning.
-- **Extension Officers:** For the frontline workers doing on-the-ground implementation and monitoring.
-- **Cooperative Leaders:** For local champions coordinating resources and sharing decisions with farmers.
+- **Priority Ranking:** Automatic classification of agricultural areas to highlight urgent intervention needs.
+- **AI-Powered Insights:** A conversational AI assistant designed to offer contextual recommendations and answer data-driven agronomic questions.
+- **Yield & Impact Predictions:** Reliable forecasts powered by XGBoost ML models and optimized caching via FastAPI lifespan events.
+- **Resource Estimation:** Forecasting capability for agricultural inputs such as seeds and fertilizer.
+- **Interactive Zoning:** Interactive geographic maps (powered by Folium and CartoDB) that zone areas based on environmental and productivity data.
+- **Unified Alerting:** Real-time notifications and cross-team communication modules.
+- **Seamless Internationalization (i18n):** Native multi-language support (English, Kinyarwanda, French) powered by a robust GNU `gettext` architecture, dynamically managed via Streamlit session state.
+- **Liquid Glass Design System:** A premium, immersive user interface featuring refractive translucency and a nature-forward color palette for a frictionless user experience.
 
 ---
 
-## 📊 Data Sources
+## Target Audience
 
-All our core data is proudly sourced from the **National Institute of Statistics of Rwanda (NISR)**:
+- **Planners:** Government and district-level officials handling national and regional agricultural strategy.
+- **Extension Officers:** Frontline agronomists executing on-the-ground implementation, training, and monitoring.
+- **Cooperative Leaders:** Local community champions coordinating resources and translating decisions to farmers.
+
+---
+
+## Data Sources
+
+Our core analytical data is strictly sourced from the **National Institute of Statistics of Rwanda (NISR)**:
 
 - **Primary:** Seasonal Agricultural Survey (SAS) — Season A 2026, Season B 2025, Annual 2025
 - **Supporting:** Agriculture Household Survey (AHS) 2024
-- **Contextual:** EICV7, Food Balance Sheets / CFSVA
+- **Contextual:** Integrated Household Living Conditions Survey (EICV7), Food Balance Sheets / Comprehensive Food Security and Vulnerability Analysis (CFSVA)
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## Architecture & Technology Stack
 
-agrimenya uses a modern, scalable microservices architecture orchestrated via Docker.
+agrimenya employs a modern, scalable microservices architecture orchestrated via Docker.
 
 ```text
 ┌─────────────────────────┐       ┌────────────────────────┐       ┌─────────────────────┐
@@ -85,3 +85,4 @@ agrimenya uses a modern, scalable microservices architecture orchestrated via Do
 │ GNU gettext (i18n)      │       │    Machine Learning    │
 │ English / Kinyarwanda   │       │ scikit-learn + XGBoost │
 └─────────────────────────┘       └────────────────────────┘
+```
