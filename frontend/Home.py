@@ -48,7 +48,7 @@ def main():
         t("pillar.segmentation.title"), 
         t("pillar.segmentation.desc"), 
         t("pillar.segmentation.btn"), 
-        "pages/3_Segmentation.py"
+        "pages/4_Zones.py"
     )
     pillar_card(
         c2, 
@@ -56,7 +56,7 @@ def main():
         t("pillar.decisions.title"), 
         t("pillar.decisions.desc"), 
         t("pillar.decisions.btn"), 
-        "pages/1_Decision_Making.py"
+        "pages/5_AI_Assistant.py"
     )
     pillar_card(
         c3, 
@@ -64,7 +64,7 @@ def main():
         t("pillar.planification.title"), 
         t("pillar.planification.desc"), 
         t("pillar.planification.btn"), 
-        "pages/2_Planification.py"
+        "pages/6_Planning.py"
     )
     pillar_card(
         c4, 
@@ -72,20 +72,21 @@ def main():
         t("pillar.communication.title"), 
         t("pillar.communication.desc"), 
         t("pillar.communication.btn"), 
-        "pages/4_Communication.py"
+        "pages/7_Communication.py"
     )
     
     st.divider()
     st.caption(t("common.built_for"))
 
 if __name__ == "__main__":
+    import logging
+    logger = logging.getLogger(__name__)
     try:
         main()
     except requests.exceptions.RequestException as e:
-        import logging
-        logging.getLogger(__name__).error(f"Network error in Home.py: {e}")
+        logger.error(f"Network error in Home.py: {e}")
         render_error_page("network", str(e))
     except Exception as e:
-        import logging
-        logging.getLogger(__name__).error(f"Unexpected error in Home.py: {e}", exc_info=True)
+        logger.error(f"Unexpected error in Home.py: {e}", exc_info=True)
         render_error_page("system", str(e))
+

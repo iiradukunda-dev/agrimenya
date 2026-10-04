@@ -105,3 +105,61 @@ def generate_mock_alerts():
         {"type": "Info", "message": "Fertilizer shipment arrived in Huye district headquarters.", "timestamp": "1 Day Ago"},
         {"type": "Urgent", "message": "Fall armyworm outbreak reported in Bugesera. Deploy inspection teams.", "timestamp": "3 Days Ago"},
     ]
+
+
+def generate_mock_zones() -> list[dict]:
+    """Generate realistic mock zones for the zone list page."""
+    zones = []
+    zone_id = 1
+    priorities = ["High", "Medium", "Low"]
+    for d in DISTRICTS:
+        for crop in CROPS[:3]:
+            zones.append({
+                "id": zone_id,
+                "name": f"{d['district']} - {crop} Zone",
+                "district": d["district"],
+                "province": d["province"],
+                "sector": f"Sector {zone_id % 5 + 1}",
+                "cell": f"Cell {zone_id % 8 + 1}",
+                "crop": crop,
+                "priority": random.choice(priorities),
+                "predicted_yield": round(random.uniform(800, 4500), 1),
+                "latitude": d["lat"] + random.uniform(-0.03, 0.03),
+                "longitude": d["lon"] + random.uniform(-0.03, 0.03),
+                "risk_status": random.choice(["Stable", "At Risk", "Critical"]),
+                "area_ha": round(random.uniform(5, 120), 1),
+            })
+            zone_id += 1
+    return zones
+
+
+def generate_mock_agri_metrics() -> list[dict]:
+    """Generate realistic mock agri metrics for the segmentation page."""
+    metrics = []
+    for d in DISTRICTS:
+        for crop in CROPS[:3]:
+            metrics.append({
+                "district": d["district"],
+                "province": d["province"],
+                "crop": crop,
+                "yield_per_ha": round(random.uniform(800, 5000), 1),
+                "area_cultivated_ha": round(random.uniform(50, 500), 0),
+                "total_production_mt": round(random.uniform(100, 2500), 1),
+                "rainfall_mm": round(random.uniform(600, 1400), 0),
+                "season": random.choice(SEASONS),
+            })
+    return metrics
+
+
+def generate_mock_weather(district: str) -> dict:
+    """Generate mock weather data for a district."""
+    return {
+        "district": district,
+        "temperature_c": round(random.uniform(18, 28), 1),
+        "humidity_pct": round(random.uniform(55, 85), 0),
+        "rainfall_mm_week": round(random.uniform(5, 60), 1),
+        "condition": random.choice(["Clear", "Partly Cloudy", "Rainy", "Overcast"]),
+        "wind_speed_kmh": round(random.uniform(5, 25), 1),
+        "forecast_summary": f"Moderate rainfall expected in {district} over the next 7 days.",
+    }
+

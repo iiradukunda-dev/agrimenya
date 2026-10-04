@@ -1,21 +1,29 @@
-"""Internationalization (i18n) module for agrimenya.
-Provides multi-language support for English (EN), Kinyarwanda (RW), and French (FR).
-Strictly complies with project rules: no emojis, clean modular structure.
 """
+Internationalization (i18n) module for agrimenya.
+Provides multi-language support for English (EN), Kinyarwanda (RW), and French (FR)
+using a professional GNU gettext architecture and a robust LocalizationManager class.
+Strictly complies with project rules: no emojis, clean modular structure, type hinting.
+"""
+import gettext
+import logging
+import os
+from typing import Dict, Any, Optional
 
 import streamlit as st
+
+logger = logging.getLogger(__name__)
 
 LANGUAGES = {
     "en": "en",
     "rw": "rw",
-    "fr": "Fr",
+    "fr": "fr",
 }
 
 DEFAULT_LANGUAGE = "en"
 
-TRANSLATIONS = {
+# Custom fallback dictionary in case .mo files are missing
+FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "en": {
-        # Common / General
         "common.language": "Language",
         "common.all_regions": "All Regions",
         "common.crop": "Crop",
@@ -26,13 +34,9 @@ TRANSLATIONS = {
         "common.unknown_crop": "Unknown Crop",
         "common.unknown_task": "Unknown Task",
         "common.built_for": "Built for the 2026 NISR Big Data Hackathon",
-        
-        # Priorities
         "priority.high": "High",
         "priority.medium": "Medium",
         "priority.low": "Low",
-
-        # Home Page
         "home.app_title": "agrimenya",
         "home.subtitle": "Decision and Planning Support System for Agricultural Productivity",
         "home.welcome": "Welcome to **agrimenya**. This platform empowers planners, extension officers, and cooperative leaders with data-driven insights using SAS, AHS, and EICV7 datasets.",
@@ -40,25 +44,18 @@ TRANSLATIONS = {
         "home.kpi.yield": "Avg Yield Increase",
         "home.kpi.cooperatives": "Active Cooperatives",
         "home.pillars_title": "Core Pillars",
-        
-        # Pillars Cards
         "pillar.segmentation.title": "Segment",
         "pillar.segmentation.desc": "Identify high-priority zones based on yield and risk data.",
         "pillar.segmentation.btn": "Segment",
-        
         "pillar.decisions.title": "Decide",
         "pillar.decisions.desc": "Review automated recommendations for timely interventions.",
         "pillar.decisions.btn": "Decide",
-        
         "pillar.planification.title": "Plan",
         "pillar.planification.desc": "Plan and track agricultural roadmaps and execution.",
         "pillar.planification.btn": "Plan",
-        
         "pillar.communication.title": "Communicate",
         "pillar.communication.desc": "Share alerts, plans, and coordinate with stakeholders.",
         "pillar.communication.btn": "Communicate",
-
-        # Decision Making Page
         "decisions.page_title": "Decision Making",
         "decisions.header": "Decision Making",
         "decisions.subtitle": "Automated, proactive recommendations based on predictive agricultural data.",
@@ -68,8 +65,6 @@ TRANSLATIONS = {
         "decisions.ai_desc": "Ask the AI planner for specific context or adjustments to the recommendations.",
         "decisions.ai_placeholder": "E.g., What are the risk factors for Maize in Nyagatare?",
         "decisions.ai_response": "This is an AI response to: *'{prompt}'*. In a live environment, the backend will parse the SAS/EICV7 data to provide targeted insight for this region.",
-
-        # Planification Page
         "plan.page_title": "Planification",
         "plan.header": "Planification",
         "plan.subtitle": "Roadmaps and execution timelines for agricultural interventions.",
@@ -97,8 +92,6 @@ TRANSLATIONS = {
         "plan.task.fertilizer": "Distribute Fertilizer",
         "plan.task.training": "Planting Training",
         "plan.task.monitoring": "Monitoring",
-
-        # Segmentation Page
         "seg.page_title": "Segmentation",
         "seg.header": "Segmentation & Zoning",
         "seg.subtitle": "Interactive mapping for prioritizing agricultural zones across Rwanda.",
@@ -117,8 +110,6 @@ TRANSLATIONS = {
         "seg.col_crop": "Crop",
         "seg.col_priority": "Priority",
         "seg.col_yield": "Yield (MT/ha)",
-
-        # Communication Page
         "comm.page_title": "Communication",
         "comm.header": "Efficient Communication",
         "comm.subtitle": "Real-time alerts, updates, and coordination across stakeholders.",
@@ -138,8 +129,6 @@ TRANSLATIONS = {
         "comm.alert_type.warning": "Warning",
         "comm.alert_type.info": "Info",
         "comm.alert_type.urgent": "Urgent",
-        
-        # Error Pages
         "error.404.title": "Page Not Found",
         "error.404.desc": "The page you are looking for does not exist or has been moved.",
         "error.network.title": "Network Error",
@@ -150,9 +139,7 @@ TRANSLATIONS = {
         "error.system.desc": "An unexpected system error occurred. Our team has been notified.",
         "error.go_home": "Return to Home",
     },
-
     "rw": {
-        # Common / General
         "common.language": "Ururimi",
         "common.all_regions": "Intara Zose",
         "common.crop": "Igihingwa",
@@ -163,13 +150,9 @@ TRANSLATIONS = {
         "common.unknown_crop": "Igihingwa Katazwi",
         "common.unknown_task": "Igikorwa Kitazwi",
         "common.built_for": "Byakozwe ku bwa NISR Big Data Hackathon ya 2026",
-        
-        # Priorities
         "priority.high": "Ikomeye",
         "priority.medium": "Iringaniye",
         "priority.low": "Iri Hasi",
-
-        # Home Page
         "home.app_title": "agrimenya",
         "home.subtitle": "Sisitemu yo Gufata Ibyemezo no Gutegura Umusaruro w'Ubuhinzi",
         "home.welcome": "Murakaza neza kuri **agrimenya**. Uru rubuga rufasha abategura igenamigambi, abashinzwe ubuhinzi, n'abayobozi b'amakoperative gufata ibyemezo bishingiye ku makuru ya SAS, AHS, na EICV7.",
@@ -177,36 +160,27 @@ TRANSLATIONS = {
         "home.kpi.yield": "Impuzandengo y'Ukwiyongera k'Umusaruro",
         "home.kpi.cooperatives": "Amakoperative Akora",
         "home.pillars_title": "Inkingi z'Ingenzi",
-        
-        # Pillars Cards
         "pillar.segmentation.title": "Iteganyazoni",
         "pillar.segmentation.desc": "Kumenya uduce tw'ibanze dushingiye ku musaruro n'ibyago.",
         "pillar.segmentation.btn": "Gana ku Iteganyazoni",
-        
         "pillar.decisions.title": "Gufata Ibyemezo",
         "pillar.decisions.desc": "Gusuzuma inama zitangwa mu buryo bwikora ku bikorwa byihuse.",
         "pillar.decisions.btn": "Gana ku Byemezo",
-        
         "pillar.planification.title": "Igenamigambi",
         "pillar.planification.desc": "Gutebya no gukurikirana igenamigambi ry'ubuhinzi n'ishyirwa mu bikorwa.",
         "pillar.planification.btn": "Gana ku Igenamigambi",
-        
         "pillar.communication.title": "Itumanaho",
         "pillar.communication.desc": "Gusangiza integuza, igenamigambi, no guhuza ibikorwa by'abafatanyabikorwa.",
         "pillar.communication.btn": "Gana ku Itumanaho",
-
-        # Decision Making Page
         "decisions.page_title": "Gufata Ibyemezo",
         "decisions.header": "Gufata Ibyemezo",
         "decisions.subtitle": "Inama z'ubwenge bwikora zishingiye ku makuru y'iteganyamisaruro.",
-        "decisions.empty": "Nta nama zibonetse ubu cyangwa seriveri ntiri kuboneka.",
+        "decisions.empty": "Nta inama zibonetse ubu cyangwa seriveri ntiri kuboneka.",
         "decisions.act_btn": "Gira icyo ukora",
         "decisions.ai_title": "Ubufasha bwa AI",
         "decisions.ai_desc": "Baza umufasha wa AI ibisobanuro byimbitse cyangwa uburyo bwo guhuza inama.",
         "decisions.ai_placeholder": "Urugero: Ni ibihe byago byugarije ikigori muri Nyagatare?",
         "decisions.ai_response": "Iki ni igisubizo cya AI ku kibazo cyawe: *'{prompt}'*. Muri seriveri nyayo, sisitemu isesengura amakuru ya SAS/EICV7 kugira ngo itange inama zihariye kuri ako gace.",
-
-        # Planification Page
         "plan.page_title": "Igenamigambi",
         "plan.header": "Igenamigambi ry'Igihembwe",
         "plan.subtitle": "Ingengabihe n'ishyirwa mu bikorwa by'ibikorwa by'ubuhinzi.",
@@ -234,8 +208,6 @@ TRANSLATIONS = {
         "plan.task.fertilizer": "Gukwirakwiza Ifumbire",
         "plan.task.training": "Amahugurwa yo Gutera",
         "plan.task.monitoring": "Gukurikirana Imihindagurikire",
-
-        # Segmentation Page
         "seg.page_title": "Iteganyazoni",
         "seg.header": "Iteganyazoni ry'Ubuhinzi",
         "seg.subtitle": "Ikarita ifasha gutondeka uduce tw'ibanze tw'ubuhinzi mu Rwanda.",
@@ -254,8 +226,6 @@ TRANSLATIONS = {
         "seg.col_crop": "Igihingwa",
         "seg.col_priority": "Uburemere",
         "seg.col_yield": "Umusaruro (MT/ha)",
-
-        # Communication Page
         "comm.page_title": "Itumanaho",
         "comm.header": "Itumanaho Ryihuse",
         "comm.subtitle": "Integuza z'ako kanya, amakuru mashya, no guhuza ibikorwa by'abafatanyabikorwa.",
@@ -275,8 +245,6 @@ TRANSLATIONS = {
         "comm.alert_type.warning": "Iburira",
         "comm.alert_type.info": "Amakuru",
         "comm.alert_type.urgent": "Byihutirwa",
-        
-        # Error Pages
         "error.404.title": "Paji Ntibonetse",
         "error.404.desc": "Paji mwashakaga ntibaho cyangwa yimuwe.",
         "error.network.title": "Ikibazo cy'Urusobe",
@@ -287,9 +255,7 @@ TRANSLATIONS = {
         "error.system.desc": "Habaye ikibazo gitunguranye muri sisitemu. Ikipe yacu yabimenyeshejwe.",
         "error.go_home": "Subira Ahabanza",
     },
-
     "fr": {
-        # Common / General
         "common.language": "Langue",
         "common.all_regions": "Toutes les Régions",
         "common.crop": "Culture",
@@ -300,13 +266,9 @@ TRANSLATIONS = {
         "common.unknown_crop": "Culture Inconnue",
         "common.unknown_task": "Tâche Inconnue",
         "common.built_for": "Développé pour le Hackathon Big Data NISR 2026",
-        
-        # Priorities
         "priority.high": "Élevée",
         "priority.medium": "Moyenne",
         "priority.low": "Faible",
-
-        # Home Page
         "home.app_title": "agrimenya",
         "home.subtitle": "Système d'Aide à la Décision et à la Planification pour la Productivité Agricole",
         "home.welcome": "Bienvenue sur **agrimenya**. Cette plateforme permet aux planificateurs, agents de vulgarisation et dirigeants de coopératives de prendre des décisions éclairées grâce aux données SAS, AHS et EICV7.",
@@ -314,25 +276,18 @@ TRANSLATIONS = {
         "home.kpi.yield": "Augmentation Moyenne du Rendement",
         "home.kpi.cooperatives": "Coopératives Actives",
         "home.pillars_title": "Piliers Fondamentaux",
-        
-        # Pillars Cards
         "pillar.segmentation.title": "Segmenter",
         "pillar.segmentation.desc": "Identifier les zones prioritaires selon les rendements et les risques.",
         "pillar.segmentation.btn": "Segmenter",
-        
         "pillar.decisions.title": "Décider",
         "pillar.decisions.desc": "Consulter les recommandations automatisées pour des interventions rapides.",
         "pillar.decisions.btn": "Décider",
-        
         "pillar.planification.title": "Planifier",
         "pillar.planification.desc": "Planifier et suivre les feuilles de route et l'exécution agricole.",
         "pillar.planification.btn": "Planifier",
-        
         "pillar.communication.title": "Communiquer",
         "pillar.communication.desc": "Diffuser des alertes, des plans et coordonner les parties prenantes.",
         "pillar.communication.btn": "Communiquer",
-
-        # Decision Making Page
         "decisions.page_title": "Prise de Décision",
         "decisions.header": "Prise de Décision",
         "decisions.subtitle": "Recommandations automatisées et proactives basées sur les données prédictives agricoles.",
@@ -342,8 +297,6 @@ TRANSLATIONS = {
         "decisions.ai_desc": "Demandez à l'assistant IA des précisions ou des ajustements aux recommandations.",
         "decisions.ai_placeholder": "Ex: Quels sont les facteurs de risque pour le maïs à Nyagatare ?",
         "decisions.ai_response": "Ceci est une réponse générée par l'IA pour : *'{prompt}'*. En environnement réel, le backend analysera les données SAS/EICV7 pour fournir des recommandations ciblées pour cette zone.",
-
-        # Planification Page
         "plan.page_title": "Planification",
         "plan.header": "Planification Agricole",
         "plan.subtitle": "Feuilles de route et calendriers d'exécution des interventions agricoles.",
@@ -371,8 +324,6 @@ TRANSLATIONS = {
         "plan.task.fertilizer": "Distribution d'Engrais",
         "plan.task.training": "Formation aux Semis",
         "plan.task.monitoring": "Suivi des Cultures",
-
-        # Segmentation Page
         "seg.page_title": "Segmentation",
         "seg.header": "Segmentation & Zonage",
         "seg.subtitle": "Cartographie interactive pour prioriser les zones agricoles au Rwanda.",
@@ -391,8 +342,6 @@ TRANSLATIONS = {
         "seg.col_crop": "Culture",
         "seg.col_priority": "Priorité",
         "seg.col_yield": "Rendement (MT/ha)",
-
-        # Communication Page
         "comm.page_title": "Communication",
         "comm.header": "Communication Efficace",
         "comm.subtitle": "Alertes en temps réel, mises à jour et coordination entre les acteurs.",
@@ -412,8 +361,6 @@ TRANSLATIONS = {
         "comm.alert_type.warning": "Avertissement",
         "comm.alert_type.info": "Information",
         "comm.alert_type.urgent": "Urgent",
-        
-        # Error Pages
         "error.404.title": "Page Non Trouvée",
         "error.404.desc": "La page que vous recherchez n'existe pas ou a été déplacée.",
         "error.network.title": "Erreur Réseau",
@@ -427,83 +374,118 @@ TRANSLATIONS = {
 }
 
 
-def get_current_language() -> str:
-    """Return active language code ('en', 'rw', or 'fr'). Defaults to 'en'."""
-    if "language" not in st.session_state:
-        st.session_state["language"] = DEFAULT_LANGUAGE
-    return st.session_state["language"]
+class LocalizationManager:
+    """
+    Robust Localization Manager to handle GNU gettext with a safe fallback mechanism.
+    Tracks active locale via Streamlit's session_state.
+    """
+    def __init__(self, domain: str = "messages", locale_dir: str = "locales"):
+        self.domain = domain
+        self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.locale_dir = os.path.join(self.base_dir, locale_dir)
+        self._translators: Dict[str, gettext.GNUTranslations] = {}
+        
+    def _get_active_lang(self) -> str:
+        if "language" not in st.session_state:
+            st.session_state["language"] = DEFAULT_LANGUAGE
+        return st.session_state["language"]
 
+    def set_language(self, lang_code: str) -> None:
+        if lang_code in LANGUAGES:
+            st.session_state["language"] = lang_code
+
+    def _load_gettext(self, lang: str) -> Optional[gettext.GNUTranslations]:
+        if lang in self._translators:
+            return self._translators[lang]
+        
+        try:
+            translator = gettext.translation(
+                domain=self.domain,
+                localedir=self.locale_dir,
+                languages=[lang],
+            )
+            self._translators[lang] = translator
+            return translator
+        except FileNotFoundError:
+            # Expected if .mo files are not compiled yet, will use custom fallback
+            return None
+        except Exception as e:
+            logger.warning("Error loading gettext for lang %s: %s", lang, e)
+            return None
+
+    def translate(self, key: str, default: Optional[str] = None, **kwargs) -> str:
+        """Translates a given key using GNU gettext, falling back to the dictionary."""
+        lang = self._get_active_lang()
+        translator = self._load_gettext(lang)
+        
+        translated = None
+        
+        # 1. Try GNU gettext
+        if translator:
+            # gettext returns the original key if translation is not found
+            candidate = translator.gettext(key)
+            if candidate != key:
+                translated = candidate
+                
+        # 2. Try Fallback dictionary
+        if translated is None:
+            translated = FALLBACK_TRANSLATIONS.get(lang, {}).get(key)
+            
+        # 3. Fallback to English dictionary
+        if translated is None and lang != DEFAULT_LANGUAGE:
+            translated = FALLBACK_TRANSLATIONS.get(DEFAULT_LANGUAGE, {}).get(key)
+            
+        # 4. Final fallback
+        if translated is None:
+            translated = default if default is not None else key
+            
+        # Format kwargs if any
+        if kwargs:
+            try:
+                return translated.format(**kwargs)
+            except Exception:
+                return translated
+        return translated
+
+
+# Initialize global manager
+_l10n_manager = LocalizationManager()
+
+def get_current_language() -> str:
+    """Return active language code."""
+    return _l10n_manager._get_active_lang()
 
 def set_language(lang_code: str) -> None:
     """Set active language code."""
-    if lang_code in LANGUAGES:
-        st.session_state["language"] = lang_code
-
+    _l10n_manager.set_language(lang_code)
 
 def t(key: str, default: str = None, **kwargs) -> str:
-    """Translate key for current session language. Fall back to English or default."""
-    lang = get_current_language()
-    val = TRANSLATIONS.get(lang, {}).get(key)
-    if val is None:
-        val = TRANSLATIONS.get(DEFAULT_LANGUAGE, {}).get(key)
-    if val is None:
-        val = default if default is not None else key
-    if kwargs:
-        try:
-            return val.format(**kwargs)
-        except Exception:
-            return val
-    return val
-
+    """Alias for standard translation method."""
+    return _l10n_manager.translate(key, default, **kwargs)
 
 def render_language_selector(sidebar: bool = True) -> None:
-    """Render a clean, modern language picker matching the green agriculture theme."""
-    reverse_map = {v: k for k, v in LANGUAGES.items()}
+    """
+    Renders the language selector.
+    Adheres to user constraint: "when changing the lanuage there should only be the world icon no more other unnecessary words".
+    We use an icon-only button to cycle through languages seamlessly.
+    """
     current_code = get_current_language()
-    current_idx = list(LANGUAGES.keys()).index(current_code) if current_code in LANGUAGES else 0
+    codes = list(LANGUAGES.keys())
+    next_idx = (codes.index(current_code) + 1) % len(codes)
+    next_code = codes[next_idx]
 
     target = st.sidebar if sidebar else st.container()
 
     with target:
-        import os
+        def _cycle_lang():
+            set_language(next_code)
 
-        from components.icons import get_base64_svg
-        globe_icon_path = "assets/globe.svg"
-        if not os.path.exists(globe_icon_path):
-            alt_globe = os.path.join("frontend", globe_icon_path)
-            if os.path.exists(alt_globe):
-                globe_icon_path = alt_globe
-
-        icon_html = ""
-        if os.path.exists(globe_icon_path):
-            b64 = get_base64_svg(globe_icon_path)
-            icon_html = f'<img src="data:image/svg+xml;base64,{b64}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; margin-top: 4px;" />'
-
-        col1, col2 = st.columns([1, 4])
-        with col1:
-            st.markdown(
-                f"""
-                <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                    {icon_html}
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-        
-        with col2:
-            def _on_lang_change():
-                chosen_label = st.session_state.get("_app_language_select")
-                new_code = reverse_map.get(chosen_label, "en")
-                st.session_state["language"] = new_code
-
-            st.selectbox(
-                label="Language Selection",
-                options=list(LANGUAGES.values()),
-                index=current_idx,
-                key="_app_language_select",
-                on_change=_on_lang_change,
-                label_visibility="collapsed"
-            )
-        
-        if sidebar:
-            st.markdown("<div style='margin-bottom: 16px; border-bottom: 1px solid #E2EAE3;'></div>", unsafe_allow_html=True)
+        # Renders an icon-only button. The empty string ensures no "unnecessary words" are shown.
+        st.button(
+            label=" ", 
+            icon=":material/language:",
+            key="lang_cycle_btn",
+            on_click=_cycle_lang,
+            help="Switch language (EN, RW, FR)",
+            use_container_width=sidebar
+        )
