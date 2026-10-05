@@ -2,18 +2,32 @@
 Navigation bar component for agrimenya.
 
 Renders a floating glass navigation bar with branding, page links,
-and an inline language selector.
+and an inline language selector. Uses a data-driven link list to keep
+the layout easy to maintain.
 """
+
+from typing import List, Tuple
 
 import streamlit as st
 from utils.i18n import render_language_selector
 
 
-def render_navbar() -> None:
-    """
-    Renders a premium floating navigation bar with agrimenya branding.
-    Hides the default Streamlit sidebar and header.
-    """
+# Central registry of navbar links: (page_path, label, material_icon)
+_NAV_LINKS: List[Tuple[str, str, str]] = [
+    ("Home.py", "Home", "home"),
+    ("pages/3_Dashboard.py", "Dashboard", "dashboard"),
+    ("pages/4_Zones.py", "Zones", "map"),
+    ("pages/5_Segmentation.py", "Segment", "layers"),
+    ("pages/6_Decision_Making.py", "Decide", "bolt"),
+    ("pages/7_AI_Assistant.py", "AI", "smart_toy"),
+    ("pages/8_Planning.py", "Plan", "edit_calendar"),
+    ("pages/9_Communication.py", "Alerts", "campaign"),
+    ("pages/10_Admin.py", "Admin", "admin_panel_settings"),
+]
+
+
+def _inject_navbar_styles() -> None:
+    """Inject CSS that hides default Streamlit chrome and styles the glass pill."""
     st.markdown("""
         <style>
         /* Hide default Streamlit navigation chrome */
@@ -26,14 +40,14 @@ def render_navbar() -> None:
             padding-bottom: 2rem !important;
         }
 
-        /* Floating glass pill for the FIRST horizontal block only */
+        /* Floating glass pill for the first horizontal block */
         .stMainBlockContainer > div > div > [data-testid="stHorizontalBlock"]:first-child {
             background: rgba(255, 255, 255, 0.35) !important;
             backdrop-filter: blur(24px) saturate(180%) !important;
             -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
             border: 1px solid rgba(255, 255, 255, 0.45) !important;
             border-radius: 50px !important;
-            padding: 6px 24px !important;
+            padding: 6px 20px !important;
             box-shadow:
                 0 4px 20px rgba(0, 0, 0, 0.05),
                 inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
@@ -42,43 +56,54 @@ def render_navbar() -> None:
             max-width: 1200px !important;
             gap: 0 !important;
         }
+
+        /* Compact page-link buttons inside the navbar */
+        .stMainBlockContainer > div > div > [data-testid="stHorizontalBlock"]:first-child
+            [data-testid="stPageLink-NavLink"] {
+            font-size: 0.82rem !important;
+            padding: 4px 6px !important;
+        }
         </style>
     """, unsafe_allow_html=True)
 
-    # Render branded navbar row
-    # 1 logo + 9 links + 1 lang selector = 11 cols
-    cols = st.columns([1.6, 0.6, 0.8, 0.6, 1.0, 0.6, 0.4, 0.6, 0.6, 0.6, 0.5])
 
-    with cols[0]:
+def _render_brand(col: st.delta_generator.DeltaGenerator) -> None:
+    """Render the agrimenya logo text in the given column."""
+    with col:
         st.markdown(
             '<p style="font-family: \'Space Grotesk\', sans-serif; font-weight: 800; '
-            'font-size: 1.25rem; margin: 0; padding: 4px 0; '
+            'font-size: 1.25rem; margin: 0; padding: 4px 0; white-space: nowrap; '
             'background: linear-gradient(135deg, #2D6A4F, #52B788); '
             '-webkit-background-clip: text; -webkit-text-fill-color: transparent;">'
             'agrimenya</p>',
             unsafe_allow_html=True,
         )
 
-    with cols[1]:
-        st.page_link("Home.py", label="Home", icon=":material/home:")
-    with cols[2]:
-        st.page_link("pages/3_Dashboard.py", label="Dashboard", icon=":material/dashboard:")
-    with cols[3]:
-        st.page_link("pages/4_Zones.py", label="Zones", icon=":material/map:")
-    with cols[4]:
-        st.page_link("pages/5_Segmentation.py", label="Segment", icon=":material/layers:")
-    with cols[5]:
-        st.page_link("pages/6_Decision_Making.py", label="Decide", icon=":material/bolt:")
-    with cols[6]:
-        st.page_link("pages/7_AI_Assistant.py", label="AI", icon=":material/smart_toy:")
-    with cols[7]:
-        st.page_link("pages/8_Planning.py", label="Plan", icon=":material/edit_calendar:")
-    with cols[8]:
-        st.page_link("pages/9_Communication.py", label="Alerts", icon=":material/campaign:")
-    with cols[9]:
-        st.page_link("pages/10_Admin.py", label="Admin", icon=":material/admin_panel_settings:")
 
-    with cols[10]:
+def render_navbar() -> None:
+    """
+    Render a premium floating navigation bar with agrimenya branding.
+
+    The navbar is built from a central ``_NAV_LINKS`` list so that adding,
+    removing, or reordering pages only requires editing one place.
+    """
+    _inject_navbar_styles()
+
+    # Column widths: brand (wider) + one col per link + language selector
+    link_count = len(_NAV_LINKS)
+    col_widths = [1.5] + [1.0] * link_count + [0.5]
+    cols = st.columns(col_widths)
+
+    # Brand
+    _render_brand(cols[0])
+
+    # Page links
+    for idx, (path, label, icon) in enumerate(_NAV_LINKS, start=1):
+        with cols[idx]:
+            st.page_link(path, label=label, icon=f":material/{icon}:")
+
+    # Language selector (icon-only)
+    with cols[-1]:
         render_language_selector(sidebar=False)
 
     st.divider()
