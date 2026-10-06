@@ -48,7 +48,7 @@ def main():
         t("pillar.segmentation.title"), 
         t("pillar.segmentation.desc"), 
         t("pillar.segmentation.btn"), 
-        "pages/4_Zones.py"
+        "pages/5_Segmentation.py"
     )
     pillar_card(
         c2, 
@@ -56,7 +56,7 @@ def main():
         t("pillar.decisions.title"), 
         t("pillar.decisions.desc"), 
         t("pillar.decisions.btn"), 
-        "pages/5_AI_Assistant.py"
+        "pages/6_Decision_Making.py"
     )
     pillar_card(
         c3, 
@@ -64,7 +64,7 @@ def main():
         t("pillar.planification.title"), 
         t("pillar.planification.desc"), 
         t("pillar.planification.btn"), 
-        "pages/6_Planning.py"
+        "pages/8_Planning.py"
     )
     pillar_card(
         c4, 
@@ -72,7 +72,7 @@ def main():
         t("pillar.communication.title"), 
         t("pillar.communication.desc"), 
         t("pillar.communication.btn"), 
-        "pages/7_Communication.py"
+        "pages/9_Communication.py"
     )
     
     st.divider()
