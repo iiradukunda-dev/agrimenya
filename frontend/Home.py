@@ -20,6 +20,49 @@ load_theme()
 render_navbar()
 
 def main():
+    # Full-page hero background using the Rwandan farmland photograph
+    st.markdown("""
+        <style>
+        /* Hero background image — covers the entire viewport behind all content */
+        .stApp {
+            background: 
+                linear-gradient(
+                    180deg,
+                    rgba(11, 31, 20, 0.30) 0%,
+                    rgba(27, 58, 45, 0.40) 35%,
+                    rgba(240, 247, 242, 0.92) 70%,
+                    #F0F7F2 100%
+                ),
+                url('/app/static/hero_bg.jpg') top center / cover no-repeat fixed !important;
+        }
+
+        /* Override the animated gradient orbs on the landing page so the photo is visible */
+        .stApp > div[data-testid="stAppViewContainer"]::before,
+        .stApp > div[data-testid="stAppViewContainer"]::after {
+            opacity: 0.15 !important;
+        }
+
+        /* Ensure the navbar glass pill remains readable over the photo */
+        .stMainBlockContainer > div > div > [data-testid="stHorizontalBlock"]:first-child {
+            background: rgba(255, 255, 255, 0.65) !important;
+        }
+
+        /* Lighten text in the hero zone for contrast on the dark overlay */
+        .stApp .stMainBlockContainer > div > div > div:nth-child(2),
+        .stApp .stMainBlockContainer > div > div > div:nth-child(3) {
+            color: #FFFFFF;
+        }
+        .stApp .stMainBlockContainer > div > div > div:nth-child(2) [data-testid="stMetricValue"],
+        .stApp .stMainBlockContainer > div > div > div:nth-child(3) [data-testid="stMetricValue"] {
+            color: #FFFFFF !important;
+        }
+        .stApp .stMainBlockContainer > div > div > div:nth-child(2) [data-testid="stMetricLabel"],
+        .stApp .stMainBlockContainer > div > div > div:nth-child(3) [data-testid="stMetricLabel"] {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     # Render interactive React Hero with GSAP
     render_react_hero()
 

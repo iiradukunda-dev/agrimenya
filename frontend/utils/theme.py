@@ -388,12 +388,15 @@ def load_theme() -> None:
         -webkit-backdrop-filter: var(--ag-glass-blur);
         border: 1px solid var(--ag-glass-border);
         border-radius: var(--ag-radius-lg);
-        padding: 32px 28px;
+        padding: 40px 32px;
         box-shadow: var(--ag-glass-shadow), var(--ag-glass-highlight);
         transition: all 0.4s var(--ag-ease);
         position: relative;
         overflow: hidden;
         height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
     }
     .ag-card::before {
         content: '';
@@ -415,32 +418,33 @@ def load_theme() -> None:
     }
 
     .ag-card-icon {
-        width: 52px; height: 52px;
-        border-radius: 14px;
+        width: 56px; height: 56px;
+        border-radius: 16px;
         background: linear-gradient(135deg, var(--ag-forest-050), var(--ag-forest-100));
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 16px;
-        box-shadow: 0 2px 8px rgba(82, 183, 136, 0.15);
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(82, 183, 136, 0.15);
     }
     .ag-card-icon svg {
-        width: 26px; height: 26px;
+        width: 28px; height: 28px;
         color: var(--ag-forest-600);
     }
 
     .ag-card-title {
         font-family: var(--ag-font-display);
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         font-weight: 700;
         color: var(--ag-forest-800);
-        margin-bottom: 10px;
-        line-height: 1.3;
+        margin-bottom: 12px;
+        line-height: 1.4;
     }
     .ag-card-desc {
-        font-size: 0.92rem;
+        font-size: 0.95rem;
         color: var(--ag-neutral-600);
-        line-height: 1.65;
+        line-height: 1.75;
+        flex-grow: 1;
     }
 
     /* ── Alert / Notification Cards ───────────────────────────── */

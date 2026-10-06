@@ -47,21 +47,22 @@ def _inject_navbar_styles() -> None:
             -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
             border: 1px solid rgba(255, 255, 255, 0.45) !important;
             border-radius: 50px !important;
-            padding: 6px 20px !important;
+            padding: 8px 24px !important;
             box-shadow:
                 0 4px 20px rgba(0, 0, 0, 0.05),
                 inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
             align-items: center !important;
             margin: 0 auto 2rem auto !important;
             max-width: 1200px !important;
-            gap: 0 !important;
+            gap: 8px !important;
+            justify-content: space-between !important;
         }
 
         /* Compact page-link buttons inside the navbar */
         .stMainBlockContainer > div > div > [data-testid="stHorizontalBlock"]:first-child
             [data-testid="stPageLink-NavLink"] {
-            font-size: 0.82rem !important;
-            padding: 4px 6px !important;
+            font-size: 0.85rem !important;
+            padding: 6px 10px !important;
         }
         </style>
     """, unsafe_allow_html=True)
