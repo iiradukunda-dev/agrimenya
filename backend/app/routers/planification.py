@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from app.core.auth import require_user
 from app.models.plan import PlanCreate
 from app.db import crud
 from app.services.disease_detector import detect_crop_disease
@@ -14,7 +15,7 @@ def get_resource_estimate(zone_id: str, area_cultivated: float | None = None,
 
 
 @router.post("/roadmap")
-def create_roadmap(plan: PlanCreate):
+def create_roadmap(plan: PlanCreate, _: dict = Depends(require_user)):
     zone = crud.get_zone(plan.zone_id)
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")
@@ -40,7 +41,8 @@ def get_plans(zone_id: str):
 
 
 @router.post("/disease-plan")
-def create_disease_plan(zone_id: str, crop: str, symptoms: str, image_description: str | None = None):
+def create_disease_plan(zone_id: str, crop: str, symptoms: str, image_description: str | None = None,
+                        _: dict = Depends(require_user)):
     zone = crud.get_zone(zone_id)
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.services.field_report_service import list_field_reports, submit_field_report
 from app.services.live_data_service import build_live_context
 from app.services.weather_service import fetch_weather
+from app.core.auth import require_user
 
 router = APIRouter(prefix="/live", tags=["Live Data"])
 
@@ -32,7 +33,7 @@ def get_weather(district: str):
 
 
 @router.post("/field-report")
-def create_field_report(request: FieldReportRequest):
+def create_field_report(request: FieldReportRequest, _: dict = Depends(require_user)):
     return submit_field_report(
         zone_id=request.zone_id,
         district=request.district,
@@ -50,7 +51,7 @@ def get_field_reports(zone_id: str):
 
 
 @router.post("/context")
-def live_context(request: LiveContextRequest):
+def live_context(request: LiveContextRequest, _: dict = Depends(require_user)):
     if not request.district and not request.zone_id:
         raise HTTPException(status_code=400, detail="Provide either district or zone_id.")
     return build_live_context(

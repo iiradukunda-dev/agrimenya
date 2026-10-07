@@ -1,4 +1,15 @@
 .venv/
+venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+.git/
+.pytest_cache/
+logs/
+tests/
+data/
 __pycache__/
 *.pyc
 *.pyo

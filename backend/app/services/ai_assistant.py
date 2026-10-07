@@ -9,13 +9,15 @@ chosen provider once LLM_API_KEY is set. Until then it returns a
 grounded summary without calling an external LLM, so the endpoint is
 usable immediately.
 """
-from typing import Any
+import logging
 
 import httpx
 from fastapi import HTTPException
 
 from app.core.config import settings
 from app.db import crud
+
+logger = logging.getLogger(__name__)
 
 
 def _normalize_question(question: str) -> str:
@@ -76,37 +78,37 @@ def _build_context(zone_id) -> str:
     return "\n".join(lines) if lines else "No data available for this zone yet."
 
 
-def _call_llm(prompt: str, context: str) -> str:
+def _call_llm(prompt: str, context: str) -> tuple[str, str]:
     if not settings.LLM_API_KEY:
-        # No LLM configured yet - return the grounded context directly
-        # so the endpoint still works end-to-end.
-        return f"(No LLM configured yet - showing raw context)\n\n{context}"
-    # Try calling Anthropic's HTTP API as a simple provider integration.
-    # If this fails for any reason, return the grounded context rather than
-    # raising an error so the endpoint remains useful.
+        return f"(No LLM configured yet - showing raw context)\n\n{context}", "grounded-context"
     try:
-        url = "https://api.anthropic.com/v1/complete"
-        prompt_text = f"Zone context:\n{context}\n\nQuestion: {prompt}\nAnswer concisely and only using the facts above."
-        payload: dict[str, Any] = {
-            "model": "claude-2",  # choose a reasonable default
-            "prompt": prompt_text,
-            "max_tokens": 500,
-            "temperature": 0.0,
-        }
-        headers = {"x-api-key": settings.LLM_API_KEY}
-        resp = httpx.post(url, json=payload, headers=headers, timeout=15.0)
-        resp.raise_for_status()
-        data = resp.json()
-        # Anthropic's /complete returns a `completion` or `completion`-like field.
-        text = data.get("completion") or data.get("completion_text") or data.get("text")
-        if not text and isinstance(data.get("choices"), list):
-            text = data["choices"][0].get("text")
-        return text or f"(LLM returned no text)\n\n{context}"
-    except Exception as e:
-        return f"(LLM call failed: {repr(e)})\n\n{context}"
+        response = httpx.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key": settings.LLM_API_KEY,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json",
+            },
+            json={
+                "model": settings.LLM_MODEL,
+                "max_tokens": 500,
+                "system": "Answer the user using only the supplied agricultural zone context. If the context does not contain the answer, say what is missing. Keep advice practical and concise.",
+                "messages": [{"role": "user", "content": f"Zone context:\n{context}\n\nQuestion: {prompt}"}],
+            },
+            timeout=20.0,
+        )
+        response.raise_for_status()
+        content = response.json().get("content", [])
+        answer = "\n".join(item.get("text", "") for item in content if item.get("type") == "text").strip()
+        if answer:
+            return answer, "anthropic"
+        logger.warning("Anthropic returned no text for the assistant request")
+    except Exception:
+        logger.exception("Anthropic assistant request failed; returning grounded zone context")
+    return f"(AI service unavailable - showing grounded context)\n\n{context}", "grounded-context"
 
 
-def ask_assistant(zone_id, question: str) -> str:
+def ask_assistant_with_source(zone_id, question: str) -> tuple[str, str]:
     # Validate zone exists before spending work/LLM credits
     zone = crud.get_zone(zone_id)
     if not zone:
@@ -115,3 +117,9 @@ def ask_assistant(zone_id, question: str) -> str:
     safe_question = _normalize_question(question)
     context = _build_context(zone_id)
     return _call_llm(safe_question, context)
+
+
+def ask_assistant(zone_id, question: str) -> str:
+    """Backward-compatible answer-only API for callers outside the route."""
+    answer, _ = ask_assistant_with_source(zone_id, question)
+    return answer

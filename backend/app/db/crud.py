@@ -40,6 +40,18 @@ def _exec_query_get_data(query, max_retries: int = 3, backoff: float = 0.5):
             raise HTTPException(status_code=503, detail="Unexpected error connecting to the database")
 
 
+def _exec_query_get_all(query, page_size: int = 500, max_pages: int = 100) -> list[dict]:
+    """Read a complete result set despite the PostgREST per-request row cap."""
+    rows = []
+    for page in range(max_pages):
+        start = page * page_size
+        batch = _exec_query_get_data(query.range(start, start + page_size - 1))
+        rows.extend(batch)
+        if len(batch) < page_size:
+            return rows
+    raise HTTPException(status_code=503, detail="Database result exceeds the configured pagination limit")
+
+
 def _update_record(table_name: str, record_id: UUID | str, payload: dict) -> dict | None:
     """Standard admin update helper for a single record.
 
@@ -70,7 +82,7 @@ def list_zones(district: str | None = None) -> list[dict]:
     query = sb.table("zones").select("*")
     if district:
         query = query.eq("district", district)
-    return _exec_query_get_data(query)
+    return _exec_query_get_all(query.order("id"))
 
 
 def create_zone(zone: dict) -> dict:
@@ -116,7 +128,7 @@ def list_agri_metrics(zone_id: UUID | None = None, season: str | None = None,
         query = query.eq("season", season)
     if crop:
         query = query.eq("crop", crop)
-    rows = _exec_query_get_data(query)
+    rows = _exec_query_get_all(query.order("id"))
     if district:
         rows = [r for r in rows if (r.get("zones") or {}).get("district") == district]
     return rows
@@ -195,7 +207,7 @@ def list_predictions(zone_id: UUID | None = None) -> list[dict]:
     query = sb.table("predictions").select("*")
     if zone_id:
         query = query.eq("zone_id", str(zone_id))
-    return _exec_query_get_data(query.order("created_at", desc=True))
+    return _exec_query_get_all(query.order("created_at", desc=True).order("id"))
 
 
 def priority_ranking(season: str | None = None) -> list[dict]:
@@ -204,7 +216,11 @@ def priority_ranking(season: str | None = None) -> list[dict]:
     query = sb.table("predictions").select("*, zones(district, sector, cell)")
     if season:
         query = query.eq("season", season)
-    rows = _exec_query_get_data(query)
+    rows = _exec_query_get_all(query.order("created_at", desc=True).order("id"))
+    latest_by_zone = {}
+    for row in rows:
+        latest_by_zone.setdefault(str(row.get("zone_id")), row)
+    rows = list(latest_by_zone.values())
     order = {"High": 0, "Medium": 1, "Low": 2}
     return sorted(rows, key=lambda r: order.get(r.get("priority_level"), 3))
 
@@ -245,7 +261,7 @@ def get_alignment_metric(zone_id: UUID) -> dict | None:
 
 def list_alignment_metrics() -> list[dict]:
     sb = get_supabase()
-    return _exec_query_get_data(sb.table("alignment_metrics").select("*"))
+    return _exec_query_get_all(sb.table("alignment_metrics").select("*").order("id"))
 
 
 # ---------- plans ----------
@@ -269,7 +285,7 @@ def list_plans(zone_id: UUID | None = None) -> list[dict]:
     query = sb.table("plans").select("*")
     if zone_id:
         query = query.eq("zone_id", str(zone_id))
-    return _exec_query_get_data(query)
+    return _exec_query_get_all(query.order("created_at", desc=True).order("id"))
 
 
 # ---------- alerts ----------
@@ -293,4 +309,4 @@ def list_alerts(zone_id: UUID | None = None) -> list[dict]:
     query = sb.table("alerts").select("*")
     if zone_id:
         query = query.eq("zone_id", str(zone_id))
-    return _exec_query_get_data(query.order("created_at", desc=True))
+    return _exec_query_get_all(query.order("created_at", desc=True).order("id"))

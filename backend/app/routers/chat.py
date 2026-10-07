@@ -1,10 +1,13 @@
 from uuid import UUID
+from io import BytesIO
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from app.db import crud
-from app.services.ai_assistant import ask_assistant
+from app.core.auth import require_user
+from app.core.config import settings
+from app.services.ai_assistant import ask_assistant_with_source
 from app.services.disease_detector import detect_crop_disease
 
 router = APIRouter(prefix="/chat", tags=["AI Assistant"])
@@ -37,22 +40,22 @@ class DiseaseDetectionResponse(BaseModel):
     confidence: float
     risk_level: str
     recommended_actions: list[str]
-    source: str = "trained-disease-model"
+    source: str = "symptom-model"
 
 
 @router.post("")
-def chat(request: ChatRequest):
-    answer = ask_assistant(request.zone_id, request.question)
+def chat(request: ChatRequest, _: dict = Depends(require_user)):
+    answer, source = ask_assistant_with_source(request.zone_id, request.question)
     return ChatResponse(
         zone_id=request.zone_id,
         question=request.question,
         answer=answer,
-        source="grounded-context",
+        source=source,
     )
 
 
 @router.post("/disease-detect")
-def disease_detect(request: DiseaseDetectionRequest):
+def disease_detect(request: DiseaseDetectionRequest, _: dict = Depends(require_user)):
     zone = crud.get_zone(request.zone_id)
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")
@@ -65,6 +68,7 @@ def disease_detect(request: DiseaseDetectionRequest):
         confidence=result["confidence"],
         risk_level=result["risk_level"],
         recommended_actions=result["recommended_actions"],
+        source=result.get("source", "symptom-model"),
     )
 
 
@@ -75,6 +79,7 @@ async def disease_detect_upload(
     symptoms: str = Form(...),
     image_description: str | None = Form(default=None),
     image: UploadFile | None = File(default=None),
+    _: dict = Depends(require_user),
 ):
     zone = crud.get_zone(zone_id)
     if not zone:
@@ -83,7 +88,30 @@ async def disease_detect_upload(
     description = image_description or ""
     image_bytes = None
     if image and image.filename:
-        image_bytes = await image.read()
+        if image.content_type not in {"image/jpeg", "image/png", "image/webp"}:
+            raise HTTPException(status_code=415, detail="Upload a JPEG, PNG, or WebP image")
+        image_bytes = await image.read(settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024 + 1)
+        if len(image_bytes) > settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024:
+            raise HTTPException(status_code=413, detail=f"Image exceeds {settings.MAX_UPLOAD_SIZE_MB} MB")
+        try:
+            from PIL import Image, UnidentifiedImageError
+
+            with Image.open(BytesIO(image_bytes)) as decoded:
+                if decoded.format not in {"JPEG", "PNG", "WEBP"}:
+                    raise HTTPException(status_code=415, detail="Image content must be JPEG, PNG, or WebP")
+                if decoded.width * decoded.height > 20_000_000:
+                    raise HTTPException(status_code=413, detail="Image dimensions are too large")
+                decoded.verify()
+        except ImportError:
+            valid_signature = (
+                image_bytes.startswith(b"\x89PNG\r\n\x1a\n")
+                or image_bytes.startswith(b"\xff\xd8\xff")
+                or (image_bytes.startswith(b"RIFF") and image_bytes[8:12] == b"WEBP")
+            )
+            if not valid_signature:
+                raise HTTPException(status_code=422, detail="Uploaded file is not a valid image")
+        except (UnidentifiedImageError, OSError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail="Uploaded file is not a valid image") from exc
         description = f"{description} Uploaded image: {image.filename}.".strip()
 
     result = detect_crop_disease(crop, symptoms, description, image_bytes=image_bytes)
@@ -94,4 +122,5 @@ async def disease_detect_upload(
         confidence=result["confidence"],
         risk_level=result["risk_level"],
         recommended_actions=result["recommended_actions"],
+        source=result.get("source", "symptom-model"),
     )

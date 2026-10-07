@@ -61,6 +61,18 @@ def _load_baselines() -> dict:
     return {}
 
 
+def _match_model_class(value: str, classes) -> str | None:
+    """Match UI labels to trained encoder labels despite case/word order."""
+    normalized = str(value).strip().casefold()
+    for candidate in classes:
+        candidate_text = str(candidate)
+        if candidate_text.strip().casefold() == normalized:
+            return candidate_text
+        if set(candidate_text.casefold().split()) == set(normalized.split()):
+            return candidate_text
+    return None
+
+
 _yield_model_bundle = None
 _baselines = _load_baselines()
 
@@ -76,12 +88,15 @@ def _estimate_yield_per_ha(district: str | None, crop: str, season: str | None,
     if bundle is not None and district and season:
         try:
             d_enc, c_enc, s_enc = bundle["district_encoder"], bundle["crop_encoder"], bundle["season_encoder"]
-            if district in d_enc.classes_ and crop in c_enc.classes_ and season in s_enc.classes_:
+            district_class = _match_model_class(district, d_enc.classes_)
+            crop_class = _match_model_class(crop, c_enc.classes_)
+            season_class = _match_model_class(season, s_enc.classes_)
+            if district_class and crop_class and season_class:
                 import pandas as pd
                 features = pd.DataFrame([{
-                    "district": d_enc.transform([district])[0],
-                    "crop": c_enc.transform([crop])[0],
-                    "season": s_enc.transform([season])[0],
+                    "district": d_enc.transform([district_class])[0],
+                    "crop": c_enc.transform([crop_class])[0],
+                    "season": s_enc.transform([season_class])[0],
                     "cultivated_area_ha": area_cultivated,
                 }])[bundle["feature_order"]]
                 yield_per_ha = float(bundle["model"].predict(features)[0])

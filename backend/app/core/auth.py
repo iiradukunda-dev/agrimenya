@@ -118,3 +118,14 @@ def require_role(required_role: str):
 
 def require_admin(request: Request):
     return require_role("admin")(request)
+
+
+def require_user(request: Request):
+    """Require a provisioned user key for writes in production.
+
+    Development remains convenient for local integration and automated tests.
+    Production startup separately enforces that USER_API_KEY is configured.
+    """
+    if settings.APP_ENV != "production":
+        return {"role": "user", "token": None}
+    return require_role("user")(request)

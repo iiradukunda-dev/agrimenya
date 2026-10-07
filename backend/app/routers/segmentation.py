@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from app.core.auth import require_user
 from app.models.zone import ZoneCreate
 from app.db import crud
 
@@ -11,7 +12,7 @@ def get_zones(district: str | None = None):
 
 
 @router.post("/zones")
-def add_zone(zone: ZoneCreate):
+def add_zone(zone: ZoneCreate, _: dict = Depends(require_user)):
     return crud.create_zone(zone.model_dump())
 
 
@@ -19,13 +20,17 @@ def add_zone(zone: ZoneCreate):
 def get_map_data(district: str | None = None):
     """Zones joined with their latest prediction, ready for Folium."""
     zones = crud.list_zones(district)
+    predictions = crud.list_predictions()
+    latest_by_zone = {}
+    for prediction in predictions:
+        latest_by_zone.setdefault(str(prediction.get("zone_id")), prediction)
     enriched = []
     for zone in zones:
-        predictions = crud.list_predictions(zone["id"])
-        latest = predictions[0] if predictions else None
+        latest = latest_by_zone.get(str(zone["id"]))
         enriched.append({
             **zone,
             "predicted_yield": latest.get("predicted_yield") if latest else None,
+            "yield_per_ha": latest.get("yield_per_ha") if latest else None,
             "priority_level": latest.get("priority_level") if latest else None,
         })
     return enriched

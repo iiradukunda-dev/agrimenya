@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from app.core.auth import require_user
 from app.db import crud
 from app.services.alignment_calculator import calculate_alignment_metrics
 from app.ml.predict import get_yield_index
@@ -9,7 +10,8 @@ router = APIRouter(prefix="/alignment", tags=["National Alignment"])
 @router.post("/compute/{zone_id}")
 def compute_alignment(zone_id: str, season: str, predicted_yield: float,
                        area_cultivated: float | None = None, rainfall_mm: float | None = None,
-                       priority_level: str = "Medium", crop: str | None = None, district: str | None = None):
+                       priority_level: str = "Medium", crop: str | None = None, district: str | None = None,
+                       _: dict = Depends(require_user)):
     zone = crud.get_zone(zone_id)
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")

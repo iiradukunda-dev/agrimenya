@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from app.core.auth import require_user
 from app.models.prediction import PredictionRequest, PredictionResult
 from app.db import crud
 from app.ml.predict import (
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/decision", tags=["Decision Making"])
 
 
 @router.post("/predict", response_model=PredictionResult)
-def predict(request: PredictionRequest):
+def predict(request: PredictionRequest, _: dict = Depends(require_user)):
     zone = crud.get_zone(request.zone_id)
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")
@@ -28,6 +29,14 @@ def predict(request: PredictionRequest):
     # analysis fields (not persisted beyond the prediction record)
     gap = get_yield_gap(zone.get("district"), request.crop)
     yi = get_yield_index(zone.get("district"), request.crop)
+    area = request.area_cultivated or 0.5
+    predicted_yield_per_ha = round(predicted_yield / area, 1)
+    benchmark_yield_per_ha = gap.get("benchmark_yield_per_ha")
+    yield_gap_kg_ha = (
+        round(max(0.0, benchmark_yield_per_ha - predicted_yield_per_ha), 1)
+        if benchmark_yield_per_ha is not None
+        else None
+    )
 
     priority = classify_priority(predicted_yield, request.area_cultivated)
 
@@ -39,9 +48,9 @@ def predict(request: PredictionRequest):
         priority_level=priority,
         confidence=confidence,
         model_version=model_version,
-        yield_per_ha=gap.get("yield_per_ha"),
-        benchmark_yield_per_ha=gap.get("benchmark_yield_per_ha"),
-        yield_gap_kg_ha=gap.get("yield_gap_kg_ha"),
+        yield_per_ha=predicted_yield_per_ha,
+        benchmark_yield_per_ha=benchmark_yield_per_ha,
+        yield_gap_kg_ha=yield_gap_kg_ha,
         yield_index=yi,
     )
 
@@ -117,7 +126,8 @@ def recommendations(zone_id: str, rainfall_mm: float | None = None, soil_type: s
 
 
 @router.post("/disease-risk")
-def disease_risk(zone_id: str, crop: str, symptoms: str, image_description: str | None = None):
+def disease_risk(zone_id: str, crop: str, symptoms: str, image_description: str | None = None,
+                 _: dict = Depends(require_user)):
     zone = crud.get_zone(zone_id)
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")
