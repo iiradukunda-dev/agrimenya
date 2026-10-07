@@ -28,9 +28,9 @@ def main():
             background: 
                 linear-gradient(
                     180deg,
-                    rgba(11, 31, 20, 0.30) 0%,
-                    rgba(27, 58, 45, 0.40) 35%,
-                    rgba(240, 247, 242, 0.92) 70%,
+                    rgba(11, 31, 20, 0.55) 0%,
+                    rgba(27, 58, 45, 0.65) 35%,
+                    rgba(240, 247, 242, 0.95) 70%,
                     #F0F7F2 100%
                 ),
                 url('/app/static/hero_bg.jpg') top center / cover no-repeat fixed !important;
@@ -51,14 +51,17 @@ def main():
         .stApp .stMainBlockContainer > div > div > div:nth-child(2),
         .stApp .stMainBlockContainer > div > div > div:nth-child(3) {
             color: #FFFFFF;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
         .stApp .stMainBlockContainer > div > div > div:nth-child(2) [data-testid="stMetricValue"],
         .stApp .stMainBlockContainer > div > div > div:nth-child(3) [data-testid="stMetricValue"] {
             color: #FFFFFF !important;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
         .stApp .stMainBlockContainer > div > div > div:nth-child(2) [data-testid="stMetricLabel"],
         .stApp .stMainBlockContainer > div > div > div:nth-child(3) [data-testid="stMetricLabel"] {
-            color: rgba(255, 255, 255, 0.85) !important;
+            color: rgba(255, 255, 255, 0.90) !important;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
         }
         </style>
     """, unsafe_allow_html=True)
