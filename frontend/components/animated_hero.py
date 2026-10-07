@@ -161,22 +161,10 @@ def render_react_hero() -> None:
         <script type="text/babel">
             const { useEffect, useRef } = React;
 
-            const particles = [
-                { emoji: '🍃', x: '8%',  y: '15%', delay: 0 },
-                { emoji: '🌿', x: '85%', y: '20%', delay: 0.3 },
-                { emoji: '🌱', x: '12%', y: '75%', delay: 0.6 },
-                { emoji: '🌾', x: '88%', y: '70%', delay: 0.9 },
-                { emoji: '🍃', x: '50%', y: '8%',  delay: 1.2 },
-                { emoji: '🌿', x: '75%', y: '85%', delay: 1.5 },
-                { emoji: '🌱', x: '20%', y: '40%', delay: 0.4 },
-                { emoji: '🌾', x: '80%', y: '45%', delay: 0.8 },
-            ];
-
             const Hero = () => {
                 const cardRef = useRef(null);
                 const sceneRef = useRef(null);
                 const pillRef = useRef(null);
-                const particleRefs = useRef([]);
 
                 useEffect(() => {
                     const card = cardRef.current;
@@ -193,25 +181,6 @@ def render_react_hero() -> None:
                         { opacity: 0, y: 20 },
                         { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 1 }
                     );
-
-                    // Animate particles
-                    particleRefs.current.forEach((el, i) => {
-                        if (!el) return;
-                        gsap.fromTo(el,
-                            { opacity: 0, scale: 0.3, y: 20 },
-                            { opacity: 0.6, scale: 1, y: 0, duration: 1, ease: "back.out(2)", delay: 0.8 + particles[i].delay }
-                        );
-                        // Gentle float
-                        gsap.to(el, {
-                            y: `random(-15, 15)`,
-                            x: `random(-10, 10)`,
-                            duration: `random(3, 5)`,
-                            repeat: -1,
-                            yoyo: true,
-                            ease: "sine.inOut",
-                            delay: particles[i].delay
-                        });
-                    });
 
                     // 3D mouse tracking
                     const handleMouseMove = (e) => {
@@ -249,16 +218,6 @@ def render_react_hero() -> None:
 
                 return (
                     <div className="hero-scene" ref={sceneRef} style={{ height: '500px' }}>
-                        {particles.map((p, i) => (
-                            <div
-                                key={i}
-                                className="particle"
-                                ref={el => particleRefs.current[i] = el}
-                                style={{ left: p.x, top: p.y, fontSize: '2rem' }}
-                            >
-                                {p.emoji}
-                            </div>
-                        ))}
                         <div className="hero-glass" ref={cardRef}>
                             <div className="hero-icon-container">
                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

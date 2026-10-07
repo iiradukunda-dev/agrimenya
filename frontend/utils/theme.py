@@ -96,10 +96,10 @@ def load_theme() -> None:
         /* Glass surfaces */
         --ag-glass-fill: linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.50) 0%,
-            rgba(255, 255, 255, 0.18) 100%
+            rgba(255, 255, 255, 0.75) 0%,
+            rgba(255, 255, 255, 0.35) 100%
         );
-        --ag-glass-border: rgba(255, 255, 255, 0.45);
+        --ag-glass-border: rgba(255, 255, 255, 0.60);
         --ag-glass-blur: blur(28px) saturate(180%) brightness(1.05);
         --ag-glass-shadow:
             0 4px 6px  rgba(0, 0, 0, 0.04),
@@ -125,14 +125,14 @@ def load_theme() -> None:
     /* ── Global Reset & Typography ────────────────────────────── */
     html, body, [class*="css"], .stApp {
         font-family: var(--ag-font-body) !important;
-        color: var(--ag-neutral-800);
+        color: var(--ag-neutral-900);
         background: transparent !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
     h1, h2, h3 {
         font-family: var(--ag-font-display) !important;
-        color: var(--ag-forest-800) !important;
+        color: var(--ag-forest-900) !important;
         letter-spacing: -0.02em;
     }
     h1 { font-weight: 800 !important; }
@@ -141,7 +141,7 @@ def load_theme() -> None:
 
     p, li, span, label {
         line-height: 1.65;
-        color: var(--ag-neutral-700);
+        color: var(--ag-neutral-800);
     }
 
     /* ── Hide Streamlit Chrome ────────────────────────────────── */
@@ -196,8 +196,8 @@ def load_theme() -> None:
     [data-testid="stMetric"]:hover {
         transform: translateY(-6px) scale(1.01);
         box-shadow:
-            0 20px 40px rgba(45, 106, 79, 0.12),
-            0 8px 16px rgba(45, 106, 79, 0.08),
+            0 24px 48px rgba(45, 106, 79, 0.16),
+            0 12px 24px rgba(45, 106, 79, 0.12),
             var(--ag-glass-highlight);
     }
     [data-testid="stMetricLabel"] {
@@ -212,7 +212,7 @@ def load_theme() -> None:
         font-family: var(--ag-font-display) !important;
         font-weight: 800 !important;
         font-size: 2rem !important;
-        color: var(--ag-forest-800) !important;
+        color: var(--ag-forest-900) !important;
         line-height: 1.2;
     }
     [data-testid="stMetricDelta"] {
@@ -257,14 +257,14 @@ def load_theme() -> None:
 
     /* Primary button — solid gradient */
     button[kind="primary"], .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, var(--ag-forest-500), var(--ag-forest-700)) !important;
+        background: linear-gradient(135deg, var(--ag-forest-600), var(--ag-forest-800)) !important;
         color: #ffffff !important;
-        border: 1px solid rgba(255,255,255,0.25) !important;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.15);
     }
     button[kind="primary"]:hover {
-        background: linear-gradient(135deg, var(--ag-forest-400), var(--ag-forest-600)) !important;
-        box-shadow: 0 12px 28px rgba(82, 183, 136, 0.3), var(--ag-glass-highlight) !important;
+        background: linear-gradient(135deg, var(--ag-forest-500), var(--ag-forest-700)) !important;
+        box-shadow: 0 12px 28px rgba(82, 183, 136, 0.4), var(--ag-glass-highlight) !important;
     }
 
     /* ── Text Inputs, Selects, Textareas ──────────────────────── */
@@ -388,12 +388,15 @@ def load_theme() -> None:
         -webkit-backdrop-filter: var(--ag-glass-blur);
         border: 1px solid var(--ag-glass-border);
         border-radius: var(--ag-radius-lg);
-        padding: 32px 28px;
+        padding: 40px 32px;
         box-shadow: var(--ag-glass-shadow), var(--ag-glass-highlight);
         transition: all 0.4s var(--ag-ease);
         position: relative;
         overflow: hidden;
         height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
     }
     .ag-card::before {
         content: '';
@@ -408,39 +411,40 @@ def load_theme() -> None:
     .ag-card:hover {
         transform: translateY(-6px);
         box-shadow:
-            0 20px 40px rgba(45, 106, 79, 0.12),
-            0 8px 16px rgba(45, 106, 79, 0.06),
+            0 24px 48px rgba(45, 106, 79, 0.16),
+            0 12px 24px rgba(45, 106, 79, 0.12),
             var(--ag-glass-highlight);
-        border-color: var(--ag-forest-400);
+        border-color: var(--ag-forest-500);
     }
 
     .ag-card-icon {
-        width: 52px; height: 52px;
-        border-radius: 14px;
+        width: 56px; height: 56px;
+        border-radius: 16px;
         background: linear-gradient(135deg, var(--ag-forest-050), var(--ag-forest-100));
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 16px;
-        box-shadow: 0 2px 8px rgba(82, 183, 136, 0.15);
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(82, 183, 136, 0.15);
     }
     .ag-card-icon svg {
-        width: 26px; height: 26px;
+        width: 28px; height: 28px;
         color: var(--ag-forest-600);
     }
 
     .ag-card-title {
         font-family: var(--ag-font-display);
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--ag-forest-800);
-        margin-bottom: 10px;
-        line-height: 1.3;
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--ag-forest-900);
+        margin-bottom: 12px;
+        line-height: 1.4;
     }
     .ag-card-desc {
-        font-size: 0.92rem;
-        color: var(--ag-neutral-600);
-        line-height: 1.65;
+        font-size: 0.95rem;
+        color: var(--ag-neutral-800);
+        line-height: 1.75;
+        flex-grow: 1;
     }
 
     /* ── Alert / Notification Cards ───────────────────────────── */
