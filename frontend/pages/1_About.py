@@ -1,10 +1,6 @@
-"""
-About page — mission, team, and platform overview.
-"""
 import os
 
 import streamlit as st
-from components.icons import render_icon_title
 from components.navbar import render_navbar
 from utils.theme import load_theme
 
@@ -15,58 +11,24 @@ st.set_page_config(page_title="About agrimenya", page_icon=LOGO_PATH, layout="wi
 load_theme()
 render_navbar()
 
+st.title("About agrimenya")
+st.markdown("A workspace for agricultural teams to review zone information and organise local action.")
 
-def main() -> None:
-    render_icon_title("assets/info.svg", "About agrimenya", "Learn more about our mission and platform")
-
-    # ── Mission Statement ──────────────────────────────────────
-    st.markdown("""
-    ### Our Mission
-    agrimenya is designed to empower agricultural professionals, cooperatives, and planners
-    with data-driven insights. By leveraging advanced analytics and seamless communication
-    channels, we aim to optimize resource allocation, enhance crop yields, and foster
-    collaboration across the agricultural ecosystem.
-    """)
-
-    st.divider()
-
-    # ── Core Pillars ───────────────────────────────────────────
-    st.markdown("### Core Pillars")
-    c1, c2, c3, c4 = st.columns(4)
-
-    pillar_data = [
-        (c1, "🧠", "Decide",
-         "AI-powered recommendations for interventions based on priority levels and historical data."),
-        (c2, "📅", "Plan",
-         "Interactive roadmaps to track seasonal tasks and ensure timely execution of activities."),
-        (c3, "🗺️", "Segment",
-         "Geographic insights and yield mapping to identify high-potential areas and allocate resources."),
-        (c4, "📡", "Communicate",
-         "Real-time alerts and unified messaging to connect extension officers, cooperatives, and planners."),
-    ]
-
-    for col, icon, title, desc in pillar_data:
+st.markdown("## How the workspace is organised")
+sections = [
+    ("Zones and segmentation", "Browse registered areas and compare the crop, season, production, and priority information available for each zone."),
+    ("Decisions", "Review recommendations returned by the connected service. Use the accompanying zone context before acting on a recommendation."),
+    ("Planning", "Create a zone-specific plan with actions, notes, and timing agreed by your team."),
+    ("Communication", "Review alerts and use the configured communication channels and consent workflows."),
+]
+for start in range(0, len(sections), 2):
+    columns = st.columns(2, gap="medium")
+    for col, (heading, description) in zip(columns, sections[start : start + 2]):
         with col:
-            st.html(f"""
-            <div class="ag-card" style="min-height: 200px;">
-                <div style="font-size: 2rem; margin-bottom: 12px;">{icon}</div>
-                <div class="ag-card-title">{title}</div>
-                <div class="ag-card-desc">{desc}</div>
-            </div>
-            """)
+            with st.container(border=True):
+                st.markdown(f"### {heading}")
+                st.write(description)
 
-    st.divider()
-
-    # ── Tech Stack ─────────────────────────────────────────────
-    st.markdown("### Technology")
-    st.markdown("""
-    agrimenya is built on a modern, scalable architecture:
-
-    - **Backend**: FastAPI with XGBoost ML models for crop yield prediction and priority ranking
-    - **Frontend**: Streamlit with a custom Liquid Glass design system, React/GSAP interactive components
-    - **Database**: PostgreSQL via Supabase for real-time data sync
-    - **Deployment**: Dockerised microservices orchestrated with Docker Compose
-    """)
-
-
-main()
+st.markdown("## Reading the information")
+st.write("Values depend on the records and services currently connected to this workspace. An unavailable value means the backend did not provide it; it should not be read as zero. Forecasts and model outputs are estimates and should be checked against local conditions and qualified agricultural advice.")
+st.caption("The application uses a Streamlit frontend connected to the agrimenya API. Features and available data depend on the active deployment configuration.")

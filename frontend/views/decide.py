@@ -25,7 +25,7 @@ def render_decide():
                     with col2:
                         st.markdown(f"{rec.get('text', '')}")
                     with col3:
-                        priority_badge(rec.get('priority', 'Low'))
+                        priority_badge(rec.get('priority', 'Not assessed'))
                         st.caption(f"{t('common.status')}: {rec.get('status', t('common.pending'))}")
                         if st.button(t("decisions.act_btn"), key=f"act_{rec.get('area', 'X')}_{rec.get('crop', 'Y')}"):
                             st.switch_page("pages/8_Planning.py")

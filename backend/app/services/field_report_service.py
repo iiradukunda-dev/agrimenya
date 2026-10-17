@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from typing import Any
 
-_FIELD_REPORTS: list[dict[str, Any]] = []
+from app.db import crud
 
 
 def submit_field_report(
@@ -23,21 +22,18 @@ def submit_field_report(
         "soil_moisture_pct": soil_moisture_pct,
         "symptoms": symptoms or "",
         "notes": notes or "",
-        "submitted_at": datetime.now(timezone.utc).isoformat(),
     }
-    _FIELD_REPORTS.insert(0, payload)
-    return payload
+    return crud.create_field_report(payload)
 
 
 def list_field_reports(zone_id: str | None = None, limit: int = 10) -> list[dict[str, Any]]:
-    records = _FIELD_REPORTS
-    if zone_id:
-        records = [item for item in records if item.get("zone_id") == str(zone_id)]
-    return records[:limit]
+    if not zone_id:
+        return []
+    return crud.list_field_reports(zone_id, limit)
 
 
-def get_field_risk_summary(crop: str | None = None) -> dict[str, Any]:
-    reports = _FIELD_REPORTS
+def get_field_risk_summary(crop: str | None = None, zone_id: str | None = None) -> dict[str, Any]:
+    reports = list_field_reports(zone_id=zone_id, limit=100) if zone_id else []
     if crop:
         reports = [item for item in reports if str(item.get("crop", "")).lower() == str(crop).lower()]
     if not reports:
@@ -46,11 +42,11 @@ def get_field_risk_summary(crop: str | None = None) -> dict[str, Any]:
     risk = "Low"
     for report in reports:
         symptoms = str(report.get("symptoms") or "").lower()
-        if any(token in symptoms for token in ["yellow", "wilting", "brown", "lesion", "mold", "rust", "spot"]):
-            risk = "Medium"
-            break
         if any(token in symptoms for token in ["severe", "collapse", "fungus", "rapid spread", "burnt"]):
             risk = "High"
+            break
+        if any(token in symptoms for token in ["yellow", "wilting", "brown", "lesion", "mold", "rust", "spot"]):
+            risk = "Medium"
             break
 
     return {

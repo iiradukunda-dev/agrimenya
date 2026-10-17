@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import io
 import json
+import logging
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -35,10 +37,12 @@ DEFAULT_LABELS = [
     "potato_early_blight",
     "tomato_leaf_mold",
 ]
+logger = logging.getLogger(__name__)
+_MODEL_CACHE: tuple[Any | None, list[str], dict[str, Any]] | None = None
+_MODEL_LOCK = threading.Lock()
 
 
 def ensure_model_metadata() -> dict[str, Any]:
-    VISION_MODEL_DIR.mkdir(parents=True, exist_ok=True)
     config = {
         "model_name": "resnet50",
         "image_size": 224,
@@ -46,20 +50,25 @@ def ensure_model_metadata() -> dict[str, Any]:
         "labels": DEFAULT_LABELS,
         "trained": MODEL_PATH.exists(),
     }
-    if not CONFIG_PATH.exists():
-        CONFIG_PATH.write_text(json.dumps(config, indent=2))
-    elif MODEL_PATH.exists():
-        config = json.loads(CONFIG_PATH.read_text())
-        config["trained"] = True
-        CONFIG_PATH.write_text(json.dumps(config, indent=2))
-    if not LABELS_PATH.exists():
-        LABELS_PATH.write_text(json.dumps(DEFAULT_LABELS, indent=2))
+    try:
+        if CONFIG_PATH.exists():
+            loaded = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+            if isinstance(loaded, dict):
+                config.update(loaded)
+        if LABELS_PATH.exists():
+            labels = json.loads(LABELS_PATH.read_text(encoding="utf-8"))
+            if isinstance(labels, list) and labels and all(isinstance(label, str) for label in labels):
+                config["labels"] = labels
+    except (OSError, json.JSONDecodeError):
+        logger.exception("Invalid vision model metadata; image model will not be available")
+        config["trained"] = False
+    config["trained"] = bool(config.get("trained") and MODEL_PATH.is_file())
     return config
 
 
 def vision_model_status() -> dict[str, Any]:
     config = ensure_model_metadata()
-    labels = json.loads(LABELS_PATH.read_text()) if LABELS_PATH.exists() else DEFAULT_LABELS
+    labels = config.get("labels", DEFAULT_LABELS)
     available = torch is not None and resnet50 is not None and Image is not None
     trained = MODEL_PATH.exists() and available
     return {
@@ -74,6 +83,17 @@ def vision_model_status() -> dict[str, Any]:
 
 
 def load_vision_model() -> tuple[Any | None, list[str], dict[str, Any]]:
+    global _MODEL_CACHE
+    if _MODEL_CACHE is not None:
+        return _MODEL_CACHE
+    with _MODEL_LOCK:
+        if _MODEL_CACHE is not None:
+            return _MODEL_CACHE
+        _MODEL_CACHE = _load_vision_model_once()
+    return _MODEL_CACHE
+
+
+def _load_vision_model_once() -> tuple[Any | None, list[str], dict[str, Any]]:
     status = vision_model_status()
     config = status["config"]
     labels = status["labels"]
@@ -85,7 +105,7 @@ def load_vision_model() -> tuple[Any | None, list[str], dict[str, Any]]:
         model = resnet50(weights=None)
         in_features = model.fc.in_features
         model.fc = torch.nn.Linear(in_features, len(labels))
-        state = torch.load(MODEL_PATH, map_location="cpu")
+        state = torch.load(MODEL_PATH, map_location="cpu", weights_only=True)
         if isinstance(state, dict) and "model_state_dict" in state:
             model.load_state_dict(state["model_state_dict"])
         else:
@@ -93,6 +113,7 @@ def load_vision_model() -> tuple[Any | None, list[str], dict[str, Any]]:
         model.eval()
         return model, labels, config
     except Exception:
+        logger.exception("Could not load the vision model; image inference is disabled")
         return None, labels, config
 
 
@@ -116,15 +137,13 @@ def predict_vision_disease(image_bytes: bytes, crop_hint: str | None = None) -> 
 
     if model is None or torch is None:
         fallback = {
-            "predicted_disease": "vision model not trained yet",
-            "confidence": 0.0,
-            "risk_level": "Low",
-            "recommended_actions": [
-                "Collect labeled plant disease photos and train the CNN model.",
-                "Use the symptom-based model until the image model is available.",
-            ],
+            "predicted_disease": "Unconfirmed",
+            "confidence": None,
+            "risk_level": "Unknown",
+            "recommended_actions": ["Request an in-person assessment from an RAB or district agronomist before treatment."],
             "labels": labels,
             "model_status": "not_trained",
+            "interpretation_note": "No validated image model is available. Confirm crop symptoms with an RAB or district agronomist.",
         }
         if crop_hint:
             fallback["crop_hint"] = crop_hint
@@ -141,14 +160,12 @@ def predict_vision_disease(image_bytes: bytes, crop_hint: str | None = None) -> 
     result = {
         "predicted_disease": disease,
         "confidence": round(confidence, 3),
-        "risk_level": "High" if confidence >= 0.75 else "Medium" if confidence >= 0.6 else "Low",
-        "recommended_actions": [
-            "Inspect the affected plants immediately and mark the spread area.",
-            "Apply the appropriate crop-protection treatment for the predicted disease.",
-            "Schedule a follow-up scouting visit within 7 days.",
-        ],
+        "risk_level": "Unknown",
+        "recommended_actions": ["Request an in-person assessment from an RAB or district agronomist before treatment."],
         "labels": labels,
         "model_status": "trained",
+        "confidence_basis": "uncalibrated_model_score",
+        "interpretation_note": "Experimental image association only; not a diagnosis. Confirm with an RAB or district agronomist before treatment.",
     }
     if crop_hint:
         result["crop_hint"] = crop_hint

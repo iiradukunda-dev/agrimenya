@@ -75,4 +75,4 @@ def render_yield_chart(df) -> None:
         marker_cornerradius=6,
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")

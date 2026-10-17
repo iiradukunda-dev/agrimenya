@@ -74,11 +74,11 @@ def render_segment():
                     display_df.columns = [t("seg.col_district"), t("seg.col_crop"), t("seg.col_priority"), t("seg.col_yield")]
                     st.dataframe(
                         display_df,
-                        use_container_width=True,
+                        width="stretch",
                         hide_index=True
                     )
                 else:
-                    st.dataframe(filtered_df, use_container_width=True, hide_index=True)
+                    st.dataframe(filtered_df, width="stretch", hide_index=True)
 
             zone_rows = (
                 filtered_df[filtered_df["id"].notna()].to_dict("records")

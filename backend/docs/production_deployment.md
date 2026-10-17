@@ -7,10 +7,13 @@ Create the backend `.env` from `.env.example` in the deployment environment. Do 
 Set these values before starting with `APP_ENV=production`:
 
 - `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`: use the project's server-side secret key. The current local configuration uses a publishable key, which is suitable for reads when RLS allows them but not for production server-side writes.
-- `ADMIN_API_KEY` and `USER_API_KEY`: separate random credentials, each at least 32 characters. Keep them in the Streamlit server environment and send them as `X-Admin-Key` and `X-API-Key` respectively.
+- `USER_API_KEY`: a random value of at least 32 characters for protected user write APIs. Administrator access uses named accounts and short-lived bearer sessions; the legacy `ADMIN_API_KEY` is no longer accepted.
 - `JWT_SECRET`: a separate random value of at least 32 characters.
+- `SMTP_HOST`, `EMAIL_FROM`, optional `SMTP_USER`/`SMTP_PASSWORD`, TLS settings, and `ADMIN_PASSWORD_RESET_URL`: backend-only mail settings for administrator invitations and one-time password recovery. The reset URL must be HTTPS and point to the frontend Admin page.
 - `ALLOWED_ORIGINS`: exact allowed browser origins, including scheme and port.
 - `ALLOWED_HOSTS`: exact API hostnames accepted by the service. Include the service hostname and `127.0.0.1` for the container health probe.
+- `GROQ_API_KEY` and `LLM_PROVIDER=groq`: configure the optional Groq chat provider on the backend only. The default model is `openai/gpt-oss-20b`; the grounded local responder remains active if the key is absent or the API is unavailable. Do not expose the provider key to Streamlit or the browser.
+- `WHATSAPP_MODE=mock` is the safe default. For live WhatsApp, use `WHATSAPP_MODE=live` with the Meta Cloud API `WHATSAPP_GRAPH_VERSION`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BUSINESS_ACCOUNT_ID`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_APP_SECRET`, and `WHATSAPP_VERIFY_TOKEN`. Configure these backend-only secrets in the Meta environment; do not use Twilio WhatsApp credentials for this path.
 
 Generate separate values for every environment. Never place a Supabase service-role key in the frontend environment.
 
@@ -24,12 +27,14 @@ docker compose ps
 Invoke-RestMethod https://<api-host>/health
 ```
 
-The health response should report `status: ok` and `database_status: ok`. API documentation, OpenAPI, and the debug log route are disabled in production. Route writes and AI operations require the user key; admin routes require the admin key.
+The health response should report `status: ok` and `database_status: ok`. API documentation, OpenAPI, and the debug log route are disabled in production. Route writes and AI operations require the user key; admin routes require a named administrator session.
 
 ## Operational notes
 
 - The container runs as a non-root user, has a health check, and excludes `.env`, logs, tests, and local data from its build context.
-- Trained files under `app/ml/artifacts` are packaged with the service. Check `model_present` and `baselines_present` in health before accepting yield predictions.
-- SMS and WhatsApp notifications remain queued unless Twilio credentials are configured. The contact form requires `SMTP_HOST`, `EMAIL_FROM`, and `DEFAULT_NOTIFICATION_EMAIL`; outbound alert email also requires SMTP configuration. External LLM responses require `LLM_API_KEY`. Verify each provider in staging before enabling production delivery.
+- Yield estimates use NISR observations in Supabase. Apply migration `0007_nisr_imports.sql` to enable release imports; check `baselines_present` and `yield_source` in health before accepting predictions. CSV training data is not required in the runtime image.
+- SMS continues to use Twilio. WhatsApp is disabled in the legacy notification route and must use the contact-consent, alert-approval, template, and delivery-webhook path; API acceptance is not delivery confirmation. Apply the WhatsApp SQL migrations and obtain Meta template approval before production sends. The contact form requires `SMTP_HOST`, `EMAIL_FROM`, and `DEFAULT_NOTIFICATION_EMAIL`; outbound alert email also requires SMTP configuration. External LLM responses require `GROQ_API_KEY` when `LLM_PROVIDER=groq`, or `LLM_API_KEY` when explicitly using `LLM_PROVIDER=anthropic`. Verify the chosen provider in staging before enabling production delivery.
 - Put the API behind an HTTPS reverse proxy and set `ALLOWED_HOSTS` to the externally visible API host.
 - Back up Supabase data and validate RLS policies before deploying schema or credential changes.
+- Apply `app/db/migrations/0008_admin_accounts.sql` using the Supabase SQL editor or deployment migration runner. Provision the first administrator from a trusted backend host with `cd backend` then `python scripts/create_admin.py`; the script prompts for the password without echoing it. After that, use Admin → Access Management to invite or disable accounts. Lost passwords are recovered through a 30-minute, single-use email link; reset increments the account session version and invalidates existing sessions. Administrator routes use named accounts; do not configure or rely on a shared `ADMIN_API_KEY`.
+- If the recovery mailbox is unavailable, an operator with trusted shell access and server-side database credentials can run `python scripts/reset_admin_password.py admin@example.org`; it also revokes existing sessions. Apply rate limits for `/auth/admin/*` at the HTTPS proxy as well, because the API's emergency local throttle is per process.

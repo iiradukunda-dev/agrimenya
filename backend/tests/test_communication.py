@@ -35,10 +35,10 @@ def test_invalid_severity_rejected():
     assert r.status_code == 422
 
 
-@patch("app.db.crud.list_plans")
-def test_share_plan(mock_list_plans):
+@patch("app.db.crud.get_plan")
+def test_share_plan(mock_get_plan):
     plan_id = str(uuid.uuid4())
-    mock_list_plans.return_value = [{"id": plan_id, "title": "P"}]
+    mock_get_plan.return_value = {"id": plan_id, "title": "P"}
     r = client.get(f"/communication/share/{plan_id}")
     assert r.status_code == 200
     assert r.json()["id"] == plan_id
@@ -163,24 +163,14 @@ def test_twilio_sms_prefers_restricted_api_key(monkeypatch):
     }
 
 
-def test_twilio_whatsapp_formats_addresses(monkeypatch):
-    from app.core.config import settings
+def test_direct_twilio_whatsapp_is_disabled(monkeypatch):
     from app.routers.communication import _send_whatsapp
 
-    monkeypatch.setattr(settings, "TWILIO_SID", "AC-account")
-    monkeypatch.setattr(settings, "TWILIO_AUTH_TOKEN", "account-token")
-    monkeypatch.setattr(settings, "TWILIO_API_KEY_SID", "")
-    monkeypatch.setattr(settings, "TWILIO_API_KEY_SECRET", "")
-    monkeypatch.setattr(settings, "TWILIO_WHATSAPP_NUMBER", "+250700000000")
-    response = Mock()
-    response.json.return_value = {"sid": "SM-message", "status": "queued"}
-    with patch("app.routers.communication.httpx.post", return_value=response) as post:
+    with patch("app.routers.communication.httpx.post") as post:
         result = _send_whatsapp("+250711111111", "Test message")
 
-    assert result["status"] == "accepted"
-    assert post.call_args.kwargs["auth"] == ("AC-account", "account-token")
-    assert post.call_args.kwargs["data"]["From"] == "whatsapp:+250700000000"
-    assert post.call_args.kwargs["data"]["To"] == "whatsapp:+250711111111"
+    assert result["status"] == "unavailable"
+    assert not post.called
 
 
 def test_twilio_is_unavailable_when_credentials_are_missing(monkeypatch):

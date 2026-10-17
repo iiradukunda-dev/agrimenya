@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 import httpx
 from app.db.rwanda_districts import DISTRICT_LOOKUP
+
+logger = logging.getLogger(__name__)
 
 DISTRICT_COORDS = {
     "gasabo": (-1.9441, 30.0619),
@@ -28,19 +31,18 @@ for _district_name, _district in DISTRICT_LOOKUP.items():
 
 
 def _fallback_weather(district: str | None) -> dict[str, Any]:
-    normalized = (district or "kigali city").strip().lower()
-    lat, lon = DISTRICT_COORDS.get(normalized, DISTRICT_COORDS["kigali city"])
     return {
-        "district": district or "Kigali City",
-        "source": "fallback",
-        "latitude": lat,
-        "longitude": lon,
-        "temperature_c": 24.5,
-        "rainfall_mm": 38.0,
-        "humidity_pct": 68,
-        "wind_kph": 12.0,
-        "summary": "Fallback weather snapshot used while the live provider is unavailable.",
-        "updated_at": "offline",
+        "district": district,
+        "source": "unavailable",
+        "latitude": None,
+        "longitude": None,
+        "temperature_c": None,
+        "rainfall_mm": None,
+        "humidity_pct": None,
+        "wind_kph": None,
+        "summary": "Weather data is unavailable; no fallback values are substituted.",
+        "updated_at": None,
+        "forecast": [],
     }
 
 
@@ -49,7 +51,10 @@ def fetch_weather(district: str | None = None, latitude: float | None = None, lo
     lat = latitude
     lon = longitude
     if lat is None or lon is None:
-        lat, lon = DISTRICT_COORDS.get(normalized, DISTRICT_COORDS["kigali city"])
+        coordinates = DISTRICT_COORDS.get(normalized)
+        if coordinates is None:
+            return _fallback_weather(district)
+        lat, lon = coordinates
 
     try:
         params = {
@@ -85,7 +90,7 @@ def fetch_weather(district: str | None = None, latitude: float | None = None, lo
             "latitude": lat,
             "longitude": lon,
             "temperature_c": current.get("temperature_2m"),
-            "rainfall_mm": current.get("precipitation") or current.get("rain") or 0.0,
+            "rainfall_mm": current.get("precipitation") if current.get("precipitation") is not None else current.get("rain"),
             "humidity_pct": current.get("relative_humidity_2m"),
             "wind_kph": current.get("wind_speed_10m"),
             "summary": "Live weather snapshot from Open-Meteo.",
@@ -94,4 +99,5 @@ def fetch_weather(district: str | None = None, latitude: float | None = None, lo
         }
         return summary
     except Exception:
+        logger.exception("Live weather request failed for district %s", district)
         return _fallback_weather(district)

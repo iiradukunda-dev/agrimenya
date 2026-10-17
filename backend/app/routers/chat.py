@@ -1,21 +1,30 @@
 from uuid import UUID
 from io import BytesIO
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from pydantic import BaseModel, Field
+from typing import Literal
 
 from app.db import crud
 from app.core.auth import require_user
 from app.core.config import settings
-from app.services.ai_assistant import ask_assistant_with_source
+from app.services.ai_assistant import ask_assistant_with_source, enforce_request_limit
 from app.services.disease_detector import detect_crop_disease
 
 router = APIRouter(prefix="/chat", tags=["AI Assistant"])
 
 
+class ChatTurn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(..., max_length=500)
+
+
 class ChatRequest(BaseModel):
     zone_id: UUID
     question: str = Field(..., min_length=1, max_length=500)
+    crop: str | None = Field(default=None, min_length=1, max_length=50)
+    season: str | None = Field(default=None, min_length=1, max_length=80)
+    history: list[ChatTurn] = Field(default_factory=list, max_length=8)
 
 
 class ChatResponse(BaseModel):
@@ -23,6 +32,7 @@ class ChatResponse(BaseModel):
     question: str
     answer: str
     source: str = "grounded-context"
+    district: str | None = None
 
 
 class DiseaseDetectionRequest(BaseModel):
@@ -37,20 +47,26 @@ class DiseaseDetectionResponse(BaseModel):
     zone_id: UUID
     crop: str
     predicted_disease: str
-    confidence: float
+    confidence: float | None = None
     risk_level: str
     recommended_actions: list[str]
-    source: str = "symptom-model"
+    source: str = "insufficient_validated_symptom_data"
+    interpretation_note: str | None = None
 
 
 @router.post("")
-def chat(request: ChatRequest, _: dict = Depends(require_user)):
-    answer, source = ask_assistant_with_source(request.zone_id, request.question)
+def chat(request: ChatRequest, http_request: Request, _: dict = Depends(require_user)):
+    client_id = http_request.client.host if http_request.client else "unknown"
+    enforce_request_limit(client_id)
+    answer, source, district = ask_assistant_with_source(request.zone_id, request.question,
+                                               request.crop, request.season,
+                                               [turn.model_dump() for turn in request.history])
     return ChatResponse(
         zone_id=request.zone_id,
         question=request.question,
         answer=answer,
         source=source,
+        district=district,
     )
 
 
@@ -69,6 +85,7 @@ def disease_detect(request: DiseaseDetectionRequest, _: dict = Depends(require_u
         risk_level=result["risk_level"],
         recommended_actions=result["recommended_actions"],
         source=result.get("source", "symptom-model"),
+        interpretation_note=result.get("interpretation_note"),
     )
 
 
@@ -123,4 +140,5 @@ async def disease_detect_upload(
         risk_level=result["risk_level"],
         recommended_actions=result["recommended_actions"],
         source=result.get("source", "symptom-model"),
+        interpretation_note=result.get("interpretation_note"),
     )

@@ -133,9 +133,9 @@ def render_ai_assistant() -> None:
                         label_visibility="collapsed",
                     )
                     if image_file:
-                        st.image(image_file, caption="Uploaded image", use_container_width=True)
+                        st.image(image_file, caption="Uploaded image", width="stretch")
 
-                submitted = st.form_submit_button("Detect Disease", type="primary", use_container_width=True)
+                submitted = st.form_submit_button("Detect Disease", type="primary", width="stretch")
 
             if submitted and symptoms:
                 with st.spinner("Analyzing symptoms..."):
@@ -170,7 +170,7 @@ def render_ai_assistant() -> None:
                         with st.container(border=True):
                             st.markdown("**Risk Level**")
                             risk = result.get("risk_level", "Unknown")
-                            priority_badge(risk if risk in ("High", "Medium", "Low") else "Medium")
+                            priority_badge(risk if risk in ("High", "Medium", "Low") else "Not assessed")
 
                     # Recommended actions
                     actions = result.get("recommended_actions", result.get("actions", []))

@@ -23,25 +23,28 @@ def _tiny_png() -> bytes:
     )
 
 
-def test_no_llm_returns_context(monkeypatch):
+def test_no_llm_returns_safe_grounded_fallback(monkeypatch):
     from app.core.config import settings
 
     monkeypatch.setattr(settings, "LLM_API_KEY", "")
+    monkeypatch.setattr(settings, "GROQ_API_KEY", "")
     zone_id = str(uuid.uuid4())
-    payload = {"zone_id": zone_id, "question": "What's the score?"}
+    payload = {"zone_id": zone_id, "question": "Tell me more about crops"}
 
     with patch("app.db.crud.get_zone") as mock_get_zone, \
          patch("app.db.crud.list_predictions") as mock_preds, \
-         patch("app.db.crud.get_alignment_metric") as mock_align, \
+         patch("app.db.crud.list_district_alerts", return_value=[]), \
+         patch("app.db.crud.list_district_agri_metrics", return_value=[]), \
          patch("app.db.crud.list_alerts") as mock_alerts:
         mock_get_zone.return_value = {"id": zone_id, "district": "Gasabo", "sector": "S", "cell": "C"}
         mock_preds.return_value = []
-        mock_align.return_value = None
         mock_alerts.return_value = []
 
         r = client.post("/chat", json=payload)
         assert r.status_code == 200
-        assert "(No LLM configured yet - showing raw context)" in r.json()["answer"]
+        assert "Choose a crop" not in r.json()["answer"]
+        assert "NISR SAS baseline" in r.json()["answer"]
+        assert "Banana" in r.json()["answer"]
 
 
 def test_configured_llm_uses_anthropic_messages_api(monkeypatch):
@@ -53,13 +56,14 @@ def test_configured_llm_uses_anthropic_messages_api(monkeypatch):
     response = Mock()
     response.json.return_value = {"content": [{"type": "text", "text": "Use mulching to retain moisture."}]}
     with patch("app.services.ai_assistant.httpx.post", return_value=response) as post:
-        answer, source = _call_llm("How can I conserve water?", "Zone context")
+        answer, source = _call_llm("How can I conserve water?", '{"basis":{},"alerts":[]}')
 
     assert answer == "Use mulching to retain moisture."
     assert source == "anthropic"
     assert post.call_args.args[0] == "https://api.anthropic.com/v1/messages"
     assert post.call_args.kwargs["headers"]["x-api-key"] == "test-anthropic-key"
     assert post.call_args.kwargs["json"]["model"] == "claude-sonnet-4-6"
+    assert post.call_args.kwargs["json"]["max_tokens"] == 1024
 
 
 def test_missing_zone_returns_404():

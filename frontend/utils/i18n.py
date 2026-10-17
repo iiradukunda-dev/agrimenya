@@ -64,7 +64,6 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "decisions.ai_title": "AI Assistant",
         "decisions.ai_desc": "Ask the AI planner for specific context or adjustments to the recommendations.",
         "decisions.ai_placeholder": "E.g., What are the risk factors for Maize in Nyagatare?",
-        "decisions.ai_response": "This is an AI response to: *'{prompt}'*. In a live environment, the backend will parse the SAS/EICV7 data to provide targeted insight for this region.",
         "plan.page_title": "Planification",
         "plan.header": "Planification",
         "plan.subtitle": "Roadmaps and execution timelines for agricultural interventions.",
@@ -180,7 +179,6 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "decisions.ai_title": "Ubufasha bwa AI",
         "decisions.ai_desc": "Baza umufasha wa AI ibisobanuro byimbitse cyangwa uburyo bwo guhuza inama.",
         "decisions.ai_placeholder": "Urugero: Ni ibihe byago byugarije ikigori muri Nyagatare?",
-        "decisions.ai_response": "Iki ni igisubizo cya AI ku kibazo cyawe: *'{prompt}'*. Muri seriveri nyayo, sisitemu isesengura amakuru ya SAS/EICV7 kugira ngo itange inama zihariye kuri ako gace.",
         "plan.page_title": "Igenamigambi",
         "plan.header": "Igenamigambi ry'Igihembwe",
         "plan.subtitle": "Ingengabihe n'ishyirwa mu bikorwa by'ibikorwa by'ubuhinzi.",
@@ -296,7 +294,6 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "decisions.ai_title": "Assistant IA",
         "decisions.ai_desc": "Demandez à l'assistant IA des précisions ou des ajustements aux recommandations.",
         "decisions.ai_placeholder": "Ex: Quels sont les facteurs de risque pour le maïs à Nyagatare ?",
-        "decisions.ai_response": "Ceci est une réponse générée par l'IA pour : *'{prompt}'*. En environnement réel, le backend analysera les données SAS/EICV7 pour fournir des recommandations ciblées pour cette zone.",
         "plan.page_title": "Planification",
         "plan.header": "Planification Agricole",
         "plan.subtitle": "Feuilles de route et calendriers d'exécution des interventions agricoles.",
@@ -487,5 +484,5 @@ def render_language_selector(sidebar: bool = True) -> None:
             key="lang_cycle_btn",
             on_click=_cycle_lang,
             help="Switch language (EN, RW, FR)",
-            use_container_width=sidebar
+            width="stretch" if sidebar else "content"
         )

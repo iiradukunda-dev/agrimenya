@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from uuid import UUID
 from app.core.auth import require_user
 from app.models.zone import ZoneCreate
 from app.db import crud
@@ -32,12 +33,19 @@ def get_map_data(district: str | None = None):
             "predicted_yield": latest.get("predicted_yield") if latest else None,
             "yield_per_ha": latest.get("yield_per_ha") if latest else None,
             "priority_level": latest.get("priority_level") if latest else None,
+            "prediction_season": latest.get("season") if latest else None,
+            "prediction_crop": latest.get("crop") if latest else None,
+            "prediction_model_version": latest.get("model_version") if latest else None,
+            "prediction_basis": (
+                "baseline" if latest and "baseline" in str(latest.get("model_version", "")).casefold()
+                else "model" if latest and latest.get("model_version") else None
+            ),
         })
     return enriched
 
 
 @router.get("/zones/{zone_id}")
-def get_zone_detail(zone_id: str):
+def get_zone_detail(zone_id: UUID):
     zone = crud.get_zone(zone_id)
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")

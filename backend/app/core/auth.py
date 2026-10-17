@@ -19,7 +19,7 @@ def _b64url_decode(data: str) -> bytes:
     return base64.urlsafe_b64decode(padded.encode("ascii"))
 
 
-def create_token(role: str, expires_in_seconds: int = 3600) -> str:
+def create_token(role: str, expires_in_seconds: int = 3600, claims: dict[str, Any] | None = None) -> str:
     """Create a signed bearer token with the caller's role and expiry time."""
     role = (role or "").lower()
     if not role:
@@ -30,7 +30,11 @@ def create_token(role: str, expires_in_seconds: int = 3600) -> str:
         "exp": int(time.time()) + int(expires_in_seconds),
         "iat": int(time.time()),
     }
-    header = {"alg": settings.JWT_ALGORITHM or "HS256", "typ": "JWT"}
+    if claims:
+        payload.update(claims)
+    if settings.JWT_ALGORITHM != "HS256":
+        raise RuntimeError("Only HS256 JWT tokens are supported")
+    header = {"alg": "HS256", "typ": "JWT"}
     header_segment = _b64url_encode(json.dumps(header, separators=(",", ":")).encode())
     payload_segment = _b64url_encode(json.dumps(payload, separators=(",", ":")).encode())
     signing_input = f"{header_segment}.{payload_segment}".encode()
@@ -48,6 +52,12 @@ def verify_token(token: str, expected_role: str | None = None) -> dict[str, Any]
         raise HTTPException(status_code=401, detail="Malformed token")
 
     header_segment, payload_segment, signature_segment = parts
+    try:
+        header = json.loads(_b64url_decode(header_segment).decode("utf-8"))
+    except Exception as exc:
+        raise HTTPException(status_code=401, detail="Invalid token header") from exc
+    if not isinstance(header, dict) or header.get("alg") != "HS256" or header.get("typ") != "JWT":
+        raise HTTPException(status_code=401, detail="Unsupported token header")
     signing_input = f"{header_segment}.{payload_segment}".encode("utf-8")
     expected_signature = _b64url_encode(
         hmac.new(settings.JWT_SECRET.encode("utf-8"), signing_input, hashlib.sha256).digest()
@@ -59,11 +69,19 @@ def verify_token(token: str, expected_role: str | None = None) -> dict[str, Any]
         payload = json.loads(_b64url_decode(payload_segment).decode("utf-8"))
     except Exception as exc:
         raise HTTPException(status_code=401, detail="Invalid token payload") from exc
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=401, detail="Invalid token payload")
 
     now = int(time.time())
-    exp = int(payload.get("exp", 0))
-    if exp and now > exp:
+    try:
+        exp = int(payload["exp"])
+        issued_at = int(payload["iat"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(status_code=401, detail="Token expiry and issue time are required") from exc
+    if exp <= now:
         raise HTTPException(status_code=401, detail="Token expired")
+    if issued_at > now or issued_at >= exp:
+        raise HTTPException(status_code=401, detail="Invalid token issue time")
 
     role = (payload.get("role") or "").lower()
     if expected_role and role != expected_role.lower():
@@ -75,7 +93,7 @@ def verify_token(token: str, expected_role: str | None = None) -> dict[str, Any]
 def _role_key(role: str) -> str:
     role = (role or "").lower()
     if role == "admin":
-        return settings.ADMIN_API_KEY
+        return ""
     if role in {"user", "reader", "analyst"}:
         return settings.USER_API_KEY
     return ""
@@ -98,11 +116,25 @@ def require_role(required_role: str):
         if token.startswith("Bearer "):
             raw_token = token.split(" ", 1)[1].strip()
             payload = verify_token(raw_token, expected_role=required)
-            return {"role": payload.get("role"), "token": raw_token}
+            if required == "admin":
+                account_id = payload.get("sub")
+                token_version = payload.get("ver")
+                if not account_id or not isinstance(token_version, int):
+                    raise HTTPException(status_code=401, detail="Administrator account session required")
+                from app.db import crud
+                account = crud.get_admin_account_by_id(str(account_id))
+                if (not account or not account.get("is_active") or
+                        int(account.get("session_version", 0)) != token_version):
+                    raise HTTPException(status_code=401, detail="Administrator session expired; sign in again")
+                payload["email"] = account.get("email")
+                payload["name"] = account.get("display_name")
+            return {"role": payload.get("role"), "token": raw_token, "account_id": payload.get("sub")}
 
         token = _extract_token(request)
         if token:
-            if token == configured_key:
+            if required == "admin":
+                raise HTTPException(status_code=401, detail="Use an administrator account session")
+            if configured_key and hmac.compare_digest(token, configured_key):
                 if role_hint and role_hint != required:
                     raise HTTPException(status_code=401, detail=f"Role mismatch: expected {required}")
                 return {"role": required, "token": token}
@@ -126,6 +158,6 @@ def require_user(request: Request):
     Development remains convenient for local integration and automated tests.
     Production startup separately enforces that USER_API_KEY is configured.
     """
-    if settings.APP_ENV != "production":
+    if settings.APP_ENV in {"development", "test"}:
         return {"role": "user", "token": None}
     return require_role("user")(request)

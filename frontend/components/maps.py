@@ -82,7 +82,7 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
         m,
         key=key,
         height=500,
-        use_container_width=True,
+        width="stretch",
         returned_objects=["last_object_clicked"],
     )
     clicked = click.get("last_object_clicked") if isinstance(click, dict) else None

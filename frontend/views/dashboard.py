@@ -20,6 +20,17 @@ from utils.i18n import t
 logger = logging.getLogger(__name__)
 
 
+def _metric_number(value, suffix: str = "", grouped: bool = False) -> str:
+    if value is None:
+        return "N/A"
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return "N/A"
+    formatted = f"{number:,.0f}" if grouped else f"{number:.0f}"
+    return f"{formatted}{suffix}"
+
+
 def render_dashboard() -> None:
     try:
         st.markdown(
@@ -36,16 +47,19 @@ def render_dashboard() -> None:
         kpi_cols = st.columns(5)
 
         kpi_items = [
-            ("Total Zones", dashboard_data.get("total_zones", 0), None),
-            ("High Nutrition Risk", dashboard_data.get("zones_high_nutrition_risk", 0), None),
-            ("Credit Readiness", f"{dashboard_data.get('avg_credit_insurance_score', 0):.0f}%", None),
-            ("Export Ready", dashboard_data.get("zones_export_ready", 0), None),
-            ("Jobs Supported", f"{dashboard_data.get('total_estimated_jobs', 0):,}", None),
+            ("Zones with alignment data", dashboard_data.get("total_zones", 0), None),
+            ("High Nutrition Risk", dashboard_data.get("zones_high_nutrition_risk") if dashboard_data.get("zones_high_nutrition_risk") is not None else "N/A", None),
+            ("Credit Readiness", _metric_number(dashboard_data.get("avg_credit_insurance_score"), "%"), None),
+            ("Export Ready", dashboard_data.get("zones_export_ready") if dashboard_data.get("zones_export_ready") is not None else "N/A", None),
+            ("Observed Worker-days", _metric_number(dashboard_data.get("observed_worker_days", 0), grouped=True), None),
         ]
 
         for col, (label, value, delta) in zip(kpi_cols, kpi_items):
             with col:
                 st.metric(label, value, delta)
+
+        if dashboard_data.get("estimate_status") == "unavailable_pending_validated_data_and_methods":
+            st.caption("Risk, credit, export, and jobs estimates are not shown because validated measures are not configured.")
 
         st.divider()
 
@@ -68,7 +82,7 @@ def render_dashboard() -> None:
             )
         with weather_controls[1]:
             st.write("")
-            if st.button("Refresh weather", use_container_width=True):
+            if st.button("Refresh weather", width="stretch"):
                 api_client.get_weather.clear()
                 st.rerun()
 
@@ -99,7 +113,7 @@ def render_dashboard() -> None:
                     "precipitation_probability_pct": "Rain chance (%)",
                     "precipitation_sum_mm": "Rain (mm)",
                 })
-                st.dataframe(forecast_df, use_container_width=True, hide_index=True)
+                st.dataframe(forecast_df, width="stretch", hide_index=True)
             st.caption("Forecast values are model estimates for the selected district centroid.")
         else:
             st.error("Weather data could not be loaded from the backend.")
@@ -154,13 +168,13 @@ def render_dashboard() -> None:
             render_icon_subheader("assets/compass.svg", "Quick Actions")
             st.markdown('<div style="display: flex; flex-direction: column; gap: 8px;">', unsafe_allow_html=True)
 
-            if st.button("Predict Zone Yield", icon=":material/query_stats:", use_container_width=True):
+            if st.button("Predict Zone Yield", icon=":material/query_stats:", width="stretch"):
                 st.switch_page("pages/4_Zones.py")
-            if st.button("Create New Plan", icon=":material/edit_calendar:", use_container_width=True):
+            if st.button("Create New Plan", icon=":material/edit_calendar:", width="stretch"):
                 st.switch_page("pages/8_Planning.py")
-            if st.button("Detect Crop Disease", icon=":material/biotech:", use_container_width=True):
+            if st.button("Detect Crop Disease", icon=":material/biotech:", width="stretch"):
                 st.switch_page("pages/7_AI_Assistant.py")
-            if st.button("Send Alert", icon=":material/campaign:", use_container_width=True):
+            if st.button("Send Alert", icon=":material/campaign:", width="stretch"):
                 st.switch_page("pages/9_Communication.py")
 
             st.markdown("</div>", unsafe_allow_html=True)
@@ -180,7 +194,7 @@ def render_dashboard() -> None:
                     with c2:
                         st.markdown(rec.get("text", ""))
                     with c3:
-                        priority_badge(rec.get("priority", "Low"))
+                        priority_badge(rec.get("priority", "Not assessed"))
 
     except requests.exceptions.RequestException as e:
         logger.error("Network error in dashboard: %s", e)

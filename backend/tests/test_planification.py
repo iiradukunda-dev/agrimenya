@@ -11,12 +11,15 @@ client = TestClient(app)
 
 def test_estimate_resources_defaults():
     r = estimate_resources(None, None)
-    assert "seeds_kg" in r and "fertilizer_kg" in r
+    assert r["status"] == "needs_inputs"
+    assert r["estimated_cost_rwf"] is None
+    assert r["missing_inputs"] == ["area_cultivated"]
 
 
 @patch("app.db.crud.get_zone")
+@patch("app.db.crud.list_plans", return_value=[])
 @patch("app.db.crud.create_plan")
-def test_plan_roundtrip(mock_create_plan, mock_get_zone):
+def test_plan_roundtrip(mock_create_plan, mock_list_plans, mock_get_zone):
     # setup
     zone_id = uuid.uuid4()
     mock_get_zone.return_value = {"id": str(zone_id), "district": "Gasabo"}
@@ -40,4 +43,6 @@ def test_plan_roundtrip(mock_create_plan, mock_get_zone):
 
     # verify get plans forwards to crud.list_plans (we can't patch it easily here but ensure endpoint exists)
     resp2 = client.get(f"/planification/plans/{zone_id}")
-    assert resp2.status_code in (200, 404)
+    assert resp2.status_code == 200
+    assert resp2.json() == []
+    mock_list_plans.assert_called_once()
