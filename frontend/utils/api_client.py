@@ -742,6 +742,14 @@ def get_admin_alerts() -> list[dict[str, Any]]:
     return []
 
 
+def send_admin_alert(payload: dict[str, Any]) -> dict[str, Any] | None:
+    """Create an alert and broadcast it to active farmer-community email accounts."""
+    result = _request_admin("POST", "/communication/alerts", payload, timeout=120)
+    if result:
+        get_alerts.clear()
+    return result
+
+
 def get_admin_api_error(path: str) -> str | None:
     """Return the latest safe error detail for an admin request path."""
     errors = st.session_state.get("admin_api_errors", {})
@@ -850,7 +858,7 @@ def get_health() -> dict[str, Any] | None:
     return _get_api("/health")
 
 
-def _request_admin(method: str, path: str, payload: dict[str, Any] | None = None) -> Any:
+def _request_admin(method: str, path: str, payload: dict[str, Any] | None = None, timeout: int = 15) -> Any:
     if not admin_session_authenticated():
         logger.info("Admin session required; skipping %s", path)
         errors = dict(st.session_state.get("admin_api_errors", {}))
@@ -863,7 +871,7 @@ def _request_admin(method: str, path: str, payload: dict[str, Any] | None = None
             f"{API_BASE_URL}{path}",
             json=payload,
             headers=_admin_headers(),
-            timeout=15,
+            timeout=timeout,
         )
         response.raise_for_status()
         errors = dict(st.session_state.get("admin_api_errors", {}))

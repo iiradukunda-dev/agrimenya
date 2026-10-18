@@ -169,6 +169,48 @@ def render_admin() -> None:
         with admin_tabs[3]:
             render_icon_subheader("assets/bell.svg", "Alert Management")
 
+            zones = api_client.get_admin_zones()
+            zone_options = {
+                f"{z.get('district', 'Unknown district')} / {z.get('sector') or z.get('cell') or str(z.get('id', ''))[-8:]}": z.get("id")
+                for z in zones if z.get("id")
+            }
+            st.caption("A sent alert is emailed to every active Farmer Community account. No recipient selection is needed. SMTP acceptance confirms handoff, not inbox delivery. WhatsApp delivery is a separate, consent-based admin action.")
+            if zone_options:
+                with st.form("admin_community_alert_create", clear_on_submit=True):
+                    selected_zone = st.selectbox("Alert area", list(zone_options))
+                    severity = st.selectbox("Severity", ["Info", "Warning", "Critical"])
+                    message = st.text_area("Alert message", max_chars=2000, height=130)
+                    crop = st.text_input("Crop (optional)", max_chars=80)
+                    action = st.text_input("Recommended action (optional)", max_chars=500)
+                    create_alert = st.form_submit_button("Send alert to all farmer accounts", type="primary")
+                if create_alert:
+                    if not message.strip():
+                        st.error("Enter the alert message.")
+                    else:
+                        result = api_client.send_admin_alert({
+                            "zone_id": zone_options[selected_zone], "severity": severity,
+                            "message": message.strip(), "crop": crop.strip() or None,
+                            "action": action.strip() or None,
+                        })
+                        if result:
+                            delivery = result.get("email_delivery") or {}
+                            sent = int(delivery.get("sent") or 0)
+                            total = int(delivery.get("recipients") or 0)
+                            failed = int(delivery.get("failed") or 0)
+                            if delivery.get("status") == "sent":
+                                st.success(f"Alert created; SMTP accepted delivery for all {sent} active farmer accounts.")
+                            elif sent:
+                                st.warning(f"Alert created; SMTP accepted delivery for {sent} of {total} accounts, with {failed} failures.")
+                            elif delivery.get("status") == "no_recipients":
+                                st.warning("Alert created, but there are no active Farmer Community email accounts yet.")
+                            else:
+                                st.warning(f"Alert created, but no emails were delivered ({failed} failed). {delivery.get('reason', 'Check SMTP settings and backend logs.')}")
+                        else:
+                            st.error(api_client.get_admin_api_error("/communication/alerts") or "Alert could not be created.")
+            else:
+                zone_error = api_client.get_admin_api_error("/admin/zones")
+                st.error(zone_error or "Add a zone before creating an alert.")
+
             admin_alerts = api_client.get_admin_alerts()
             if admin_alerts:
                 df = pd.DataFrame(admin_alerts)

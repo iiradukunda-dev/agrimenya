@@ -58,6 +58,28 @@ def list_community_accounts(limit: int = 200) -> list[dict]:
     )
 
 
+def list_active_community_emails(limit: int = 10000) -> list[str]:
+    maximum = max(1, min(int(limit), 100000))
+    rows = []
+    for offset in range(0, maximum, 1000):
+        page = _exec_query_get_data(
+            get_supabase().table("community_accounts").select("email")
+            .eq("is_active", True).order("created_at").range(offset, min(offset + 999, maximum - 1))
+        )
+        rows.extend(page)
+        if len(page) < 1000:
+            break
+    emails = []
+    seen = set()
+    for row in rows:
+        email = str(row.get("email") or "").strip()
+        key = email.casefold()
+        if email and key not in seen:
+            seen.add(key)
+            emails.append(email)
+    return emails
+
+
 def set_community_account_active(account_id: str, is_active: bool) -> bool:
     account = get_community_account_by_id(account_id)
     if not account:

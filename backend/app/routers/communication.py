@@ -15,7 +15,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 
 from app.core.config import settings
-from app.core.auth import require_user
+from app.core.auth import require_admin, require_user
+from app.core.audit import audit_admin_action
 from app.db import crud
 from app.models.alert import AlertCreate
 
@@ -246,6 +247,77 @@ def send_notification(message: str, phone: str | None = None, email: str | None 
     }
 
 
+def _broadcast_alert_email(alert: dict[str, Any], zone: dict[str, Any] | None) -> dict[str, Any]:
+    """Email each active community account individually; never disclose the recipient list."""
+    recipients = crud.list_active_community_emails()
+    total = len(recipients)
+    if not total:
+        return {"status": "no_recipients", "recipients": 0, "sent": 0, "failed": 0}
+    if not settings.SMTP_HOST or not settings.EMAIL_FROM:
+        return {
+            "status": "unavailable", "recipients": total, "sent": 0, "failed": total,
+            "reason": "Configure SMTP_HOST and EMAIL_FROM to deliver alert email.",
+        }
+    if bool(settings.SMTP_USER) != bool(settings.SMTP_PASSWORD):
+        return {
+            "status": "unavailable", "recipients": total, "sent": 0, "failed": total,
+            "reason": "Configure both SMTP_USER and SMTP_PASSWORD, or leave both empty.",
+        }
+
+    zone_label = " / ".join(str(value).replace("\r", " ").replace("\n", " ") for value in (
+        (zone or {}).get("district"), (zone or {}).get("sector"), (zone or {}).get("cell"),
+    ) if value) or "Rwanda"
+    body_lines = [
+        "Agri-Menya farmer alert", "", f"Area: {zone_label}",
+        f"Severity: {alert.get('severity', 'Info')}", "", str(alert.get("message", "")).strip(),
+    ]
+    if alert.get("crop"):
+        body_lines.extend(["", f"Crop: {alert['crop']}"])
+    if alert.get("action"):
+        body_lines.extend([f"Recommended action: {alert['action']}"])
+    body_lines.extend(["", "This alert was issued by an Agri-Menya administrator."])
+    message_body = "\n".join(body_lines)
+
+    sent = 0
+    failed = 0
+    try:
+        client_factory = smtplib.SMTP_SSL if settings.SMTP_USE_SSL else smtplib.SMTP
+        with client_factory(settings.SMTP_HOST, settings.SMTP_PORT, timeout=20) as smtp:
+            if settings.SMTP_STARTTLS and not settings.SMTP_USE_SSL:
+                smtp.starttls()
+            if settings.SMTP_USER and settings.SMTP_PASSWORD:
+                smtp.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+            for start in range(0, total, 40):
+                batch = recipients[start:start + 40]
+                email_message = EmailMessage()
+                email_message["Subject"] = f"[Agri-Menya] {alert.get('severity', 'Info')} field alert"
+                email_message["From"] = settings.EMAIL_FROM
+                email_message["To"] = "undisclosed-recipients:;"
+                email_message.set_content(message_body)
+                try:
+                    refused = smtp.send_message(email_message, to_addrs=batch)
+                    failed_batch = len(refused or {})
+                    failed += failed_batch
+                    sent += len(batch) - failed_batch
+                except Exception as exc:
+                    logger.warning("Community alert email batch failed (%s)", type(exc).__name__)
+                    failed += len(batch)
+                    if isinstance(exc, (smtplib.SMTPServerDisconnected, OSError, TimeoutError)):
+                        failed += total - start - len(batch)
+                        break
+    except Exception as exc:
+        logger.exception("Community alert email broadcast could not connect")
+        failed = total - sent
+        return {
+            "status": "failed" if sent == 0 else "partial", "recipients": total,
+            "sent": sent, "failed": failed,
+            "reason": f"SMTP delivery failed ({type(exc).__name__}); check backend mail settings and logs.",
+        }
+
+    delivery_status = "sent" if sent == total else "partial" if sent else "failed"
+    return {"status": delivery_status, "recipients": total, "sent": sent, "failed": failed}
+
+
 @router.post("/notify")
 def notify(payload: NotificationRequest, request: Request, _: dict = Depends(require_user)):
     _limit_client_requests(request)
@@ -308,18 +380,29 @@ def submit_contact_message(payload: ContactMessageRequest, request: Request, _: 
 
 
 @router.post("/alerts")
-def create_alert(alert: AlertCreate, request: Request, _: dict = Depends(require_user)):
+def create_alert(alert: AlertCreate, request: Request, admin: dict = Depends(require_admin)):
     _limit_client_requests(request)
     # Pydantic keeps zone_id as a UUID in Python mode, which the Supabase
     # client's JSON encoder cannot serialize. JSON mode converts it to text.
-    created = crud.create_alert(alert.model_dump(mode="json"))
-    notification = send_notification(
-        message=alert.message,
-        phone=settings.DEFAULT_NOTIFICATION_PHONE,
-        email=settings.DEFAULT_NOTIFICATION_EMAIL,
-        channels=["sms", "whatsapp", "email"],
-    )
-    return {**created, "notification": notification}
+    payload = alert.model_dump(mode="json")
+    payload["created_by"] = admin.get("name") or admin.get("email") or "Administrator"
+    created = crud.create_alert(payload)
+    try:
+        zone = crud.get_zone(alert.zone_id)
+        email_delivery = _broadcast_alert_email(created, zone)
+    except Exception as exc:
+        logger.exception("Alert saved but email broadcast setup failed")
+        email_delivery = {
+            "status": "failed", "recipients": 0, "sent": 0, "failed": 0,
+            "reason": f"Alert saved; recipient lookup or email delivery failed ({type(exc).__name__}).",
+        }
+    audit_admin_action("create_community_alert", "alerts", {
+        "actor_id": admin.get("account_id"), "alert_id": created.get("id"),
+        "severity": alert.severity, "zone_id": str(alert.zone_id),
+        "email_recipients": email_delivery["recipients"],
+        "email_sent": email_delivery["sent"], "email_failed": email_delivery["failed"],
+    }, request=request)
+    return {**created, "email_delivery": email_delivery}
 
 
 @router.get("/alerts")
