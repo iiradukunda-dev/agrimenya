@@ -28,6 +28,33 @@ templates are configured.
 - A Supabase project with migrations applied. The backend needs the project
   URL and keys appropriate to the environment.
 
+## Team B handoff
+
+Use the shared feature branch so you receive the current backend, frontend,
+database migrations, and yield evaluation data:
+
+```powershell
+git clone --branch feature/ci-logging-debug https://github.com/iiradukunda-dev/agrimenya.git
+cd agrimenya/backend
+Copy-Item .env.example .env
+```
+
+Fill `backend/.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the
+project you are authorized to use. To see the same live records as Team A, both
+teams need access to the same Supabase project; exchange its credentials
+through an approved secure channel, never by committing `.env` to GitHub. Apply
+migrations `0001` through `0008` if they are not already applied. Then start both
+services:
+
+```powershell
+docker compose up --build
+```
+
+Open the app at `http://localhost:8501` and the API health page at
+`http://localhost:8000/health`. The shared branch runs WhatsApp in mock mode;
+live WhatsApp and AI-provider behavior require their own backend credentials.
+The setup and local development instructions below cover non-Docker options.
+
 Never commit `.env` files, service-role keys, WhatsApp/SMTP/LLM credentials,
 passwords, or local logs. The backend service-role key must stay in the
 backend environment; do not copy it to Streamlit or the browser.
