@@ -1,11 +1,8 @@
+.env
+.env.*
+!**/.env.example
 __pycache__/
 *.py[cod]
-*$py.class
-.env
-.venv
-env/
+.venv/
 venv/
-ENV/
-env.bak/
-venv.bak/
-.DS_Store
+backend/logs/*.log

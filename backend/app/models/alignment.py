@@ -9,14 +9,14 @@ class AlignmentMetric(BaseModel):
     id: Optional[UUID] = None
     zone_id: UUID
     season: str
-    irrigation_ha: float = 0
-    terraces_ha: float = 0
+    irrigation_ha: Optional[float] = None
+    terraces_ha: Optional[float] = None
     credit_insurance_score: Optional[float] = None
     nutrition_risk_level: Optional[RiskLevel] = None
     climate_risk_level: Optional[RiskLevel] = None
     female_managed_share: Optional[float] = None
-    export_readiness_flag: bool = False
-    estimated_jobs_supported: int = 0
+    export_readiness_flag: Optional[bool] = None
+    estimated_jobs_supported: Optional[int] = None
 
 
 class NationalDashboardSummary(BaseModel):

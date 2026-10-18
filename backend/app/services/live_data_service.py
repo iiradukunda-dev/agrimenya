@@ -16,21 +16,20 @@ def build_live_context(
 ) -> dict[str, Any]:
     weather = fetch_weather(district=district)
     reports = list_field_reports(zone_id=zone_id, limit=5)
-    field_risk = get_field_risk_summary(crop=crop)
-    freshness = data_freshness_score(weather.get("updated_at"), max_age_hours=24)
-
+    field_risk = get_field_risk_summary(crop=crop, zone_id=zone_id)
+    manual_observations = None
     if rainfall_mm is not None:
-        weather["rainfall_mm"] = rainfall_mm
-        weather["source"] = "manual-input"
+        manual_observations = {"rainfall_mm": rainfall_mm, "basis": "user-provided"}
 
-    if notes:
-        weather["summary"] = notes
+    freshness = data_freshness_score(weather.get("updated_at"), max_age_hours=24)
 
     return {
         "zone_id": zone_id,
         "district": district or weather.get("district"),
         "crop": crop,
         "weather": weather,
+        "manual_observations": manual_observations,
+        "user_notes": notes,
         "field_reports": reports,
         "field_risk_summary": field_risk,
         "freshness": freshness,

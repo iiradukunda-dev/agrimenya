@@ -150,25 +150,17 @@ def detect_crop_disease(crop: str | None, symptoms: str | None, image_descriptio
                     "recommended_actions": vision_result["recommended_actions"],
                     "crop": (crop or "Crop").strip().title(),
                     "source": "vision-cnn",
+                    "confidence_basis": "uncalibrated_model_score",
+                    "interpretation_note": "Experimental image association only; not a diagnosis. Confirm with an RAB or district agronomist before treatment.",
+                    "recommended_actions": ["Request an in-person assessment from an RAB or district agronomist before treatment."],
                 }
-
-    model = _load_or_train_model()
     normalized_crop = _normalize_crop(crop)
-    symptom_text = f"{symptoms or ''} {image_description or ''}".strip()
-    symptom_features = _build_symptom_features(symptom_text)
-    row = {"crop": normalized_crop, **symptom_features}
-    prediction = model.predict(pd.DataFrame([row]))[0]
-    proba = float(max(model.predict_proba(pd.DataFrame([row]))[0]))
-    confidence = round(min(max(proba, 0.45), 0.97), 2)
-
-    action_list = DISEASE_ACTIONS.get(prediction, DISEASE_ACTIONS["leaf_blight"])
-    risk_level = "High" if confidence >= 0.75 else "Medium" if confidence >= 0.6 else "Low"
-
     return {
-        "predicted_disease": prediction.replace("_", " ").title(),
-        "confidence": confidence,
-        "risk_level": risk_level,
-        "recommended_actions": action_list,
+        "predicted_disease": "Unconfirmed",
+        "confidence": None,
+        "risk_level": "Unknown",
+        "recommended_actions": ["Request an in-person assessment from an RAB or district agronomist before treatment."],
         "crop": normalized_crop.replace("_", " ").title(),
-        "source": "symptom-model",
+        "source": "insufficient_validated_symptom_data",
+        "interpretation_note": "Symptoms alone are insufficient for a validated diagnosis. These district-level tools are not a substitute for field inspection.",
     }
