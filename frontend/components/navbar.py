@@ -14,6 +14,14 @@ def render_navbar() -> None:
       [data-testid="stPageLink-NavLink"][aria-current="page"] p { color:#194b36; }
       .ag-nav-rule { border:0; border-top:1px solid #e3e9e3; margin:.45rem 0 1.4rem; }
       @media(max-width:850px) { [data-testid="stPageLink-NavLink"] p { font-size:.77rem; } }
+      @media(max-width:700px) {
+        .block-container { padding:1rem .8rem 3rem !important; }
+        [data-testid="stHorizontalBlock"] { flex-wrap:wrap !important; gap:.55rem !important; }
+        [data-testid="stHorizontalBlock"] > [data-testid="column"] { min-width:110px !important; }
+        [data-testid="stPageLink-NavLink"] { min-height:3rem; }
+        [data-testid="stButton"] button, [data-testid="stFormSubmitButton"] button { min-height:3rem; }
+        [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea { font-size:16px; }
+      }
       </style>
     """, unsafe_allow_html=True)
 

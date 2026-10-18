@@ -74,7 +74,7 @@ The runtime image needs the interval calibration artifact and database access;
 training tables and baseline-generation files stay in the offline retraining
 workflow. Readiness returns unavailable if the database has no yield evidence.
 
-Apply migrations `0001` through `0009` in order to Supabase before deploying
+Apply migrations `0001` through `0011` in order to Supabase before deploying
 this version. They add field reports, unknown prediction priority, readiness
 and work records, WhatsApp consent and delivery, alert approval, versioned NISR
 releases, named administrator accounts with hashed password recovery tokens,

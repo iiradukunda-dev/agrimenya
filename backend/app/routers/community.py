@@ -6,9 +6,11 @@ import secrets
 import threading
 import time
 from typing import Literal
-from uuid import UUID
+from uuid import UUID, uuid4
+from datetime import date
+from io import BytesIO
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile, status
 from pydantic import BaseModel, Field, field_validator
 
 from app.core.auth import create_token, require_admin, require_community
@@ -52,7 +54,7 @@ def _ensure_secure_sessions() -> None:
 
 class CommunityRegister(BaseModel):
     email: str = Field(min_length=3, max_length=254)
-    display_name: str = Field(min_length=1, max_length=80)
+    display_name: str = Field(min_length=3, max_length=30)
     password: str = Field(min_length=12, max_length=256)
 
     @field_validator("email")
@@ -66,9 +68,9 @@ class CommunityRegister(BaseModel):
     @field_validator("display_name")
     @classmethod
     def display_name_clean(cls, value: str) -> str:
-        value = _clean_text(value)
-        if not value:
-            raise ValueError("Display name is required")
+        value = _clean_text(value).lower()
+        if not re.fullmatch(r"[a-z0-9_]{3,30}", value):
+            raise ValueError("Username must be 3-30 characters using letters, numbers, and underscores")
         return value
 
 
@@ -140,6 +142,8 @@ def register(payload: CommunityRegister, request: Request):
     try:
         if crud.get_community_account_by_email(payload.email):
             raise HTTPException(status_code=409, detail="An account already uses that email")
+        if crud.get_community_account_by_username(payload.display_name):
+            raise HTTPException(status_code=409, detail="That username is already taken")
         account = crud.create_community_account(
             payload.email, payload.display_name, hash_password(payload.password)
         )
@@ -149,6 +153,8 @@ def register(payload: CommunityRegister, request: Request):
         try:
             if crud.get_community_account_by_email(payload.email):
                 raise HTTPException(status_code=409, detail="An account already uses that email") from exc
+            if crud.get_community_account_by_username(payload.display_name):
+                raise HTTPException(status_code=409, detail="That username is already taken") from exc
         except HTTPException:
             raise
         except Exception:
@@ -193,6 +199,111 @@ def posts(limit: int = Query(default=30, ge=1, le=50), offset: int = Query(defau
         raise HTTPException(status_code=503, detail="Community feed is temporarily unavailable") from exc
 
 
+@router.get("/field-reports")
+def community_field_reports(limit: int = Query(default=10, ge=1, le=20),
+                           _: dict = Depends(require_community)):
+    """Recent farmer observations, explicitly separate from official statistics."""
+    try:
+        reports = crud.list_community_field_reports(limit)
+        storage = crud.get_supabase().storage.from_(settings.COMMUNITY_PHOTO_BUCKET)
+        for report in reports:
+            path = report.pop("photo_path", None)
+            report["photo_url"] = None
+            if path:
+                try:
+                    signed = storage.create_signed_url(path, 900)
+                    report["photo_url"] = signed.get("signedURL") or signed.get("signedUrl")
+                except Exception:
+                    logger.info("Could not sign field report photo URL")
+        return reports
+    except Exception as exc:
+        logger.exception("Field observations could not be loaded")
+        raise HTTPException(status_code=503, detail="Field observations are temporarily unavailable") from exc
+
+
+@router.post("/field-reports", status_code=status.HTTP_201_CREATED)
+async def create_community_field_report(
+    zone_id: UUID = Form(...), crop: str = Form(..., min_length=1, max_length=50),
+    observed_on: date = Form(...), symptoms: str = Form(default="", max_length=500),
+    notes: str = Form(default="", max_length=1000),
+    photo: UploadFile | None = File(default=None),
+    account: dict = Depends(require_community),
+):
+    _rate_limit(_write_attempts, f"field-report:{account['account_id']}", 10, 3600)
+    if observed_on > date.today():
+        raise HTTPException(status_code=422, detail="Observation date cannot be in the future")
+    zone = crud.get_zone(zone_id)
+    if not zone:
+        raise HTTPException(status_code=404, detail="Choose a valid district")
+    crop = _clean_text(crop)
+    if not crop:
+        raise HTTPException(status_code=422, detail="Crop is required")
+    photo_path = None
+    if photo is not None and photo.filename:
+        try:
+            from PIL import Image, UnidentifiedImageError
+        except ImportError as exc:
+            raise HTTPException(status_code=503, detail="Photo uploads require the Pillow backend dependency") from exc
+        raw = await photo.read(5 * 1024 * 1024 + 1)
+        if len(raw) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="Photo must be 5 MB or smaller")
+        try:
+            image = Image.open(BytesIO(raw))
+            image.verify()
+            image = Image.open(BytesIO(raw)).convert("RGB")
+            image.thumbnail((1400, 1400))
+            output = BytesIO()
+            image.save(output, format="JPEG", quality=78, optimize=True)
+        except (UnidentifiedImageError, OSError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail="Upload a valid image file") from exc
+        if output.tell() > 5 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="Compressed photo must be 5 MB or smaller")
+        photo_path = f"{account['account_id']}/{uuid4()}.jpg"
+        try:
+            crud.get_supabase().storage.from_(settings.COMMUNITY_PHOTO_BUCKET).upload(
+                photo_path, output.getvalue(),
+                file_options={"content-type": "image/jpeg", "upsert": "false"},
+            )
+        except Exception as exc:
+            logger.exception("Field report photo upload failed")
+            raise HTTPException(status_code=503, detail="Photo storage is unavailable; try again without a photo") from exc
+    if not any((symptoms.strip(), notes.strip(), photo_path)):
+        raise HTTPException(status_code=422, detail="Add a short observation or attach a photo")
+    try:
+        return crud.create_field_report({
+            "zone_id": str(zone_id), "district": zone.get("district", ""), "crop": crop,
+            "observed_on": observed_on.isoformat(), "symptoms": _clean_text(symptoms),
+            "notes": _clean_text(notes), "reporter_id": account["account_id"], "photo_path": photo_path,
+        })
+    except Exception as exc:
+        if photo_path:
+            try:
+                crud.get_supabase().storage.from_(settings.COMMUNITY_PHOTO_BUCKET).remove([photo_path])
+            except Exception:
+                logger.warning("Could not remove orphaned field report photo")
+        logger.exception("Field observation could not be saved")
+        raise HTTPException(status_code=503, detail="Field observation could not be saved") from exc
+
+
+@router.delete("/field-reports/{report_id}")
+def delete_own_field_report(report_id: UUID, account: dict = Depends(require_community)):
+    try:
+        deleted = crud.delete_community_field_report(str(report_id), account["account_id"])
+        if not deleted:
+            raise HTTPException(status_code=404, detail="Your field observation was not found")
+        if deleted.get("photo_path"):
+            try:
+                crud.get_supabase().storage.from_(settings.COMMUNITY_PHOTO_BUCKET).remove([deleted["photo_path"]])
+            except Exception:
+                logger.warning("Field observation deleted but its photo could not be removed")
+        return {"status": "deleted", "message": "Your field observation was deleted."}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Community field observation deletion failed")
+        raise HTTPException(status_code=503, detail="Field observation could not be deleted") from exc
+
+
 @router.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_post(payload: PostCreate, account: dict = Depends(require_community)):
     _rate_limit(_write_attempts, f"post:{account['account_id']}", 5, 3600)
@@ -205,24 +316,53 @@ def create_post(payload: PostCreate, account: dict = Depends(require_community))
 
 @router.get("/posts/{post_id}/comments")
 def comments(post_id: UUID, _: dict = Depends(require_community)):
-    post = crud.get_community_post(str(post_id))
-    if not post or post.get("status") != "published":
-        raise HTTPException(status_code=404, detail="Post not found")
-    return crud.list_community_comments(str(post_id))
+    try:
+        post = crud.get_community_post(str(post_id))
+        if not post or post.get("status") != "published":
+            raise HTTPException(status_code=404, detail="Post not found")
+        return crud.list_community_comments(str(post_id))
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Community comments could not be loaded")
+        raise HTTPException(status_code=503, detail="Replies are temporarily unavailable") from exc
 
 
 @router.post("/posts/{post_id}/comments", status_code=status.HTTP_201_CREATED)
 def create_comment(post_id: UUID, payload: CommentCreate,
                    account: dict = Depends(require_community)):
     _rate_limit(_write_attempts, f"comment:{account['account_id']}", 30, 3600)
-    post = crud.get_community_post(str(post_id))
-    if not post or post.get("status") != "published":
-        raise HTTPException(status_code=404, detail="Post not found")
     try:
+        post = crud.get_community_post(str(post_id))
+        if not post or post.get("status") != "published":
+            raise HTTPException(status_code=404, detail="Post not found")
         return crud.create_community_comment(str(post_id), account["account_id"], payload.body)
+    except HTTPException:
+        raise
     except Exception as exc:
         logger.exception("Community comment could not be created")
         raise HTTPException(status_code=503, detail="Comment could not be saved") from exc
+
+
+@router.delete("/posts/{post_id}")
+def delete_own_post(post_id: UUID, account: dict = Depends(require_community)):
+    """Authors can remove their own post; status is retained for moderation history."""
+    try:
+        post = crud.get_community_post(str(post_id))
+        if not post or post.get("status") != "published":
+            raise HTTPException(status_code=404, detail="Post not found")
+        if str(post.get("author_id")) != account["account_id"]:
+            raise HTTPException(status_code=403, detail="You can delete only your own posts")
+        if not crud.moderate_community_content(
+            target_kind="post", target_id=str(post_id), status="deleted"
+        ):
+            raise HTTPException(status_code=404, detail="Post not found")
+        return {"status": "deleted", "message": "Your post was deleted."}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Community author deletion failed")
+        raise HTTPException(status_code=503, detail="Post could not be deleted") from exc
 
 
 @router.post("/posts/{post_id}/report", status_code=status.HTTP_201_CREATED)
@@ -252,6 +392,50 @@ def report_post(post_id: UUID, payload: ReportCreate, account: dict = Depends(re
 @router.get("/moderation/reports")
 def moderation_reports(_: dict = Depends(require_admin)):
     return crud.list_community_reports()
+
+
+@router.get("/moderation/posts")
+def moderation_posts(_: dict = Depends(require_admin)):
+    return crud.list_community_posts_for_moderation()
+
+
+@router.get("/moderation/field-reports")
+def moderation_field_reports(_: dict = Depends(require_admin)):
+    reports = crud.list_community_field_reports(50)
+    storage = crud.get_supabase().storage.from_(settings.COMMUNITY_PHOTO_BUCKET)
+    for report in reports:
+        path = report.pop("photo_path", None)
+        report["photo_url"] = None
+        if path:
+            try:
+                signed = storage.create_signed_url(path, 900)
+                report["photo_url"] = signed.get("signedURL") or signed.get("signedUrl")
+            except Exception:
+                logger.info("Could not sign field report photo URL for moderation")
+    return reports
+
+
+@router.delete("/moderation/field-reports/{report_id}")
+def delete_moderated_field_report(report_id: UUID, request: Request,
+                                  admin: dict = Depends(require_admin)):
+    try:
+        deleted = crud.delete_community_field_report(str(report_id))
+        if not deleted:
+            raise HTTPException(status_code=404, detail="Field observation not found")
+        if deleted.get("photo_path"):
+            try:
+                crud.get_supabase().storage.from_(settings.COMMUNITY_PHOTO_BUCKET).remove([deleted["photo_path"]])
+            except Exception:
+                logger.warning("Field observation deleted but its photo could not be removed")
+        audit_admin_action("community_field_report_delete", "field_reports", {
+            "actor_id": admin.get("account_id"), "report_id": str(report_id),
+        }, request=request)
+        return {"status": "deleted", "message": "Field observation deleted."}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Administrator field observation deletion failed")
+        raise HTTPException(status_code=503, detail="Field observation could not be deleted") from exc
 
 
 @router.get("/moderation/accounts")

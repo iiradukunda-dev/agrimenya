@@ -43,7 +43,7 @@ Fill `backend/.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the
 project you are authorized to use. To see the same live records as Team A, both
 teams need access to the same Supabase project; exchange its credentials
 through an approved secure channel, never by committing `.env` to GitHub. Apply
-migrations `0001` through `0009` if they are not already applied. Set
+migrations `0001` through `0011` if they are not already applied. Set
 `JWT_SECRET` to a private random value of at least 32 characters for community
 sessions. Then start both
 services:
@@ -123,11 +123,15 @@ operations. Restart the relevant service after changing environment values.
 ## Database setup
 
 Apply the SQL files in `backend/app/db/migrations/` to Supabase in numeric
-order, `0001` through `0009`, using the Supabase SQL editor or your migration
+order, `0001` through `0011`, using the Supabase SQL editor or your migration
 runner. Migrations `0005` and `0006` add WhatsApp contacts, message tracking,
 consent, and alert approval; `0007` enables versioned NISR yield imports; and
 `0008` adds named administrator accounts and password recovery tokens; `0009`
-adds individually authenticated farmer discussions and moderation reports. Check
+adds individually authenticated farmer discussions and moderation reports; `0010`
+adds dated farmer field observations with optional private, compressed photos;
+`0011` enforces unique lowercase community usernames.
+These observations stay separate from official NISR yield records and are never
+used as NISR baselines. Check
 the migration comments and `backend/docs/` before applying these changes to a
 production database.
 

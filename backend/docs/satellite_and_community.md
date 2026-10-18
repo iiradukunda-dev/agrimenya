@@ -30,8 +30,8 @@ mistaken for a time-series imagery API.
 
 ## Farmer community pilot
 
-Apply migration `0009_farmer_community.sql` after migrations `0001` through
-`0008`. Community members register with an email, display name, and password;
+Apply migrations `0009_farmer_community.sql` and `0010_field_observations.sql`
+after migrations `0001` through `0008`. Community members register with an email, display name, and password;
 accounts currently default to the farmer role. Passwords are stored as scrypt
 hashes, sessions expire after one hour, and the community API checks account
 status and session version on each request. Rate limits apply to registration,
@@ -46,3 +46,22 @@ so explicitly. Before public launch, add verified email or phone recovery,
 verified organization roles where required, a published community standard and
 privacy notice, and durable abuse throttling/monitoring at the API edge. Never
 present a peer post as an official extension recommendation.
+
+Migration `0010` adds a compact field observation flow with district, crop,
+observation date, notes, and an optional photo. Reports are stored in the
+existing `field_reports` table with the community author and a private Storage
+object path. The migration creates a private `community-field-reports` bucket;
+the API compresses and re-encodes uploads as JPEG and returns 15-minute signed
+image URLs to signed-in community members. Keep this farmer submitted data
+clearly labeled: it is not an official NISR observation and must never be mixed
+into the NISR yield baseline imports. Field symptom reports can contribute to
+the separate live field-risk context.
+
+The community page has an explicit English/Kinyarwanda switch, responsive
+phone-sized forms, larger buttons, and client-side photo compression for lower
+bandwidth. The optional photo can be omitted on a slow connection.
+
+Migration `0011_community_unique_usernames.sql` makes the existing community
+handle unique case-insensitively and limits new handles to 3–30 lowercase
+letters, digits, or underscores. Email addresses were already unique
+case-insensitively in migration `0009`.

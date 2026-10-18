@@ -35,6 +35,14 @@ def get_community_account_by_email(email: str) -> dict | None:
     return rows[0] if rows else None
 
 
+def get_community_account_by_username(username: str) -> dict | None:
+    rows = _exec_query_get_data(
+        get_supabase().table("community_accounts").select("id,display_name")
+        .eq("display_name", username.strip().lower()).limit(1)
+    )
+    return rows[0] if rows else None
+
+
 def get_community_account_by_id(account_id: str) -> dict | None:
     rows = _exec_query_get_data(
         get_supabase().table("community_accounts").select("*")
@@ -105,6 +113,15 @@ def list_community_posts(limit: int = 30, offset: int = 0) -> list[dict]:
         .select("id,title,body,author_id,status,created_at,updated_at,author:community_accounts(display_name,role)")
         .eq("status", "published").order("created_at", desc=True)
         .range(offset, offset + limit - 1)
+    )
+
+
+def list_community_posts_for_moderation(limit: int = 100) -> list[dict]:
+    return _exec_query_get_data(
+        get_supabase().table("community_posts")
+        .select("id,title,body,author_id,status,created_at,updated_at,author:community_accounts(display_name,role)")
+        .neq("status", "deleted").order("created_at", desc=True)
+        .limit(max(1, min(int(limit), 200)))
     )
 
 
@@ -1100,3 +1117,20 @@ def list_field_reports(zone_id: UUID, limit: int = 20) -> list[dict]:
     query = (sb.table("field_reports").select("*").eq("zone_id", str(zone_id))
              .order("submitted_at", desc=True).limit(max(1, min(int(limit), 100))))
     return _exec_query_get_data(query)
+
+
+def list_community_field_reports(limit: int = 20) -> list[dict]:
+    query = (get_supabase().table("field_reports")
+             .select("id,zone_id,district,crop,observed_on,photo_path,symptoms,notes,submitted_at,"
+                     "zone:zones(district),reporter:community_accounts(id,display_name)")
+             .order("submitted_at", desc=True).limit(max(1, min(int(limit), 50))))
+    return _exec_query_get_data(query)
+
+
+def delete_community_field_report(report_id: str, reporter_id: str | None = None) -> dict | None:
+    """Remove a farmer field report, optionally restricting the delete to its author."""
+    query = get_supabase().table("field_reports").delete().eq("id", report_id)
+    if reporter_id is not None:
+        query = query.eq("reporter_id", reporter_id)
+    result = query.select("id,photo_path").execute()
+    return result.data[0] if result.data else None

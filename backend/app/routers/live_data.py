@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from uuid import UUID
 from app.db import crud
 
-from app.services.field_report_service import list_field_reports, submit_field_report
+from app.services.field_report_service import get_field_risk_summary, list_field_reports, submit_field_report
 from app.services.live_data_service import build_live_context
 from app.services.weather_service import fetch_weather
 from app.core.auth import require_user
@@ -57,6 +57,19 @@ def get_field_reports(zone_id: UUID, _: dict = Depends(require_user)):
     if not crud.get_zone(zone_id):
         raise HTTPException(status_code=404, detail="Zone not found")
     return list_field_reports(zone_id=zone_id, limit=20)
+
+
+@router.get("/field-risk/{zone_id}")
+def get_field_risk(zone_id: UUID, crop: str | None = None, _: dict = Depends(require_user)):
+    if not crud.get_zone(zone_id):
+        raise HTTPException(status_code=404, detail="Zone not found")
+    summary = get_field_risk_summary(crop=crop, zone_id=str(zone_id))
+    latest = summary.get("latest_report")
+    if latest:
+        summary["latest_report"] = {
+            key: latest.get(key) for key in ("district", "crop", "observed_on", "submitted_at", "symptoms", "notes")
+        }
+    return summary
 
 
 @router.post("/context")

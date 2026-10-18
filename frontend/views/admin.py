@@ -374,6 +374,50 @@ def render_admin() -> None:
                         else:
                             path = f"/community/moderation/accounts/{account.get('id')}/status"
                             st.error(api_client.get_admin_api_error(path) or "Account status could not be updated.")
+            all_posts = api_client.get_community_moderation_posts()
+            post_load_error = api_client.get_admin_api_error("/community/moderation/posts")
+            if post_load_error:
+                st.error(post_load_error)
+            with st.expander(f"Community posts ({len(all_posts)})"):
+                for post in all_posts:
+                    author = post.get("author") or {}
+                    with st.container(border=True):
+                        st.caption(f"{author.get('display_name', 'unknown member')} · {post.get('status')} · {post.get('created_at', '')}")
+                        st.write(post.get("title", ""))
+                        st.write(post.get("body", ""))
+                        actions = ([('Restore', 'restore'), ('Delete', 'delete')] if post.get("status") == "hidden"
+                                   else [('Hide', 'hide'), ('Delete', 'delete')])
+                        action_cols = st.columns(len(actions))
+                        for col, (label, action) in zip(action_cols, actions):
+                            if col.button(label, key=f"community_post_{post.get('id')}_{action}"):
+                                result = api_client.moderate_community_content({
+                                    "target_kind": "post", "target_id": post["id"], "action": action,
+                                })
+                                if result:
+                                    success_message = {"hide": "Post hidden.", "restore": "Post restored.", "delete": "Post deleted."}[action]
+                                    st.success(success_message)
+                                    st.rerun()
+                                else:
+                                    st.error(api_client.get_admin_api_error("/community/moderation") or f"Post could not be {action}d.")
+            field_reports = api_client.get_community_moderation_field_reports()
+            field_report_error = api_client.get_admin_api_error("/community/moderation/field-reports")
+            if field_report_error:
+                st.error(field_report_error)
+            with st.expander(f"Farmer field observations ({len(field_reports)})"):
+                for report in field_reports:
+                    reporter = report.get("reporter") or {}
+                    with st.container(border=True):
+                        st.caption(f"{report.get('crop', '')} · {report.get('district', '')} · {report.get('observed_on', '')} · {reporter.get('display_name', 'unknown member')}")
+                        st.write(report.get("symptoms") or report.get("notes") or "No note provided")
+                        if report.get("photo_url"):
+                            st.image(report["photo_url"], width=320)
+                        if st.button("Delete field observation", key=f"community_report_delete_{report.get('id')}"):
+                            result = api_client.delete_community_field_report(str(report["id"]))
+                            if result:
+                                st.success("Field observation deleted.")
+                                st.rerun()
+                            else:
+                                st.error(api_client.get_admin_api_error(f"/community/moderation/field-reports/{report.get('id')}") or "Field observation could not be deleted.")
             reports = api_client.get_community_moderation_reports()
             if not reports:
                 error = api_client.get_admin_api_error("/community/moderation/reports")

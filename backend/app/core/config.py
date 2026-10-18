@@ -40,6 +40,7 @@ class Settings:
     ADMIN_PASSWORD_RESET_URL: str = os.getenv("ADMIN_PASSWORD_RESET_URL", "").strip()
     USER_API_KEY: str = os.getenv("USER_API_KEY", "")
     MAX_UPLOAD_SIZE_MB: int = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10"))
+    COMMUNITY_PHOTO_BUCKET: str = os.getenv("COMMUNITY_PHOTO_BUCKET", "community-field-reports").strip()
     TWILIO_SID: str = os.getenv("TWILIO_SID", "")
     TWILIO_AUTH_TOKEN: str = os.getenv("TWILIO_AUTH_TOKEN", "")
     TWILIO_API_KEY_SID: str = os.getenv("TWILIO_API_KEY_SID", "")

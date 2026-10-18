@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date, timedelta
 from typing import Any
 
 from app.db import crud
@@ -34,10 +35,20 @@ def list_field_reports(zone_id: str | None = None, limit: int = 10) -> list[dict
 
 def get_field_risk_summary(crop: str | None = None, zone_id: str | None = None) -> dict[str, Any]:
     reports = list_field_reports(zone_id=zone_id, limit=100) if zone_id else []
+    cutoff = date.today() - timedelta(days=30)
+    recent_reports = []
+    for report in reports:
+        observed_on = str(report.get("observed_on") or report.get("submitted_at") or date.today())[:10]
+        try:
+            if date.fromisoformat(observed_on) >= cutoff:
+                recent_reports.append(report)
+        except ValueError:
+            continue
+    reports = recent_reports
     if crop:
         reports = [item for item in reports if str(item.get("crop", "")).lower() == str(crop).lower()]
     if not reports:
-        return {"total_reports": 0, "risk_level": "Low", "notes": "No live field reports yet."}
+        return {"total_reports": 0, "risk_level": "Unknown", "notes": "No field observations from the last 30 days."}
 
     risk = "Low"
     for report in reports:
@@ -53,4 +64,6 @@ def get_field_risk_summary(crop: str | None = None, zone_id: str | None = None) 
         "total_reports": len(reports),
         "risk_level": risk,
         "latest_report": reports[0],
+        "source": "farmer field observations; not official NISR data",
+        "period_days": 30,
     }

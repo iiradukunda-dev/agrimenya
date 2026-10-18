@@ -679,6 +679,13 @@ def get_field_reports(zone_id: str) -> list[dict[str, Any]]:
     return []
 
 
+@st.cache_data(ttl=60, show_spinner=False)
+def get_field_risk(zone_id: str, crop: str | None = None) -> dict[str, Any] | None:
+    """Recent community observation summary for decision context."""
+    suffix = f"?crop={quote(crop, safe='')}" if crop else ""
+    return _get_api(f"/live/field-risk/{quote(str(zone_id), safe='')}{suffix}")
+
+
 @st.cache_data(ttl=120, show_spinner=False)
 def get_zone_readiness(zone_id: str) -> dict[str, Any] | None:
     """GET /alignment/readiness/{zone_id}."""
@@ -764,6 +771,20 @@ def get_admin_accounts() -> list[dict[str, Any]]:
 def get_community_moderation_reports() -> list[dict[str, Any]]:
     data = _request_admin("GET", "/community/moderation/reports")
     return data if isinstance(data, list) else []
+
+
+def get_community_moderation_posts() -> list[dict[str, Any]]:
+    data = _request_admin("GET", "/community/moderation/posts")
+    return data if isinstance(data, list) else []
+
+
+def get_community_moderation_field_reports() -> list[dict[str, Any]]:
+    data = _request_admin("GET", "/community/moderation/field-reports")
+    return data if isinstance(data, list) else []
+
+
+def delete_community_field_report(report_id: str) -> dict[str, Any] | None:
+    return _request_admin("DELETE", f"/community/moderation/field-reports/{quote(str(report_id), safe='')}")
 
 
 def moderate_community_content(payload: dict[str, Any]) -> dict[str, Any] | None:
