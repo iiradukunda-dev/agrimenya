@@ -81,8 +81,8 @@ async def _dispatch_one(alert: dict, zone: dict, contact: dict, crop: str, semap
     if crud.count_outbound_messages_since(contact_id, midnight) >= settings.WHATSAPP_DAILY_CAP:
         return {"skipped_daily_cap": 1}
 
-    message = sanitize_alert_text(alert.get("message", ""), bool(alert.get("allow_links")))
-    action = sanitize_alert_text(alert.get("action") or "Follow local extension guidance", bool(alert.get("allow_links")))
+    message = sanitize_alert_text(alert.get("message", ""), bool(alert.get("allow_links"))) or "No additional details"
+    action = sanitize_alert_text(alert.get("action") or "", bool(alert.get("allow_links"))) or "Follow local extension guidance"
     district = str(zone.get("district") or "Unknown")
     last_inbound = _parse_timestamp(contact.get("last_inbound_at"))
     within_window = bool(last_inbound and (datetime.now(timezone.utc) - last_inbound).total_seconds() < 86400)
