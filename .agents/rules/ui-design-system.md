@@ -4,7 +4,7 @@
 
 The entire agrimenya application MUST adhere strictly to the "Liquid Glass" design language provided by the user. This is a premium, modern aesthetic that relies heavily on glassmorphism, depth, and nature-forward imagery.
 
-Whenever you add a new component, page, or UI element, it MUST look cohesive with this design. 
+Whenever you add a new component, page, or UI element, it MUST look cohesive with this design.
 
 ## 1. Backgrounds & Environment
 - The app should NOT use flat solid colors for the main background.
@@ -21,7 +21,7 @@ All major container elements (navbars, cards, modals, sidebars) MUST be implemen
 
 ## 3. Typography & Colors
 - **Font Families:** Modern sans-serif (e.g., Inter, Space Grotesk, or system UI fonts).
-- **Text Colors:** 
+- **Text Colors:**
   - Primary text: Deep, legible forest greens (e.g., `#064E3B`, `#1B3A2D`) or very dark grays.
   - Secondary text: Softer greens or grays.
 - **Accents:** Emerald greens, vibrant leaf greens for active states and highlights.

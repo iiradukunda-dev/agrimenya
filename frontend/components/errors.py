@@ -2,6 +2,7 @@
 Error page component — renders user-friendly error states.
 """
 import os
+from html import escape
 
 import streamlit as st
 from components.icons import get_base64_svg
@@ -50,7 +51,7 @@ def render_error_page(error_type: str, details: str = None) -> None:
 
     details_html = ""
     if details:
-        details_html = f'<div class="ag-error-details">{details}</div>'
+        details_html = f'<div class="ag-error-details">{escape(str(details))}</div>'
 
     _, col, _ = st.columns([1, 2, 1])
     with col:
@@ -68,7 +69,7 @@ def render_error_page(error_type: str, details: str = None) -> None:
 
         if st.button(
             t("error.go_home"),
-            use_container_width=True,
+            width="stretch",
             key=f"btn_error_{error_type}",
         ):
             st.switch_page("Home.py")

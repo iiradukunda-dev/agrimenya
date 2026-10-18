@@ -24,7 +24,8 @@ def test_compute_alignment_and_endpoints():
          patch("app.db.crud.upsert_alignment_metric") as mock_upsert, \
          patch("app.db.crud.get_alignment_metric") as mock_get_metric, \
          patch("app.db.crud.list_alignment_metrics") as mock_list_metrics, \
-         patch("app.ml.predict.get_yield_index") as mock_get_yi:
+         patch("app.db.crud.list_zone_work_records", return_value=[]) as mock_work_records, \
+         patch("app.routers.alignment.get_yield_index") as mock_get_yi:
         mock_get_zone.return_value = {"id": zone_id}
         mock_get_yi.return_value = 1.2
         mock_upsert.return_value = {"zone_id": zone_id, "credit_insurance_score": 50}
@@ -35,10 +36,13 @@ def test_compute_alignment_and_endpoints():
         params = {k: v for k, v in payload.items() if v is not None}
         r = client.post(f"/alignment/compute/{zone_id}", params=params)
         assert r.status_code == 200
+        mock_get_yi.assert_called_once_with("Gasabo", "maize", "2026-S1")
 
         r2 = client.get(f"/alignment/finance-readiness/{zone_id}")
         assert r2.status_code == 200
         assert "credit_insurance_score" in r2.json()
+        assert r2.json()["credit_insurance_score"] is None
+        assert r2.json()["status"] == "unavailable"
 
         r3 = client.get(f"/alignment/nutrition-risk/{zone_id}")
         assert r3.status_code == 200
@@ -50,6 +54,8 @@ def test_compute_alignment_and_endpoints():
 
         r5 = client.get("/alignment/dashboard")
         assert r5.status_code == 200
+        assert r5.json()["estimate_status"] == "unavailable_pending_validated_data_and_methods"
+        mock_work_records.assert_called_once()
 
 
 def test_alignment_upsert_is_duplicate_safe():

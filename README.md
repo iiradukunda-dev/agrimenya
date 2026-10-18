@@ -1,88 +1,222 @@
-<div align="center">
-  <img src="frontend/assets/logo.jpg" alt="agrimenya logo" width="120" style="border-radius: 20px;"/>
-  <h1>agrimenya</h1>
-  <p><b>A Data-Driven Decision and Planning Support System for Agricultural Productivity in Rwanda</b></p>
-  <p><i>Proudly built for the <b>2026 NISR Big Data Hackathon</b></i></p>
-</div>
+# Agri-Menya
 
----
+Agri-Menya is a Rwanda-focused agricultural decision and planning support
+system. The Streamlit frontend calls a FastAPI backend, which reads and writes
+application data in Supabase. Yield estimates use validated NISR observations
+stored in the database. WhatsApp is an optional access and notification
+channel; mock mode is the default until Meta credentials and approved message
+templates are configured.
 
-## Overview
+## Project layout
 
-**agrimenya** is an intelligent platform designed to help **planners, agricultural extension officers, and cooperative leaders** make faster, better-informed decisions to improve agricultural productivity across Rwanda.
+- `frontend/` — Streamlit application for farmers, planners, cooperative
+  leaders, and administrators.
+- `backend/app/` — FastAPI routes, services, database access, and yield logic.
+- `backend/app/db/migrations/` — ordered SQL migrations for the Supabase
+  schema.
+- `backend/scripts/` — administrator provisioning, NISR data preparation, and
+  offline evaluation tools.
+- `backend/docs/` — deployment, data import, retraining, model, and WhatsApp
+  operating notes.
 
-By aggregating dense official survey data from the National Institute of Statistics of Rwanda (NISR) and augmenting it with machine learning, agrimenya transforms raw statistics into clear priorities, actionable roadmaps, and real-time alerts.
+## Requirements
 
-Instead of leaving planners to manually cross-reference complex spreadsheets and reports, agrimenya automatically surfaces **where to focus, what to do, and how urgent the action is**.
+- Python 3.12 for the Docker images (Python 3.11 or newer for local
+  development).
+- Docker Desktop with Docker Compose, or separate Python environments for
+  local development.
+- A Supabase project with migrations applied. The backend needs the project
+  URL and keys appropriate to the environment.
 
----
+## Team B handoff
 
-## The Problem We Are Solving
+Use the shared feature branch so you receive the current backend, frontend,
+database migrations, and yield evaluation data:
 
-Agricultural planning in Rwanda relies on rich, high-quality survey data (SAS, AHS, EICV, and CFSVA). While this data is powerful, it is often underutilized in day-to-day decision-making simply because it is difficult to digest quickly.
+```powershell
+git clone --branch feature/ci-logging-debug https://github.com/iiradukunda-dev/agrimenya.git
+cd agrimenya/backend
+Copy-Item .env.example .env
+```
 
-Turning those datasets into concrete, local action takes significant manual analysis—time that extension officers and busy planners lack. We built agrimenya to bridge this exact gap, ensuring that data directly drives operational action.
+Fill `backend/.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the
+project you are authorized to use. To see the same live records as Team A, both
+teams need access to the same Supabase project; exchange its credentials
+through an approved secure channel, never by committing `.env` to GitHub. Apply
+migrations `0001` through `0011` if they are not already applied. Set
+`JWT_SECRET` to a private random value of at least 32 characters for community
+sessions. Then start both
+services:
 
----
+```powershell
+docker compose up --build
+```
 
-## Core Pillars
+Open the app at `http://localhost:8501` and the API health page at
+`http://localhost:8000/health`. The shared branch runs WhatsApp in mock mode;
+live WhatsApp and AI-provider behavior require their own backend credentials.
+The setup and local development instructions below cover non-Docker options.
 
-agrimenya is organized around four core capabilities that communicate seamlessly with each other:
+Never commit `.env` files, service-role keys, WhatsApp/SMTP/LLM credentials,
+passwords, or local logs. The backend service-role key must stay in the
+backend environment; do not copy it to Streamlit or the browser.
 
-| Pillar | Capability | Description |
-|:---|:---|:---|
-| **Decide** | Decision Engine | Generates precise, automated, and proactive recommendations for specific agricultural zones based on predictive models. |
-| **Plan** | Roadmapping | Facilitates the creation of clear planning roadmaps and step-by-step action plans to coordinate stakeholder activities. |
-| **Segment** | Geographic Analysis | Visually zones and prioritizes areas (Low / Medium / High) based on climate, yield, and productivity metrics. |
-| **Communicate** | Alert System | Maintains operational alignment by sharing real-time alerts and plans across planners, officers, and cooperatives. |
+## Run both services with Docker Compose
 
----
+Create `backend/.env` from the example and fill in at least the Supabase
+settings. Run Compose from the `backend` directory so its `.env` file is used
+for API settings and Compose variable interpolation:
 
-## Key Features
+```powershell
+Copy-Item .env.example .env
+# Edit .env and set the required Supabase values.
+docker compose up --build
+```
 
-- **Priority Ranking:** Automatic classification of agricultural areas to highlight urgent intervention needs.
-- **AI-Powered Insights:** A conversational AI assistant designed to offer contextual recommendations and answer data-driven agronomic questions.
-- **Yield & Impact Predictions:** Reliable forecasts powered by XGBoost ML models and optimized caching via FastAPI lifespan events.
-- **Resource Estimation:** Forecasting capability for agricultural inputs such as seeds and fertilizer.
-- **Interactive Zoning:** Interactive geographic maps (powered by Folium and CartoDB) that zone areas based on environmental and productivity data.
-- **Unified Alerting:** Real-time notifications and cross-team communication modules.
-- **Seamless Internationalization (i18n):** Native multi-language support (English, Kinyarwanda, French) powered by a robust GNU `gettext` architecture, dynamically managed via Streamlit session state.
-- **Liquid Glass Design System:** A premium, immersive user interface featuring refractive translucency and a nature-forward color palette for a frictionless user experience.
+Open the frontend at `http://localhost:8501`; the API is available at
+`http://localhost:8000`. Compose configures the frontend to call the API by its
+internal service name. Stop the services with `Ctrl+C`, or run
+`docker compose down` from `backend/`. View service status and logs with:
 
----
+```powershell
+docker compose ps
+docker compose logs -f api frontend
+```
 
-## Target Audience
+Set `FRONTEND_PORT` in the Compose environment to change the host port. The
+frontend image excludes local environments, secrets, logs, and editor files;
+the backend build also excludes `.env` and offline datasets. Compose requires
+the backend `.env` file to exist before startup.
 
-- **Planners:** Government and district-level officials handling national and regional agricultural strategy.
-- **Extension Officers:** Frontline agronomists executing on-the-ground implementation, training, and monitoring.
-- **Cooperative Leaders:** Local community champions coordinating resources and translating decisions to farmers.
+## Local development without Docker
 
----
+Create `backend/.env` from `backend/.env.example`, then set `SUPABASE_URL` and
+`SUPABASE_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`). The publishable key supports
+only operations allowed by the database's RLS policies; server-side writes
+need the service-role key. Do not put the service-role key in the frontend.
 
-## Data Sources
+In PowerShell, install and run the API:
 
-Our core analytical data is strictly sourced from the **National Institute of Statistics of Rwanda (NISR)**:
+```powershell
+cd backend
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
 
-- **Primary:** Seasonal Agricultural Survey (SAS) — Season A 2026, Season B 2025, Annual 2025
-- **Supporting:** Agriculture Household Survey (AHS) 2024
-- **Contextual:** Integrated Household Living Conditions Survey (EICV7), Food Balance Sheets / Comprehensive Food Security and Vulnerability Analysis (CFSVA)
+In a second terminal, install and run Streamlit:
 
----
+```powershell
+cd frontend
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+Copy-Item .env.example .env
+streamlit run Home.py --server.port 8501
+```
 
-## Architecture & Technology Stack
+The frontend `.env` defaults to `API_BASE_URL=http://localhost:8000`. Set its
+`USER_API_KEY` to the same value as the backend when using protected user
+operations. Restart the relevant service after changing environment values.
 
-agrimenya employs a modern, scalable microservices architecture orchestrated via Docker.
+## Database setup
 
-```text
-┌─────────────────────────┐       ┌────────────────────────┐       ┌─────────────────────┐
-│       Frontend          │       │        Backend         │       │      Database       │
-│  Streamlit + React      │──────▶│   FastAPI (Python)     │──────▶│     PostgreSQL      │
-│  Folium + Plotly        │◀──────│                        │◀──────│     (Supabase)      │
-└─────────────────────────┘       └────────────────────────┘       └─────────────────────┘
-             │                               │
-             ▼                               ▼
-┌─────────────────────────┐       ┌────────────────────────┐
-│ GNU gettext (i18n)      │       │    Machine Learning    │
-│ English / Kinyarwanda   │       │ scikit-learn + XGBoost │
-└─────────────────────────┘       └────────────────────────┘
+Apply the SQL files in `backend/app/db/migrations/` to Supabase in numeric
+order, `0001` through `0011`, using the Supabase SQL editor or your migration
+runner. Migrations `0005` and `0006` add WhatsApp contacts, message tracking,
+consent, and alert approval; `0007` enables versioned NISR yield imports; and
+`0008` adds named administrator accounts and password recovery tokens; `0009`
+adds individually authenticated farmer discussions and moderation reports; `0010`
+adds dated farmer field observations with optional private, compressed photos;
+`0011` enforces unique lowercase community usernames.
+These observations stay separate from official NISR yield records and are never
+used as NISR baselines. Check
+the migration comments and `backend/docs/` before applying these changes to a
+production database.
+
+After startup, check `http://localhost:8000/health`. For prediction readiness,
+the database needs yield observations; the health endpoint reports whether
+they are present. A healthy API connection alone does not mean yield data is
+available.
+
+## Administrator access and recovery
+
+Apply migration `0008_admin_accounts.sql` and configure SMTP in
+`backend/.env`. For production, set `ADMIN_PASSWORD_RESET_URL` to the public
+HTTPS Admin page. Bootstrap the first named administrator from a trusted
+backend shell:
+
+```powershell
+cd backend
+python scripts/create_admin.py
+```
+
+The script prompts for a password without displaying it. Password recovery
+uses a single-use link that expires after 30 minutes. If the recovery mailbox
+is unavailable, an operator with trusted shell and database access can reset
+the account with:
+
+```powershell
+python scripts/reset_admin_password.py admin@example.org
+```
+
+This invalidates existing administrator sessions. Do not configure the
+service-role key in frontend settings. See
+[`backend/docs/production_deployment.md`](backend/docs/production_deployment.md)
+for production settings and administrator operations.
+
+## NISR yield data
+
+Administrators can import a normalized NISR CSV after migration `0007` is
+applied. The required columns are `district`, `crop`, `season`, and positive
+`yield_kg_ha`; optional columns are `production_mt` and `cultivated_area_ha`.
+Review each release's source and mapped values before import. The server stages
+and validates rows before activation; predictions read active database
+observations rather than a few bundled CSV files. Import history and the full
+format are documented in
+[`backend/docs/nisr_imports_and_access.md`](backend/docs/nisr_imports_and_access.md).
+
+Training and evaluation are offline workflows. They may use source datasets
+that are intentionally excluded from the runtime Docker image and should be
+handled according to their source and access terms. See
+[`backend/docs/retraining.md`](backend/docs/retraining.md) before creating
+training artifacts.
+
+## Users, WhatsApp, and production readiness
+
+The frontend presents role-oriented experiences for citizens/farmers,
+planners, cooperative leaders, and administrators. Administrator access uses
+named accounts. Individual citizen/planner/cooperative accounts and complete
+server-enforced ownership or membership scopes are still required before
+those experiences can be treated as production access control; see the access
+model in `backend/docs/nisr_imports_and_access.md`.
+
+The optional farmer discussion pilot supports posts, comments, abuse reports,
+and administrator moderation. Accounts and roles are currently self-reported;
+email verification and account recovery are not yet available. The Rwanda
+Space Agency orthomosaic is an optional visual map layer only, not a signal used
+to predict yield or prioritize zones. See
+[`backend/docs/satellite_and_community.md`](backend/docs/satellite_and_community.md)
+for data limitations and safeguards.
+
+WhatsApp starts in mock mode. Live messaging requires Meta Cloud API
+credentials, verified webhooks, opt-in records, and approved templates. Keep
+all provider credentials in the backend environment. Configure production
+secrets, HTTPS origins, allowed hostnames, email recovery, and operational
+backups as described in
+[`backend/docs/production_deployment.md`](backend/docs/production_deployment.md).
+
+## Validation
+
+Run the backend suite from `backend/` after installing its requirements:
+
+```powershell
+python -m pytest tests -q
+```
+
+Docker image builds can be checked from `backend/` with:
+
+```powershell
+docker compose build
 ```

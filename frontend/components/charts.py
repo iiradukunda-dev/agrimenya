@@ -30,7 +30,7 @@ AG_PLOTLY_LAYOUT = dict(
 
 def render_yield_chart(df) -> None:
     """
-    Renders a grouped bar chart of average crop yield by district and priority.
+    Renders grouped estimated production by district and priority.
     Uses the agrimenya semantic color palette for priority levels.
     """
     if df.empty:
@@ -44,7 +44,7 @@ def render_yield_chart(df) -> None:
     }
 
     grouped = (
-        df.groupby(["District", "Priority"])["Yield_MT_ha"]
+        df.groupby(["District", "Priority"])["Production_MT"]
         .mean()
         .reset_index()
     )
@@ -52,7 +52,7 @@ def render_yield_chart(df) -> None:
     fig = px.bar(
         grouped,
         x="District",
-        y="Yield_MT_ha",
+        y="Production_MT",
         color="Priority",
         color_discrete_map=priority_colors,
         title=t("seg.chart_title"),
@@ -75,4 +75,4 @@ def render_yield_chart(df) -> None:
         marker_cornerradius=6,
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")

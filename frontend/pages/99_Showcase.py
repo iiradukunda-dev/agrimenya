@@ -1,49 +1,34 @@
+"""Plain-language guide to interpreting data in agrimenya."""
+import os
+
 import streamlit as st
+from components.navbar import render_navbar
 from utils.theme import load_theme
 
-st.set_page_config(page_title="Liquid Glass Showcase", layout="wide", initial_sidebar_state="expanded")
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
+LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")
+
+st.set_page_config(page_title="Data guide - agrimenya", page_icon=LOGO_PATH, layout="wide")
 load_theme()
+render_navbar()
 
-st.title("Liquid Glass UI Showcase")
-st.markdown("A demonstration of the new Apple-style Liquid Glass design system.")
+st.title("Data guide")
+st.markdown("A short guide to what the workspace shows and how to read it.")
 
-st.header("1. Cards & Metrics")
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.metric("Total Users", "1,234", "+15%")
-with col2:
-    st.metric("Active Sessions", "892", "-5%")
-with col3:
-    st.metric("System Health", "99.9%", "Stable")
+guide = [
+    ("Zones", "A zone is an agricultural area recorded in the system. District, sector or cell, crop, season, area, and location are shown only when those details are available."),
+    ("Priorities and recommendations", "These come from the connected backend. A priority is a signal for review; check its zone and crop context before planning an intervention."),
+    ("Production and yield", "Production predictions and yield baselines are different measures. The interface labels each value and leaves it unavailable when the service has no value."),
+    ("Weather", "Weather information is associated with the selected district. Forecast values are estimates for a district location; a fallback snapshot is marked when current provider data cannot be reached."),
+    ("Plans", "Saved plans contain actions entered by a user for a selected zone. Confirm timing, resources, and responsibilities with the people carrying out the work."),
+    ("Alerts and WhatsApp", "Alert delivery depends on recipient consent, approved templates, and the configured messaging service. A saved alert does not by itself mean that a message was delivered."),
+]
+for start in range(0, len(guide), 2):
+    cols = st.columns(2, gap="medium")
+    for col, (heading, explanation) in zip(cols, guide[start : start + 2]):
+        with col:
+            with st.container(border=True):
+                st.markdown(f"### {heading}")
+                st.write(explanation)
 
-st.markdown("<br>", unsafe_allow_html=True)
-st.html("""
-<div class="lg-glass" style="padding: 2rem;">
-    <h3 style="margin-top: 0;">Glass Container</h3>
-    <p>This is a custom HTML div using the <code>.lg-glass</code> class. Notice the deep blur, semi-transparent background, and crisp specular border highlights.</p>
-</div>
-""")
-
-st.header("2. Interactive Inputs & Buttons")
-col_in1, col_in2 = st.columns(2)
-with col_in1:
-    st.text_input("Username", placeholder="Enter your username")
-    st.selectbox("Theme Preference", ["Auto (System)", "Light", "Dark"])
-with col_in2:
-    st.button("Secondary Action", use_container_width=True)
-    st.button("Primary Action", type="primary", use_container_width=True)
-
-st.header("3. Tabbed Navigation")
-tab1, tab2, tab3 = st.tabs(["Overview", "Analytics", "Settings"])
-with tab1:
-    st.markdown("Overview content goes here. The tabs above are styled as a pill selector.")
-with tab2:
-    st.markdown("Analytics content...")
-with tab3:
-    st.markdown("Settings content...")
-
-st.header("4. Chat Interface")
-with st.chat_message("user"):
-    st.markdown("Hello, can you analyze this resume?")
-with st.chat_message("assistant"):
-    st.markdown("Certainly! Please upload the resume file and I'll extract the key skills and experience using the Liquid Glass interface.")
+st.info("Model outputs and forecasts support review. Confirm decisions with current field observations and qualified local advice.")
