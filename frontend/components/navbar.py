@@ -1,5 +1,6 @@
 """Compact, consistent application navigation."""
 import streamlit as st
+from components.ai_widget import render_floating_ai_widget
 from utils.i18n import render_language_selector
 
 
@@ -51,3 +52,4 @@ def render_navbar() -> None:
     with language:
         render_language_selector(sidebar=False)
     st.markdown('<hr class="ag-nav-rule">', unsafe_allow_html=True)
+    render_floating_ai_widget()
