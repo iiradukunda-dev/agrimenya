@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Literal
 from uuid import UUID
 
@@ -7,14 +7,19 @@ PriorityLevel = Literal["Low", "Medium", "High", "Uncertain"]
 
 class PredictionRequest(BaseModel):
     zone_id: UUID
-    season: str
-    crop: str = "All crops"
-    crop_category: Optional[str] = None
+    season: str = Field(min_length=2, max_length=40)
+    crop: str = Field(default="All crops", min_length=1, max_length=80)
+    crop_category: Optional[str] = Field(default=None, max_length=80)
     allow_category_proxy: bool = False
     rainfall_mm: Optional[float] = Field(default=None, ge=0, le=1000)
     area_cultivated: Optional[float] = Field(default=None, gt=0, le=100000)
-    soil_type: Optional[str] = None
+    soil_type: Optional[str] = Field(default=None, max_length=100)
     household_size: Optional[float] = Field(default=None, gt=0, le=10000)
+
+    @field_validator("season", "crop", "crop_category", "soil_type")
+    @classmethod
+    def normalize_text_inputs(cls, value: str | None) -> str | None:
+        return value.strip() if value is not None else None
 
 
 class PredictionResult(BaseModel):

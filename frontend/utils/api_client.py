@@ -753,6 +753,25 @@ def get_admin_accounts() -> list[dict[str, Any]]:
     return data if isinstance(data, list) else []
 
 
+def get_community_moderation_reports() -> list[dict[str, Any]]:
+    data = _request_admin("GET", "/community/moderation/reports")
+    return data if isinstance(data, list) else []
+
+
+def moderate_community_content(payload: dict[str, Any]) -> dict[str, Any] | None:
+    return _request_admin("PATCH", "/community/moderation", payload)
+
+
+def get_community_accounts() -> list[dict[str, Any]]:
+    data = _request_admin("GET", "/community/moderation/accounts")
+    return data if isinstance(data, list) else []
+
+
+def set_community_account_active(account_id: str, is_active: bool) -> dict[str, Any] | None:
+    return _request_admin("PATCH", f"/community/moderation/accounts/{quote(str(account_id), safe='')}/status",
+                          {"is_active": is_active})
+
+
 def invite_admin_account(email: str, display_name: str) -> dict[str, Any] | None:
     return _request_admin("POST", "/auth/admin/accounts", {"email": email, "display_name": display_name})
 

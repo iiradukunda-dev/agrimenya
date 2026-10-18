@@ -26,7 +26,7 @@ def render_admin() -> None:
             "System operations, zone management, and health monitoring",
         )
 
-        admin_tabs = st.tabs(["System Health", "Zone Management", "Plan Management", "Alert Management", "NISR Data", "Access Management"])
+        admin_tabs = st.tabs(["System Health", "Zone Management", "Plan Management", "Alert Management", "NISR Data", "Access Management", "Community Moderation"])
 
         # ═════════════════════════════════════════════════════════════
         # TAB 1: System Health
@@ -308,6 +308,61 @@ def render_admin() -> None:
                 st.error(f"Administrator accounts could not load: {api_client.get_admin_api_error('/auth/admin/accounts')}")
             else:
                 st.info("No administrator accounts are available.")
+
+        with admin_tabs[6]:
+            render_icon_subheader("assets/compass.svg", "Community Moderation")
+            st.caption("Review reported posts and comments. Hidden content is removed from the public feed.")
+            accounts = api_client.get_community_accounts()
+            with st.expander(f"Community accounts ({len(accounts)})"):
+                for account in accounts:
+                    access_col, toggle_col = st.columns([4, 1])
+                    access_col.text(
+                        f"{account.get('display_name')} · {account.get('email')} · "
+                        f"{account.get('role')} · {'Active' if account.get('is_active') else 'Disabled'}"
+                    )
+                    next_active = not bool(account.get("is_active"))
+                    if toggle_col.button(
+                        "Enable" if next_active else "Disable",
+                        key=f"community_account_{account.get('id')}",
+                    ):
+                        result = api_client.set_community_account_active(str(account.get("id")), next_active)
+                        if result:
+                            st.success(result.get("message", "Account status updated."))
+                            st.rerun()
+                        else:
+                            path = f"/community/moderation/accounts/{account.get('id')}/status"
+                            st.error(api_client.get_admin_api_error(path) or "Account status could not be updated.")
+            reports = api_client.get_community_moderation_reports()
+            if not reports:
+                error = api_client.get_admin_api_error("/community/moderation/reports")
+                st.error(error) if error else st.info("There are no open community reports.")
+            for report in reports:
+                target_kind = "comment" if report.get("comment_id") else "post"
+                target = report.get(target_kind) or {}
+                author = target.get("author") or {}
+                with st.container(border=True):
+                    st.text(f"Report: {report.get('reason', '')}")
+                    st.text(f"{target_kind.title()} by {author.get('display_name', 'unknown member')} · {report.get('created_at', '')}")
+                    if target_kind == "post":
+                        st.text(target.get("title", "Post"))
+                    st.text(target.get("body", ""))
+                    buttons = st.columns(3)
+                    actions = [("Hide content", "hide"), ("Delete content", "delete"), ("Dismiss report", "dismiss")]
+                    for column, (label, action) in zip(buttons, actions):
+                        if column.button(label, key=f"community_mod_{report['id']}_{action}"):
+                            payload = {
+                                "target_kind": target_kind,
+                                "target_id": report.get("comment_id") or report.get("post_id"),
+                                "action": action,
+                                "report_id": report["id"],
+                                "report_action": "dismissed" if action == "dismiss" else "resolved",
+                            }
+                            result = api_client.moderate_community_content(payload)
+                            if result:
+                                st.success(result.get("message", "Moderation saved."))
+                                st.rerun()
+                            else:
+                                st.error(api_client.get_admin_api_error("/community/moderation") or "Moderation could not be saved.")
 
     except requests.exceptions.RequestException as e:
         logger.error("Network error in admin view: %s", e)

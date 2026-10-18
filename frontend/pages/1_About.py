@@ -20,6 +20,7 @@ sections = [
     ("Decisions", "Review recommendations returned by the connected service. Use the accompanying zone context before acting on a recommendation."),
     ("Planning", "Create a zone-specific plan with actions, notes, and timing agreed by your team."),
     ("Communication", "Review alerts and use the configured communication channels and consent workflows."),
+    ("Farmer community", "Share field experiences and questions with other growers; community roles are not yet verified."),
 ]
 for start in range(0, len(sections), 2):
     columns = st.columns(2, gap="medium")

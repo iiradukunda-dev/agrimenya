@@ -43,7 +43,9 @@ Fill `backend/.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the
 project you are authorized to use. To see the same live records as Team A, both
 teams need access to the same Supabase project; exchange its credentials
 through an approved secure channel, never by committing `.env` to GitHub. Apply
-migrations `0001` through `0008` if they are not already applied. Then start both
+migrations `0001` through `0009` if they are not already applied. Set
+`JWT_SECRET` to a private random value of at least 32 characters for community
+sessions. Then start both
 services:
 
 ```powershell
@@ -121,10 +123,11 @@ operations. Restart the relevant service after changing environment values.
 ## Database setup
 
 Apply the SQL files in `backend/app/db/migrations/` to Supabase in numeric
-order, `0001` through `0008`, using the Supabase SQL editor or your migration
+order, `0001` through `0009`, using the Supabase SQL editor or your migration
 runner. Migrations `0005` and `0006` add WhatsApp contacts, message tracking,
 consent, and alert approval; `0007` enables versioned NISR yield imports; and
-`0008` adds named administrator accounts and password recovery tokens. Check
+`0008` adds named administrator accounts and password recovery tokens; `0009`
+adds individually authenticated farmer discussions and moderation reports. Check
 the migration comments and `backend/docs/` before applying these changes to a
 production database.
 
@@ -184,6 +187,14 @@ named accounts. Individual citizen/planner/cooperative accounts and complete
 server-enforced ownership or membership scopes are still required before
 those experiences can be treated as production access control; see the access
 model in `backend/docs/nisr_imports_and_access.md`.
+
+The optional farmer discussion pilot supports posts, comments, abuse reports,
+and administrator moderation. Accounts and roles are currently self-reported;
+email verification and account recovery are not yet available. The Rwanda
+Space Agency orthomosaic is an optional visual map layer only, not a signal used
+to predict yield or prioritize zones. See
+[`backend/docs/satellite_and_community.md`](backend/docs/satellite_and_community.md)
+for data limitations and safeguards.
 
 WhatsApp starts in mock mode. Live messaging requires Meta Cloud API
 credentials, verified webhooks, opt-in records, and approved templates. Keep

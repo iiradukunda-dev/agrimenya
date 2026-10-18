@@ -6,7 +6,7 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from app.core.config import settings
 from app.core.logging import configure_logging
-from app.routers import decision, planification, segmentation, communication, chat, alignment, admin, live_data, whatsapp_admin, webhooks, admin_auth
+from app.routers import decision, planification, segmentation, communication, community, chat, alignment, admin, live_data, whatsapp_admin, webhooks, admin_auth
 
 DEVELOPMENT_ENVIRONMENTS = {"development", "test"}
 IS_DEVELOPMENT = settings.APP_ENV in DEVELOPMENT_ENVIRONMENTS
@@ -52,6 +52,7 @@ app.include_router(chat.router)
 app.include_router(alignment.router)
 app.include_router(admin.router)
 app.include_router(admin_auth.router)
+app.include_router(community.router)
 app.include_router(live_data.router)
 
 

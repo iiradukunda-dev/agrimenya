@@ -39,6 +39,7 @@ def render_navbar() -> None:
             st.page_link("pages/99_Showcase.py", label="Data guide", icon=":material/menu_book:")
             st.page_link("pages/1_About.py", label="About", icon=":material/info:")
             st.page_link("pages/11_Contact.py", label="Feedback", icon=":material/feedback:")
+            st.page_link("pages/12_Community.py", label="Farmer community", icon=":material/forum:")
     with language:
         render_language_selector(sidebar=False)
     st.markdown('<hr class="ag-nav-rule">', unsafe_allow_html=True)

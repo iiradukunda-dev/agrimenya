@@ -3,6 +3,7 @@ from uuid import UUID
 from app.core.auth import require_user
 from app.models.prediction import PredictionRequest, PredictionResult
 from app.db import crud
+from app.db.rwanda_districts import RWANDA_DISTRICTS
 from app.ml.predict import (
     predict_yield,
     classify_priority,
@@ -25,22 +26,27 @@ def predict(request: PredictionRequest, _: dict = Depends(require_user)):
     zone = crud.get_zone(request.zone_id)
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")
+    district = str(zone.get("district") or "").strip()
+    district_by_name = {item["district"].casefold(): item["district"] for item in RWANDA_DISTRICTS}
+    if district.casefold() not in district_by_name:
+        raise HTTPException(status_code=422, detail="Yield decisions are currently supported for Rwanda's 30 districts only")
+    district = district_by_name[district.casefold()]
 
     predicted_yield, confidence, model_version = predict_yield(
-        zone.get("district"), request.crop, request.season,
+        district, request.crop, request.season,
         request.rainfall_mm, request.area_cultivated, request.household_size,
         request.allow_category_proxy, request.crop_category,
     )
-    interval = predict_with_interval(zone.get("district"), request.crop, request.season,
+    interval = predict_with_interval(district, request.crop, request.season,
                                      allow_category_proxy=request.allow_category_proxy,
                                      crop_category=request.crop_category)
-    explanation = explain_prediction(zone.get("district"), request.crop, request.season)
+    explanation = explain_prediction(district, request.crop, request.season)
     confidence_basis = interval["basis"]
     provenance = model_provenance()
 
     # analysis fields (not persisted beyond the prediction record)
-    gap = get_yield_gap(zone.get("district"), request.crop, request.season)
-    yi = get_yield_index(zone.get("district"), request.crop, request.season)
+    gap = get_yield_gap(district, request.crop, request.season)
+    yi = get_yield_index(district, request.crop, request.season)
     area = request.area_cultivated if request.area_cultivated and request.area_cultivated > 0 else None
     # Rainfall is not a validated prediction feature; it does not scale yield.
     predicted_yield_per_ha = interval["point"]
@@ -53,7 +59,7 @@ def predict(request: PredictionRequest, _: dict = Depends(require_user)):
 
     priority_yield = predicted_yield if predicted_yield is not None else predicted_yield_per_ha
     priority = (classify_priority(priority_yield, request.area_cultivated,
-                                  zone.get("district"), request.crop, request.season)
+                                  district, request.crop, request.season)
                 if priority_yield is not None else {
                     "priority_level": "Unknown", "underlying_priority_level": "Unknown",
                     "priority_status": "no_yield_data", "reasons": ["No yield observations for this crop."],

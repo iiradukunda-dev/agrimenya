@@ -223,6 +223,27 @@ Frontend usage:
 - recent field updates
 - context summary near decision cards
 
+### 5.8 Farmer community and satellite map context
+
+The farmer community provides individually authenticated text posts and
+comments, content reports, and administrator moderation. The pilot does not
+verify email addresses or farmer roles and has no account recovery yet; do not
+present community posts as official advice.
+
+API group:
+- /community
+
+Key endpoints:
+- POST /community/register and /community/login
+- GET/POST /community/posts
+- GET/POST /community/posts/{post_id}/comments
+- POST /community/posts/{post_id}/report
+- Admin-only community moderation endpoints
+
+The zone priority map includes an optional Rwanda Space Agency orthomosaic
+layer. It is visual context only, covers a limited mapped area near Kigali, and
+does not feed yield predictions or priority levels.
+
 ---
 
 ## 6. Recommended frontend pages and wireframe outline

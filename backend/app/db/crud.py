@@ -27,6 +27,132 @@ def get_admin_account_by_id(account_id: str) -> dict | None:
     return rows[0] if rows else None
 
 
+def get_community_account_by_email(email: str) -> dict | None:
+    rows = _exec_query_get_data(
+        get_supabase().table("community_accounts").select("*")
+        .eq("email", email.lower()).limit(1)
+    )
+    return rows[0] if rows else None
+
+
+def get_community_account_by_id(account_id: str) -> dict | None:
+    rows = _exec_query_get_data(
+        get_supabase().table("community_accounts").select("*")
+        .eq("id", account_id).limit(1)
+    )
+    return rows[0] if rows else None
+
+
+def create_community_account(email: str, display_name: str, password_hash: str) -> dict:
+    result = get_supabase().table("community_accounts").insert({
+        "email": email.lower(), "display_name": display_name, "password_hash": password_hash,
+    }).execute()
+    return result.data[0]
+
+
+def list_community_accounts(limit: int = 200) -> list[dict]:
+    return _exec_query_get_data(
+        get_supabase().table("community_accounts")
+        .select("id,email,display_name,role,is_active,created_at")
+        .order("created_at", desc=True).limit(max(1, min(int(limit), 500)))
+    )
+
+
+def set_community_account_active(account_id: str, is_active: bool) -> bool:
+    account = get_community_account_by_id(account_id)
+    if not account:
+        return False
+    result = get_supabase().table("community_accounts").update({
+        "is_active": is_active,
+        "session_version": int(account.get("session_version", 1)) + 1,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", account_id).execute()
+    return bool(result.data)
+
+
+def create_community_post(author_id: str, title: str, body: str) -> dict:
+    result = get_supabase().table("community_posts").insert({
+        "author_id": author_id, "title": title, "body": body,
+    }).execute()
+    return result.data[0]
+
+
+def list_community_posts(limit: int = 30, offset: int = 0) -> list[dict]:
+    return _exec_query_get_data(
+        get_supabase().table("community_posts")
+        .select("id,title,body,author_id,status,created_at,updated_at,author:community_accounts(display_name,role)")
+        .eq("status", "published").order("created_at", desc=True)
+        .range(offset, offset + limit - 1)
+    )
+
+
+def get_community_post(post_id: str) -> dict | None:
+    rows = _exec_query_get_data(
+        get_supabase().table("community_posts").select("id,status,author_id")
+        .eq("id", post_id).limit(1)
+    )
+    return rows[0] if rows else None
+
+
+def create_community_comment(post_id: str, author_id: str, body: str) -> dict:
+    result = get_supabase().table("community_comments").insert({
+        "post_id": post_id, "author_id": author_id, "body": body,
+    }).execute()
+    return result.data[0]
+
+
+def get_community_comment(comment_id: str) -> dict | None:
+    rows = _exec_query_get_data(
+        get_supabase().table("community_comments").select("id,post_id,author_id,status")
+        .eq("id", comment_id).limit(1)
+    )
+    return rows[0] if rows else None
+
+
+def list_community_comments(post_id: str, limit: int = 100) -> list[dict]:
+    return _exec_query_get_data(
+        get_supabase().table("community_comments")
+        .select("id,post_id,body,author_id,status,created_at,author:community_accounts(display_name,role)")
+        .eq("post_id", post_id).eq("status", "published")
+        .order("created_at").limit(max(1, min(int(limit), 200)))
+    )
+
+
+def create_community_report(reporter_id: str, *, reason: str,
+                            post_id: str | None = None, comment_id: str | None = None) -> dict:
+    result = get_supabase().table("community_reports").insert({
+        "reporter_id": reporter_id, "reason": reason,
+        "post_id": post_id, "comment_id": comment_id,
+    }).execute()
+    return result.data[0]
+
+
+def list_community_reports(limit: int = 100) -> list[dict]:
+    return _exec_query_get_data(
+        get_supabase().table("community_reports")
+        .select("id,reporter_id,post_id,comment_id,reason,status,created_at,"
+                "post:community_posts(title,body,author:community_accounts(display_name)),"
+                "comment:community_comments(body,author:community_accounts(display_name))")
+        .eq("status", "open").order("created_at").limit(max(1, min(int(limit), 200)))
+    )
+
+
+def moderate_community_content(*, target_kind: str, target_id: str, status: str) -> bool:
+    table = "community_posts" if target_kind == "post" else "community_comments"
+    result = get_supabase().table(table).update({
+        "status": status, "updated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", target_id).execute()
+    return bool(result.data)
+
+
+def resolve_community_report(report_id: str, reviewer_id: str | None, status: str) -> bool:
+    result = get_supabase().table("community_reports").update({
+        "status": status, "reviewed_by": reviewer_id,
+        "reviewed_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", report_id).eq("status", "open").execute()
+    return bool(result.data)
+
+
 def create_admin_account(email: str, display_name: str, password_hash: str) -> dict:
     result = get_supabase().table("admin_accounts").insert({
         "email": email.lower(), "display_name": display_name, "password_hash": password_hash,

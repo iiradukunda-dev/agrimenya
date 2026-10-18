@@ -325,6 +325,10 @@ def render_zones() -> None:
                     _render_work_records(selected_zone, crops)
 
             with st.expander("Run a yield prediction"):
+                st.caption(
+                    "This is a historical NISR-observation baseline for the selected district, crop, and season. "
+                    "It is not a weather-adjusted forecast; satellite imagery is visual context and does not change this estimate."
+                )
                 with st.form(f"zone_yield_prediction_{zone_id}"):
                     prediction_cols = st.columns(2)
                     with prediction_cols[0]:

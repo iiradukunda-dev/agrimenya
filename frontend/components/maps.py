@@ -19,6 +19,12 @@ PRIORITY_COLORS = {
 }
 
 
+RSA_ORTHOMOSAIC_TILES = (
+    "https://portal.space.gov.rw/server/rest/services/Hosted/Ortho_Orthomosaic/"
+    "MapServer/tile/{z}/{y}/{x}"
+)
+
+
 def render_priority_map(df, *, key: str = "priority_map") -> str | None:
     """
     Renders a Folium map with priority zone markers.
@@ -31,8 +37,29 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
     m = folium.Map(
         location=[-1.9403, 29.8739],
         zoom_start=8,
+        max_zoom=23,
         tiles="OpenStreetMap",
     )
+
+    show_imagery = st.toggle(
+        "Show Rwanda Space Agency orthomosaic imagery",
+        value=False,
+        key=f"{key}_rsa_imagery",
+        help="Visual context only. This imagery does not affect yield estimates or priority levels.",
+    )
+    if show_imagery:
+        folium.TileLayer(
+            tiles=RSA_ORTHOMOSAIC_TILES,
+            attr=("Imagery: <a href='https://portal.space.gov.rw/server/rest/services/Hosted/"
+                  "Ortho_Orthomosaic/MapServer' target='_blank'>Rwanda Space Agency</a>"),
+            name="RSA orthomosaic",
+            overlay=True,
+            control=True,
+            show=True,
+            max_zoom=23,
+            max_native_zoom=23,
+        ).add_to(m)
+        folium.LayerControl(collapsed=True).add_to(m)
 
     if not df.empty:
         for _, row in df.iterrows():
@@ -78,6 +105,12 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
             ).add_to(m)
 
     st.caption("Red: High priority | Amber: Medium | Green: Low | Gray: not assessed. Click a point to select its zone.")
+    if show_imagery:
+        st.caption(
+            "The public RSA orthomosaic cache has a limited mapped footprint near Kigali; "
+            "the service does not expose a capture date in its layer summary. It is visual reference only "
+            "and is not evidence of crop type, field condition, or yield."
+        )
     click = st_folium(
         m,
         key=key,

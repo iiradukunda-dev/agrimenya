@@ -161,3 +161,30 @@ def require_user(request: Request):
     if settings.APP_ENV in {"development", "test"}:
         return {"role": "user", "token": None}
     return require_role("user")(request)
+
+
+def require_community(request: Request) -> dict[str, Any]:
+    """Require an individually authenticated community account."""
+    if (len(settings.JWT_SECRET) < 32 or settings.JWT_SECRET.startswith("replace-with-") or
+            settings.JWT_SECRET == "dev-secret-change-me"):
+        raise HTTPException(status_code=503, detail="Community sessions are not securely configured")
+    authorization = request.headers.get("Authorization", "")
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Sign in to the farmer community")
+    raw_token = authorization.split(" ", 1)[1].strip()
+    payload = verify_token(raw_token, expected_role="community")
+    account_id = payload.get("sub")
+    token_version = payload.get("ver")
+    if not account_id or not isinstance(token_version, int):
+        raise HTTPException(status_code=401, detail="Community account session required")
+    from app.db import crud
+
+    account = crud.get_community_account_by_id(str(account_id))
+    if (not account or not account.get("is_active") or
+            int(account.get("session_version", 0)) != token_version):
+        raise HTTPException(status_code=401, detail="Community session expired; sign in again")
+    return {
+        "account_id": str(account["id"]),
+        "display_name": account["display_name"],
+        "role": account["role"],
+    }

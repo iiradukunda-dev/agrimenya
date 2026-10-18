@@ -74,11 +74,18 @@ The runtime image needs the interval calibration artifact and database access;
 training tables and baseline-generation files stay in the offline retraining
 workflow. Readiness returns unavailable if the database has no yield evidence.
 
-Apply migrations `0001` through `0008` in order to Supabase before deploying
+Apply migrations `0001` through `0009` in order to Supabase before deploying
 this version. They add field reports, unknown prediction priority, readiness
 and work records, WhatsApp consent and delivery, alert approval, versioned NISR
-releases, and named administrator accounts with hashed password recovery
-tokens.
+releases, named administrator accounts with hashed password recovery tokens,
+and an individually authenticated farmer discussion board. The community is a
+pilot: roles and email addresses are not verified and account recovery is not
+available yet.
+
+The Rwanda Space Agency's public orthomosaic map layer is optional visual
+context, not a numeric input to yield predictions or priority rankings. See
+[`docs/satellite_and_community.md`](docs/satellite_and_community.md) before
+using either feature beyond development.
 
 Resource quantities are calculated only from rates and prices supplied by the
 user; the service does not prescribe application rates. Finance, nutrition,
