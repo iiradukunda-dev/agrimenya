@@ -4917,8 +4917,8 @@
     }
   },
   "artifacts": {
-    "oof_predictions": "C:\\Users\\fabri\\Downloads\\agri-menya-backend-updated\\agri-menya\\backend\\data\\eval\\oof_predictions.csv",
-    "interval_calibration": "C:\\Users\\fabri\\Downloads\\agri-menya-backend-updated\\agri-menya\\backend\\app\\ml\\artifacts\\yield_intervals.json"
+    "oof_predictions": "backend\\data\\eval\\oof_predictions.csv",
+    "interval_calibration": "backend\\app\\ml\\artifacts\\yield_intervals.json"
   },
   "interval_calibration_evaluation": {
     "Overall": {
@@ -4969,7 +4969,7 @@
   },
   "interval_calibration_prediction_column": "district_crop_season_weighted",
   "input": {
-    "path": "C:\\Users\\fabri\\Downloads\\agri-menya-backend-updated\\agri-menya\\backend\\data\\training_table.csv",
+    "path": "backend\\data\\training_table.csv",
     "sha256": "3384e65e052d6202940b30fa9f26c6dad261a55eef28dda62fbb3b9a4956e425",
     "rows": 3030,
     "valid_target_rows": 2659,

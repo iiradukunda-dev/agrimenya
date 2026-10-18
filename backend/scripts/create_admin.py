@@ -27,21 +27,9 @@ def main() -> None:
         raise SystemExit("Use at least 12 characters.")
     if password != confirmation:
         raise SystemExit("Passwords do not match.")
-    try:
-        existing = crud.get_admin_account_by_email(email)
-    except Exception as exc:
-        raise SystemExit(
-            "Could not access the administrator table. Apply migration 0008_admin_accounts.sql and "
-            "confirm the backend .env has Supabase service-role access."
-        ) from exc
-    if existing:
+    if crud.get_admin_account_by_email(email):
         raise SystemExit("An administrator account already uses that email.")
-    try:
-        account = crud.create_admin_account(email, name, hash_password(password))
-    except Exception as exc:
-        raise SystemExit(
-            "Administrator account creation failed. Check migration 0008 and Supabase service-role access."
-        ) from exc
+    account = crud.create_admin_account(email, name, hash_password(password))
     print(f"Created administrator {account['email']} ({account['id']}).")
 
 

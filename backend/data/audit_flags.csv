@@ -1,0 +1,84 @@
+season,district,crop,cultivated_area_ha,yield_kg_ha,production_mt,flag,detail
+2026 Season A,Bugesera,Pea,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Gakenke,Groundnut,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Gakenke,Other cereals,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Gicumbi,Other cereals,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Kayonza,Wheat,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Kicukiro,Climbing bean,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Ngororero,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Nyabihu,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Nyagatare,Pea,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Nyarugenge,Climbing bean,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Nyarugenge,Fodder crops,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Burera,Other cereals,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Burera,Soybean,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Gakenke,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Gasabo,Other cereals,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Gasabo,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Gatsibo,Wheat,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Gicumbi,Groundnut,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Huye,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Karongi,Wheat,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Kicukiro,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Muhanga,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Muhanga,Wheat,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Ngororero,Paddy rice,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Nyamagabe,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Nyamagabe,Wheat,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Nyarugenge,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Rulindo,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season B,Rwamagana,Sorghum,,,,season_pair_missing,Pair absent in other season
+2026 Season A,Rubavu,Cassava,549.0,,,missing_value,yield_kg_ha
+2026 Season A,Rubavu,Cassava,549.0,,,missing_value,production_mt
+2026 Season A,Nyabihu,Yams & Taro,19.0,,,missing_value,yield_kg_ha
+2026 Season A,Nyabihu,Yams & Taro,19.0,,,missing_value,production_mt
+2026 Season A,Nyamagabe,Other crops,4935.0,,,missing_value,yield_kg_ha
+2026 Season A,Nyamagabe,Other crops,4935.0,,,missing_value,production_mt
+2026 Season A,Bugesera,Pea,1.0,456.0,0.0,literal_zero,production_mt
+2026 Season A,Nyarugenge,Fruits,15.0,,,missing_value,yield_kg_ha
+2026 Season A,Nyarugenge,Fruits,15.0,,,missing_value,production_mt
+2026 Season A,Nyarugenge,Other crops,1162.0,,,missing_value,yield_kg_ha
+2026 Season A,Nyarugenge,Other crops,1162.0,,,missing_value,production_mt
+2026 Season B,Rubavu,Fruits,3047.0,,,missing_value,yield_kg_ha
+2026 Season B,Rubavu,Fruits,3047.0,,,missing_value,production_mt
+2026 Season B,Nyarugenge,Fruits,5.0,,,missing_value,yield_kg_ha
+2026 Season B,Nyarugenge,Fruits,5.0,,,missing_value,production_mt
+2026 Season A,Muhanga,Groundnut,15.0,173.0,3.0,production_consistency_over_10pct,"production=3.0, yield×source harvested area/1000=2.595, error=15.6%"
+2026 Season A,Gicumbi,Other cereals,6.0,567.0,4.0,production_consistency_over_10pct,"production=4.0, yield×source harvested area/1000=3.402, error=17.6%"
+2026 Season A,Nyabihu,Soybean,14.0,249.0,4.0,production_consistency_over_10pct,"production=4.0, yield×source harvested area/1000=3.486, error=14.7%"
+2026 Season A,Nyaruguru,Other cereals,6.0,257.0,2.0,production_consistency_over_10pct,"production=2.0, yield×source harvested area/1000=1.542, error=29.7%"
+2026 Season A,Nyaruguru,Other crops,4696.0,702.0,1.0,production_consistency_over_10pct,"production=1.0, yield×source harvested area/1000=0.702, error=42.5%"
+2026 Season A,Bugesera,Pea,1.0,456.0,0.0,production_consistency_over_10pct,"production=0.0, yield×source harvested area/1000=0.456, error=100.0%"
+2026 Season B,Rubavu,Other crops,1802.0,4575.0,653.0,production_consistency_over_10pct,"production=653.0, yield×source harvested area/1000=6052.725, error=89.2%"
+2026 Season B,Nyagatare,Other cereals,1.0,682.0,1.0,production_consistency_over_10pct,"production=1.0, yield×source harvested area/1000=0.682, error=46.6%"
+2026 Season B,Ngororero,Paddy rice,1.0,2356.0,2.0,production_consistency_over_10pct,"production=2.0, yield×source harvested area/1000=2.356, error=15.1%"
+2026 Season B,Nyaruguru,Other cereals,6.0,203.0,1.0,production_consistency_over_10pct,"production=1.0, yield×source harvested area/1000=1.218, error=17.9%"
+2026 Season B,Kamonyi,Other cereals,14.0,321.0,4.0,production_consistency_over_10pct,"production=4.0, yield×source harvested area/1000=4.494, error=11.0%"
+2026 Season A,Nyagatare,Maize,31265.0,2887.0,90252.0,yield_outlier_3_robust_sd,"yield=2887, crop median=1441.5, robust_sd=455.899"
+2026 Season A,Musanze,Cassava,83.0,5458.0,147.0,yield_outlier_3_robust_sd,"yield=5458, crop median=13404, robust_sd=1937.758"
+2026 Season A,Rubavu,Irish potato,5643.0,13794.0,76867.0,yield_outlier_3_robust_sd,"yield=13794, crop median=5200.5, robust_sd=1742.055"
+2026 Season A,Nyabihu,Irish potato,8546.0,12839.0,109107.0,yield_outlier_3_robust_sd,"yield=12839, crop median=5200.5, robust_sd=1742.055"
+2026 Season A,Burera,Irish potato,4386.0,10878.0,47706.0,yield_outlier_3_robust_sd,"yield=10878, crop median=5200.5, robust_sd=1742.055"
+2026 Season A,Musanze,Irish potato,4978.0,12556.0,62509.0,yield_outlier_3_robust_sd,"yield=12556, crop median=5200.5, robust_sd=1742.055"
+2026 Season A,Rwamagana,Yams & Taro,1163.0,13278.0,1913.0,yield_outlier_3_robust_sd,"yield=13278, crop median=6096, robust_sd=1845.837"
+2026 Season B,Nyabihu,Banana for beer,563.0,6219.0,1032.0,yield_outlier_3_robust_sd,"yield=6219, crop median=10550, robust_sd=1086.005"
+2026 Season B,Nyamagabe,Banana for beer,4216.0,6078.0,10406.0,yield_outlier_3_robust_sd,"yield=6078, crop median=10550, robust_sd=1086.005"
+2026 Season B,Burera,Beans,9947.0,1215.0,12086.0,yield_outlier_3_robust_sd,"yield=1215, crop median=698.5, robust_sd=143.071"
+2026 Season A,Musanze,Bush bean,299.0,888.0,266.0,yield_outlier_3_robust_sd,"yield=888, crop median=620.5, robust_sd=65.976"
+2026 Season A,Kirehe,Soybean,951.0,1313.0,1248.0,yield_outlier_3_robust_sd,"yield=1313, crop median=462, robust_sd=102.299"
+2026 Season B,Rubavu,Vegetables,3047.0,13219.0,33413.0,yield_outlier_3_robust_sd,"yield=13219, crop median=8174, robust_sd=1504.839"
+2026 Season B,Nyabihu,Vegetables,970.0,15055.0,14608.0,yield_outlier_3_robust_sd,"yield=15055, crop median=8174, robust_sd=1504.839"
+2026 Season A,Rusizi,Fruits,1607.0,12023.0,6746.0,yield_outlier_3_robust_sd,"yield=12023, crop median=4885, robust_sd=1719.816"
+2026 Season B,Gisagara,Fruits,201.0,14705.0,339.0,yield_outlier_3_robust_sd,"yield=14705, crop median=4885, robust_sd=1719.816"
+2026 Season B,Kicukiro,Fruits,124.0,12312.0,117.0,yield_outlier_3_robust_sd,"yield=12312, crop median=4885, robust_sd=1719.816"
+2026 Season B,Kamonyi,Fruits,245.0,10626.0,894.0,yield_outlier_3_robust_sd,"yield=10626, crop median=4885, robust_sd=1719.816"
+2026 Season A,Gicumbi,Other crops,1785.0,17369.0,3718.0,yield_outlier_3_robust_sd,"yield=17369, crop median=2892.5, robust_sd=2952.598"
+2026 Season A,Rulindo,Other crops,3860.0,17665.0,7684.0,yield_outlier_3_robust_sd,"yield=17665, crop median=2892.5, robust_sd=2952.598"
+2026 Season A,Rutsiro,Other crops,3707.0,16803.0,10888.0,yield_outlier_3_robust_sd,"yield=16803, crop median=2892.5, robust_sd=2952.598"
+2026 Season A,Burera,Other crops,313.0,15876.0,860.0,yield_outlier_3_robust_sd,"yield=15876, crop median=2892.5, robust_sd=2952.598"
+2026 Season A,Nyamasheke,Other crops,5987.0,27430.0,6008.0,yield_outlier_3_robust_sd,"yield=27430, crop median=2892.5, robust_sd=2952.598"
+2026 Season A,Gakenke,Other crops,1852.0,18075.0,7484.0,yield_outlier_3_robust_sd,"yield=18075, crop median=2892.5, robust_sd=2952.598"
+2026 Season B,Burera,Other crops,327.0,11855.0,2448.0,yield_outlier_3_robust_sd,"yield=11855, crop median=2892.5, robust_sd=2952.598"
+2026 Season B,Musanze,Other crops,1382.0,14414.0,9344.0,yield_outlier_3_robust_sd,"yield=14414, crop median=2892.5, robust_sd=2952.598"
+2026 Season A,Burera,Sorghum,1316.0,2129.0,2802.0,yield_outlier_3_robust_sd,"yield=2129, crop median=1093, robust_sd=278.729"
+2026 Season B,Nyagatare,Wheat,81.0,330.0,27.0,yield_outlier_3_robust_sd,"yield=330, crop median=1190, robust_sd=255.007"
