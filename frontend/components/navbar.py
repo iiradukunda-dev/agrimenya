@@ -1,4 +1,4 @@
-"""Compact, consistent application navigation."""
+"""Compact, polished, glassmorphic application navigation."""
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
 from utils.i18n import render_language_selector
@@ -9,28 +9,87 @@ def render_navbar() -> None:
     st.markdown("""
       <style>
       [data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; }
-      [data-testid="stPageLink-NavLink"] { border-radius:8px; min-height:2.5rem; }
-      [data-testid="stPageLink-NavLink"] p { font-size:.88rem; font-weight:600; color:#40554a; }
-      [data-testid="stPageLink-NavLink"][aria-current="page"] { background:#eaf3ec; }
-      [data-testid="stPageLink-NavLink"][aria-current="page"] p { color:#194b36; }
-      .ag-nav-rule { border:0; border-top:1px solid #e3e9e3; margin:.45rem 0 1.4rem; }
-      @media(max-width:850px) { [data-testid="stPageLink-NavLink"] p { font-size:.77rem; } }
+      
+      /* Nav Bar Base Container Styling */
+      [data-testid="stPageLink-NavLink"] {
+        border-radius: 10px !important;
+        min-height: 2.55rem !important;
+        padding: 0.35rem 0.75rem !important;
+        border: 1px solid transparent !important;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      }
+      [data-testid="stPageLink-NavLink"] p {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.88rem !important;
+        font-weight: 650 !important;
+        color: #374b40 !important;
+        letter-spacing: -0.01em !important;
+        transition: color 0.2s ease !important;
+      }
+      [data-testid="stPageLink-NavLink"]:hover {
+        background: rgba(16, 185, 129, 0.08) !important;
+        border-color: rgba(16, 185, 129, 0.2) !important;
+        transform: translateY(-1px) !important;
+      }
+      [data-testid="stPageLink-NavLink"]:hover p {
+        color: #0d3b28 !important;
+      }
+      [data-testid="stPageLink-NavLink"][aria-current="page"] {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%) !important;
+        border: 1px solid rgba(16, 185, 129, 0.32) !important;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12) !important;
+      }
+      [data-testid="stPageLink-NavLink"][aria-current="page"] p {
+        color: #065f46 !important;
+        font-weight: 750 !important;
+      }
+
+      /* Brand Logo Special Styling */
+      [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"],
+      [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] {
+        background: linear-gradient(135deg, #092e1e 0%, #134e34 100%) !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 12px rgba(9, 46, 30, 0.22) !important;
+        border: 1px solid rgba(16, 185, 129, 0.3) !important;
+      }
+      [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"] p,
+      [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] p {
+        color: #ffffff !important;
+        font-size: 0.96rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.02em !important;
+      }
+      [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"]:hover,
+      [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:hover {
+        transform: translateY(-1px) scale(1.02) !important;
+        box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35) !important;
+      }
+
+      /* Divider rule */
+      .ag-nav-rule {
+        border: 0;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(16, 185, 129, 0.4) 0%, rgba(227, 233, 227, 0.9) 35%, rgba(227, 233, 227, 0.9) 70%, rgba(16, 185, 129, 0.3) 100%);
+        margin: 0.6rem 0 1.5rem;
+      }
+
+      @media(max-width:850px) {
+        [data-testid="stPageLink-NavLink"] p { font-size: 0.78rem !important; }
+      }
       @media(max-width:700px) {
-        .block-container { padding:1rem .8rem 3rem !important; }
-        [data-testid="stHorizontalBlock"] { flex-wrap:wrap !important; gap:.55rem !important; }
-        [data-testid="stHorizontalBlock"] > [data-testid="column"] { min-width:110px !important; }
-        [data-testid="stPageLink-NavLink"] { min-height:3rem; }
-        [data-testid="stButton"] button, [data-testid="stFormSubmitButton"] button { min-height:3rem; }
-        [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea { font-size:16px; }
+        .block-container { padding: 1rem 0.8rem 3rem !important; }
+        [data-testid="stHorizontalBlock"] { flex-wrap: wrap !important; gap: 0.5rem !important; }
+        [data-testid="stHorizontalBlock"] > [data-testid="column"] { min-width: 105px !important; }
+        [data-testid="stPageLink-NavLink"] { min-height: 2.8rem !important; }
       }
       </style>
     """, unsafe_allow_html=True)
 
     brand, dashboard, zones, segment, decide, planning, communication, more, language = st.columns(
-        [1.45, 1.05, .8, 1, .85, .8, 1.2, .7, .4], vertical_alignment="center", gap="small"
+        [1.4, 1.05, 0.8, 0.95, 0.85, 0.8, 1.15, 0.7, 0.45], vertical_alignment="center", gap="small"
     )
     with brand:
-        st.page_link("Home.py", label="agrimenya")
+        st.page_link("Home.py", label="🌱 agrimenya")
     for col, path, label, icon in [
         (dashboard, "pages/3_Dashboard.py", "Overview", "dashboard"),
         (zones, "pages/4_Zones.py", "Zones", "map"),
