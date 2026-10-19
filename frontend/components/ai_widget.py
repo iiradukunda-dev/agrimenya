@@ -189,6 +189,6 @@ def render_floating_ai_widget() -> None:
     </style>
     <a href="/AI_Assistant" target="_self" class="ag-floating-ai-fab" aria-label="Ask AI Assistant">
         <img src="data:image/png;base64,{img_b64}" alt="AI Assistant" />
-        <div class="ag-floating-ai-tooltip"><span class="ag-glass-spark">✦</span> Ask AI Assistant</div>
+        <div class="ag-floating-ai-tooltip"><span class="ag-glass-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#1b8a5a"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Ask AI Assistant</div>
     </a>
     """, unsafe_allow_html=True)

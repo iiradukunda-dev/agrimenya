@@ -65,6 +65,13 @@ def render_navbar() -> None:
         box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35) !important;
       }
 
+      /* Hide any icons in navbar links */
+      [data-testid="stPageLink-NavLink"] span[data-testid="stIconMaterial"],
+      [data-testid="stPageLink-NavLink"] svg,
+      [data-testid="stPageLink-NavLink"] i {
+        display: none !important;
+      }
+
       /* Divider rule */
       .ag-nav-rule {
         border: 0;
@@ -86,28 +93,28 @@ def render_navbar() -> None:
     """, unsafe_allow_html=True)
 
     brand, dashboard, zones, segment, decide, planning, communication, more, language = st.columns(
-        [1.4, 1.05, 0.8, 0.95, 0.85, 0.8, 1.15, 0.7, 0.45], vertical_alignment="center", gap="small"
+        [1.3, 0.95, 0.75, 0.85, 0.75, 0.7, 0.8, 0.65, 0.45], vertical_alignment="center", gap="small"
     )
     with brand:
-        st.page_link("Home.py", label="🌱 agrimenya")
-    for col, path, label, icon in [
-        (dashboard, "pages/3_Dashboard.py", "Overview", "dashboard"),
-        (zones, "pages/4_Zones.py", "Zones", "map"),
-        (segment, "pages/5_Segmentation.py", "Segment", "layers"),
-        (decide, "pages/6_Decision_Making.py", "Decide", "bolt"),
-        (planning, "pages/8_Planning.py", "Plan", "edit_calendar"),
-        (communication, "pages/9_Communication.py", "Alerts", "campaign"),
+        st.page_link("Home.py", label="agrimenya")
+    for col, path, label in [
+        (dashboard, "pages/3_Dashboard.py", "Overview"),
+        (zones, "pages/4_Zones.py", "Zones"),
+        (segment, "pages/5_Segmentation.py", "Segment"),
+        (decide, "pages/6_Decision_Making.py", "Decide"),
+        (planning, "pages/8_Planning.py", "Plan"),
+        (communication, "pages/9_Communication.py", "Alerts"),
     ]:
         with col:
-            st.page_link(path, label=label, icon=f":material/{icon}:")
+            st.page_link(path, label=label)
     with more:
         with st.popover("More", width="stretch"):
-            st.page_link("pages/7_AI_Assistant.py", label="AI assistant", icon=":material/smart_toy:")
-            st.page_link("pages/10_Admin.py", label="Administration", icon=":material/admin_panel_settings:")
-            st.page_link("pages/99_Showcase.py", label="Data guide", icon=":material/menu_book:")
-            st.page_link("pages/1_About.py", label="About", icon=":material/info:")
-            st.page_link("pages/11_Contact.py", label="Feedback", icon=":material/feedback:")
-            st.page_link("pages/12_Community.py", label="Farmer community", icon=":material/forum:")
+            st.page_link("pages/7_AI_Assistant.py", label="AI assistant")
+            st.page_link("pages/10_Admin.py", label="Administration")
+            st.page_link("pages/99_Showcase.py", label="Data guide")
+            st.page_link("pages/1_About.py", label="About")
+            st.page_link("pages/11_Contact.py", label="Feedback")
+            st.page_link("pages/12_Community.py", label="Farmer community")
     with language:
         render_language_selector(sidebar=False)
     st.markdown('<hr class="ag-nav-rule">', unsafe_allow_html=True)
