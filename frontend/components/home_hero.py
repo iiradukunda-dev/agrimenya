@@ -1,72 +1,136 @@
 """Creative, animated agro-intelligence hero for the agrimenya landing page."""
+import os
+import shutil
 import streamlit as st
+import streamlit.components.v1 as components
+
+
+def _ensure_landing_video() -> str:
+    """Ensure landing video is linked in frontend/static for streaming."""
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    assets_dir = os.path.join(base_dir, "assets")
+    static_dir = os.path.join(base_dir, "static")
+    src = os.path.join(assets_dir, "landing video.mp4")
+    dst = os.path.join(static_dir, "landing_video.mp4")
+
+    if os.path.exists(src) and not os.path.exists(dst):
+        os.makedirs(static_dir, exist_ok=True)
+        try:
+            os.link(src, dst)
+        except Exception:
+            try:
+                shutil.copy2(src, dst)
+            except Exception:
+                pass
+    return "app/static/landing_video.mp4"
 
 
 def render_home_hero() -> None:
     """Render a modern, animated hero section with glowing gradient mesh and live indicators."""
-    st.html("""
+    video_url = _ensure_landing_video()
+
+    st.html(f"""
     <style>
-      .ag-hero-container {
+      .ag-hero-container {{
         position: relative;
         overflow: hidden;
         display: grid;
         grid-template-columns: 1.35fr 0.65fr;
         gap: 2.2rem;
         align-items: center;
-        min-height: 290px;
-        padding: 2.8rem 3.2rem;
+        min-height: 380px;
+        padding: 3rem 3.2rem;
         margin: 0.2rem 0 1.8rem;
         color: #ffffff;
-        background: linear-gradient(135deg, #021824 0%, #042633 30%, #063836 65%, #08422e 100%);
+        background: #021824;
         border-radius: 22px;
-        border: 1px solid rgba(56, 189, 248, 0.22);
-        box-shadow: 0 20px 50px rgba(2, 24, 36, 0.28), 0 0 35px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-      }
+        border: 1px solid rgba(56, 189, 248, 0.28);
+        box-shadow: 0 20px 50px rgba(2, 24, 36, 0.35), 0 0 40px rgba(56, 189, 248, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      }}
+
+      /* Full Motion Background Video & Cinematic Dark-Emerald Overlay */
+      .ag-hero-video {{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: 100%;
+        height: 100%;
+        transform: translate(-50%, -50%);
+        object-fit: cover;
+        z-index: 0;
+        pointer-events: none;
+        filter: brightness(0.85) contrast(1.1) saturate(1.2);
+      }}
+      .ag-hero-overlay {{
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(2, 24, 36, 0.70) 0%,
+          rgba(4, 38, 51, 0.55) 38%,
+          rgba(6, 56, 54, 0.50) 72%,
+          rgba(8, 66, 46, 0.65) 100%
+        );
+        z-index: 1;
+        pointer-events: none;
+      }}
+
+      /* Hide empty custom component container */
+      div[data-testid="stCustomComponentV1"] {{
+        display: none !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }}
 
       /* Animated cyan bulb & tree emerald light orbs in the background */
-      .ag-hero-container::before {
+      .ag-hero-container::before {{
         content: "";
         position: absolute;
         top: -60px;
         right: 15%;
         width: 320px;
         height: 320px;
-        background: radial-gradient(circle, rgba(56, 189, 248, 0.32) 0%, rgba(14, 165, 233, 0) 70%);
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.28) 0%, rgba(14, 165, 233, 0) 70%);
         border-radius: 50%;
         filter: blur(35px);
         pointer-events: none;
+        z-index: 1;
         animation: ag-hero-orb-float 7s ease-in-out infinite alternate;
-      }
-      .ag-hero-container::after {
+      }}
+      .ag-hero-container::after {{
         content: "";
         position: absolute;
         bottom: -80px;
         left: 20%;
         width: 360px;
         height: 360px;
-        background: radial-gradient(circle, rgba(74, 222, 128, 0.28) 0%, rgba(34, 197, 94, 0) 70%);
+        background: radial-gradient(circle, rgba(74, 222, 128, 0.24) 0%, rgba(34, 197, 94, 0) 70%);
         border-radius: 50%;
         filter: blur(40px);
         pointer-events: none;
+        z-index: 1;
         animation: ag-hero-orb-float-2 9s ease-in-out infinite alternate;
-      }
+      }}
 
-      @keyframes ag-hero-orb-float {
-        0% { transform: translate(0, 0) scale(1); }
-        100% { transform: translate(-30px, 25px) scale(1.15); }
-      }
-      @keyframes ag-hero-orb-float-2 {
-        0% { transform: translate(0, 0) scale(1); }
-        100% { transform: translate(35px, -20px) scale(1.12); }
-      }
+      @keyframes ag-hero-orb-float {{
+        0% {{ transform: translate(0, 0) scale(1); }}
+        100% {{ transform: translate(-30px, 25px) scale(1.15); }}
+      }}
+      @keyframes ag-hero-orb-float-2 {{
+        0% {{ transform: translate(0, 0) scale(1); }}
+        100% {{ transform: translate(35px, -20px) scale(1.12); }}
+      }}
 
-      .ag-hero-content {
+      .ag-hero-content {{
         position: relative;
         z-index: 2;
-      }
+      }}
 
       /* Live Beacon Badge - Cyan & Emerald */
-      .ag-hero-badge {
+      .ag-hero-badge {{
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -83,8 +147,8 @@ def render_home_hero() -> None:
         color: #e0f2fe;
         margin-bottom: 0.9rem;
         box-shadow: 0 4px 14px rgba(14, 165, 233, 0.18);
-      }
-      .ag-hero-beacon {
+      }}
+      .ag-hero-beacon {{
         width: 8px;
         height: 8px;
         background-color: #38bdf8;
@@ -92,15 +156,15 @@ def render_home_hero() -> None:
         display: inline-block;
         box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8);
         animation: ag-beacon-radar 2s infinite;
-      }
-      @keyframes ag-beacon-radar {
-        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8); }
-        50% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0.35); }
-        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
-      }
+      }}
+      @keyframes ag-beacon-radar {{
+        0% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8); }}
+        50% {{ box-shadow: 0 0 0 6px rgba(74, 222, 128, 0.35); }}
+        100% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }}
+      }}
 
       /* Headline - explicitly white with cyan-to-emerald highlight */
-      .ag-hero-title {
+      .ag-hero-title {{
         margin: 0 0 0.85rem !important;
         color: #ffffff !important;
         -webkit-text-fill-color: #ffffff !important;
@@ -109,56 +173,57 @@ def render_home_hero() -> None:
         line-height: 1.08 !important;
         font-weight: 800 !important;
         letter-spacing: -0.04em !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
-      }
-      .ag-hero-glow-text {
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35) !important;
+      }}
+      .ag-hero-glow-text {{
         background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 35%, #4ade80 75%, #a7f3d0 100%) !important;
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         display: inline-block !important;
         filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.35)) !important;
-      }
+      }}
 
-      .ag-hero-copy {
+      .ag-hero-copy {{
         max-width: 660px;
         margin: 0 0 1.6rem;
         color: #e0f2fe;
         font-size: 1.02rem;
         line-height: 1.65;
         font-weight: 450;
-      }
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+      }}
 
       /* Stats Ticker Strip */
-      .ag-hero-stats {
+      .ag-hero-stats {{
         display: flex;
         flex-wrap: wrap;
         gap: 1.4rem;
         align-items: center;
         padding-top: 1.1rem;
         border-top: 1px solid rgba(56, 189, 248, 0.2);
-      }
-      .ag-hero-stat-item {
+      }}
+      .ag-hero-stat-item {{
         display: flex;
         flex-direction: column;
-      }
-      .ag-hero-stat-val {
+      }}
+      .ag-hero-stat-val {{
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 1.15rem;
         font-weight: 800;
         color: #f0fdfa;
         letter-spacing: -0.02em;
         text-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
-      }
-      .ag-hero-stat-lbl {
+      }}
+      .ag-hero-stat-lbl {{
         font-size: 0.74rem;
         font-weight: 600;
         color: #7dd3fc;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-      }
+      }}
 
       /* Right Column: Liquid Glass Bulb Horizon Card */
-      .ag-hero-glass-card {
+      .ag-hero-glass-card {{
         position: relative;
         z-index: 2;
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(56, 189, 248, 0.1) 40%, rgba(34, 197, 94, 0.1) 100%);
@@ -170,27 +235,27 @@ def render_home_hero() -> None:
         padding: 1.5rem 1.6rem;
         box-shadow: 0 16px 40px rgba(2, 24, 36, 0.3), inset 0 1.5px 2px rgba(255, 255, 255, 0.4), inset 0 -1.5px 2px rgba(56, 189, 248, 0.2);
         transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-      }
-      .ag-hero-glass-card:hover {
+      }}
+      .ag-hero-glass-card:hover {{
         transform: translateY(-3px);
         border-color: rgba(125, 211, 252, 0.55);
         box-shadow: 0 20px 48px rgba(2, 24, 36, 0.35), 0 0 24px rgba(56, 189, 248, 0.2);
-      }
+      }}
 
-      .ag-hero-card-header {
+      .ag-hero-card-header {{
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 0.8rem;
-      }
-      .ag-hero-card-title {
+      }}
+      .ag-hero-card-title {{
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 0.94rem;
         font-weight: 750;
         color: #ffffff;
         letter-spacing: -0.01em;
-      }
-      .ag-hero-card-tag {
+      }}
+      .ag-hero-card-tag {{
         font-size: 0.72rem;
         font-weight: 700;
         background: rgba(56, 189, 248, 0.22);
@@ -200,21 +265,21 @@ def render_home_hero() -> None:
         border-radius: 9999px;
         text-transform: uppercase;
         box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
-      }
+      }}
 
-      .ag-hero-card-desc {
+      .ag-hero-card-desc {{
         color: #e0f2fe;
         font-size: 0.86rem;
         line-height: 1.55;
         margin-bottom: 1rem;
-      }
+      }}
 
-      .ag-hero-card-row {
+      .ag-hero-card-row {{
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-      }
-      .ag-hero-pill-info {
+      }}
+      .ag-hero-pill-info {{
         display: flex;
         align-items: center;
         gap: 8px;
@@ -224,18 +289,19 @@ def render_home_hero() -> None:
         border-radius: 8px;
         font-size: 0.78rem;
         color: #f0fdfa;
-      }
+      }}
 
-      @media (max-width: 900px) {
-        .ag-hero-container {
+      @media (max-width: 900px) {{
+        .ag-hero-container {{
           grid-template-columns: 1fr;
           padding: 2rem 1.6rem;
           gap: 1.8rem;
-        }
-      }
+        }}
+      }}
     </style>
 
     <section class="ag-hero-container" aria-label="agrimenya overview">
+      <div class="ag-hero-overlay"></div>
       <div class="ag-hero-content">
         <div class="ag-hero-badge">
           <span class="ag-hero-beacon"></span>
@@ -294,3 +360,49 @@ def render_home_hero() -> None:
       </aside>
     </section>
     """)
+
+    components.html(
+        f"""
+        <script>
+        (function injectLandingVideo() {{
+            try {{
+                const parentDoc = window.parent.document;
+                const container = parentDoc.querySelector('.ag-hero-container');
+                if (container) {{
+                    let video = parentDoc.getElementById('ag-hero-bg-video-elem');
+                    if (!video) {{
+                        video = parentDoc.createElement('video');
+                        video.id = 'ag-hero-bg-video-elem';
+                        video.className = 'ag-hero-video';
+                        video.autoplay = true;
+                        video.loop = true;
+                        video.muted = true;
+                        video.playsInline = true;
+                        video.preload = 'auto';
+                        video.setAttribute('muted', '');
+                        video.setAttribute('playsinline', '');
+                        video.setAttribute('autoplay', '');
+                        video.setAttribute('loop', '');
+                        
+                        const source = parentDoc.createElement('source');
+                        source.src = '{video_url}';
+                        source.type = 'video/mp4';
+                        video.appendChild(source);
+                        
+                        container.insertBefore(video, container.firstChild);
+                        video.play().catch(function(e) {{
+                            console.warn('Video autoplay prevented:', e);
+                        }});
+                    }}
+                }} else {{
+                    setTimeout(injectLandingVideo, 120);
+                }}
+            }} catch (err) {{
+                console.error('Video injection error:', err);
+            }}
+        }})();
+        </script>
+        """,
+        height=0,
+    )
+
