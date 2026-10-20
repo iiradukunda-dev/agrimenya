@@ -22,35 +22,35 @@ def render_navbar() -> None:
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.88rem !important;
         font-weight: 650 !important;
-        color: #374b40 !important;
+        color: #2b454e !important;
         letter-spacing: -0.01em !important;
         transition: color 0.2s ease !important;
       }
       [data-testid="stPageLink-NavLink"]:hover {
-        background: rgba(16, 185, 129, 0.08) !important;
-        border-color: rgba(16, 185, 129, 0.2) !important;
+        background: rgba(14, 165, 233, 0.08) !important;
+        border-color: rgba(56, 189, 248, 0.28) !important;
         transform: translateY(-1px) !important;
       }
       [data-testid="stPageLink-NavLink"]:hover p {
-        color: #0d3b28 !important;
+        color: #0284c7 !important;
       }
       [data-testid="stPageLink-NavLink"][aria-current="page"] {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%) !important;
-        border: 1px solid rgba(16, 185, 129, 0.32) !important;
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12) !important;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(16, 185, 129, 0.1) 100%) !important;
+        border: 1px solid rgba(56, 189, 248, 0.38) !important;
+        box-shadow: 0 2px 10px rgba(14, 165, 233, 0.14) !important;
       }
       [data-testid="stPageLink-NavLink"][aria-current="page"] p {
-        color: #065f46 !important;
+        color: #035368 !important;
         font-weight: 750 !important;
       }
 
-      /* Brand Logo Special Styling */
+      /* Brand Logo Special Styling - Cyan-to-Forest Bulb Theme */
       [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"],
       [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] {
-        background: linear-gradient(135deg, #092e1e 0%, #134e34 100%) !important;
+        background: linear-gradient(135deg, #02202c 0%, #053b42 50%, #0a4f38 100%) !important;
         border-radius: 10px !important;
-        box-shadow: 0 4px 12px rgba(9, 46, 30, 0.22) !important;
-        border: 1px solid rgba(16, 185, 129, 0.3) !important;
+        box-shadow: 0 4px 14px rgba(2, 32, 44, 0.25), 0 0 16px rgba(56, 189, 248, 0.18) !important;
+        border: 1px solid rgba(56, 189, 248, 0.38) !important;
       }
       [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"] p,
       [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] p {
@@ -62,7 +62,8 @@ def render_navbar() -> None:
       [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"]:hover,
       [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:hover {
         transform: translateY(-1px) scale(1.02) !important;
-        box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35) !important;
+        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.38) !important;
+        border-color: rgba(56, 189, 248, 0.6) !important;
       }
 
       /* Hide any icons in navbar links */
@@ -76,7 +77,7 @@ def render_navbar() -> None:
       .ag-nav-rule {
         border: 0;
         height: 1px;
-        background: linear-gradient(90deg, rgba(16, 185, 129, 0.4) 0%, rgba(227, 233, 227, 0.9) 35%, rgba(227, 233, 227, 0.9) 70%, rgba(16, 185, 129, 0.3) 100%);
+        background: linear-gradient(90deg, rgba(56, 189, 248, 0.5) 0%, rgba(74, 222, 128, 0.45) 35%, rgba(216, 229, 232, 0.9) 70%, rgba(56, 189, 248, 0.3) 100%);
         margin: 0.6rem 0 1.5rem;
       }
 

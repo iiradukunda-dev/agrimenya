@@ -26,15 +26,15 @@ def render_floating_ai_widget() -> None:
     <style>
     @keyframes ag-bulb-glow {{
         0%, 100% {{
-            filter: drop-shadow(0 0 5px rgba(255, 240, 160, 0.85))
-                    drop-shadow(0 0 12px rgba(74, 222, 128, 0.75))
-                    drop-shadow(0 0 24px rgba(34, 197, 94, 0.5))
+            filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85))
+                    drop-shadow(0 0 14px rgba(74, 222, 128, 0.75))
+                    drop-shadow(0 0 26px rgba(34, 197, 94, 0.45))
                     drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25)) !important;
         }}
         50% {{
-            filter: drop-shadow(0 0 9px rgba(255, 248, 190, 0.95))
-                    drop-shadow(0 0 20px rgba(74, 222, 128, 0.9))
-                    drop-shadow(0 0 36px rgba(34, 197, 94, 0.65))
+            filter: drop-shadow(0 0 10px rgba(125, 211, 252, 0.95))
+                    drop-shadow(0 0 22px rgba(56, 189, 248, 0.85))
+                    drop-shadow(0 0 38px rgba(74, 222, 128, 0.65))
                     drop-shadow(0 6px 14px rgba(0, 0, 0, 0.2)) !important;
         }}
     }}
@@ -72,7 +72,7 @@ def render_floating_ai_widget() -> None:
         width: 70px !important;
         height: 100px !important;
         transform: translate(-50%, -52%) !important;
-        background: radial-gradient(ellipse at 50% 40%, rgba(255, 245, 180, 0.45) 0%, rgba(74, 222, 128, 0.4) 35%, rgba(34, 197, 94, 0.2) 60%, rgba(16, 185, 129, 0) 80%) !important;
+        background: radial-gradient(ellipse at 50% 40%, rgba(56, 189, 248, 0.5) 0%, rgba(74, 222, 128, 0.4) 35%, rgba(34, 197, 94, 0.22) 60%, rgba(14, 165, 233, 0) 80%) !important;
         border-radius: 50% !important;
         filter: blur(12px) !important;
         pointer-events: none !important;
@@ -98,9 +98,9 @@ def render_floating_ai_widget() -> None:
     }}
     .ag-floating-ai-fab:hover img {{
         animation: none !important;
-        filter: drop-shadow(0 0 12px rgba(255, 252, 200, 1))
-                drop-shadow(0 0 26px rgba(74, 222, 128, 0.95))
-                drop-shadow(0 0 48px rgba(34, 197, 94, 0.75))
+        filter: drop-shadow(0 0 14px rgba(125, 211, 252, 1))
+                drop-shadow(0 0 28px rgba(56, 189, 248, 0.95))
+                drop-shadow(0 0 48px rgba(74, 222, 128, 0.75))
                 drop-shadow(0 8px 18px rgba(0, 0, 0, 0.25)) !important;
     }}
     .ag-floating-ai-tooltip {{
@@ -108,14 +108,14 @@ def render_floating_ai_widget() -> None:
         right: 72px !important;
         background: linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.72) 0%,
-            rgba(255, 255, 255, 0.28) 35%,
-            rgba(220, 252, 231, 0.38) 70%,
-            rgba(187, 247, 208, 0.5) 100%
+            rgba(255, 255, 255, 0.82) 0%,
+            rgba(224, 242, 254, 0.45) 35%,
+            rgba(220, 252, 231, 0.45) 70%,
+            rgba(187, 247, 208, 0.55) 100%
         ) !important;
         backdrop-filter: blur(16px) saturate(190%) !important;
         -webkit-backdrop-filter: blur(16px) saturate(190%) !important;
-        color: #113824 !important;
+        color: #034b5c !important;
         font-size: 0.84rem !important;
         font-weight: 700 !important;
         padding: 7px 18px !important;
@@ -127,12 +127,12 @@ def render_floating_ai_widget() -> None:
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
         border: 1px solid rgba(255, 255, 255, 0.75) !important;
         border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.45) !important;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.35) !important;
         box-shadow:
-            0 10px 30px rgba(16, 55, 35, 0.12),
+            0 10px 30px rgba(2, 38, 48, 0.12),
             0 2px 8px rgba(0, 0, 0, 0.04),
             inset 0 1.5px 2px rgba(255, 255, 255, 1),
-            inset 0 -1.5px 2px rgba(180, 230, 200, 0.35),
+            inset 0 -1.5px 2px rgba(56, 189, 248, 0.25),
             inset 0 0 14px rgba(255, 255, 255, 0.5) !important;
         text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9) !important;
         letter-spacing: 0.02em !important;
