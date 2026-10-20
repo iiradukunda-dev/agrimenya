@@ -275,7 +275,7 @@ def render_home_hero() -> None:
           <span class="ag-hero-card-tag">2026 Season A</span>
         </div>
         <p class="ag-hero-card-desc">
-          Current agricultural campaign is active. Review localized soil moisture and yield projections before dispatching field advisories.
+          Active 2026 Season A campaign. Tracking soil moisture and conformal yield bounds.
         </p>
         <div class="ag-hero-card-row">
           <div class="ag-hero-pill-info">
