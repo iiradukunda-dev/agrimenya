@@ -73,6 +73,44 @@ def render_navbar() -> None:
         display: none !important;
       }
 
+      /* More Popover Button & Floating Panel */
+      [data-testid="stPopover"] > button {
+        border-radius: 10px !important;
+        min-height: 2.55rem !important;
+        padding: 0.35rem 0.85rem !important;
+        border: 1px solid rgba(56, 189, 248, 0.22) !important;
+        background: rgba(255, 255, 255, 0.6) !important;
+        backdrop-filter: blur(8px) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.88rem !important;
+        font-weight: 650 !important;
+        color: #2b454e !important;
+        transition: all 0.25s ease !important;
+      }
+      [data-testid="stPopover"] > button:hover {
+        background: rgba(14, 165, 233, 0.1) !important;
+        border-color: rgba(56, 189, 248, 0.45) !important;
+        color: #0284c7 !important;
+        transform: translateY(-1px) !important;
+      }
+      div[data-testid="stPopoverBody"] {
+        max-height: 520px !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(56, 189, 248, 0.28) !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+        box-shadow: 0 16px 40px rgba(2, 32, 44, 0.16) !important;
+        padding: 0.65rem 0.55rem !important;
+      }
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] {
+        min-height: 2.2rem !important;
+        padding: 0.25rem 0.65rem !important;
+        margin: 0.08rem 0 !important;
+      }
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] p {
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+      }
+
       /* Divider rule */
       .ag-nav-rule {
         border: 0;
@@ -93,29 +131,32 @@ def render_navbar() -> None:
       </style>
     """, unsafe_allow_html=True)
 
-    brand, dashboard, zones, segment, decide, planning, communication, more, language = st.columns(
-        [1.3, 0.95, 0.75, 0.85, 0.75, 0.7, 0.8, 0.65, 0.45], vertical_alignment="center", gap="small"
+    brand, dashboard, zones, decide, more, language = st.columns(
+        [1.6, 1.15, 1.05, 1.15, 0.95, 0.55], vertical_alignment="center", gap="medium"
     )
     with brand:
         st.page_link("Home.py", label="agrimenya")
     for col, path, label in [
         (dashboard, "pages/3_Dashboard.py", "Overview"),
         (zones, "pages/4_Zones.py", "Zones"),
-        (segment, "pages/5_Segmentation.py", "Segment"),
-        (decide, "pages/6_Decision_Making.py", "Decide"),
-        (planning, "pages/8_Planning.py", "Plan"),
-        (communication, "pages/9_Communication.py", "Alerts"),
+        (decide, "pages/6_Decision_Making.py", "Decisions"),
     ]:
         with col:
             st.page_link(path, label=label)
     with more:
         with st.popover("More", width="stretch"):
+            st.caption("OPERATIONS & TOOLS")
+            st.page_link("pages/8_Planning.py", label="Seasonal planning")
+            st.page_link("pages/9_Communication.py", label="Field alerts & comms")
+            st.page_link("pages/5_Segmentation.py", label="Zone segmentation")
             st.page_link("pages/7_AI_Assistant.py", label="AI assistant")
+            st.divider()
+            st.caption("PLATFORM & COMMUNITY")
             st.page_link("pages/10_Admin.py", label="Administration")
             st.page_link("pages/99_Showcase.py", label="Data guide")
-            st.page_link("pages/1_About.py", label="About")
-            st.page_link("pages/11_Contact.py", label="Feedback")
             st.page_link("pages/12_Community.py", label="Farmer community")
+            st.page_link("pages/1_About.py", label="About agrimenya")
+            st.page_link("pages/11_Contact.py", label="Feedback & support")
     with language:
         render_language_selector(sidebar=False)
     st.markdown('<hr class="ag-nav-rule">', unsafe_allow_html=True)
