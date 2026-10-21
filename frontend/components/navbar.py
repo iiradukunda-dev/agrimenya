@@ -10,38 +10,45 @@ def render_navbar() -> None:
       <style>
       [data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; }
       
-      /* Nav Bar Base Container Styling */
+      /* Nav Bar Base Container Styling - Frosted Glass Capsules */
       [data-testid="stPageLink-NavLink"] {
+        background: rgba(255, 255, 255, 0.88) !important;
+        backdrop-filter: blur(14px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
         border-radius: 10px !important;
         min-height: 2.55rem !important;
         padding: 0.35rem 0.75rem !important;
-        border: 1px solid transparent !important;
+        border: 1px solid rgba(255, 255, 255, 0.65) !important;
+        box-shadow: 0 4px 14px rgba(2, 24, 36, 0.15) !important;
+        justify-content: center !important;
+        text-align: center !important;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
       }
       [data-testid="stPageLink-NavLink"] p {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.88rem !important;
-        font-weight: 650 !important;
-        color: #2b454e !important;
+        font-weight: 700 !important;
+        color: #032b35 !important;
         letter-spacing: -0.01em !important;
         transition: color 0.2s ease !important;
       }
       [data-testid="stPageLink-NavLink"]:hover {
-        background: rgba(14, 165, 233, 0.08) !important;
-        border-color: rgba(56, 189, 248, 0.28) !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-color: rgba(56, 189, 248, 0.5) !important;
+        box-shadow: 0 6px 18px rgba(14, 165, 233, 0.25) !important;
         transform: translateY(-1px) !important;
       }
       [data-testid="stPageLink-NavLink"]:hover p {
         color: #0284c7 !important;
       }
       [data-testid="stPageLink-NavLink"][aria-current="page"] {
-        background: linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(16, 185, 129, 0.1) 100%) !important;
-        border: 1px solid rgba(56, 189, 248, 0.38) !important;
-        box-shadow: 0 2px 10px rgba(14, 165, 233, 0.14) !important;
+        background: linear-gradient(135deg, rgba(224, 242, 254, 0.95) 0%, rgba(209, 250, 229, 0.95) 100%) !important;
+        border: 1.5px solid rgba(56, 189, 248, 0.6) !important;
+        box-shadow: 0 4px 16px rgba(14, 165, 233, 0.22) !important;
       }
       [data-testid="stPageLink-NavLink"][aria-current="page"] p {
         color: #035368 !important;
-        font-weight: 750 !important;
+        font-weight: 800 !important;
       }
 
       /* Brand Logo Special Styling - Cyan-to-Forest Bulb Theme */
@@ -78,18 +85,20 @@ def render_navbar() -> None:
         border-radius: 10px !important;
         min-height: 2.55rem !important;
         padding: 0.35rem 0.85rem !important;
-        border: 1px solid rgba(56, 189, 248, 0.22) !important;
-        background: rgba(255, 255, 255, 0.6) !important;
-        backdrop-filter: blur(8px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.65) !important;
+        background: rgba(255, 255, 255, 0.88) !important;
+        backdrop-filter: blur(14px) saturate(180%) !important;
+        box-shadow: 0 4px 14px rgba(2, 24, 36, 0.15) !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.88rem !important;
-        font-weight: 650 !important;
-        color: #2b454e !important;
+        font-weight: 700 !important;
+        color: #032b35 !important;
         transition: all 0.25s ease !important;
       }
       [data-testid="stPopover"] > button:hover {
-        background: rgba(14, 165, 233, 0.1) !important;
-        border-color: rgba(56, 189, 248, 0.45) !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-color: rgba(56, 189, 248, 0.5) !important;
+        box-shadow: 0 6px 18px rgba(14, 165, 233, 0.25) !important;
         color: #0284c7 !important;
         transform: translateY(-1px) !important;
       }

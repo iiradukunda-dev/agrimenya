@@ -22,7 +22,7 @@ def main():
 
     # Section 1: Core Action Workflows
     st.markdown(
-        """<div style="margin:1.8rem 0 1rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;"><div><h2 style="margin:0;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.65rem;font-weight:800;color:#032b35;letter-spacing:-0.03em;">Decision & Action Pillars</h2><p style="margin:0.25rem 0 0;color:#3e5c66;font-size:0.94rem;">Navigate from spatial zone intelligence to verified field recommendations and team dispatches.</p></div></div>""",
+        """<div style="margin:2rem 0 1rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;"><div><h2 style="margin:0;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.65rem;font-weight:800;color:#ffffff;letter-spacing:-0.03em;text-shadow:0 2px 10px rgba(0,0,0,0.7);">Decision & Action Pillars</h2><p style="margin:0.25rem 0 0;color:#e0f2fe;font-size:0.94rem;text-shadow:0 1px 6px rgba(0,0,0,0.7);">Navigate from spatial zone intelligence to verified field recommendations and team dispatches.</p></div></div>""",
         unsafe_allow_html=True,
     )
 
@@ -71,7 +71,7 @@ def main():
 
     # Section 2: Interactive Operational Roadmap
     st.markdown(
-        """<div style="margin:2.6rem 0 1.2rem;"><div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(14,165,233,0.12);border:1px solid rgba(56,189,248,0.3);border-radius:9999px;font-size:0.74rem;font-weight:750;letter-spacing:0.08em;text-transform:uppercase;color:#0284c7;">OPERATIONAL PIPELINE</div><h2 style="margin:0.4rem 0 0.25rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.55rem;font-weight:800;color:#032b35;letter-spacing:-0.03em;">A Practical Field Workflow</h2><p style="margin:0;color:#3e5c66;font-size:0.94rem;">A streamlined three-stage cycle designed for agronomists, regional planners, and extension leaders.</p></div>""",
+        """<div style="margin:2.8rem 0 1.2rem;"><div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(14,165,233,0.24);border:1px solid rgba(56,189,248,0.45);border-radius:9999px;font-size:0.74rem;font-weight:750;letter-spacing:0.08em;text-transform:uppercase;color:#7dd3fc;box-shadow:0 2px 8px rgba(2,24,36,0.3);">OPERATIONAL PIPELINE</div><h2 style="margin:0.45rem 0 0.25rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.55rem;font-weight:800;color:#ffffff;letter-spacing:-0.03em;text-shadow:0 2px 10px rgba(0,0,0,0.7);">A Practical Field Workflow</h2><p style="margin:0;color:#e0f2fe;font-size:0.94rem;text-shadow:0 1px 6px rgba(0,0,0,0.7);">A streamlined three-stage cycle designed for agronomists, regional planners, and extension leaders.</p></div>""",
         unsafe_allow_html=True,
     )
 
