@@ -2,6 +2,7 @@
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
 from utils.i18n import render_language_selector
+from utils.pwa import render_pwa_support
 
 
 def render_navbar() -> None:
@@ -276,7 +277,12 @@ def render_navbar() -> None:
             st.page_link("pages/12_Community.py", label="Farmer community")
             st.page_link("pages/1_About.py", label="About agrimenya")
             st.page_link("pages/11_Contact.py", label="Feedback & support")
+            st.markdown(
+                '<a href="/app/static/offline.html" target="_blank" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.65rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#38bdf8;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);margin-top:0.3rem;">⚡ Offline Field Hub</a>',
+                unsafe_allow_html=True,
+            )
     with language:
         render_language_selector(sidebar=False)
     st.markdown('<hr class="ag-nav-rule">', unsafe_allow_html=True)
     render_floating_ai_widget()
+    render_pwa_support()
