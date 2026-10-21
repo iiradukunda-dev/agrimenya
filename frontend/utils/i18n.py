@@ -495,10 +495,9 @@ def render_language_selector(sidebar: bool = True) -> None:
         def _cycle_lang():
             set_language(next_code)
 
-        # Renders an icon-only button. The empty string ensures no "unnecessary words" are shown.
+        # Renders an icon-only button styled with vector SVG globe via CSS.
         st.button(
             label=" ", 
-            icon=":material/language:",
             key="lang_cycle_btn",
             on_click=_cycle_lang,
             help="Switch language (EN, RW, FR)",

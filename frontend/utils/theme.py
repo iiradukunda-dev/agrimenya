@@ -7,6 +7,7 @@ def load_theme() -> None:
     st.html("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
     :root {
       /* Bio-Luminescent Bulb & Foliage Theme Palette */
@@ -86,7 +87,7 @@ def load_theme() -> None:
     /* Headings */
     h1, h2, h3, h4 {
       font-family: 'Plus Jakarta Sans', 'Inter', sans-serif !important;
-      color: var(--ag-ink) !important;
+      color: var(--ag-ink);
       letter-spacing: -0.03em;
       font-weight: 750 !important;
     }
@@ -117,20 +118,58 @@ def load_theme() -> None:
       font-size: 0.86rem;
     }
 
-    /* Glass Cards & Containers with Liquid Refraction */
+    /* Transparent Glass Cards & Containers with Liquid Refraction */
     [data-testid="stVerticalBlockBorderWrapper"] {
-      border: 1px solid rgba(56, 189, 248, 0.22) !important;
+      border: 1px solid rgba(255, 255, 255, 0.20) !important;
+      border-top: 1.5px solid rgba(255, 255, 255, 0.38) !important;
       border-radius: var(--ag-radius-md) !important;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(246, 252, 254, 0.85) 100%) !important;
-      backdrop-filter: blur(14px) !important;
-      -webkit-backdrop-filter: blur(14px) !important;
-      box-shadow: 0 4px 18px rgba(4, 31, 38, 0.05), inset 0 1px 1.5px rgba(255, 255, 255, 0.95) !important;
+      background: rgba(2, 24, 36, 0.32) !important;
+      backdrop-filter: blur(16px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"]:hover {
-      box-shadow: 0 12px 32px rgba(4, 31, 38, 0.09), 0 0 20px rgba(56, 189, 248, 0.25) !important;
-      border-color: rgba(56, 189, 248, 0.45) !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(56, 189, 248, 0.25) !important;
+      border-color: rgba(56, 189, 248, 0.55) !important;
+      background: rgba(2, 24, 36, 0.48) !important;
       transform: translateY(-3px) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] h1,
+    [data-testid="stVerticalBlockBorderWrapper"] h2,
+    [data-testid="stVerticalBlockBorderWrapper"] h3,
+    [data-testid="stVerticalBlockBorderWrapper"] h4 {
+      color: #ffffff !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] p {
+      color: #e0f2fe !important;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
+    [data-testid="stVerticalBlockBorderWrapper"] button {
+      background: rgba(255, 255, 255, 0.10) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      border-radius: 10px !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+      transition: all 0.25s ease !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
+    [data-testid="stVerticalBlockBorderWrapper"] button * {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
+    [data-testid="stVerticalBlockBorderWrapper"] button:hover {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(74, 222, 128, 0.30) 100%) !important;
+      border-color: rgba(56, 189, 248, 0.8) !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
+      transform: translateY(-2px) !important;
     }
 
     /* Metrics Cards with Cyan Bulb Accent */
@@ -201,6 +240,100 @@ def load_theme() -> None:
       color: #ffffff !important;
       box-shadow: 0 8px 26px rgba(14, 165, 233, 0.55), 0 0 22px rgba(74, 222, 128, 0.4) !important;
       transform: translateY(-2px) scale(1.01) !important;
+    }
+
+    /* Transparent Card Buttons override (Placed after generic button rules) */
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
+    [data-testid="stVerticalBlockBorderWrapper"] button {
+      background: rgba(255, 255, 255, 0.10) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      border-radius: 10px !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+      transition: all 0.25s ease !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
+    [data-testid="stVerticalBlockBorderWrapper"] button * {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
+    [data-testid="stVerticalBlockBorderWrapper"] button:hover {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(74, 222, 128, 0.30) 100%) !important;
+      border-color: rgba(56, 189, 248, 0.8) !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
+      transform: translateY(-2px) !important;
+    }
+
+    /* Navbar Transparent Buttons & Popovers (Placed after generic button rules) */
+    [data-testid="stHorizontalBlock"] button,
+    [data-testid="stHorizontalBlock"] .stPopover > button,
+    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
+      background: rgba(255, 255, 255, 0.08) !important;
+      backdrop-filter: blur(14px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
+      border-radius: 10px !important;
+      min-height: 2.55rem !important;
+      padding: 0.35rem 0.85rem !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 0.88rem !important;
+      font-weight: 700 !important;
+      color: #ffffff !important;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
+      transition: all 0.25s ease !important;
+    }
+    [data-testid="stHorizontalBlock"] button p,
+    [data-testid="stHorizontalBlock"] .stPopover > button p,
+    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p {
+      color: #ffffff !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-weight: 700 !important;
+    }
+    [data-testid="stHorizontalBlock"] button span[data-testid="stIconMaterial"],
+    [data-testid="stHorizontalBlock"] .stPopover > button span[data-testid="stIconMaterial"],
+    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span[data-testid="stIconMaterial"] {
+      color: #ffffff !important;
+      font-family: "Material Symbols Rounded", "Material Symbols Outlined" !important;
+    }
+    [data-testid="stHorizontalBlock"] button:hover,
+    [data-testid="stHorizontalBlock"] .stPopover > button:hover,
+    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
+      background: rgba(255, 255, 255, 0.18) !important;
+      border-color: rgba(56, 189, 248, 0.65) !important;
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
+      transform: translateY(-1px) !important;
+    }
+    [data-testid="stHorizontalBlock"] button:hover p,
+    [data-testid="stHorizontalBlock"] .stPopover > button:hover p,
+    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
+    [data-testid="stHorizontalBlock"] button:hover span[data-testid="stIconMaterial"],
+    [data-testid="stHorizontalBlock"] .stPopover > button:hover span[data-testid="stIconMaterial"] {
+      color: #38bdf8 !important;
+    }
+
+    /* Transparent Landing Page Headings & Subtitles */
+    .ag-section-title, h2.ag-section-title {
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 1.65rem !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.03em !important;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+      margin: 0 !important;
+    }
+    .ag-section-subtitle, p.ag-section-subtitle {
+      color: #e0f2fe !important;
+      -webkit-text-fill-color: #e0f2fe !important;
+      font-size: 0.94rem !important;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8) !important;
+      margin: 0.25rem 0 0 !important;
     }
 
     /* Form inputs & Selectboxes */

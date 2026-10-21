@@ -65,13 +65,83 @@ def render_home_hero() -> None:
       div[data-testid="stCustomComponentV1"] {
         margin-bottom: 1.5rem !important;
       }
-      /* Action workflow cards: high-gloss translucent glass cards */
+      /* Action workflow cards: transparent frosted glass cards */
       [data-testid="stVerticalBlockBorderWrapper"] {
-        background: rgba(255, 255, 255, 0.90) !important;
+        background: rgba(2, 24, 36, 0.32) !important;
         backdrop-filter: blur(16px) saturate(190%) !important;
         -webkit-backdrop-filter: blur(16px) saturate(190%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.7) !important;
-        box-shadow: 0 12px 32px rgba(2, 24, 36, 0.22) !important;
+        border: 1px solid rgba(255, 255, 255, 0.20) !important;
+        border-top: 1.5px solid rgba(255, 255, 255, 0.40) !important;
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
+        border-radius: 18px !important;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      }
+      [data-testid="stVerticalBlockBorderWrapper"]:hover {
+        background: rgba(2, 24, 36, 0.48) !important;
+        border-color: rgba(56, 189, 248, 0.6) !important;
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.50), 0 0 24px rgba(56, 189, 248, 0.28) !important;
+        transform: translateY(-4px) !important;
+      }
+
+      /* Headings & Text inside transparent cards */
+      [data-testid="stVerticalBlockBorderWrapper"] h1,
+      [data-testid="stVerticalBlockBorderWrapper"] h2,
+      [data-testid="stVerticalBlockBorderWrapper"] h3,
+      [data-testid="stVerticalBlockBorderWrapper"] h4 {
+        color: #ffffff !important;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+      }
+      [data-testid="stVerticalBlockBorderWrapper"] p,
+      [data-testid="stVerticalBlockBorderWrapper"] span:not([style*="color"]) {
+        color: #e0f2fe !important;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7) !important;
+      }
+
+      /* Transparent Card Buttons - High specificity override */
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
+      [data-testid="stVerticalBlockBorderWrapper"] button,
+      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"] {
+        background: rgba(255, 255, 255, 0.10) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+        border-radius: 10px !important;
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.01em !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
+        transition: all 0.25s ease !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+      }
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
+      [data-testid="stVerticalBlockBorderWrapper"] button * {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+      }
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
+      [data-testid="stVerticalBlockBorderWrapper"] button:hover,
+      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:hover {
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(74, 222, 128, 0.30) 100%) !important;
+        border-color: rgba(56, 189, 248, 0.8) !important;
+        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+      }
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover *,
+      [data-testid="stVerticalBlockBorderWrapper"] button:hover * {
+        color: #ffffff !important;
+      }
+
+      /* White Section Title & Subtitle overrides for fullpage video backdrop */
+      .ag-section-title, h2.ag-section-title {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+      }
+      .ag-section-subtitle, p.ag-section-subtitle {
+        color: #e0f2fe !important;
+        -webkit-text-fill-color: #e0f2fe !important;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8) !important;
       }
     </style>
     """)
@@ -98,7 +168,7 @@ def render_home_hero() -> None:
           height: 100%;
         }}
 
-        /* Floating glassmorphic command center card (no video inside - video is full page background) */
+        /* Floating transparent glassmorphic command center card (no video inside - video is full page background) */
         .ag-hero-wrapper {{
           position: relative;
           overflow: hidden;
@@ -107,17 +177,17 @@ def render_home_hero() -> None:
           color: #ffffff;
           background: linear-gradient(
             135deg,
-            rgba(2, 24, 36, 0.72) 0%,
-            rgba(3, 34, 46, 0.58) 42%,
-            rgba(6, 56, 48, 0.58) 78%,
-            rgba(4, 40, 32, 0.68) 100%
+            rgba(2, 24, 36, 0.32) 0%,
+            rgba(3, 34, 46, 0.22) 42%,
+            rgba(6, 56, 48, 0.22) 78%,
+            rgba(4, 40, 32, 0.28) 100%
           );
-          backdrop-filter: blur(20px) saturate(190%);
-          -webkit-backdrop-filter: blur(20px) saturate(190%);
+          backdrop-filter: blur(14px) saturate(170%);
+          -webkit-backdrop-filter: blur(14px) saturate(170%);
           border-radius: 22px;
-          border: 1px solid rgba(56, 189, 248, 0.38);
-          border-top: 1.5px solid rgba(255, 255, 255, 0.55);
-          box-shadow: 0 20px 50px rgba(2, 24, 36, 0.45), 0 0 40px rgba(56, 189, 248, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          border-top: 1.5px solid rgba(255, 255, 255, 0.45);
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.40), 0 0 40px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.20);
         }}
 
         /* Ambient Cyan Bulb & Tree Emerald Light Orbs inside hero card */
@@ -267,14 +337,14 @@ def render_home_hero() -> None:
         /* Right Column: Liquid Glass Bulb Horizon Card */
         .ag-hero-glass-card {{
           position: relative;
-          background: linear-gradient(135deg, rgba(2, 24, 36, 0.75) 0%, rgba(4, 38, 51, 0.65) 40%, rgba(6, 56, 54, 0.65) 100%);
-          backdrop-filter: blur(20px) saturate(190%);
-          -webkit-backdrop-filter: blur(20px) saturate(190%);
-          border: 1px solid rgba(125, 211, 252, 0.4);
-          border-top: 1.5px solid rgba(255, 255, 255, 0.7);
+          background: linear-gradient(135deg, rgba(2, 24, 36, 0.35) 0%, rgba(4, 38, 51, 0.25) 40%, rgba(6, 56, 54, 0.25) 100%);
+          backdrop-filter: blur(14px) saturate(170%);
+          -webkit-backdrop-filter: blur(14px) saturate(170%);
+          border: 1px solid rgba(125, 211, 252, 0.30);
+          border-top: 1.5px solid rgba(255, 255, 255, 0.50);
           border-radius: 18px;
           padding: 1.4rem 1.5rem;
-          box-shadow: 0 16px 40px rgba(2, 24, 36, 0.55), inset 0 1.5px 2px rgba(255, 255, 255, 0.35);
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.25);
         }}
         .ag-hero-card-header {{
           display: flex;
@@ -444,7 +514,7 @@ def render_home_hero() -> None:
             if (!overlay) {{
               overlay = parentDoc.createElement('div');
               overlay.id = 'ag-landing-fullpage-overlay';
-              overlay.style.cssText = 'position:fixed;inset:0;background:radial-gradient(circle at 50% 15%, rgba(2,24,36,0.45) 0%, rgba(2,24,36,0.78) 100%);z-index:-1;pointer-events:none;';
+              overlay.style.cssText = 'position:fixed;inset:0;background:radial-gradient(circle at 50% 15%, rgba(2,24,36,0.30) 0%, rgba(2,24,36,0.65) 100%);z-index:-1;pointer-events:none;';
               parentDoc.body.prepend(overlay);
             }} else {{
               overlay.style.display = 'block';
