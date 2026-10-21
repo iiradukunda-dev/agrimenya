@@ -473,7 +473,9 @@ def render_home_hero() -> None:
             const parentDoc = window.parent.document;
             if (!parentDoc) return;
 
-            // 1. Inject or update full-page background video
+            // 1. Inject or update full-page background video with pristine native fidelity
+            const videoStyles = 'position:fixed;top:0;left:0;width:100vw;height:100vh;min-width:100%;min-height:100%;object-fit:cover;object-position:center center;z-index:-2;pointer-events:none;transform:translate3d(0,0,0);-webkit-transform:translate3d(0,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden;will-change:transform;image-rendering:high-quality;image-rendering:-webkit-optimize-contrast;filter:brightness(0.92);';
+
             let video = parentDoc.getElementById('ag-landing-fullpage-video');
             if (!video) {{
               video = parentDoc.createElement('video');
@@ -487,7 +489,7 @@ def render_home_hero() -> None:
               video.setAttribute('muted', '');
               video.setAttribute('loop', '');
               video.setAttribute('playsinline', '');
-              video.style.cssText = 'position:fixed;top:0;left:-1%;width:138vw;height:100vh;object-fit:cover;object-position:left center;z-index:-2;pointer-events:none;filter:brightness(0.80) contrast(1.1) saturate(1.25);';
+              video.style.cssText = videoStyles;
               
               const source = parentDoc.createElement('source');
               source.src = '{video_url}';
@@ -496,6 +498,7 @@ def render_home_hero() -> None:
               
               parentDoc.body.prepend(video);
             }} else {{
+              video.style.cssText = videoStyles;
               video.style.display = 'block';
             }}
 
@@ -510,13 +513,15 @@ def render_home_hero() -> None:
             }}
 
             // 2. Inject or update cinematic full-page overlay
+            const overlayStyles = 'position:fixed;inset:0;background:radial-gradient(ellipse at 50% 25%, rgba(2,24,36,0.12) 0%, rgba(2,24,36,0.38) 100%);z-index:-1;pointer-events:none;';
             let overlay = parentDoc.getElementById('ag-landing-fullpage-overlay');
             if (!overlay) {{
               overlay = parentDoc.createElement('div');
               overlay.id = 'ag-landing-fullpage-overlay';
-              overlay.style.cssText = 'position:fixed;inset:0;background:radial-gradient(circle at 50% 15%, rgba(2,24,36,0.30) 0%, rgba(2,24,36,0.65) 100%);z-index:-1;pointer-events:none;';
+              overlay.style.cssText = overlayStyles;
               parentDoc.body.prepend(overlay);
             }} else {{
+              overlay.style.cssText = overlayStyles;
               overlay.style.display = 'block';
             }}
 
