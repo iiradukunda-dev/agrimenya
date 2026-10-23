@@ -17,8 +17,10 @@ logger = logging.getLogger(__name__)
 
 def render_admin() -> None:
     try:
+        if not api_client.admin_session_authenticated():
+            st.title("Administrator sign in")
+            st.caption("Use your named administrator account to access system operations and NISR data.")
         if not api_client.render_admin_login("admin_panel"):
-            st.info("Sign in with your administrator email and password to use these operations.")
             return
         render_icon_title(
             "assets/compass.svg",
@@ -26,12 +28,13 @@ def render_admin() -> None:
             "System operations, zone management, and health monitoring",
         )
 
-        admin_tabs = st.tabs(["System Health", "Zone Management", "Plan Management", "Alert Management", "NISR Data", "Access Management", "Community Moderation"])
+        admin_sections = ["System Health", "Zone Management", "Plan Management", "Alert Management", "NISR Data", "Access Management", "Community Moderation"]
+        admin_section = st.selectbox("Administration area", admin_sections, key="admin_active_section")
 
         # ═════════════════════════════════════════════════════════════
         # TAB 1: System Health
         # ═════════════════════════════════════════════════════════════
-        with admin_tabs[0]:
+        if admin_section == "System Health":
             render_icon_subheader("assets/compass.svg", "System Health")
 
             health = api_client.get_health()
@@ -43,22 +46,19 @@ def render_admin() -> None:
                     st.metric("API service", status.upper())
                 with h_cols[1]:
                     st.metric("Database", str(health.get("database_status", "unknown")).upper())
-                model_present = health.get("model_present", False)
+                model_present = bool(health.get("model_present", False))
                 with h_cols[2]:
                     st.metric("Environment", health.get("env", "N/A"))
                 with h_cols[3]:
-                    yield_source = health.get("yield_source") or ("Trained model" if model_present else "Unavailable")
-                    if "database" in str(yield_source).casefold():
-                        source_label = "Database"
-                    elif "model" in str(yield_source).casefold():
-                        source_label = "Model"
-                    else:
-                        source_label = "Unavailable"
-                    st.metric("Yield source", source_label)
+                    yield_source = health.get("yield_source") or "Unavailable"
+                    st.metric("Yield evidence", "Available" if health.get("baselines_present") else "Unavailable")
                     st.caption(str(yield_source))
                 with h_cols[4]:
                     baselines_present = health.get("baselines_present", False)
                     st.metric("Yield baselines", "Loaded" if baselines_present else "Unavailable")
+
+                if not model_present and health.get("baselines_present"):
+                    st.info("A trained yield ML model is not deployed. Yield assessments currently use recorded observations and the official NISR historical baseline fallback; do not describe these as ML predictions.")
 
                 with st.expander("Detailed Health Info"):
                     st.json(health)
@@ -68,7 +68,7 @@ def render_admin() -> None:
         # ═════════════════════════════════════════════════════════════
         # TAB 2: Zone Management
         # ═════════════════════════════════════════════════════════════
-        with admin_tabs[1]:
+        if admin_section == "Zone Management":
             render_icon_subheader("assets/map.svg", "Zone Management")
 
             admin_zones = api_client.get_admin_zones()
@@ -128,7 +128,7 @@ def render_admin() -> None:
         # ═════════════════════════════════════════════════════════════
         # TAB 3: Plan Management
         # ═════════════════════════════════════════════════════════════
-        with admin_tabs[2]:
+        if admin_section == "Plan Management":
             render_icon_subheader("assets/calendar.svg", "Plan Management")
 
             admin_plans = api_client.get_admin_plans()
@@ -156,6 +156,32 @@ def render_admin() -> None:
                                 st.rerun()
                             else:
                                 st.error("Plan update failed. Check admin access.")
+                        roadmap = plan.get("roadmap_json") or []
+                        if isinstance(roadmap, list) and roadmap:
+                            with st.expander("Review activity status"):
+                                st.caption("Status changes are saved to the plan and recorded in the administrator audit log.")
+                                updated_steps = []
+                                with st.form(f"admin_plan_activity_status_{plan_id}"):
+                                    for index, step in enumerate(roadmap):
+                                        step = dict(step)
+                                        status_values = ["planned", "in_progress", "completed", "blocked"]
+                                        current = step.get("status", "planned")
+                                        if current not in status_values:
+                                            current = "planned"
+                                        step["status"] = st.selectbox(
+                                            str(step.get("title") or f"Activity {index + 1}"),
+                                            status_values, index=status_values.index(current),
+                                            format_func=lambda value: value.replace("_", " ").title(),
+                                            key=f"admin_plan_step_status_{plan_id}_{index}",
+                                        )
+                                        updated_steps.append(step)
+                                    save_statuses = st.form_submit_button("Save activity statuses", type="primary")
+                                if save_statuses:
+                                    if api_client.update_admin_plan(plan_id, {"roadmap_json": updated_steps}):
+                                        st.success("Activity statuses saved.")
+                                        st.rerun()
+                                    else:
+                                        st.error("Activity status update failed. Check administrator access.")
             else:
                 error = api_client.get_admin_api_error("/admin/plans")
                 if error:
@@ -166,7 +192,7 @@ def render_admin() -> None:
         # ═════════════════════════════════════════════════════════════
         # TAB 4: Alert Management
         # ═════════════════════════════════════════════════════════════
-        with admin_tabs[3]:
+        if admin_section == "Alert Management":
             render_icon_subheader("assets/bell.svg", "Alert Management")
 
             zones = api_client.get_admin_zones()
@@ -245,15 +271,15 @@ def render_admin() -> None:
                 else:
                     st.info("No alerts are available for management.")
 
-        with admin_tabs[4]:
+        if admin_section == "NISR Data":
             render_icon_subheader("assets/compass.svg", "NISR Dataset Imports")
             st.markdown(
                 "Upload one released NISR district-by-crop yield table at a time. "
                 "Imports are validated, tied to their release and season, and recorded in the database."
             )
             example_csv = (
-                "district,crop,season,yield_kg_ha,production_mt,cultivated_area_ha\n"
-                "Gasabo,Maize,2026 Season C,2200,4.4,2.0\n"
+                "district,crop,season,yield_kg_ha,production_mt,cultivated_area_ha,harvested_area_ha\n"
+                "Gasabo,Maize,2026 Season C,2200,4.4,2.0,1.8\n"
             )
             st.download_button(
                 "Download CSV format example",
@@ -263,7 +289,8 @@ def render_admin() -> None:
             )
             st.caption(
                 "Required columns: district, crop, season, yield_kg_ha. "
-                "production_mt and cultivated_area_ha are optional. Use the exact season label on every row, "
+                "production_mt, cultivated_area_ha and harvested_area_ha are optional. Use harvested area "
+                "for SAS yield where the official release provides it. Use the exact season label on every row, "
                 "for example ‘2026 Season C’. Accepted districts are Rwanda’s 30 districts."
             )
             with st.form("nisr_release_import", clear_on_submit=True):
@@ -308,7 +335,7 @@ def render_admin() -> None:
             else:
                 st.caption("No NISR releases have been imported through this panel yet.")
 
-        with admin_tabs[5]:
+        if admin_section == "Access Management":
             render_icon_subheader("assets/compass.svg", "Administrator Accounts")
             st.caption("Invite named administrators by email. Each invite link expires after 30 minutes and can be used once.")
             with st.form("admin_account_invite", clear_on_submit=True):
@@ -351,7 +378,7 @@ def render_admin() -> None:
             else:
                 st.info("No administrator accounts are available.")
 
-        with admin_tabs[6]:
+        if admin_section == "Community Moderation":
             render_icon_subheader("assets/compass.svg", "Community Moderation")
             st.caption("Review reported posts and comments. Hidden content is removed from the public feed.")
             accounts = api_client.get_community_accounts()
@@ -389,7 +416,17 @@ def render_admin() -> None:
                                    else [('Hide', 'hide'), ('Delete', 'delete')])
                         action_cols = st.columns(len(actions))
                         for col, (label, action) in zip(action_cols, actions):
-                            if col.button(label, key=f"community_post_{post.get('id')}_{action}"):
+                            post_id = str(post.get("id"))
+                            if action == "delete":
+                                with col.popover(label):
+                                    st.warning("Permanently delete this community post?")
+                                    should_moderate = st.button(
+                                        "Confirm delete", key=f"community_post_{post_id}_confirm_delete",
+                                        type="primary", width="stretch",
+                                    )
+                            else:
+                                should_moderate = col.button(label, key=f"community_post_{post_id}_{action}")
+                            if should_moderate:
                                 result = api_client.moderate_community_content({
                                     "target_kind": "post", "target_id": post["id"], "action": action,
                                 })
@@ -411,7 +448,13 @@ def render_admin() -> None:
                         st.write(report.get("symptoms") or report.get("notes") or "No note provided")
                         if report.get("photo_url"):
                             st.image(report["photo_url"], width=320)
-                        if st.button("Delete field observation", key=f"community_report_delete_{report.get('id')}"):
+                        with st.popover("Delete field observation"):
+                            st.warning("Permanently delete this farmer-submitted observation and its photo?")
+                            confirm_delete_report = st.button(
+                                "Confirm delete", key=f"community_report_confirm_{report.get('id')}",
+                                type="primary", width="stretch",
+                            )
+                        if confirm_delete_report:
                             result = api_client.delete_community_field_report(str(report["id"]))
                             if result:
                                 st.success("Field observation deleted.")
@@ -435,7 +478,16 @@ def render_admin() -> None:
                     buttons = st.columns(3)
                     actions = [("Hide content", "hide"), ("Delete content", "delete"), ("Dismiss report", "dismiss")]
                     for column, (label, action) in zip(buttons, actions):
-                        if column.button(label, key=f"community_mod_{report['id']}_{action}"):
+                        if action == "delete":
+                            with column.popover(label):
+                                st.warning("Permanently delete the reported content?")
+                                should_moderate = st.button(
+                                    "Confirm delete", key=f"community_mod_{report['id']}_confirm_delete",
+                                    type="primary", width="stretch",
+                                )
+                        else:
+                            should_moderate = column.button(label, key=f"community_mod_{report['id']}_{action}")
+                        if should_moderate:
                             payload = {
                                 "target_kind": target_kind,
                                 "target_id": report.get("comment_id") or report.get("post_id"),

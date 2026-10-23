@@ -1,5 +1,6 @@
 """Feedback form for the agrimenya workspace."""
 import os
+import re
 
 import streamlit as st
 from components.navbar import render_navbar
@@ -25,11 +26,13 @@ with st.container(border=True):
         submitted = st.form_submit_button("Send feedback", type="primary", width="stretch")
 
 if submitted:
-    if not name.strip() or not email.strip() or not message.strip():
-        st.error("Enter your name, email address, and message.")
+    if not name.strip() or not subject.strip() or not email.strip() or not message.strip():
+        st.error("Enter your name, a valid email address, a subject, and a message.")
+    elif not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email.strip()):
+        st.error("Enter a valid email address.")
     else:
         response = api_client.send_contact_message(name.strip(), email.strip(), subject.strip(), message.strip())
         if response:
             st.success("Your feedback was submitted.")
         else:
-            st.error("Feedback could not be submitted. Please try again when the service is available.")
+            st.error("Feedback was not submitted because the contact service is unavailable. Please try again later.")

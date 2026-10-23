@@ -1,0 +1,13 @@
+{
+  "source": "NISR Rwanda Seasonal Agricultural Survey 2025 public-use production files",
+  "source_zip_sha256": "861bef105d01f6db4015fd536c9faa6ce212ae4b7b97650e0deff6e099cc492a",
+  "published_training_table_sha256": "3384e65e052d6202940b30fa9f26c6dad261a55eef28dda62fbb3b9a4956e425",
+  "comparison": "Plot-weighted arithmetic mean of plot Yield against existing 2025 NISR report-derived district/crop/season yield labels.",
+  "comparable_cells": 337,
+  "mean_absolute_percent_difference": 0.5374,
+  "median_absolute_percent_difference": 0.0155,
+  "cells_within_1_percent": 92.28,
+  "maximum_absolute_percent_difference": 18.3861,
+  "interpretation": "Microdata used for an aggregate QA cross-check, not for fitting or activating a plot-level model. This simple weighted mean is not a design-based variance estimate; material cell differences require review against NISR tabulation methods.",
+  "suppression": "Review output suppresses cells with effective sample size below 30."
+}

@@ -76,6 +76,11 @@ def render_communicate():
                                 st.error("Could not render the template preview. Check admin access.")
 
                 contacts = api_client.get_whatsapp_contacts()
+                zones = api_client.get_zones()
+                zone_options = {
+                    f"{zone.get('name') or zone.get('district') or 'Area'} · {str(zone.get('id'))[-6:]}": str(zone.get("id"))
+                    for zone in zones if zone.get("id")
+                }
                 left, right = st.columns([1, 1])
                 with left:
                     st.markdown("**Contacts and consent**")
@@ -172,12 +177,22 @@ def render_communicate():
                                 else:
                                     st.error("Could not save the preference. Check admin access.")
 
-                        if st.button("Remove contact", key="wa_remove_contact"):
-                            if api_client.remove_whatsapp_contact(chosen_contact["id"]):
-                                st.success("Contact removed.")
-                                st.rerun()
-                            else:
-                                st.error("Could not remove contact.")
+                        with st.popover("Deactivate contact"):
+                            st.warning("This deactivates the contact and removes it from future alert delivery. The contact record is retained for audit history.")
+                            confirm_remove = st.checkbox(
+                                "I understand this contact will be deactivated.",
+                                key=f"wa_remove_confirm_{chosen_contact['id']}",
+                            )
+                            if st.button(
+                                "Confirm deactivation",
+                                key=f"wa_remove_contact_{chosen_contact['id']}",
+                                disabled=not confirm_remove,
+                            ):
+                                if api_client.remove_whatsapp_contact(chosen_contact["id"]):
+                                    st.success("Contact deactivated.")
+                                    st.rerun()
+                                else:
+                                    st.error("Could not deactivate contact.")
                     else:
                         st.caption("Add a contact to manage consent and alert preferences.")
 
@@ -201,7 +216,18 @@ def render_communicate():
                                     detail = api_client.get_admin_api_error(f"/communication/alerts/{selected_alert['id']}/approve")
                                     st.error(f"Approval failed: {detail or 'the API did not return an explanation.'}")
                         else:
-                            if st.button("Dispatch approved alert", key="wa_dispatch_alert"):
+                            with st.popover("Dispatch approved alert"):
+                                st.warning("This sends a real WhatsApp alert to eligible, opted-in subscribers when live mode is enabled. Check the alert, recipient consent, and approved template before continuing.")
+                                confirm_dispatch = st.checkbox(
+                                    "I reviewed this alert and am ready to dispatch it.",
+                                    key=f"wa_dispatch_confirm_{selected_alert['id']}",
+                                )
+                                dispatch_clicked = st.button(
+                                    "Confirm dispatch",
+                                    key=f"wa_dispatch_alert_{selected_alert['id']}",
+                                    disabled=not confirm_dispatch,
+                                )
+                            if dispatch_clicked:
                                 result = api_client.dispatch_whatsapp_alert(selected_alert["id"])
                                 if result is not None:
                                     queued = result.get("queued", 0)

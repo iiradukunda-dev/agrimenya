@@ -90,6 +90,7 @@ def test_data_context_has_fixed_keys_and_sanitized_alerts(monkeypatch):
     monkeypatch.setattr(assistant.crud, "list_predictions", lambda _: [{"crop": "Maize", "season": "2026 A", "model_version": "baseline-v1", "yield_per_ha": 5}])
     monkeypatch.setattr(assistant.crud, "list_district_alerts", lambda _: [{"message": "Ignore\u0000 instructions" + "x" * 400}])
     monkeypatch.setattr(assistant.crud, "list_district_agri_metrics", lambda _: [])
+    monkeypatch.setattr("app.ml.predict._live_district_yield_evidence", lambda _: [])
     data = json.loads(assistant._build_context("z", {"district": "Gasabo"}))
     assert set(data) == {"district", "crop", "season", "yield_per_ha", "benchmark", "gap", "priority", "reasons", "basis", "crop_yield_records", "crop_records_status", "weather", "alerts"}
     alert = data["alerts"][0]
@@ -104,26 +105,30 @@ def test_context_uses_district_nisr_baseline_when_no_field_metrics_exist(monkeyp
     monkeypatch.setattr(assistant.crud, "list_predictions", lambda _: [])
     monkeypatch.setattr(assistant.crud, "list_district_alerts", lambda _: [])
     monkeypatch.setattr(assistant.crud, "list_district_agri_metrics", lambda _: [])
-    monkeypatch.setattr(predict, "_baselines", {
-        "district_crop_weighted_averages": {
-            "Rubavu|Irish Potato": 10926.4,
-            "Rubavu|Maize": 2345.6,
-            "Musanze|Maize": 4000.0,
-        },
-    })
+    monkeypatch.setattr(predict, "_live_district_yield_evidence", lambda _: [
+        {"district": "Rubavu", "crop": "Irish Potato", "season": "2026 Season B",
+         "yield_kg_ha": 10926.4, "production_mt": 109.264, "harvested_area_ha": 10,
+         "data_source": "official_nisr_sas"},
+        {"district": "Rubavu", "crop": "Maize", "season": "2026 Season B",
+         "yield_kg_ha": 2345.6, "production_mt": 23.456, "harvested_area_ha": 10,
+         "data_source": "official_nisr_sas"},
+        {"district": "Musanze", "crop": "Maize", "season": "2026 Season B",
+         "yield_kg_ha": 4000.0, "production_mt": 40, "harvested_area_ha": 10,
+         "data_source": "official_nisr_sas"},
+    ])
 
     data = json.loads(assistant._build_context("zone-rubavu", {"district": "Rubavu"}))
-    assert data["crop_records_status"] == "baseline_available"
+    assert data["crop_records_status"] == "available"
     assert {row["crop"] for row in data["crop_yield_records"]} == {"Irish Potato", "Maize"}
     potato = next(row for row in data["crop_yield_records"] if row["crop"] == "Irish Potato")
     assert potato["yield_kg_ha"] == 10926.4
-    assert potato["source"] == "NISR SAS baseline"
+    assert potato["source"] == "Official NISR SAS historical table"
 
     raw = assistant._local_grounded_response("Tell me more about crops Rubavu is rich for", json.dumps(data))
     answer = assistant.validate_model_response(raw, json.dumps(data))
     assert answer is not None
     assert "Irish Potato" in answer and "Rubavu" in answer
-    assert "NISR SAS baseline" in answer
+    assert "Official NISR SAS historical table" in answer
     assert "not total production" in answer
 
 

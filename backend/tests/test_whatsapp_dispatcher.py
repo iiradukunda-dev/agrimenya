@@ -95,13 +95,12 @@ def test_alert_sanitizer_removes_links_phone_numbers_and_controls():
 
 def test_dispatch_api_refuses_unapproved_alert(monkeypatch):
     from fastapi.testclient import TestClient
-    from app.core.config import settings
     from app.main import app
+    from tests.auth_helpers import admin_headers
 
-    monkeypatch.setattr(settings, "ADMIN_API_KEY", "test-admin-secret")
     monkeypatch.setattr("app.routers.whatsapp_admin.crud.get_alert", lambda _: {"id": "alert-1", "status": "draft"})
     response = TestClient(app).post(
         "/communication/alerts/alert-1/dispatch/whatsapp",
-        headers={"X-Admin-Key": "test-admin-secret"},
+        headers=admin_headers(monkeypatch),
     )
     assert response.status_code == 409

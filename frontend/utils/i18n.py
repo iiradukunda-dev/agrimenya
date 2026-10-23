@@ -48,7 +48,7 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "pillar.segmentation.desc": "Identify high-priority zones based on yield and risk data.",
         "pillar.segmentation.btn": "Segment",
         "pillar.decisions.title": "Decide",
-        "pillar.decisions.desc": "Review automated recommendations for timely interventions.",
+        "pillar.decisions.desc": "Review ranked priorities, evidence, and planned actions.",
         "pillar.decisions.btn": "Decide",
         "pillar.planification.title": "Plan",
         "pillar.planification.desc": "Plan and track agricultural roadmaps and execution.",
@@ -58,12 +58,17 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "pillar.communication.btn": "Communicate",
         "decisions.page_title": "Decision Making",
         "decisions.header": "Decision Making",
-        "decisions.subtitle": "Automated, proactive recommendations based on predictive agricultural data.",
+        "decisions.subtitle": "District crop evidence for planning and follow-up.",
         "decisions.empty": "No recommendations currently available or the backend could not be reached.",
         "decisions.act_btn": "Act",
-        "decisions.ai_title": "AI Assistant",
-        "decisions.ai_desc": "Ask the AI planner for specific context or adjustments to the recommendations.",
-        "decisions.ai_placeholder": "E.g., What are the risk factors for Maize in Nyagatare?",
+        "decisions.role_note": "Decide presents structured assessments from available data. For open questions and plain-language explanations, use AI Assistant.",
+        "decisions.priority_item": "Priority {number}",
+        "decisions.no_detail": "No supporting recommendation detail is available for this item.",
+        "decisions.evidence_title": "Evidence to consider",
+        "decisions.evidence_note": "Use recent field observations as context alongside the structured priorities. Community reports are not verified statistics or advice.",
+        "decisions.zone_context": "Select an area",
+        "decisions.zone_required": "Add or load an area to review its recent field observations.",
+        "decisions.ask_assistant": "Ask AI Assistant to explain this evidence",
         "decisions.field_signal": "Recent farmer observations (last 30 days)",
         "decisions.field_signal_note": "Community observations are an early field signal, not verified advice or official NISR data. They do not change the historical yield baseline.",
         "decisions.field_signal_empty": "No farmer observations recorded in this zone during the last 30 days.",
@@ -98,8 +103,8 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "plan.task.training": "Planting Training",
         "plan.task.monitoring": "Monitoring",
         "seg.page_title": "Segmentation",
-        "seg.header": "Segmentation & Zoning",
-        "seg.subtitle": "Interactive mapping for prioritizing agricultural zones across Rwanda.",
+        "seg.header": "Agricultural Segmentation",
+        "seg.subtitle": "Compare observed crop production across Rwanda’s districts and seasons.",
         "seg.filters": "Filters",
         "seg.season": "Season",
         "seg.crops": "Crops",
@@ -169,7 +174,7 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "pillar.segmentation.desc": "Kumenya uduce tw'ibanze dushingiye ku musaruro n'ibyago.",
         "pillar.segmentation.btn": "Gana ku Iteganyazoni",
         "pillar.decisions.title": "Gufata Ibyemezo",
-        "pillar.decisions.desc": "Gusuzuma inama zitangwa mu buryo bwikora ku bikorwa byihuse.",
+        "pillar.decisions.desc": "Gusuzuma ibyihutirwa, ibimenyetso bibishyigikira, n'ibikorwa biteganyijwe.",
         "pillar.decisions.btn": "Gana ku Byemezo",
         "pillar.planification.title": "Igenamigambi",
         "pillar.planification.desc": "Gutebya no gukurikirana igenamigambi ry'ubuhinzi n'ishyirwa mu bikorwa.",
@@ -179,12 +184,17 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "pillar.communication.btn": "Gana ku Itumanaho",
         "decisions.page_title": "Gufata Ibyemezo",
         "decisions.header": "Gufata Ibyemezo",
-        "decisions.subtitle": "Inama z'ubwenge bwikora zishingiye ku makuru y'iteganyamisaruro.",
+        "decisions.subtitle": "Amakuru y'akarere ku bihingwa yo gufasha mu igenamigambi no gukurikirana.",
         "decisions.empty": "Nta inama zibonetse ubu cyangwa seriveri ntiri kuboneka.",
         "decisions.act_btn": "Gira icyo ukora",
-        "decisions.ai_title": "Ubufasha bwa AI",
-        "decisions.ai_desc": "Baza umufasha wa AI ibisobanuro byimbitse cyangwa uburyo bwo guhuza inama.",
-        "decisions.ai_placeholder": "Urugero: Ni ibihe byago byugarije ikigori muri Nyagatare?",
+        "decisions.role_note": "Iki gice kigaragaza isuzuma rishingiye ku makuru ahari. Ku bibazo bisanzwe no gusobanurirwa mu magambo yoroshye, koresha AI Assistant.",
+        "decisions.priority_item": "Icyihutirwa {number}",
+        "decisions.no_detail": "Nta bisobanuro by'inyongera bihari kuri iki cyifuzo.",
+        "decisions.evidence_title": "Ibimenyetso byo kwitaho",
+        "decisions.evidence_note": "Reba amakuru mashya yo mu mirima nk'inyongera ku isuzuma. Amakuru y'abaturage si imibare yemejwe cyangwa inama zemewe.",
+        "decisions.zone_context": "Hitamo agace",
+        "decisions.zone_required": "Ongeraho cyangwa ufungure agace kugira ngo urebe amakuru mashya yo mu murima.",
+        "decisions.ask_assistant": "Saba AI Assistant gusobanura ibi bimenyetso",
         "decisions.field_signal": "Amakuru aheruka y'abahinzi (iminsi 30 ishize)",
         "decisions.field_signal_note": "Aya ni amakuru yatanzwe n'abahinzi yo kumenya ibiri kuba; si inama zemejwe cyangwa imibare ya NISR. Ntabwo ahindura impuzandengo y'umusaruro yo mu bihe byashize.",
         "decisions.field_signal_empty": "Nta makuru y'abahinzi yatanzwe muri aka gace mu minsi 30 ishize.",
@@ -219,8 +229,8 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "plan.task.training": "Amahugurwa yo Gutera",
         "plan.task.monitoring": "Gukurikirana Imihindagurikire",
         "seg.page_title": "Iteganyazoni",
-        "seg.header": "Iteganyazoni ry'Ubuhinzi",
-        "seg.subtitle": "Ikarita ifasha gutondeka uduce tw'ibanze tw'ubuhinzi mu Rwanda.",
+        "seg.header": "Gusesengura ibyiciro by'ubuhinzi",
+        "seg.subtitle": "Gereranya umusaruro wagaragajwe mu turere no mu bihembwe by'ubuhinzi mu Rwanda.",
         "seg.filters": "Akayunguruzo",
         "seg.season": "Igihembwe",
         "seg.crops": "Ibihingwa",
@@ -290,7 +300,7 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "pillar.segmentation.desc": "Identifier les zones prioritaires selon les rendements et les risques.",
         "pillar.segmentation.btn": "Segmenter",
         "pillar.decisions.title": "Décider",
-        "pillar.decisions.desc": "Consulter les recommandations automatisées pour des interventions rapides.",
+        "pillar.decisions.desc": "Consulter les priorités, leurs éléments de preuve et les actions prévues.",
         "pillar.decisions.btn": "Décider",
         "pillar.planification.title": "Planifier",
         "pillar.planification.desc": "Planifier et suivre les feuilles de route et l'exécution agricole.",
@@ -300,12 +310,17 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "pillar.communication.btn": "Communiquer",
         "decisions.page_title": "Prise de Décision",
         "decisions.header": "Prise de Décision",
-        "decisions.subtitle": "Recommandations automatisées et proactives basées sur les données prédictives agricoles.",
+        "decisions.subtitle": "Données agricoles locales pour planifier et assurer le suivi.",
         "decisions.empty": "Aucune recommandation disponible actuellement ou le backend est inaccessible.",
         "decisions.act_btn": "Agir",
-        "decisions.ai_title": "Assistant IA",
-        "decisions.ai_desc": "Demandez à l'assistant IA des précisions ou des ajustements aux recommandations.",
-        "decisions.ai_placeholder": "Ex: Quels sont les facteurs de risque pour le maïs à Nyagatare ?",
+        "decisions.role_note": "Cette page présente des évaluations structurées à partir des données disponibles. Pour poser des questions et obtenir des explications, utilisez AI Assistant.",
+        "decisions.priority_item": "Priorité {number}",
+        "decisions.no_detail": "Aucun détail justificatif n'est disponible pour cet élément.",
+        "decisions.evidence_title": "Éléments à prendre en compte",
+        "decisions.evidence_note": "Consultez les observations récentes en complément des priorités. Les signalements communautaires ne sont ni des statistiques vérifiées ni des conseils validés.",
+        "decisions.zone_context": "Sélectionner une zone",
+        "decisions.zone_required": "Ajoutez ou chargez une zone pour consulter ses observations récentes.",
+        "decisions.ask_assistant": "Demander à AI Assistant d'expliquer ces éléments",
         "decisions.field_signal": "Observations récentes des agriculteurs (30 derniers jours)",
         "decisions.field_signal_note": "Ces observations donnent un signal de terrain, pas un conseil vérifié ni des données officielles du NISR. Elles ne modifient pas la référence historique de rendement.",
         "decisions.field_signal_empty": "Aucune observation d'agriculteur dans cette zone au cours des 30 derniers jours.",
@@ -340,8 +355,8 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "plan.task.training": "Formation aux Semis",
         "plan.task.monitoring": "Suivi des Cultures",
         "seg.page_title": "Segmentation",
-        "seg.header": "Segmentation & Zonage",
-        "seg.subtitle": "Cartographie interactive pour prioriser les zones agricoles au Rwanda.",
+        "seg.header": "Segmentation agricole",
+        "seg.subtitle": "Comparez les productions agricoles observées par district et par saison au Rwanda.",
         "seg.filters": "Filtres",
         "seg.season": "Saison",
         "seg.crops": "Cultures",
@@ -479,28 +494,20 @@ def t(key: str, default: str = None, **kwargs) -> str:
     return _l10n_manager.translate(key, default, **kwargs)
 
 def render_language_selector(sidebar: bool = True) -> None:
-    """
-    Renders the language selector.
-    Adheres to user constraint: "when changing the lanuage there should only be the world icon no more other unnecessary words".
-    We use an icon-only button to cycle through languages seamlessly.
-    """
+    """Render an explicit, accessible English/Kinyarwanda language control."""
     current_code = get_current_language()
-    codes = list(LANGUAGES.keys())
-    next_idx = (codes.index(current_code) + 1) % len(codes)
-    next_code = codes[next_idx]
-
     target = st.sidebar if sidebar else st.container()
-
     with target:
-        def _cycle_lang():
-            set_language(next_code)
-
-        # Renders an icon-only button. The empty string ensures no "unnecessary words" are shown.
-        st.button(
-            label=" ", 
-            icon=":material/language:",
-            key="lang_cycle_btn",
-            on_click=_cycle_lang,
-            help="Switch language (EN, RW, FR)",
-            width="stretch" if sidebar else "content"
+        options = ["en", "rw"]
+        if current_code not in options:
+            current_code = DEFAULT_LANGUAGE
+        st.selectbox(
+            "Language / Ururimi",
+            options=options,
+            index=options.index(current_code),
+            format_func=lambda code: "English · EN" if code == "en" else "Ikinyarwanda · RW",
+            key="global_language_selector",
+            on_change=lambda: set_language(st.session_state["global_language_selector"]),
+            label_visibility="collapsed",
+            width="stretch",
         )

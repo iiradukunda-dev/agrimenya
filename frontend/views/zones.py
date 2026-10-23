@@ -4,6 +4,7 @@ Zones view — zone listing with filters and zone detail inspection.
 Implements Page 2 of the frontend handoff: Zones list + zone detail.
 """
 import logging
+from math import ceil
 
 import pandas as pd
 import requests
@@ -13,7 +14,6 @@ from components.errors import render_error_page
 from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
 from utils.i18n import t
-from utils.mock_data import CROPS
 
 logger = logging.getLogger(__name__)
 
@@ -186,7 +186,9 @@ def render_zones() -> None:
     try:
         render_icon_title("assets/map.svg", "Agricultural Zones", "Explore, filter, and inspect zones across Rwanda")
 
-        zones = api_client.get_zones()
+        registry = api_client.get_zone_registry_summary()
+        summary_rows = registry.get("districts") or []
+        st.metric("Registered zones", registry.get("total_zones", 0))
 
         with st.expander("Register a zone", expanded=False):
             st.caption("Add a district level map point. Use decimal latitude and longitude for the location.")
@@ -223,36 +225,54 @@ def render_zones() -> None:
                         st.error("The zone could not be registered. Check backend access and try again.")
 
         # ── Filters ──────────────────────────────────────────────────
-        filter_cols = st.columns(4)
-        all_districts = sorted({str(z.get("district")) for z in zones if z.get("district")})
-        all_crops = sorted({str(z.get("crop")) for z in zones if z.get("crop")})
-        all_priorities = sorted({str(z.get("priority") or "Not assessed") for z in zones})
-
+        all_districts = sorted({str(item.get("district") or "").strip() for item in summary_rows if item.get("district")}, key=str.casefold)
+        all_crops = sorted(set(registry.get("crops") or []) | set(api_client.get_crops()))
+        filter_cols = st.columns([1.1, 1.1, 1.8, 0.7])
+        district_options = ["All districts", *all_districts]
+        crop_options = ["All crops", *all_crops]
+        if st.session_state.get("zones_district_filter") not in district_options:
+            st.session_state.pop("zones_district_filter", None)
+        if st.session_state.get("zones_crop_filter") not in crop_options:
+            st.session_state.pop("zones_crop_filter", None)
         with filter_cols[0]:
-            selected_districts = st.multiselect("District", all_districts, default=all_districts)
+            selected_district = st.selectbox("District", district_options, key="zones_district_filter")
         with filter_cols[1]:
-            selected_crops = st.multiselect("Crop", all_crops, default=all_crops)
+            selected_crop = st.selectbox("Crop", crop_options, key="zones_crop_filter")
         with filter_cols[2]:
-            selected_priorities = st.multiselect("Priority", all_priorities, default=all_priorities)
+            search_query = st.text_input("Search zones", placeholder="District, sector, cell or crop", key="zones_search_query")
         with filter_cols[3]:
-            search_query = st.text_input("Search zones", placeholder="e.g. Musanze")
+            page_size = st.selectbox("Rows", [25, 50, 100], index=0, key="zones_page_size")
 
-        # ── Apply filters ────────────────────────────────────────────
-        filtered = [
-            z for z in zones
-            if (not selected_districts or z.get("district") in selected_districts)
-            and (not selected_crops or z.get("crop") in selected_crops)
-            and (not selected_priorities or str(z.get("priority") or "Not assessed") in selected_priorities)
-            and (not search_query or search_query.lower() in z.get("name", "").lower())
-        ]
-
-        st.caption(f"Showing {len(filtered)} of {len(zones)} zones")
-
+        focus_zone_id = st.session_state.pop("zone_focus_id", None)
+        signature = (selected_district, selected_crop, search_query.strip(), page_size, focus_zone_id)
+        if st.session_state.get("zones_filter_signature") != signature:
+            st.session_state["zones_filter_signature"] = signature
+            st.session_state["zones_table_page"] = 0
+        page_index = int(st.session_state.get("zones_table_page", 0))
+        if focus_zone_id:
+            page_data = api_client.get_zones_page(zone_id=str(focus_zone_id), limit=1, offset=0)
+        else:
+            page_data = api_client.get_zones_page(
+                district=None if selected_district == "All districts" else selected_district,
+                crop=None if selected_crop == "All crops" else selected_crop,
+                search=search_query.strip() or None, limit=page_size, offset=page_index * page_size,
+            )
+        filtered = page_data.get("items") or []
+        total_rows = int(page_data.get("total", 0) or 0)
+        page_count = max(1, ceil(total_rows / page_size))
+        if not focus_zone_id and page_index >= page_count:
+            st.session_state["zones_table_page"] = page_count - 1
+            st.rerun()
+        if focus_zone_id:
+            st.session_state["zones_detail_choice"] = str(focus_zone_id)
+            st.caption("Showing the selected zone from search.")
+        else:
+            first_row = page_index * page_size + 1 if total_rows else 0
+            last_row = min((page_index + 1) * page_size, total_rows)
+            st.caption(f"Showing {first_row}?{last_row} of {total_rows} zones")
         if not filtered:
             st.info("No zones match the current filters.")
             return
-
-        # ── Zone table ───────────────────────────────────────────────
         df = pd.DataFrame(filtered)
         display_cols = ["name", "district", "sector", "cell", "crop", "priority", "predicted_production_kg", "risk_status"]
         available_cols = [c for c in display_cols if c in df.columns]
@@ -270,6 +290,18 @@ def render_zones() -> None:
         }
         display_df.rename(columns=col_rename, inplace=True)
         st.dataframe(display_df, width="stretch", hide_index=True)
+        if not focus_zone_id and page_count > 1:
+            pager_cols = st.columns([1, 1, 8])
+            with pager_cols[0]:
+                if st.button("Previous", disabled=page_index <= 0, key="zones_page_previous"):
+                    st.session_state["zones_table_page"] = page_index - 1
+                    st.rerun()
+            with pager_cols[1]:
+                if st.button("Next", disabled=page_index >= page_count - 1, key="zones_page_next"):
+                    st.session_state["zones_table_page"] = page_index + 1
+                    st.rerun()
+            with pager_cols[2]:
+                st.caption(f"Page {page_index + 1} of {page_count}")
 
         st.divider()
 
@@ -278,6 +310,8 @@ def render_zones() -> None:
 
         zone_by_id = {str(zone["id"]): zone for zone in filtered if zone.get("id")}
         zone_ids = list(zone_by_id)
+        if st.session_state.get("zones_detail_choice") not in zone_ids:
+            st.session_state["zones_detail_choice"] = zone_ids[0]
         selected_zone_id = st.selectbox(
             "Select a zone to inspect",
             zone_ids,
@@ -316,7 +350,10 @@ def render_zones() -> None:
 
             with st.expander("Field observations and records", expanded=False):
                 field_tab, evidence_tab, workers_tab = st.tabs(["Field observations", "Readiness evidence", "Worker-days"])
-                crops = api_client.get_crops() or CROPS
+                crops = api_client.get_crops()
+                registered_crop = selected_zone.get("crop_type") or selected_zone.get("crop")
+                if registered_crop and registered_crop not in crops:
+                    crops.append(str(registered_crop))
                 with field_tab:
                     _render_field_reports(selected_zone, crops)
                 with evidence_tab:
@@ -332,8 +369,10 @@ def render_zones() -> None:
                 with st.form(f"zone_yield_prediction_{zone_id}"):
                     prediction_cols = st.columns(2)
                     with prediction_cols[0]:
-                        prediction_crops = api_client.get_crops() or CROPS
                         crop_value = selected_zone.get("crop_type") or selected_zone.get("crop")
+                        prediction_crops = api_client.get_crops()
+                        if crop_value and crop_value not in prediction_crops:
+                            prediction_crops.append(str(crop_value))
                         crop_index = prediction_crops.index(crop_value) if crop_value in prediction_crops else 0
                         prediction_crop = st.selectbox("Crop", prediction_crops, index=crop_index, key=f"prediction_crop_{zone_id}")
                     with prediction_cols[1]:
@@ -371,72 +410,72 @@ def render_zones() -> None:
                             if prediction.get("priority_reasons"):
                                 st.caption("Priority context: " + "; ".join(prediction["priority_reasons"]))
 
-            detail_cols = st.columns(3)
+            # Only show indicators when the underlying data exists and is assessed.
+            detail_cards = []
+            priority = str(selected_zone.get("priority") or "").strip()
+            risk_status = str(selected_zone.get("risk_status") or "").strip()
+            unassessed = {"", "unknown", "not assessed", "unassessed", "unavailable", "none"}
+            if priority.casefold() not in unassessed:
+                detail_cards.append(("Priority status", priority, risk_status, "priority"))
+            elif risk_status.casefold() not in unassessed:
+                detail_cards.append(("Risk status", risk_status, "", "metric"))
 
-            # Priority + Risk
-            with detail_cols[0]:
-                with st.container(border=True):
-                    st.markdown("**Priority Status**")
-                    priority_badge(selected_zone.get("priority", "Low"))
-                    st.caption(f"Risk: {selected_zone.get('risk_status', 'Unknown')}")
+            readiness = api_client.get_zone_readiness(zone_id)
+            finance_checklist = (readiness or {}).get("finance_checklist") or {}
+            completed_evidence = int(finance_checklist.get("completed_items", 0) or 0)
+            if completed_evidence > 0:
+                total_evidence = finance_checklist.get("total_items", len(FINANCE_EVIDENCE))
+                detail_cards.append(("Finance evidence", f"{completed_evidence} / {total_evidence} recorded", "Checklist progress only", "metric"))
 
-            # Finance readiness
-            with detail_cols[1]:
-                with st.container(border=True):
-                    st.markdown("**Finance evidence**")
-                    readiness = api_client.get_zone_readiness(zone_id)
-                    if readiness:
-                        checklist = readiness.get("finance_checklist") or {}
-                        st.metric("Documents recorded", f"{checklist.get('completed_items', 0)} / {checklist.get('total_items', len(FINANCE_EVIDENCE))}")
-                        st.caption("Evidence checklist only; this is not a credit score.")
-                    else:
-                        st.caption("Evidence checklist unavailable.")
+            nutrition = api_client.get_nutrition_risk(zone_id)
+            nutrition_level = str((nutrition or {}).get("nutrition_risk_level") or "").strip()
+            if nutrition_level.casefold() not in unassessed:
+                detail_cards.append(("Nutrition risk", nutrition_level, (nutrition or {}).get("note") or "", "metric"))
 
-            # Nutrition risk
-            with detail_cols[2]:
-                with st.container(border=True):
-                    st.markdown("**Nutrition Risk**")
-                    nutrition = api_client.get_nutrition_risk(zone_id)
-                    if nutrition:
-                        risk_level = nutrition.get("nutrition_risk_level", "Unknown")
-                        st.metric("Assessment", risk_level or "Not assessed")
-                        st.caption(nutrition.get("note", "Household nutrition risk has not been assessed."))
-                    else:
-                        st.caption("Not assessed. District yield alone cannot establish household nutrition risk.")
+            if detail_cards:
+                card_cols = st.columns(len(detail_cards))
+                for column, (title, value, note, kind) in zip(card_cols, detail_cards):
+                    with column:
+                        with st.container(border=True):
+                            st.markdown(f"**{title}**")
+                            if kind == "priority":
+                                priority_badge(value)
+                                if note.casefold() not in unassessed:
+                                    st.caption(f"Risk: {note}")
+                            else:
+                                st.metric(title, value)
+                                if note:
+                                    st.caption(note)
 
-            # Recommendations
-            st.divider()
-            render_icon_subheader("assets/brain.svg", "Recommendations")
             rec_data = api_client.get_zone_recommendations(zone_id)
-            if rec_data:
-                recs = rec_data.get("recommendations", [])
-                if recs:
-                    for i, rec in enumerate(recs, 1):
-                        st.markdown(f"**{i}.** {rec}")
-                else:
-                    st.info("No specific recommendations for this zone yet.")
-            else:
-                st.info("Unable to fetch recommendations for this zone.")
+            recs = (rec_data or {}).get("recommendations") or []
+            if recs:
+                st.divider()
+                render_icon_subheader("assets/brain.svg", "Recommendations")
+                for i, rec in enumerate(recs, 1):
+                    st.markdown(f"**{i}.** {rec}")
 
-            # Weather context
+            # Weather context appears only when the API has current values.
             district = selected_zone.get("district", "")
             if district:
-                st.divider()
-                render_icon_subheader("assets/compass.svg", f"Weather — {district}")
                 weather = api_client.get_weather(district)
                 if weather:
-                    w_cols = st.columns(4)
-                    with w_cols[0]:
-                        st.metric("Temperature", f"{weather.get('temperature_c', 'N/A')} C")
-                    with w_cols[1]:
-                        st.metric("Humidity", f"{weather.get('humidity_pct', 'N/A')}%")
-                    with w_cols[2]:
-                        st.metric("Rain", f"{weather.get('rainfall_mm_week', weather.get('rainfall_mm', 'N/A'))} mm")
-                    with w_cols[3]:
-                        st.metric("Wind", f"{weather.get('wind_speed_kmh', weather.get('wind_kph', 'N/A'))} km/h")
-                    st.caption(weather.get("forecast_summary") or weather.get("summary", ""))
-                else:
-                    st.caption("Weather data unavailable.")
+                    weather_values = [
+                        ("Temperature", weather.get("temperature_c"), "°C"),
+                        ("Humidity", weather.get("humidity_pct"), "%"),
+                        ("Rain", weather.get("rainfall_mm_week", weather.get("rainfall_mm")), " mm"),
+                        ("Wind", weather.get("wind_speed_kmh", weather.get("wind_kph")), " km/h"),
+                    ]
+                    weather_values = [(label, value, unit) for label, value, unit in weather_values if value is not None]
+                    if weather_values:
+                        st.divider()
+                        render_icon_subheader("assets/compass.svg", f"Weather — {district}")
+                        w_cols = st.columns(len(weather_values))
+                        for column, (label, value, unit) in zip(w_cols, weather_values):
+                            column.metric(label, f"{value}{unit}")
+                        summary = weather.get("forecast_summary") or weather.get("summary")
+                        if summary:
+                            st.caption(summary)
 
     except requests.exceptions.RequestException as e:
         logger.error("Network error in zones view: %s", e)

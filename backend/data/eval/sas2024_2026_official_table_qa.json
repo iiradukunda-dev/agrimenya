@@ -1,0 +1,94 @@
+{
+  "purpose": "Offline model experiment and source QA only; output is not an admin import or production table.",
+  "added_seasons": [
+    "2022 Season A",
+    "2022 Season B",
+    "2022 Season C",
+    "2023 Season A",
+    "2023 Season B",
+    "2023 Season C",
+    "2024 Season A",
+    "2024 Season B",
+    "2024 Season C"
+  ],
+  "official_table_sheets": {
+    "2022": [
+      "Table 17",
+      "Table 18 ",
+      "Table 19",
+      "Table 14",
+      "Table 15 ",
+      "Table 16",
+      "Table 11",
+      "Table 12 ",
+      "Table 13"
+    ],
+    "2023": [
+      "Table 16",
+      "Table 17",
+      "Table 18",
+      "Table 13",
+      "Table 14",
+      "Table 15",
+      "Table 10",
+      "Table 11",
+      "Table 12"
+    ],
+    "2024": [
+      "Table 16",
+      "Table 17",
+      "Table 18",
+      "Table 13",
+      "Table 14",
+      "Table 15",
+      "Table 10",
+      "Table 11",
+      "Table 12"
+    ]
+  },
+  "coverage_by_year": {
+    "2022": {
+      "yield_cells": 1370,
+      "harvested_area_cells": 1395,
+      "cultivated_area_cells": 1430,
+      "matched_cells": 1368
+    },
+    "2023": {
+      "yield_cells": 1357,
+      "harvested_area_cells": 1376,
+      "cultivated_area_cells": 1385,
+      "matched_cells": 1354
+    },
+    "2024": {
+      "yield_cells": 1410,
+      "harvested_area_cells": 1413,
+      "cultivated_area_cells": 1424,
+      "matched_cells": 1410
+    }
+  },
+  "added_rows_by_year": {
+    "2022": 1368,
+    "2023": 1354,
+    "2024": 1410
+  },
+  "added_rows": 4132,
+  "existing_training_rows": 3030,
+  "combined_rows": 7162,
+  "matched_existing_labels_against_official_2025_2026_rows": 2659,
+  "existing_label_comparison_mean_absolute_percent_difference": 0.017905019501781614,
+  "existing_label_comparison_max_absolute_percent_difference": 0.3250512887150701,
+  "source_workbook_sha256": {
+    "2022": "8576cd4a462d7fb015b491bcccfafc9488e34db338917858f436b4f23e0b6de6",
+    "2023": "fc07b45002c7aff36a0d6ee437acc47ff4bfea33b8bf240f264a78b41322fc82",
+    "2024": "5c7c6024d9a7b766d9911348aa3b5d5316555c6aa4a8c53f10dc290e2d8906e6",
+    "2025": "3a6ed44f1e973578e46221b392e54833bb39e73b681be6e54fa2b44efe5fe1f7",
+    "2026-A": "c4e4cb4c4e697febac1cb332280189a4dc6ff7f10d0de956bff279b284c5d4c2",
+    "2026-B": "5ca81c6b0a54c4a282ed718d134423920cc75279a5827bbe772fe6eb1a4e9d27"
+  },
+  "source_note": "SAS 2022-2024 overall district tables supply yield (kg/ha), harvested area (ha), and cultivated area (ha) separately. Production_mt is computed as official yield times official harvested area / 1000 to preserve the table's yield-area identity. SITE subgroup tables are excluded.",
+  "limitations": [
+    "Historical auxiliary practice and land features are left blank; the pipeline does not fill them from newer seasons.",
+    "The 2022-2024 output is for grouped offline evaluation; it is not activated in serving or the database."
+  ],
+  "output_sha256": "0f855771671f78f7df2a380960df7d85703db6e6aac1cce833b5fd72bd7b50da"
+}

@@ -12,8 +12,7 @@ from urllib.parse import quote, urlencode, urlparse
 import requests
 import streamlit as st
 
-from .config import API_BASE_URL, USE_MOCK_DATA, USER_API_KEY
-from . import mock_data
+from .config import API_BASE_URL, USER_API_KEY
 
 logger = logging.getLogger(__name__)
 ADMIN_SESSION_SECONDS = 30 * 60
@@ -62,26 +61,31 @@ def admin_session_authenticated() -> bool:
 
 def render_admin_login(key_prefix: str = "admin") -> bool:
     """Require a named administrator account before using admin APIs."""
+    st.markdown(
+        f"<style>.st-key-{key_prefix}_auth_panel {{ max-width: 660px; margin: 1rem auto 2rem; }}</style>",
+        unsafe_allow_html=True,
+    )
     reset_token = st.query_params.get("reset_token")
     if reset_token:
-        st.subheader("Reset administrator password")
-        with st.form(f"{key_prefix}_reset_form"):
-            password = st.text_input("New password (12 characters minimum)", type="password", key=f"{key_prefix}_new_password")
-            confirmation = st.text_input("Confirm new password", type="password", key=f"{key_prefix}_confirm_password")
-            submit = st.form_submit_button("Set new password", type="primary")
-        if submit:
-            if len(password) < 12:
-                st.error("Use at least 12 characters for your password.")
-            elif password != confirmation:
-                st.error("The passwords do not match.")
-            else:
-                result = reset_admin_password(reset_token, password)
-                if result:
-                    st.success("Password updated. Sign in with your new password.")
-                    st.query_params.clear()
-                    st.rerun()
+        with st.container(key=f"{key_prefix}_auth_panel"):
+            st.subheader("Reset administrator password")
+            with st.form(f"{key_prefix}_reset_form"):
+                password = st.text_input("New password (12 characters minimum)", type="password", key=f"{key_prefix}_new_password")
+                confirmation = st.text_input("Confirm new password", type="password", key=f"{key_prefix}_confirm_password")
+                submit = st.form_submit_button("Set new password", type="primary")
+            if submit:
+                if len(password) < 12:
+                    st.error("Use at least 12 characters for your password.")
+                elif password != confirmation:
+                    st.error("The passwords do not match.")
                 else:
-                    st.error(get_admin_api_error("/auth/admin/password/reset") or "This reset link is invalid or expired.")
+                    result = reset_admin_password(reset_token, password)
+                    if result:
+                        st.success("Password updated. Sign in with your new password.")
+                        st.query_params.clear()
+                        st.rerun()
+                    else:
+                        st.error(get_admin_api_error("/auth/admin/password/reset") or "This reset link is invalid or expired.")
         return False
     if admin_session_authenticated():
         identity = st.session_state.get("admin_identity", {})
@@ -93,26 +97,28 @@ def render_admin_login(key_prefix: str = "admin") -> bool:
             st.rerun()
         return True
     widget_key = f"{key_prefix}_password"
-    with st.form(f"{key_prefix}_login_form"):
-        st.text_input("Administrator email", key=f"{key_prefix}_email")
-        st.text_input("Password", type="password", key=widget_key)
-        st.form_submit_button(
-            "Sign in",
-            on_click=_authenticate_admin_session,
-            args=(widget_key,),
-        )
-    login_error = st.session_state.pop("admin_login_error", None)
-    if login_error:
-        st.error(login_error)
-    with st.expander("Forgot your password?"):
-        with st.form(f"{key_prefix}_forgot_form"):
-            email = st.text_input("Administrator email", key=f"{key_prefix}_forgot_email")
-            forgot = st.form_submit_button("Send reset link")
-        if forgot:
-            if request_admin_password_reset(email):
-                st.success("If an active account matches that email, reset instructions will be sent.")
-            else:
-                st.error(get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
+    with st.container(key=f"{key_prefix}_auth_panel"):
+        with st.form(f"{key_prefix}_login_form"):
+            st.text_input("Administrator email", key=f"{key_prefix}_email")
+            st.text_input("Password", type="password", key=widget_key)
+            st.form_submit_button(
+                "Sign in",
+                on_click=_authenticate_admin_session,
+                args=(widget_key,),
+                type="primary",
+            )
+        login_error = st.session_state.pop("admin_login_error", None)
+        if login_error:
+            st.error(login_error)
+        with st.expander("Forgot your password?"):
+            with st.form(f"{key_prefix}_forgot_form"):
+                email = st.text_input("Administrator email", key=f"{key_prefix}_forgot_email")
+                forgot = st.form_submit_button("Send reset link")
+            if forgot:
+                if request_admin_password_reset(email):
+                    st.success("If an active account matches that email, reset instructions will be sent.")
+                else:
+                    st.error(get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
     return admin_session_authenticated()
 
 
@@ -211,7 +217,8 @@ def _post_api_file(path: str, files: dict, data: dict | None = None, timeout: in
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
-        logger.error("API POST (file) %s failed: %s", url, e)
+        err_msg = f"{e} - Detail: {e.response.text}" if hasattr(e, "response") and getattr(e, "response", None) is not None else str(e)
+        logger.error("API POST (file) %s failed: %s", url, err_msg)
         return None
 
 
@@ -227,9 +234,6 @@ def _admin_headers() -> dict[str, str]:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_kpis() -> dict[str, Any]:
     """Return only overview metrics backed by live API data."""
-    if USE_MOCK_DATA:
-        zones = mock_data.generate_mock_zones()
-        return {"total_zones": len(zones), "baseline_yield_kg_ha": None, "active_alerts": None}
     zones = get_zones()
     alerts = get_alerts()
     data = _get_api("/health")
@@ -243,14 +247,6 @@ def get_kpis() -> dict[str, Any]:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_alignment_dashboard() -> dict[str, Any]:
     """Fetches alignment dashboard KPIs from /alignment/dashboard."""
-    if USE_MOCK_DATA:
-        return {
-            "total_zones": 30,
-            "high_priority_zones": 8,
-            "avg_credit_readiness": 62.4,
-            "export_ready_zones": 5,
-            "estimated_jobs": 12_500,
-        }
     data = _get_api("/alignment/dashboard")
     if data:
         return data
@@ -264,14 +260,49 @@ def get_alignment_dashboard() -> dict[str, Any]:
 import pandas as pd
 
 
+def _apply_zone_data_quality(row: dict[str, Any]) -> dict[str, Any]:
+    """Attach saved assessments only when they match the zone's registered crop."""
+    zone_crop = str(row.get("crop_type") or "").strip()
+    assessment_crop = str(row.get("prediction_crop") or "").strip()
+    zone_season = str(row.get("season") or "").strip()
+    assessment_season = str(row.get("prediction_season") or "").strip()
+    matches = bool(
+        zone_crop and assessment_crop and zone_crop.casefold() == assessment_crop.casefold()
+        and (not zone_season or not assessment_season or zone_season.casefold() == assessment_season.casefold())
+    )
+    row["assessment_matches_zone_context"] = matches
+    row["assessment_crop"] = assessment_crop or None
+    row["assessment_season"] = assessment_season or None
+    if not matches:
+        row["priority_level"] = None
+        row["predicted_yield"] = None
+        row["prediction_confidence"] = None
+        row["prediction_priority_reasons"] = []
+
+    district_key = str(row.get("district") or "").strip().casefold()
+    district = next(
+        (item for item in get_districts() if str(item.get("district") or "").strip().casefold() == district_key),
+        None,
+    )
+    has_subdistrict = bool(str(row.get("sector") or "").strip() or str(row.get("cell") or "").strip())
+    try:
+        is_centroid = bool(
+            district and not has_subdistrict
+            and abs(float(row.get("latitude")) - float(district["latitude"])) < 0.0005
+            and abs(float(row.get("longitude")) - float(district["longitude"])) < 0.0005
+        )
+    except (TypeError, ValueError, KeyError):
+        is_centroid = False
+    row["location_scope"] = "district_reference" if is_centroid else "submitted_coordinates_unverified"
+    return row
+
+
 @st.cache_data(ttl=300, show_spinner=False)
 def get_priority_data() -> pd.DataFrame:
     """Segmentation map data for prioritizing agricultural zones."""
-    if USE_MOCK_DATA:
-        return mock_data.generate_mock_priority_data()
-
     data = _get_api("/segmentation/map-data")
     if data:
+        data = [_apply_zone_data_quality(dict(row)) for row in data]
         df = pd.DataFrame(data)
         if not df.empty:
             df.rename(columns={
@@ -300,8 +331,6 @@ def get_priority_data() -> pd.DataFrame:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_zones() -> list[dict[str, Any]]:
     """Returns all zones from the backend."""
-    if USE_MOCK_DATA:
-        return mock_data.generate_mock_zones()
     data = _get_api("/segmentation/zones")
     if data and isinstance(data, list):
         map_rows = _get_api("/segmentation/map-data") or []
@@ -309,15 +338,69 @@ def get_zones() -> list[dict[str, Any]]:
         normalized = []
         for zone in data:
             row = {**zone, **map_by_id.get(str(zone.get("id")), {})}
+            row = _apply_zone_data_quality(row)
             row["name"] = " / ".join(filter(None, [row.get("district"), row.get("sector"), row.get("cell")])) or str(row.get("id", "Zone"))
             row["crop"] = row.get("crop_type") or row.get("crop") or ""
-            row["priority"] = row.get("priority_level") or row.get("priority") or ""
-            row["risk_status"] = row.get("climate_risk_level") or row.get("nutrition_risk_level") or "Unknown"
+            row["priority"] = row.get("priority_level") or row.get("priority") or "Not assessed"
+            row["risk_status"] = row.get("climate_risk_level") or row.get("nutrition_risk_level") or "Not assessed"
             row["area_ha"] = row.get("area_cultivated")
             row["predicted_production_kg"] = row.get("predicted_yield")
             normalized.append(row)
         return normalized
     return []
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def get_zone_registry_summary() -> dict[str, Any]:
+    """Small registry counts for the Zones screen; avoids downloading every row."""
+    data = _get_api("/segmentation/zones/summary")
+    return data if isinstance(data, dict) else {}
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def get_zones_page(
+    *, zone_id: str | None = None, district: str | None = None, crop: str | None = None, season: str | None = None,
+    search: str | None = None, limit: int = 50, offset: int = 0,
+) -> dict[str, Any]:
+    """Retrieve one filtered zone page from the backend."""
+    data = _get_api("/segmentation/zones/page", params={
+        "zone_id": zone_id, "district": district, "crop": crop, "season": season,
+        "search": search, "limit": limit, "offset": offset,
+    })
+    if not isinstance(data, dict):
+        return {"items": [], "total": 0, "offset": offset, "limit": limit, "has_more": False}
+    items = []
+    for raw in data.get("items") or []:
+        row = _apply_zone_data_quality(dict(raw))
+        row["name"] = " / ".join(filter(None, [row.get("district"), row.get("sector"), row.get("cell")])) or str(row.get("id", "Zone"))
+        row["crop"] = row.get("crop_type") or ""
+        row["priority"] = row.get("priority_level") or "Not assessed"
+        row["risk_status"] = row.get("climate_risk_level") or row.get("nutrition_risk_level") or "Not assessed"
+        row["area_ha"] = row.get("area_cultivated")
+        row["predicted_production_kg"] = row.get("predicted_yield")
+        items.append(row)
+    data["items"] = items
+    return data
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def get_agri_metrics_page(
+    *, district: str | None = None, crop: str | None = None, season: str | None = None,
+    search: str | None = None, limit: int = 100, offset: int = 0,
+) -> dict[str, Any]:
+    """Retrieve one filtered yield-observation page without loading all rows."""
+    data = _get_api("/segmentation/agri-metrics/page", params={
+        "district": district, "crop": crop, "season": season,
+        "search": search, "limit": limit, "offset": offset,
+    })
+    return data if isinstance(data, dict) else {"items": [], "total": 0, "offset": offset, "limit": limit, "has_more": False}
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_districts() -> list[dict[str, Any]]:
+    """Return canonical Rwanda districts for coverage and zone registration."""
+    data = _get_api("/segmentation/districts")
+    return data if isinstance(data, list) else []
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -332,19 +415,30 @@ def create_zone(payload: dict[str, Any]) -> dict[str, Any] | None:
     result = _post_api("/segmentation/zones", payload)
     if result:
         get_zones.clear()
+        get_zones_page.clear()
+        get_zone_registry_summary.clear()
         get_priority_data.clear()
     return result
 
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_agri_metrics() -> list[dict[str, Any]]:
-    """Returns agri metrics from segmentation."""
-    if USE_MOCK_DATA:
-        return mock_data.generate_mock_agri_metrics()
-    data = _get_api("/segmentation/agri-metrics")
-    if data and isinstance(data, list):
-        return data
-    return []
+    """Fetch the yield-observation register in bounded pages for map summaries."""
+    rows: list[dict[str, Any]] = []
+    offset = 0
+    page_size = 200
+    while offset < 200_000:
+        page = _get_api("/segmentation/agri-metrics/page", params={"limit": page_size, "offset": offset})
+        if not isinstance(page, dict):
+            break
+        batch = page.get("items") or []
+        if not batch:
+            break
+        rows.extend(batch)
+        offset += len(batch)
+        if not page.get("has_more"):
+            break
+    return rows
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -363,10 +457,7 @@ def get_crop_comparison(district: str, season: str | None = None) -> list[dict[s
 @st.cache_data(ttl=300, show_spinner=False)
 def get_recommendations() -> list[dict[str, Any]]:
     """Fetches decision-making recommendations based on priority rankings."""
-    if USE_MOCK_DATA:
-        return mock_data.generate_mock_recommendations()
-
-    rankings = _get_api("/decision/priority-ranking")
+    rankings = _get_api("/decision/priority-ranking?include_recommendations=true&limit=5")
     if rankings and isinstance(rankings, list):
         recs = []
         for r in rankings[:5]:
@@ -375,15 +466,28 @@ def get_recommendations() -> list[dict[str, Any]]:
             priority = r.get("priority_level", "Medium")
             district = (r.get("zones") or {}).get("district", "Unknown")
 
-            rec_data = _get_api(f"/decision/recommendations/{zone_id}")
-            texts = rec_data.get("recommendations", []) if rec_data else []
+            texts = r.get("recommendations", [])
             text = " ".join(texts) if texts else "No detailed recommendations."
 
             recs.append({
+                "zone_id": str(zone_id) if zone_id else None,
                 "area": district,
                 "crop": crop,
+                "season": r.get("season"),
                 "priority": priority,
                 "text": text,
+                "basis": r.get("basis"),
+                "model_version": r.get("model_version"),
+                "evidence_source": r.get("evidence_source"),
+                "evidence_period": r.get("evidence_period"),
+                "evidence_scope": r.get("evidence_scope"),
+                "yield_per_ha": r.get("yield_per_ha"),
+                "predicted_yield_low": r.get("predicted_yield_low"),
+                "predicted_yield_high": r.get("predicted_yield_high"),
+                "confidence": r.get("confidence"),
+                "warning": r.get("warning"),
+                "priority_reasons": r.get("priority_reasons") or [],
+                "interpretation_note": r.get("interpretation_note"),
                 "status": "Pending",
             })
         if recs:
@@ -406,7 +510,13 @@ def get_crops() -> list[str]:
     data = _get_api("/decision/crops")
     if data and isinstance(data, list):
         return data
-    return mock_data.CROPS
+    return []
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_decision_evidence_ranking(crop: str, season: str | None = None) -> dict[str, Any] | None:
+    """Observed NISR district comparison with source coverage metadata."""
+    return _get_api("/decision/evidence-ranking", params={"crop": crop, "season": season})
 
 
 def predict_yield(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -448,25 +558,33 @@ def get_export_flags() -> list[dict[str, Any]]:
 # CHAT / AI ASSISTANT
 # ═══════════════════════════════════════════════════════════════════
 
-def chat(message: str, zone_id: str) -> dict[str, Any] | None:
+def chat(message: str, zone_id: str, history: list[dict[str, str]] | None = None,
+         crop: str | None = None, season: str | None = None) -> dict[str, Any] | None:
     """Sends a message to the AI assistant."""
-    payload: dict[str, Any] = {"question": message, "zone_id": zone_id}
+    payload: dict[str, Any] = {"question": message, "zone_id": zone_id, "history": history or []}
+    if crop:
+        payload["crop"] = crop
+    if season:
+        payload["season"] = season
     # The backend may wait up to 20 seconds for an LLM provider response.
     return _post_api("/chat", payload, timeout=35)
 
 
-def disease_detect(crop: str, symptoms: str, zone_id: str, image_description: str | None = None) -> dict[str, Any] | None:
-    """Text-based disease detection."""
-    return _post_api("/chat/disease-detect", {"zone_id": zone_id, "crop": crop, "symptoms": symptoms, "image_description": image_description})
+def disease_detect(crop: str, symptoms: str, zone_id: str, image_description: str | None = None, language: str = "en") -> dict[str, Any] | None:
+    """Request preliminary crop-health triage from the backend."""
+    return _post_api("/chat/disease-detect", {
+        "zone_id": zone_id, "crop": crop, "symptoms": symptoms,
+        "image_description": image_description, "language": language,
+    }, timeout=60)
 
 
-def disease_detect_upload(crop: str, symptoms: str, zone_id: str, image_file, image_description: str | None = None) -> dict[str, Any] | None:
-    """Image-based disease detection via multipart upload."""
+def disease_detect_upload(crop: str, symptoms: str, zone_id: str, image_file, image_description: str | None = None, language: str = "en") -> dict[str, Any] | None:
+    """Upload a crop image for preliminary provider-backed crop-health triage."""
     files = {"image": (image_file.name, image_file, image_file.type)}
-    data = {"zone_id": zone_id, "crop": crop, "symptoms": symptoms}
+    data = {"zone_id": str(zone_id), "crop": crop or "Crop", "symptoms": symptoms or "", "language": language or "en"}
     if image_description:
         data["image_description"] = image_description
-    return _post_api_file("/chat/disease-detect-upload", files=files, data=data)
+    return _post_api_file("/chat/disease-detect-upload", files=files, data=data, timeout=60)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -476,9 +594,6 @@ def disease_detect_upload(crop: str, symptoms: str, zone_id: str, image_file, im
 @st.cache_data(ttl=300, show_spinner=False)
 def get_roadmap(zone_id: str | None = None) -> pd.DataFrame:
     """Fetch the latest saved roadmap for the selected zone."""
-    if USE_MOCK_DATA:
-        return mock_data.generate_mock_roadmap()
-
     if zone_id:
         plans = get_zone_plans(zone_id)
         if plans:
@@ -498,7 +613,7 @@ def get_roadmap(zone_id: str | None = None) -> pd.DataFrame:
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_zone_resources(zone_id: str, **inputs: float | None) -> dict[str, Any] | None:
+def get_zone_resources(zone_id: str, **inputs: Any) -> dict[str, Any] | None:
     """Resource estimates for a zone."""
     return _get_api(f"/planification/resources/{quote(str(zone_id), safe='')}", params=inputs)
 
@@ -530,19 +645,23 @@ def create_disease_plan(payload: dict[str, Any]) -> dict[str, Any] | None:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_alerts() -> list[dict[str, str]]:
     """Fetches recent communication alerts."""
-    if USE_MOCK_DATA:
-        return mock_data.generate_mock_alerts()
-
     alerts = _get_api("/communication/alerts")
     if alerts and isinstance(alerts, list):
-        mapped = [
-            {
-            "type": a.get("severity", "Info"),
-                "message": a.get("message", ""),
-                "timestamp": str(a.get("created_at", ""))[:10],
-            }
-            for a in alerts
-        ]
+        zones_by_id = {str(zone.get("id")): zone for zone in get_zones() if zone.get("id")}
+        mapped = []
+        for alert in alerts:
+            zone = zones_by_id.get(str(alert.get("zone_id")), {})
+            location = " / ".join(str(value) for value in (
+                zone.get("district"), zone.get("sector"), zone.get("cell")
+            ) if value)
+            mapped.append({
+                **alert,
+                "type": alert.get("severity", "Info"),
+                "message": alert.get("message", ""),
+                "timestamp": str(alert.get("created_at", ""))[:10],
+                "location": location or "Location not available",
+                "source_label": alert.get("created_by") or "Source not supplied",
+            })
         if mapped:
             return mapped
 
@@ -551,9 +670,6 @@ def get_alerts() -> list[dict[str, str]]:
 
 def send_alert(message: str, zone_id: str, severity: str) -> dict[str, Any] | None:
     """Sends a new communication alert."""
-    if USE_MOCK_DATA:
-        return None
-
     url = f"{API_BASE_URL}/communication/alerts"
     payload = {
         "zone_id": zone_id,

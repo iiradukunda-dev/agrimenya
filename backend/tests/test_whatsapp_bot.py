@@ -19,7 +19,7 @@ def test_help_command_returns_command_menu():
 
 
 def test_district_command_fuzzy_matches_against_database(monkeypatch):
-    monkeypatch.setattr(bot.crud, "list_zones", lambda: [{"district": "Gasabo"}])
+    monkeypatch.setattr(bot.crud, "list_zones", lambda **_: [{"district": "Gasabo"}])
     monkeypatch.setattr(bot.crud, "list_agri_metrics", lambda **_: [])
     reply = bot.handle_inbound(_contact(), "DISTRICT Gasab")
     assert "Gasabo" in reply

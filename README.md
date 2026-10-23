@@ -176,6 +176,9 @@ and validates rows before activation; predictions read active database
 observations rather than a few bundled CSV files. Import history and the full
 format are documented in
 [`backend/docs/nisr_imports_and_access.md`](backend/docs/nisr_imports_and_access.md).
+The latest zone and yield provenance check, including limits on saved assessment
+metadata and unverified coordinates, is recorded in
+[`backend/docs/zone_data_provenance.md`](backend/docs/zone_data_provenance.md).
 
 Training and evaluation are offline workflows. They may use source datasets
 that are intentionally excluded from the runtime Docker image and should be
@@ -193,10 +196,10 @@ those experiences can be treated as production access control; see the access
 model in `backend/docs/nisr_imports_and_access.md`.
 
 The optional farmer discussion pilot supports posts, comments, abuse reports,
-and administrator moderation. Accounts and roles are currently self-reported;
-email verification and account recovery are not yet available. The Rwanda
-Space Agency orthomosaic is an optional visual map layer only, not a signal used
-to predict yield or prioritize zones. See
+and administrator moderation. Roles and email ownership are self-reported;
+farmer password recovery uses a single-use email link. Satellite imagery is
+currently removed because the reviewed public mosaic had limited, undated
+coverage and did not support dependable crop monitoring. See
 [`backend/docs/satellite_and_community.md`](backend/docs/satellite_and_community.md)
 for data limitations and safeguards.
 
@@ -206,6 +209,8 @@ all provider credentials in the backend environment. Configure production
 secrets, HTTPS origins, allowed hostnames, email recovery, and operational
 backups as described in
 [`backend/docs/production_deployment.md`](backend/docs/production_deployment.md).
+For the Meta account, app, webhook, and test-to-live setup sequence, see
+[`backend/docs/whatsapp_meta_cloud_api_setup.md`](backend/docs/whatsapp_meta_cloud_api_setup.md).
 
 ## Validation
 

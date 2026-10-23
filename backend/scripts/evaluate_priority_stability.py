@@ -77,11 +77,16 @@ def evaluate(training_path: Path = TRAINING_PATH, oof_path: Path = OOF_PATH,
                 actual = float(row.actual_yield_kg_ha)
                 prediction = float(getattr(row, prediction_column)) if pd.notna(getattr(row, prediction_column)) else actual
                 yield_index = actual / crop_mean if crop_mean > 0 else None
+                peer_yields = pd.to_numeric(train_crop.yield_kg_ha, errors="coerce").dropna()
+                less = int((peer_yields < actual).sum())
+                tied = int((peer_yields == actual).sum())
+                yield_percentile = 100.0 * (less + 0.5 * tied) / len(peer_yields) if len(peer_yields) else None
                 result = classify_components(
                     observed_yield=actual, expected_yield=prediction if model_kind else None,
                     residual_se=residual_se, top_quartile_yield=benchmark,
                     cultivated_area_ha=area, area_percentile=area_pct,
-                    yield_index=yield_index, crop_district_count=int(counts.get(crop, 0)),
+                    yield_index=yield_index, yield_percentile=yield_percentile,
+                    crop_district_count=int(counts.get(crop, 0)),
                     model_available=bool(model_kind),
                 )
                 identity = f"{row.district}|{row.crop}"

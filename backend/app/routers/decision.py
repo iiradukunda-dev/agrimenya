@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from uuid import UUID
 from app.core.auth import require_user
 from app.models.prediction import PredictionRequest, PredictionResult
 from app.db import crud
 from app.db.rwanda_districts import RWANDA_DISTRICTS
 from app.ml.predict import (
-    predict_yield,
     classify_priority,
     known_crops,
     get_yield_gap,
@@ -13,6 +12,7 @@ from app.ml.predict import (
     predict_with_interval,
     model_provenance,
     get_model_info,
+    get_district_evidence_ranking,
 )
 from app.ml.explain import explain_prediction
 from app.services.disease_detector import detect_crop_disease
@@ -32,16 +32,10 @@ def predict(request: PredictionRequest, _: dict = Depends(require_user)):
         raise HTTPException(status_code=422, detail="Yield decisions are currently supported for Rwanda's 30 districts only")
     district = district_by_name[district.casefold()]
 
-    predicted_yield, confidence, model_version = predict_yield(
-        district, request.crop, request.season,
-        request.rainfall_mm, request.area_cultivated, request.household_size,
-        request.allow_category_proxy, request.crop_category,
-    )
     interval = predict_with_interval(district, request.crop, request.season,
                                      allow_category_proxy=request.allow_category_proxy,
                                      crop_category=request.crop_category)
     explanation = explain_prediction(district, request.crop, request.season)
-    confidence_basis = interval["basis"]
     provenance = model_provenance()
 
     # analysis fields (not persisted beyond the prediction record)
@@ -50,6 +44,9 @@ def predict(request: PredictionRequest, _: dict = Depends(require_user)):
     area = request.area_cultivated if request.area_cultivated and request.area_cultivated > 0 else None
     # Rainfall is not a validated prediction feature; it does not scale yield.
     predicted_yield_per_ha = interval["point"]
+    predicted_yield = (round(predicted_yield_per_ha * area, 1)
+                       if predicted_yield_per_ha is not None and area is not None else None)
+    model_version = interval.get("model_version") or interval.get("basis") or "no-yield-data"
     benchmark_yield_per_ha = gap.get("benchmark_yield_per_ha")
     yield_gap_kg_ha = (
         round(max(0.0, benchmark_yield_per_ha - predicted_yield_per_ha), 1)
@@ -72,12 +69,13 @@ def predict(request: PredictionRequest, _: dict = Depends(require_user)):
         crop=request.crop,
         predicted_yield=predicted_yield,
         priority_level=priority["priority_level"],
-        confidence=(min(1.0, max(0.0, 1.0 / (1.0 +
-                    (interval["high"] - interval["low"]) / max(2.0 * interval["point"], 1e-9))))
-                    if interval["point"] is not None and interval["low"] is not None and interval["high"] is not None
-                    else confidence),
-        confidence_basis=confidence_basis,
+        # Interval width is uncertainty information, not a calibrated probability.
+        confidence=None,
+        confidence_basis=None,
         model_version=model_version,
+        evidence_source=interval.get("evidence_source"),
+        evidence_period=interval.get("evidence_period"),
+        evidence_scope=interval.get("evidence_scope"),
         model_trained_on=provenance["model_trained_on"],
         basis=(interval["basis"] if interval["basis"] == "category_proxy" else
                "model" if interval["basis"] == "model" else "baseline"),
@@ -125,65 +123,63 @@ def model_info():
 
 @router.get("/district-ranking")
 def district_ranking(crop: str, season: str | None = None):
-    # return all districts with analysis fields; 404 if unknown crop
-    from app.db.rwanda_districts import RWANDA_DISTRICTS
-
     if crop not in known_crops():
         raise HTTPException(status_code=404, detail="Unknown crop")
-
-    source_metrics = crud.list_agri_metrics(season=season, crop=crop)
-    metrics_by_district = {}
-    for metric in source_metrics:
-        district_name = (metric.get("zones") or {}).get("district")
-        if district_name:
-            metrics_by_district.setdefault(district_name.casefold(), []).append(metric)
-
-    districts = [d["district"] for d in RWANDA_DISTRICTS]
-    rows = []
-    for d in districts:
-        gap = get_yield_gap(d, crop, season)
-        yp = gap.get("yield_per_ha")
-        by = gap.get("benchmark_yield_per_ha")
-        yg = gap.get("yield_gap_kg_ha")
-        yi = get_yield_index(d, crop, season)
-        # estimate cultivated area from agri_metrics if possible
-        metrics = metrics_by_district.get(d.casefold(), [])
-        cultivated = None
-        if metrics:
-            by_season = {}
-            for metric in metrics:
-                season_key = str(metric.get("season", "")).casefold()
-                by_season.setdefault(season_key, {})[str(metric.get("zone_id"))] = float(metric.get("area_cultivated") or 0)
-            seasonal_totals = [sum(zone_areas.values()) for zone_areas in by_season.values()]
-            # When no season is selected, use the largest single season's
-            # exposure to avoid counting the same cultivated land twice.
-            cultivated = sum(next(iter(by_season.values())).values()) if season and by_season else (
-                max(seasonal_totals) if seasonal_totals else None)
-
-        rows.append({
-            "district": d,
-            "yield_per_ha": yp,
-            "benchmark_yield_per_ha": by,
-            "yield_gap_kg_ha": yg,
-            "yield_index": yi,
-            "cultivated_area_ha": cultivated,
-            # potential_gain_mt = yield_gap_kg_ha * cultivated_area / 1000
-            "potential_gain_mt": round(((yg or 0.0) * (cultivated or 0)) / 1000.0, 3) if cultivated else None,
+    evidence = get_district_evidence_ranking(crop, season)
+    reference = evidence.get("national_reference_kg_ha")
+    result = []
+    for item in evidence["rows"]:
+        value = item["yield_kg_ha"]
+        result.append({
+            "district": item["district"], "yield_per_ha": value,
+            "benchmark_yield_per_ha": reference,
+            "yield_gap_kg_ha": round(max(0.0, reference - value), 1) if reference is not None else None,
+            "yield_index": round(value / reference, 4) if reference else None,
+            "observation_count": item["observation_count"], "seasons": item["seasons"],
+            "sources": item["sources"], "rank": item["rank"],
+            "cultivated_area_ha": None, "potential_gain_mt": None,
         })
+    return result
 
-    # sort worst-priority-first: highest gap or lowest yield_index
-    def sort_key(r):
-        if r["yield_index"] is None:
-            return float("inf")
-        return r["yield_index"]
 
-    rows_sorted = sorted(rows, key=sort_key)
-    return rows_sorted
+@router.get("/evidence-ranking")
+def evidence_ranking(crop: str, season: str | None = None):
+    """Compare only districts with crop observations; missing districts stay absent."""
+    if crop not in known_crops():
+        raise HTTPException(status_code=404, detail="Unknown crop")
+    try:
+        return get_district_evidence_ranking(crop, season)
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Yield evidence is temporarily unavailable") from exc
 
 
 @router.get("/priority-ranking")
-def get_priority_ranking(season: str | None = None):
-    return crud.priority_ranking(season)
+def get_priority_ranking(
+    season: str | None = None,
+    include_recommendations: bool = False,
+    limit: int = Query(default=20, ge=1, le=100),
+):
+    """Return saved assessments in one request; optionally attach actionable context.
+
+    Recommendations are derived from the stored assessment and explanatory
+    factors. They remain suggestions for review, not field instructions.
+    """
+    rows = crud.priority_ranking(season)[:limit]
+    if not include_recommendations:
+        return rows
+    for row in rows:
+        zone_id = row.get("zone_id")
+        zone = row.get("zones") or {}
+        explanation = explain_prediction(
+            zone.get("district"), row.get("crop", ""), row.get("season")
+        )
+        row["recommendations"] = get_recommendations(
+            row.get("priority_level", "Unknown"), None, None, explanation["factors"]
+        )
+        row["explanation_factors"] = explanation["factors"]
+        row["explanation_diagnosis"] = explanation["diagnosis"]
+        row["interpretation_note"] = explanation["interpretation_note"]
+    return rows
 
 
 @router.get("/recommendations/{zone_id}")
@@ -199,7 +195,10 @@ def recommendations(zone_id: UUID, rainfall_mm: float | None = None, soil_type: 
                                      latest.get("crop", ""), latest.get("season"))
     return {
         "zone_id": zone_id,
+        "crop": latest.get("crop"),
+        "season": latest.get("season"),
         "priority_level": latest["priority_level"],
+        "model_version": latest.get("model_version"),
         "recommendations": get_recommendations(latest["priority_level"], rainfall_mm, soil_type,
                                                explanation["factors"]),
         "explanation_factors": explanation["factors"],
