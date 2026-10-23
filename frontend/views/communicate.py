@@ -11,7 +11,7 @@ def render_communicate():
     try:
         render_icon_title("assets/message.svg", t("comm.header"), t("comm.subtitle"))
 
-        st.info("Agri-Menya alerts are sent by administrators. This feed is available to community members for reading.")
+        st.info("agrimenya alerts are sent by administrators. This feed is available to community members for reading.")
         st.subheader(t("comm.feed_title"))
         alerts = api_client.get_alerts()
         if not alerts:

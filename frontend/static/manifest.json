@@ -1,7 +1,7 @@
 {
-  "name": "agrimenya: Agro-Climate Decision Support",
+  "name": "agrimenya",
   "short_name": "agrimenya",
-  "description": "Rwanda agro-climate decision support, seasonal crop planning, and spatial intelligence",
+  "description": "agrimenya",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",

@@ -1,6 +1,6 @@
-# Agri-Menya
+# agrimenya
 
-Agri-Menya is a Rwanda-focused agricultural decision and planning support
+agrimenya is a Rwanda-focused agricultural decision and planning support
 system. The Streamlit frontend calls a FastAPI backend, which reads and writes
 application data in Supabase. Yield estimates use validated NISR observations
 stored in the database. WhatsApp is an optional access and notification
