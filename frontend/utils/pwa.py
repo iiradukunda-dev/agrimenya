@@ -24,6 +24,7 @@ def ensure_pwa_assets() -> None:
         "apple-touch-icon.png",
         "favicon.png",
         "wheat.svg",
+        "ai_assistant_bulb.png",
     ]
 
     for fname in files_to_sync:

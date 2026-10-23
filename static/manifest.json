@@ -38,9 +38,9 @@
       "type": "image/png"
     },
     {
-      "src": "/app/static/wheat.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/app/static/ai_assistant_bulb.png",
+      "sizes": "699x1024",
+      "type": "image/png",
       "purpose": "any"
     }
   ]

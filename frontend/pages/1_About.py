@@ -5,7 +5,7 @@ from components.navbar import render_navbar
 from utils.theme import load_theme
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
-LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")
+LOGO_PATH = os.path.join(ASSETS_DIR, "ai_assistant_bulb.png")
 
 st.set_page_config(page_title="About agrimenya", page_icon=LOGO_PATH, layout="wide")
 load_theme()

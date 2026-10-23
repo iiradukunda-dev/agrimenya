@@ -1,12 +1,13 @@
 """Compact, polished application navigation."""
 import streamlit as st
-from components.ai_widget import render_floating_ai_widget
+from components.ai_widget import _get_ai_icon_base64, render_floating_ai_widget
 from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
 
 
 def render_navbar() -> None:
     """Show the main workflows first and keep supporting pages one click away."""
+    bulb_b64 = _get_ai_icon_base64()
     st.markdown("""
       <style>
       @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
@@ -53,13 +54,30 @@ def render_navbar() -> None:
         text-shadow: 0 0 10px rgba(56, 189, 248, 0.6) !important;
       }
 
-      /* Brand Logo Special Styling - Solid Cyan Glow */
+      /* Brand Logo Special Styling - Solid Cyan Glow with Bulb Icon */
       [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"],
       [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] {
         background: #041d2a !important;
         border-radius: 10px !important;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 16px rgba(56, 189, 248, 0.25) !important;
         border: 1px solid rgba(56, 189, 248, 0.45) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.45rem !important;
+      }
+      [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"]::before,
+      [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]::before {
+        content: "" !important;
+        display: inline-block !important;
+        width: 20px !important;
+        height: 24px !important;
+        background-image: url('data:image/png;base64,""" + bulb_b64 + """') !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85)) drop-shadow(0 0 12px rgba(74, 222, 128, 0.65)) !important;
+        transition: transform 0.3s ease, filter 0.3s ease !important;
       }
       [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"] p,
       [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] p {
@@ -75,6 +93,11 @@ def render_navbar() -> None:
         transform: translateY(-1px) scale(1.02) !important;
         box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45) !important;
         border-color: rgba(56, 189, 248, 0.75) !important;
+      }
+      [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"]:hover::before,
+      [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:hover::before {
+        transform: scale(1.15) rotate(-3deg) !important;
+        filter: drop-shadow(0 0 10px rgba(56, 189, 248, 1)) drop-shadow(0 0 18px rgba(74, 222, 128, 0.85)) !important;
       }
 
       /* Hide any icons in navbar links */

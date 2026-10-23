@@ -7,7 +7,7 @@ from utils.timezone import setup_system_timezone
 from views.admin import render_admin
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
-LOGO_PATH = os.path.join(ASSETS_DIR, "logo.jpg")
+LOGO_PATH = os.path.join(ASSETS_DIR, "ai_assistant_bulb.png")
 
 st.set_page_config(page_title="Admin - agrimenya", page_icon=LOGO_PATH, layout="wide")
 setup_system_timezone()

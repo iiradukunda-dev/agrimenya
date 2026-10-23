@@ -13,7 +13,8 @@ const PRECACHE_ASSETS = [
   '/app/static/icon-512.png',
   '/app/static/icon-maskable-512.png',
   '/app/static/apple-touch-icon.png',
-  '/app/static/favicon.png'
+  '/app/static/favicon.png',
+  '/app/static/ai_assistant_bulb.png'
 ];
 
 // Install: precache core offline application shell
