@@ -2,6 +2,7 @@
 import base64
 import os
 import streamlit as st
+from utils.i18n import t
 
 _ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
 _IMAGE_PATH = os.path.join(_ASSETS_DIR, "ai_assistant_bulb.png")
@@ -21,6 +22,8 @@ def render_floating_ai_widget() -> None:
     img_b64 = _get_ai_icon_base64()
     if not img_b64:
         return
+
+    ask_ai_text = t("ai.ask_ai", "Ask AI")
 
     st.markdown(f"""
     <style>
@@ -52,6 +55,8 @@ def render_floating_ai_widget() -> None:
         position: fixed !important;
         bottom: 24px !important;
         right: 24px !important;
+        width: 72px !important;
+        height: 104px !important;
         z-index: 9999999 !important;
         display: flex !important;
         align-items: center !important;
@@ -105,42 +110,45 @@ def render_floating_ai_widget() -> None:
     }}
     .ag-floating-ai-tooltip {{
         position: absolute !important;
-        right: 72px !important;
+        right: 76px !important;
+        top: 50% !important;
+        transform: translateY(-50%) translateX(12px) scale(0.96) !important;
         background: linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.82) 0%,
-            rgba(224, 242, 254, 0.45) 35%,
-            rgba(220, 252, 231, 0.45) 70%,
-            rgba(187, 247, 208, 0.55) 100%
+            rgba(255, 255, 255, 0.88) 0%,
+            rgba(224, 242, 254, 0.55) 35%,
+            rgba(220, 252, 231, 0.55) 70%,
+            rgba(187, 247, 208, 0.65) 100%
         ) !important;
         backdrop-filter: blur(16px) saturate(190%) !important;
         -webkit-backdrop-filter: blur(16px) saturate(190%) !important;
         color: #034b5c !important;
-        font-size: 0.84rem !important;
-        font-weight: 700 !important;
-        padding: 7px 18px !important;
+        font-size: 0.86rem !important;
+        font-weight: 750 !important;
+        padding: 8px 18px !important;
         border-radius: 9999px !important;
         white-space: nowrap !important;
         pointer-events: none !important;
         opacity: 0 !important;
-        transform: translateX(12px) scale(0.96) !important;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        border: 1px solid rgba(255, 255, 255, 0.75) !important;
+        visibility: hidden !important;
+        transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.85) !important;
         border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
-        border-bottom: 1px solid rgba(56, 189, 248, 0.35) !important;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.45) !important;
         box-shadow:
-            0 10px 30px rgba(2, 38, 48, 0.12),
-            0 2px 8px rgba(0, 0, 0, 0.04),
+            0 10px 30px rgba(2, 38, 48, 0.16),
+            0 2px 8px rgba(0, 0, 0, 0.05),
             inset 0 1.5px 2px rgba(255, 255, 255, 1),
-            inset 0 -1.5px 2px rgba(56, 189, 248, 0.25),
-            inset 0 0 14px rgba(255, 255, 255, 0.5) !important;
+            inset 0 -1.5px 2px rgba(56, 189, 248, 0.3),
+            inset 0 0 14px rgba(255, 255, 255, 0.6) !important;
         text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9) !important;
         letter-spacing: 0.02em !important;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         overflow: hidden !important;
         display: flex !important;
         align-items: center !important;
         gap: 6px !important;
+        z-index: 10000000 !important;
     }}
     .ag-glass-spark {{
         color: #1b8a5a !important;
@@ -160,17 +168,23 @@ def render_floating_ai_widget() -> None:
         transition: left 0.75s ease !important;
         pointer-events: none !important;
     }}
-    .ag-floating-ai-fab:hover .ag-floating-ai-tooltip {{
+    .ag-floating-ai-fab:hover .ag-floating-ai-tooltip,
+    .ag-floating-ai-fab:focus .ag-floating-ai-tooltip,
+    .ag-floating-ai-fab:active .ag-floating-ai-tooltip {{
         opacity: 1 !important;
-        transform: translateX(0) scale(1) !important;
+        visibility: visible !important;
+        transform: translateY(-50%) translateX(0) scale(1) !important;
     }}
-    .ag-floating-ai-fab:hover .ag-floating-ai-tooltip::after {{
+    .ag-floating-ai-fab:hover .ag-floating-ai-tooltip::after,
+    .ag-floating-ai-fab:focus .ag-floating-ai-tooltip::after {{
         left: 150% !important;
     }}
     @media (max-width: 600px) {{
         .ag-floating-ai-fab {{
             bottom: 16px !important;
             right: 16px !important;
+            width: 58px !important;
+            height: 84px !important;
         }}
         .ag-floating-ai-fab img {{
             width: 48px !important;
@@ -181,14 +195,14 @@ def render_floating_ai_widget() -> None:
             height: 84px !important;
         }}
         .ag-floating-ai-tooltip {{
-            right: 60px !important;
+            right: 64px !important;
             padding: 6px 14px !important;
             font-size: 0.78rem !important;
         }}
     }}
     </style>
-    <a href="/AI_Assistant" target="_self" class="ag-floating-ai-fab" aria-label="Ask AI Assistant">
+    <a href="/AI_Assistant" target="_self" class="ag-floating-ai-fab" aria-label="{ask_ai_text}" title="{ask_ai_text}">
         <img src="data:image/png;base64,{img_b64}" alt="AI Assistant" />
-        <div class="ag-floating-ai-tooltip"><span class="ag-glass-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#1b8a5a"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Ask AI Assistant</div>
+        <div class="ag-floating-ai-tooltip"><span class="ag-glass-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#1b8a5a"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> {ask_ai_text}</div>
     </a>
     """, unsafe_allow_html=True)

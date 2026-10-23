@@ -3,6 +3,7 @@ import os
 import shutil
 import streamlit as st
 import streamlit.components.v1 as components
+from utils.i18n import t
 
 
 def _ensure_landing_video() -> str:
@@ -48,6 +49,26 @@ def _ensure_landing_video() -> str:
 def render_home_hero() -> None:
     """Render full-page background video and a floating glassmorphic hero command center."""
     video_url = _ensure_landing_video()
+
+    badge_text = t("hero.badge", "Rwanda Agro-Climate Decision Engine")
+    title_pre = t("hero.title_pre", "Make the next")
+    title_glow = t("hero.title_glow", "field decision")
+    title_post = t("hero.title_post", "clearer.")
+    copy_text = t("hero.copy", "Explore spatial zone intelligence, evaluate seasonal crop recommendations, and turn data-grounded insights into synchronized field plans.")
+    stat_districts_val = t("hero.stat.districts_val", "30 Districts")
+    stat_districts_lbl = t("hero.stat.districts_lbl", "Spatial Coverage")
+    stat_crops_val = t("hero.stat.crops_val", "10+ Key Crops")
+    stat_crops_lbl = t("hero.stat.crops_lbl", "SAS Baselines")
+    stat_weather_val = t("hero.stat.weather_val", "Real-time Weather")
+    stat_weather_lbl = t("hero.stat.weather_lbl", "Satellite Indicators")
+    stat_timezone_val = t("hero.stat.timezone_val", "CAT (UTC+2)")
+    stat_timezone_lbl = t("hero.stat.timezone_lbl", "System Timezone")
+    card_title = t("hero.card.title", "Seasonal Horizon")
+    card_tag = t("hero.card.tag", "2026 Season A")
+    card_desc = t("hero.card.desc", "Active 2026 Season A campaign. Tracking soil moisture and conformal yield bounds.")
+    pill_priority = t("hero.pill.priority", "Priority Zones: Gasabo, Bugesera, Musanze")
+    pill_window = t("hero.pill.window", "Optimal planting window actively tracked")
+    pill_ai = t("hero.pill.ai", "AI Assistant available via corner bulb")
 
     # Apply parent-page transparency so the full-page video shows across the entire viewport
     st.html("""
@@ -188,6 +209,23 @@ def render_home_hero() -> None:
           border: 1px solid rgba(255, 255, 255, 0.22);
           border-top: 1.5px solid rgba(255, 255, 255, 0.45);
           box-shadow: 0 20px 50px rgba(0, 0, 0, 0.40), 0 0 40px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.20);
+          animation: ag-hero-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }}
+
+        @keyframes ag-hero-enter {{
+          from {{ opacity: 0; transform: translateY(16px) scale(0.99); }}
+          to {{ opacity: 1; transform: translateY(0) scale(1); }}
+        }}
+
+        @keyframes ag-text-shimmer {{
+          0% {{ filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.45)); }}
+          50% {{ filter: drop-shadow(0 0 24px rgba(74, 222, 128, 0.75)); }}
+          100% {{ filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.6)); }}
+        }}
+
+        @keyframes ag-hero-card-float {{
+          0% {{ transform: translateY(0); }}
+          100% {{ transform: translateY(-5px); }}
         }}
 
         /* Ambient Cyan Bulb & Tree Emerald Light Orbs inside hero card */
@@ -261,6 +299,10 @@ def render_home_hero() -> None:
           color: #e0f2fe;
           margin-bottom: 0.85rem;
           box-shadow: 0 4px 14px rgba(14, 165, 233, 0.25);
+          transition: transform 0.25s ease;
+        }}
+        .ag-hero-badge:hover {{
+          transform: scale(1.03);
         }}
         .ag-hero-beacon {{
           width: 8px;
@@ -293,6 +335,7 @@ def render_home_hero() -> None:
           -webkit-text-fill-color: transparent !important;
           display: inline-block !important;
           filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.5)) !important;
+          animation: ag-text-shimmer 4s ease-in-out infinite alternate !important;
         }}
 
         .ag-hero-copy {{
@@ -305,7 +348,7 @@ def render_home_hero() -> None:
           text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
         }}
 
-        /* Stats Ticker Strip */
+        /* Stats Ticker Strip with Hover Lift */
         .ag-hero-stats {{
           display: flex;
           flex-wrap: wrap;
@@ -317,6 +360,11 @@ def render_home_hero() -> None:
         .ag-hero-stat-item {{
           display: flex;
           flex-direction: column;
+          transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: default;
+        }}
+        .ag-hero-stat-item:hover {{
+          transform: translateY(-3px) scale(1.04);
         }}
         .ag-hero-stat-val {{
           font-size: 1.15rem;
@@ -324,6 +372,11 @@ def render_home_hero() -> None:
           color: #ffffff;
           letter-spacing: -0.02em;
           text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 12px rgba(56, 189, 248, 0.4);
+          transition: color 0.2s ease, text-shadow 0.2s ease;
+        }}
+        .ag-hero-stat-item:hover .ag-hero-stat-val {{
+          color: #38bdf8;
+          text-shadow: 0 0 18px rgba(56, 189, 248, 0.85);
         }}
         .ag-hero-stat-lbl {{
           font-size: 0.72rem;
@@ -334,7 +387,7 @@ def render_home_hero() -> None:
           text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
         }}
 
-        /* Right Column: Liquid Glass Bulb Horizon Card */
+        /* Right Column: Liquid Glass Bulb Horizon Card with Subtle Float */
         .ag-hero-glass-card {{
           position: relative;
           background: linear-gradient(135deg, rgba(2, 24, 36, 0.35) 0%, rgba(4, 38, 51, 0.25) 40%, rgba(6, 56, 54, 0.25) 100%);
@@ -345,6 +398,13 @@ def render_home_hero() -> None:
           border-radius: 18px;
           padding: 1.4rem 1.5rem;
           box-shadow: 0 16px 40px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+          animation: ag-hero-card-float 6s ease-in-out infinite alternate;
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }}
+        .ag-hero-glass-card:hover {{
+          transform: translateY(-5px) scale(1.02);
+          box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), 0 0 28px rgba(56, 189, 248, 0.35);
+          border-color: rgba(56, 189, 248, 0.6);
         }}
         .ag-hero-card-header {{
           display: flex;
@@ -391,6 +451,13 @@ def render_home_hero() -> None:
           border-radius: 8px;
           font-size: 0.78rem;
           color: #f0fdfa;
+          transition: all 0.25s ease;
+        }}
+        .ag-hero-pill-info:hover {{
+          background: rgba(2, 38, 56, 0.85);
+          border-color: rgba(56, 189, 248, 0.55);
+          transform: translateX(4px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }}
 
         @media (max-width: 900px) {{
@@ -411,56 +478,56 @@ def render_home_hero() -> None:
           <div class="ag-hero-content">
             <div class="ag-hero-badge">
               <span class="ag-hero-beacon"></span>
-              Rwanda Agro-Climate Decision Engine
+              {badge_text}
             </div>
             <h1 class="ag-hero-title">
-              Make the next<br/>
-              <span class="ag-hero-glow-text">field decision</span> clearer.
+              {title_pre}<br/>
+              <span class="ag-hero-glow-text">{title_glow}</span> {title_post}
             </h1>
             <p class="ag-hero-copy">
-              Explore spatial zone intelligence, evaluate seasonal crop recommendations, and turn data-grounded insights into synchronized field plans.
+              {copy_text}
             </p>
 
             <div class="ag-hero-stats">
               <div class="ag-hero-stat-item">
-                <span class="ag-hero-stat-val">30 Districts</span>
-                <span class="ag-hero-stat-lbl">Spatial Coverage</span>
+                <span class="ag-hero-stat-val">{stat_districts_val}</span>
+                <span class="ag-hero-stat-lbl">{stat_districts_lbl}</span>
               </div>
               <div class="ag-hero-stat-item">
-                <span class="ag-hero-stat-val">10+ Key Crops</span>
-                <span class="ag-hero-stat-lbl">SAS Baselines</span>
+                <span class="ag-hero-stat-val">{stat_crops_val}</span>
+                <span class="ag-hero-stat-lbl">{stat_crops_lbl}</span>
               </div>
               <div class="ag-hero-stat-item">
-                <span class="ag-hero-stat-val">Real-time Weather</span>
-                <span class="ag-hero-stat-lbl">Satellite Indicators</span>
+                <span class="ag-hero-stat-val">{stat_weather_val}</span>
+                <span class="ag-hero-stat-lbl">{stat_weather_lbl}</span>
               </div>
               <div class="ag-hero-stat-item">
-                <span class="ag-hero-stat-val">CAT (UTC+2)</span>
-                <span class="ag-hero-stat-lbl">System Timezone</span>
+                <span class="ag-hero-stat-val">{stat_timezone_val}</span>
+                <span class="ag-hero-stat-lbl">{stat_timezone_lbl}</span>
               </div>
             </div>
           </div>
 
           <aside class="ag-hero-glass-card">
             <div class="ag-hero-card-header">
-              <span class="ag-hero-card-title">Seasonal Horizon</span>
-              <span class="ag-hero-card-tag">2026 Season A</span>
+              <span class="ag-hero-card-title">{card_title}</span>
+              <span class="ag-hero-card-tag">{card_tag}</span>
             </div>
             <p class="ag-hero-card-desc">
-              Active 2026 Season A campaign. Tracking soil moisture and conformal yield bounds.
+              {card_desc}
             </p>
             <div class="ag-hero-card-row">
               <div class="ag-hero-pill-info">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span>Priority Zones: Gasabo, Bugesera, Musanze</span>
+                <span>{pill_priority}</span>
               </div>
               <div class="ag-hero-pill-info">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
-                <span>Optimal planting window actively tracked</span>
+                <span>{pill_window}</span>
               </div>
               <div class="ag-hero-pill-info">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                <span>AI Assistant available via corner bulb</span>
+                <span>{pill_ai}</span>
               </div>
             </div>
           </aside>

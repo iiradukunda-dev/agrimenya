@@ -1,7 +1,7 @@
 """Compact, polished, glassmorphic application navigation."""
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
-from utils.i18n import render_language_selector
+from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
 
 
@@ -89,10 +89,10 @@ def render_navbar() -> None:
       }
 
       /* Column 5: More Popover Button - Transparent Capsule with centered "More" */
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:nth-child(5) button,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="stColumn"]:nth-child(5) button,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) .stPopover button,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) div[data-testid="stPopover"] button {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:nth-child(5) button,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:nth-child(5) button,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) .stPopover button,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) div[data-testid="stPopover"] button {
         border-radius: 10px !important;
         min-height: 2.55rem !important;
         padding: 0.35rem 0.85rem !important;
@@ -103,17 +103,17 @@ def render_navbar() -> None:
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
         transition: all 0.25s ease !important;
       }
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:nth-child(5) button:hover,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="stColumn"]:nth-child(5) button:hover,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) .stPopover button:hover {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:nth-child(5) button:hover,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:nth-child(5) button:hover,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) .stPopover button:hover {
         background: rgba(255, 255, 255, 0.18) !important;
         border-color: rgba(56, 189, 248, 0.65) !important;
         box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
         transform: translateY(-1px) !important;
       }
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:nth-child(5) button p,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="stColumn"]:nth-child(5) button p,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) .stPopover button p {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:nth-child(5) button p,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:nth-child(5) button p,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) .stPopover button p {
         color: #ffffff !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.88rem !important;
@@ -123,17 +123,17 @@ def render_navbar() -> None:
         text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
         transition: color 0.2s ease !important;
       }
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:nth-child(5) button:hover p,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="stColumn"]:nth-child(5) button:hover p,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) .stPopover button:hover p {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:nth-child(5) button:hover p,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:nth-child(5) button:hover p,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) .stPopover button:hover p {
         color: #38bdf8 !important;
       }
       /* Completely eliminate the expand_more chevron from the More button */
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:nth-child(5) button div:has(> span.material-symbols-rounded),
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:nth-child(5) button .material-symbols-rounded,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:nth-child(5) [class*="eqzt73c3"],
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="stColumn"]:nth-child(5) [class*="eqzt73c3"],
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) .material-symbols-rounded {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:nth-child(5) button div:has(> span.material-symbols-rounded),
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:nth-child(5) button .material-symbols-rounded,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:nth-child(5) [class*="eqzt73c3"],
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:nth-child(5) [class*="eqzt73c3"],
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) .material-symbols-rounded {
         display: none !important;
         visibility: hidden !important;
         font-size: 0 !important;
@@ -177,8 +177,8 @@ def render_navbar() -> None:
       }
 
       /* Column 6: Language Selector Button - Strictly scoped to Navbar only */
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:last-child button,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="stColumn"]:last-child button {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:last-child button,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:last-child button {
         background: rgba(255, 255, 255, 0.08) !important;
         backdrop-filter: blur(14px) !important;
         -webkit-backdrop-filter: blur(14px) !important;
@@ -194,15 +194,15 @@ def render_navbar() -> None:
         padding: 0 !important;
         position: relative !important;
       }
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:last-child button:hover,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="stColumn"]:last-child button:hover {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:last-child button:hover,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:last-child button:hover {
         background: rgba(255, 255, 255, 0.18) !important;
         border-color: rgba(56, 189, 248, 0.65) !important;
         box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
         transform: translateY(-1px) !important;
       }
       /* Hide the literal text inside the language button */
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:last-child button * {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:last-child button * {
         font-size: 0 !important;
         color: transparent !important;
         line-height: 0 !important;
@@ -212,8 +212,8 @@ def render_navbar() -> None:
         visibility: hidden !important;
       }
       /* Inject crisp vector world icon via ::before */
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:last-child button::before,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="stColumn"]:last-child button::before {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:last-child button::before,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:last-child button::before {
         content: '' !important;
         display: block !important;
         width: 20px !important;
@@ -225,8 +225,8 @@ def render_navbar() -> None:
         pointer-events: none !important;
         transition: transform 0.25s ease !important;
       }
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="column"]:last-child button:hover::before,
-      [data-testid="stHorizontalBlock"]:has(a[href*="Home.py"]) [data-testid="stColumn"]:last-child button:hover::before {
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:last-child button:hover::before,
+      [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:last-child button:hover::before {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='2' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'%3E%3C/path%3E%3C/svg%3E") !important;
         transform: rotate(18deg) scale(1.1) !important;
       }
@@ -257,28 +257,28 @@ def render_navbar() -> None:
     with brand:
         st.page_link("Home.py", label="agrimenya")
     for col, path, label in [
-        (dashboard, "pages/3_Dashboard.py", "Overview"),
-        (zones, "pages/4_Zones.py", "Zones"),
-        (decide, "pages/6_Decision_Making.py", "Decisions"),
+        (dashboard, "pages/3_Dashboard.py", t("nav.overview", "Overview")),
+        (zones, "pages/4_Zones.py", t("nav.zones", "Zones")),
+        (decide, "pages/6_Decision_Making.py", t("nav.decisions", "Decisions")),
     ]:
         with col:
             st.page_link(path, label=label)
     with more:
-        with st.popover("More", width="stretch"):
-            st.caption("OPERATIONS & TOOLS")
-            st.page_link("pages/8_Planning.py", label="Seasonal planning")
-            st.page_link("pages/9_Communication.py", label="Field alerts & comms")
-            st.page_link("pages/5_Segmentation.py", label="Zone segmentation")
-            st.page_link("pages/7_AI_Assistant.py", label="AI assistant")
+        with st.popover(t("nav.more", "More"), width="stretch"):
+            st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
+            st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))
+            st.page_link("pages/9_Communication.py", label=t("nav.comms", "Field alerts & comms"))
+            st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation", "Zone segmentation"))
+            st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant", "AI assistant"))
             st.divider()
-            st.caption("PLATFORM & COMMUNITY")
-            st.page_link("pages/10_Admin.py", label="Administration")
-            st.page_link("pages/99_Showcase.py", label="Data guide")
-            st.page_link("pages/12_Community.py", label="Farmer community")
-            st.page_link("pages/1_About.py", label="About agrimenya")
-            st.page_link("pages/11_Contact.py", label="Feedback & support")
+            st.caption(t("nav.platform_community", "PLATFORM & COMMUNITY"))
+            st.page_link("pages/10_Admin.py", label=t("nav.admin", "Administration"))
+            st.page_link("pages/99_Showcase.py", label=t("nav.data_guide", "Data guide"))
+            st.page_link("pages/12_Community.py", label=t("nav.community", "Farmer community"))
+            st.page_link("pages/1_About.py", label=t("nav.about", "About agrimenya"))
+            st.page_link("pages/11_Contact.py", label=t("nav.contact", "Feedback & support"))
             st.markdown(
-                '<a href="/app/static/offline.html" target="_blank" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.65rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#38bdf8;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);margin-top:0.3rem;">⚡ Offline Field Hub</a>',
+                f'<a href="/app/static/offline.html" target="_blank" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.65rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#38bdf8;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);margin-top:0.3rem;">⚡ {t("nav.offline_hub", "Offline Field Hub")}</a>',
                 unsafe_allow_html=True,
             )
     with language:
