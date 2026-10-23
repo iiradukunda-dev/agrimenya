@@ -1,5 +1,5 @@
 """
-Zones view — zone listing with filters and zone detail inspection.
+Zones view - zone listing with filters and zone detail inspection.
 
 Implements Page 2 of the frontend handoff: Zones list + zone detail.
 """
@@ -371,14 +371,23 @@ def render_zones() -> None:
                             if prediction.get("priority_reasons"):
                                 st.caption("Priority context: " + "; ".join(prediction["priority_reasons"]))
 
-            detail_cols = st.columns(3)
+            detail_cols = st.columns(2, gap="medium")
 
-            # Priority + Risk
+            # Priority + Risk & Nutrition
             with detail_cols[0]:
                 with st.container(border=True):
-                    st.markdown("**Priority Status**")
+                    st.markdown("**Priority Status & Risk**")
                     priority_badge(selected_zone.get("priority", "Low"))
                     st.caption(f"Risk: {selected_zone.get('risk_status', 'Unknown')}")
+                    st.divider()
+                    st.markdown("**Nutrition Risk**")
+                    nutrition = api_client.get_nutrition_risk(zone_id)
+                    if nutrition:
+                        risk_level = nutrition.get("nutrition_risk_level", "Unknown")
+                        st.metric("Assessment", risk_level or "Not assessed")
+                        st.caption(nutrition.get("note", "Household nutrition risk has not been assessed."))
+                    else:
+                        st.caption("Not assessed. District yield alone cannot establish household nutrition risk.")
 
             # Finance readiness
             with detail_cols[1]:
@@ -391,18 +400,6 @@ def render_zones() -> None:
                         st.caption("Evidence checklist only; this is not a credit score.")
                     else:
                         st.caption("Evidence checklist unavailable.")
-
-            # Nutrition risk
-            with detail_cols[2]:
-                with st.container(border=True):
-                    st.markdown("**Nutrition Risk**")
-                    nutrition = api_client.get_nutrition_risk(zone_id)
-                    if nutrition:
-                        risk_level = nutrition.get("nutrition_risk_level", "Unknown")
-                        st.metric("Assessment", risk_level or "Not assessed")
-                        st.caption(nutrition.get("note", "Household nutrition risk has not been assessed."))
-                    else:
-                        st.caption("Not assessed. District yield alone cannot establish household nutrition risk.")
 
             # Recommendations
             st.divider()
@@ -422,7 +419,7 @@ def render_zones() -> None:
             district = selected_zone.get("district", "")
             if district:
                 st.divider()
-                render_icon_subheader("assets/compass.svg", f"Weather — {district}")
+                render_icon_subheader("assets/compass.svg", f"Weather: {district}")
                 weather = api_client.get_weather(district)
                 if weather:
                     w_cols = st.columns(4)

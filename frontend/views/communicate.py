@@ -27,12 +27,14 @@ def render_communicate():
             else:
                 health = api_client.get_whatsapp_health()
                 if health:
-                    h1, h2, h3 = st.columns(3)
-                    h1.metric("Provider mode", health.get("mode", "unknown"))
-                    h2.metric("Approved templates", health.get("approved_templates", 0))
-                    h3.metric("Failed messages (24h)", health.get("failed_messages_24h", 0))
-                    if health.get("last_webhook_received_at"):
-                        st.caption(f"Last webhook: {health['last_webhook_received_at']}")
+                    h1, h2 = st.columns(2, gap="medium")
+                    with h1:
+                        st.metric("Provider mode", health.get("mode", "unknown"))
+                        st.metric("Approved templates", health.get("approved_templates", 0))
+                    with h2:
+                        st.metric("Failed messages (24h)", health.get("failed_messages_24h", 0))
+                        if health.get("last_webhook_received_at"):
+                            st.caption(f"Last webhook: {health['last_webhook_received_at']}")
                 else:
                     st.info("WhatsApp status is unavailable. Check the admin API key and backend connection.")
 
@@ -84,7 +86,7 @@ def render_communicate():
                             [
                                 {
                                     "Name": c.get("display_name") or "Unnamed",
-                                    "Role": c.get("role") or "—",
+                                    "Role": c.get("role") or "-",
                                     "Phone": c.get("phone_masked") or "BSUID contact",
                                     "Language": c.get("language", "en"),
                                     "Opted in": c.get("whatsapp_opt_in", False),

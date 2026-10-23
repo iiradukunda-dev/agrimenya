@@ -17,7 +17,7 @@ COPY = {
         "notes": "Extra details (optional)", "photo": "Photo (optional, compressed before upload)", "save_report": "Share field observation",
         "saved": "Observation shared.", "no_reports": "No field observations yet.", "unknown_author": "Community member",
         "signin": "Sign in", "create": "Create account", "email": "Email address", "password": "Password",
-        "name": "Username (3–30 letters, numbers, or underscores)", "create_farmer": "Create farmer account", "signout": "Sign out",
+        "name": "Username (3-30 letters, numbers, or underscores)", "create_farmer": "Create farmer account", "signout": "Sign out",
         "new_post": "Share an update or question", "topic": "Topic", "post_body": "Your experience or question",
         "publish": "Publish to the community", "posted": "Your update has been posted.", "replies": "Read replies and join the discussion",
         "reply": "Add a reply", "send_reply": "Reply", "report": "Report content", "reason": "Reason (required)",
@@ -42,7 +42,7 @@ COPY = {
         "notes": "Ibindi bisobanuro (si ngombwa)", "photo": "Ifoto (si ngombwa; iragabanywa mbere yo koherezwa)", "save_report": "Sangiza amakuru yo mu murima",
         "saved": "Amakuru yo mu murima yasangijwe.", "no_reports": "Nta makuru yo mu murima arahari.", "unknown_author": "Umunyamuryango",
         "signin": "Injira", "create": "Fungura konti", "email": "Imeyili", "password": "Ijambo ry'ibanga",
-        "name": "Izina ukoresha (inyuguti, imibare cyangwa _; 3–30)", "create_farmer": "Fungura konti y'umuhinzi", "signout": "Sohoka",
+        "name": "Izina ukoresha (inyuguti, imibare cyangwa _; 3-30)", "create_farmer": "Fungura konti y'umuhinzi", "signout": "Sohoka",
         "new_post": "Sangiza amakuru cyangwa ikibazo", "topic": "Umutwe", "post_body": "Ibyo wahuye na byo cyangwa ikibazo",
         "publish": "Sangiza umuryango", "posted": "Amakuru yawe yasangijwe.", "replies": "Soma ibisubizo unaganire n'abandi",
         "reply": "Andika igisubizo", "send_reply": "Subiza", "report": "Tanga ikirego", "reason": "Impamvu (ni ngombwa)",
@@ -182,7 +182,7 @@ def _error_message(exc: requests.RequestException, language: str = "en") -> str:
                     return ("Password must be at least 12 characters." if language == "en"
                             else "Ijambo ry'ibanga rigomba kugira inyuguti nibura 12.")
                 if "display_name" in locations:
-                    return ("Use a username of 3–30 letters, numbers, or underscores." if language == "en"
+                    return ("Use a username of 3-30 letters, numbers, or underscores." if language == "en"
                             else "Koresha izina rigizwe n'inyuguti, imibare cyangwa _, hagati ya 3 na 30.")
                 if "email" in locations:
                     return ("Enter a valid email address." if language == "en"

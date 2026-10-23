@@ -1,5 +1,5 @@
 """
-Priority badge component — renders semantic status indicators.
+Priority badge component - renders semantic status indicators.
 """
 from html import escape
 
@@ -9,7 +9,7 @@ from utils.i18n import t
 
 def priority_badge(priority: str) -> None:
     """
-    Renders a glassmorphic priority badge with a pulsing dot indicator.
+    Renders a modern semantic priority badge with a pulsing dot indicator.
 
     Args:
         priority: One of 'High', 'Medium', or 'Low'.

@@ -1,4 +1,4 @@
-"""Compact, polished, glassmorphic application navigation."""
+"""Compact, polished application navigation."""
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
 from utils.i18n import render_language_selector, t
@@ -12,15 +12,13 @@ def render_navbar() -> None:
       @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
       [data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; }
       
-      /* Nav Bar Base Container Styling - Transparent Frosted Glass Capsules */
+      /* Nav Bar Base Container Styling - Crisp Solid Modern Capsules */
       [data-testid="stPageLink-NavLink"] {
-        background: rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(14px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
+        background: #081a26 !important;
         border-radius: 10px !important;
         min-height: 2.55rem !important;
         padding: 0.35rem 0.75rem !important;
-        border: 1px solid rgba(255, 255, 255, 0.22) !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
         justify-content: center !important;
         text-align: center !important;
@@ -36,7 +34,7 @@ def render_navbar() -> None:
         transition: color 0.2s ease !important;
       }
       [data-testid="stPageLink-NavLink"]:hover {
-        background: rgba(255, 255, 255, 0.18) !important;
+        background: #0c2434 !important;
         border-color: rgba(56, 189, 248, 0.65) !important;
         box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
         transform: translateY(-1px) !important;
@@ -55,12 +53,10 @@ def render_navbar() -> None:
         text-shadow: 0 0 10px rgba(56, 189, 248, 0.6) !important;
       }
 
-      /* Brand Logo Special Styling - Transparent Cyan Glass Glow */
+      /* Brand Logo Special Styling - Solid Cyan Glow */
       [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"],
       [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] {
-        background: rgba(2, 32, 44, 0.35) !important;
-        backdrop-filter: blur(14px) !important;
-        -webkit-backdrop-filter: blur(14px) !important;
+        background: #041d2a !important;
         border-radius: 10px !important;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 16px rgba(56, 189, 248, 0.25) !important;
         border: 1px solid rgba(56, 189, 248, 0.45) !important;
@@ -75,7 +71,7 @@ def render_navbar() -> None:
       }
       [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"]:hover,
       [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:hover {
-        background: rgba(2, 32, 44, 0.55) !important;
+        background: #062b3d !important;
         transform: translateY(-1px) scale(1.02) !important;
         box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45) !important;
         border-color: rgba(56, 189, 248, 0.75) !important;
@@ -88,7 +84,7 @@ def render_navbar() -> None:
         display: none !important;
       }
 
-      /* Column 5: More Popover Button - Transparent Capsule with centered "More" */
+      /* Column 5: More Popover Button - Modern Solid Capsule */
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:nth-child(5) button,
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:nth-child(5) button,
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) .stPopover button,
@@ -96,18 +92,18 @@ def render_navbar() -> None:
         border-radius: 10px !important;
         min-height: 2.55rem !important;
         padding: 0.35rem 0.85rem !important;
-        border: 1px solid rgba(255, 255, 255, 0.22) !important;
-        background: rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(14px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
+        background: #081a26 !important;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
         transition: all 0.25s ease !important;
       }
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:nth-child(5) button:hover,
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:nth-child(5) button:hover,
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) .stPopover button:hover {
-        background: rgba(255, 255, 255, 0.18) !important;
+        background: #0c2434 !important;
         border-color: rgba(56, 189, 248, 0.65) !important;
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
+      }
         box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
         transform: translateY(-1px) !important;
       }
@@ -149,9 +145,7 @@ def render_navbar() -> None:
         max-height: 520px !important;
         border-radius: 14px !important;
         border: 1px solid rgba(56, 189, 248, 0.38) !important;
-        background: rgba(2, 24, 36, 0.92) !important;
-        backdrop-filter: blur(20px) !important;
-        -webkit-backdrop-filter: blur(20px) !important;
+        background: #061924 !important;
         box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
         padding: 0.65rem 0.55rem !important;
       }
@@ -179,10 +173,8 @@ def render_navbar() -> None:
       /* Column 6: Language Selector Button - Strictly scoped to Navbar only */
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:last-child button,
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:last-child button {
-        background: rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(14px) !important;
-        -webkit-backdrop-filter: blur(14px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.22) !important;
+        background: #081a26 !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
         border-radius: 10px !important;
         min-height: 2.55rem !important;
         width: 100% !important;
@@ -196,7 +188,7 @@ def render_navbar() -> None:
       }
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="column"]:last-child button:hover,
       [data-testid="stHorizontalBlock"]:has(a[href*="Dashboard"]) [data-testid="stColumn"]:last-child button:hover {
-        background: rgba(255, 255, 255, 0.18) !important;
+        background: #0c2434 !important;
         border-color: rgba(56, 189, 248, 0.65) !important;
         box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
         transform: translateY(-1px) !important;
@@ -278,7 +270,7 @@ def render_navbar() -> None:
             st.page_link("pages/1_About.py", label=t("nav.about", "About agrimenya"))
             st.page_link("pages/11_Contact.py", label=t("nav.contact", "Feedback & support"))
             st.markdown(
-                f'<a href="/app/static/offline.html" target="_blank" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.65rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#38bdf8;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);margin-top:0.3rem;">⚡ {t("nav.offline_hub", "Offline Field Hub")}</a>',
+                f'<a href="/app/static/offline.html" target="_blank" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.65rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#38bdf8;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);margin-top:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> {t("nav.offline_hub", "Offline Field Hub")}</a>',
                 unsafe_allow_html=True,
             )
     with language:

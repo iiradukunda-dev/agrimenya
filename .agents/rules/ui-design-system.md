@@ -1,43 +1,64 @@
-# UI Design System & Theme Rules — agrimenya
+---
+trigger: always_on
+---
 
-## Core Philosophy: "Liquid Glass" & Agriculture Intelligence
+## Agrimenya Design-System Enforcement
 
-The entire agrimenya application MUST adhere strictly to the "Liquid Glass" design language provided by the user. This is a premium, modern aesthetic that relies heavily on glassmorphism, depth, and nature-forward imagery.
+Before creating, modifying, or reviewing UI, read `AGRIMENYA_DESIGN_SYSTEM.md`.
 
-Whenever you add a new component, page, or UI element, it MUST look cohesive with this design.
+Treat this file as the canonical source of truth for Agrimenya's visual identity, Liquid Glass surfaces, design tokens, component conventions, accessibility, responsive behavior, motion, performance, and UI evaluation.
 
-## 1. Backgrounds & Environment
-- The app should NOT use flat solid colors for the main background.
-- It MUST use rich, high-quality, blurred agricultural imagery (e.g., macro shots of tea leaves, green fields, sunlight) as a full-viewport ambient background.
-- Elements float on top of this environment.
+### Mandatory rules
 
-## 2. Glassmorphism (The "Glass" Effect)
-All major container elements (navbars, cards, modals, sidebars) MUST be implemented as frosted glass surfaces:
-- **Background:** Semi-transparent white or very light green (e.g., `rgba(255, 255, 255, 0.15)` to `0.3`).
-- **Backdrop Filter:** Strong blur effect (`backdrop-filter: blur(16px)` to `blur(24px)`).
-- **Borders:** Subtle, semi-transparent white borders to create a refractive edge (`border: 1px solid rgba(255, 255, 255, 0.4)`).
-- **Shadows:** Soft, diffused drop shadows to create elevation (`box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1)`).
-- **Highlights:** Subtle top/left inner highlights to simulate light hitting the glass edge.
+1. Follow the approved Agrimenya palette, typography, spacing, surface hierarchy, and component patterns.
+2. Prefer agricultural imagery and refined Liquid Glass surfaces where appropriate.
+3. Preserve readability, accessibility, responsive behavior, and application functionality.
+4. Reuse existing components and tokens before creating new ones.
+5. Avoid generic layouts, unnecessary decoration, excessive blur, and unoptimized animation.
+6. Respect reduced-motion preferences and provide fallbacks for unsupported visual effects.
+7. Preserve existing application logic, state, navigation, and integrations.
+8. Inspect the rendered interface when the environment supports visual verification.
+9. Do not claim tests, visual checks, or skill recognition succeeded unless they were actually verified.
+10. Do not mark substantial UI work complete while critical accessibility, functional, or responsive failures remain.
 
-## 3. Typography & Colors
-- **Font Families:** Modern sans-serif (e.g., Inter, Space Grotesk, or system UI fonts).
-- **Text Colors:**
-  - Primary text: Deep, legible forest greens (e.g., `#064E3B`, `#1B3A2D`) or very dark grays.
-  - Secondary text: Softer greens or grays.
-- **Accents:** Emerald greens, vibrant leaf greens for active states and highlights.
-- **Avoid:** Generic pure blacks, blues, or reds unless strictly semantic (e.g., error states), but even semantic colors should be tweaked to fit the earthy, premium palette.
+### Skill coordination
 
-## 4. Component Specifics
-- **Navbar:** Floating, pill-shaped, or detached glass header (not edge-to-edge flush). It should house the brand mark, navigation links, and a language selector.
-- **Cards & Containers:** Rounded corners (e.g., `border-radius: 16px` to `24px`). Content inside should have ample padding.
-- **Buttons & Interactive Elements:** Should have hover states that slightly increase opacity, blur, or elevate the element. Active states should feel tactile.
-- **Icons:** Use elegant, consistent icons (like the wheat or leaf SVGs). 3D-like, embossed, or inner-shadowed icon containers (as seen in the agrimenya logo mark on the hero card) are highly encouraged.
-- **Animations:** Subtle micro-animations (GSAP or CSS transitions) for floating elements, particles (like leaves), and hover states.
+Use only the installed skills relevant to the task.
 
-## 5. Streamlit Integration
-When working within Streamlit:
-- Inject these styles globally via `st.html` or `st.markdown(..., unsafe_allow_html=True)`.
-- Use custom HTML/CSS wrappers for major structural elements if native Streamlit components cannot be styled to meet this premium standard.
-- Hide default Streamlit chrome (like the default header and footer) to maintain the immersive app experience.
+- `frontend-design`: Interface implementation and visual refinement.
+- `ui-ux-pro-max`: Usability and responsive design evaluation.
+- `theme-factory`: Shared theme tokens and consistency.
+- `brand-guidelines`: Agrimenya brand consistency.
+- `emil-design-eng`: Design engineering quality.
+- `animate`: Purposeful interaction motion.
+- `animate-expo`: Expo or React Native animation when applicable.
+- `review-animations`: Animation review.
+- `improve-animations`: Animation refinement.
+- `find-animation-opportunities`: Useful motion opportunities.
+- `animation-performance`: Animation performance.
+- `animation-vocabulary`: Motion terminology.
+- `ai-design-evaluator`: Design-system compliance evaluation.
+- `ai-motion-corrector`: Animation correction.
+- `ai-style-mapper`: Mapping existing UI to Agrimenya's visual language.
+- `apple-design`: Applicable platform-design principles without overriding Agrimenya's brand.
 
-**CRITICAL RULE:** If an interface looks basic, flat, or like a default Streamlit app, you have failed the UI constraint. It must always look like a premium, state-of-the-art web application.
+Follow the actual instructions in each installed `SKILL.md`. Do not assume a skill is installed or recognized until verified.
+
+### Quality gate
+
+For substantial UI changes:
+
+1. Inspect the relevant implementation and existing tokens.
+2. Implement the requested functionality using Agrimenya conventions.
+3. Check accessibility, responsive behavior, motion, and performance.
+4. Inspect the rendered result where possible.
+5. Evaluate the implementation against the rubric in `AGRIMENYA_DESIGN_SYSTEM.md`.
+6. Resolve critical failures before completion.
+
+Target a minimum evaluation score of 85/100. Critical accessibility, functional, or responsive failures must be fixed regardless of the aggregate score.
+
+### Conflict resolution
+
+If the design system conflicts with accessibility or working application functionality, preserve accessibility and core functionality. Choose the closest visually consistent alternative and explain any meaningful deviation.
+
+Do not overwrite existing project-specific instructions when adding or updating these rules.

@@ -1,7 +1,7 @@
 """
 Animated hero component for the agrimenya landing page.
 
-Uses React 18 + GSAP to render an interactive 3D glass card hero section
+Uses React 18 + GSAP to render an interactive 3D hero section
 with climate-themed floating data particles.
 """
 import streamlit.components.v1 as components
@@ -10,7 +10,7 @@ import streamlit.components.v1 as components
 def render_react_hero() -> None:
     """
     Renders a premium interactive hero section with:
-    - 3D perspective glass card that tracks mouse movement
+    - 3D perspective hero card that tracks mouse movement
     - Floating climate data particles (temperature, rain, soil icons)
     - GSAP entrance animations
     - Responsive design
@@ -25,12 +25,12 @@ def render_react_hero() -> None:
         <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
             * { margin: 0; padding: 0; box-sizing: border-box; }
 
             body {
-                font-family: 'Inter', sans-serif;
+                font-family: 'Outfit', sans-serif;
                 overflow: hidden;
                 background: transparent;
             }
@@ -64,25 +64,17 @@ def render_react_hero() -> None:
                 filter: blur(0.5px);
             }
 
-            .hero-glass {
-                background: linear-gradient(
-                    135deg,
-                    rgba(255, 255, 255, 0.55) 0%,
-                    rgba(255, 255, 255, 0.15) 100%
-                );
-                backdrop-filter: blur(40px) saturate(200%);
-                -webkit-backdrop-filter: blur(40px) saturate(200%);
-                border: 1px solid rgba(255, 255, 255, 0.5);
+            .hero-card {
+                background: #ffffff;
+                border: 1px solid rgba(226, 232, 240, 0.9);
                 border-radius: 32px;
                 padding: 56px 64px;
                 max-width: 720px;
                 width: 90%;
                 text-align: center;
                 box-shadow:
-                    0 20px 60px rgba(0, 0, 0, 0.1),
-                    0 4px 16px rgba(0, 0, 0, 0.05),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-                    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+                    0 20px 60px rgba(0, 0, 0, 0.08),
+                    0 4px 16px rgba(0, 0, 0, 0.04);
                 transform-style: preserve-3d;
                 cursor: default;
                 position: relative;
@@ -95,7 +87,7 @@ def render_react_hero() -> None:
             .hero-icon-container {
                 width: 72px;
                 height: 72px;
-                background: rgba(255, 255, 255, 0.8);
+                background: rgba(240, 253, 244, 0.9);
                 border-radius: 20px;
                 display: flex;
                 align-items: center;
@@ -103,11 +95,11 @@ def render_react_hero() -> None:
                 margin-bottom: 24px;
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
                 transform: translateZ(40px);
-                border: 1px solid rgba(255, 255, 255, 1);
+                border: 1px solid #bbf7d0;
             }
 
             .hero-title {
-                font-family: 'Space Grotesk', sans-serif;
+                font-family: 'Plus Jakarta Sans', sans-serif;
                 font-size: 3rem;
                 font-weight: 800;
                 line-height: 1.15;
@@ -119,7 +111,7 @@ def render_react_hero() -> None:
             }
 
             .hero-subtitle {
-                font-family: 'Space Grotesk', sans-serif;
+                font-family: 'Plus Jakarta Sans', sans-serif;
                 font-size: 1.4rem;
                 font-weight: 600;
                 color: #2D6A4F;
@@ -129,7 +121,7 @@ def render_react_hero() -> None:
             }
 
             .hero-text {
-                font-family: 'Inter', sans-serif;
+                font-family: 'Outfit', sans-serif;
                 font-size: 1.05rem;
                 color: #4B5563;
                 line-height: 1.6;
@@ -140,12 +132,11 @@ def render_react_hero() -> None:
             .bottom-pill {
                 position: absolute;
                 bottom: 20px;
-                background: rgba(255, 255, 255, 0.4);
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.6);
+                background: #ffffff;
+                border: 1px solid rgba(226, 232, 240, 0.9);
                 padding: 10px 24px;
                 border-radius: 50px;
-                font-family: 'Inter', sans-serif;
+                font-family: 'Outfit', sans-serif;
                 font-size: 0.8rem;
                 font-weight: 600;
                 letter-spacing: 0.1em;
@@ -218,7 +209,7 @@ def render_react_hero() -> None:
 
                 return (
                     <div className="hero-scene" ref={sceneRef} style={{ height: '500px' }}>
-                        <div className="hero-glass" ref={cardRef}>
+                        <div className="hero-card" ref={cardRef}>
                             <div className="hero-icon-container">
                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M12 2v20M12 12c-3-3-6-3-6-3s3 0 6 3c3-3 6-3 6-3s-3 0-6 3M12 6c-3-3-6-3-6-3s3 0 6 3c3-3 6-3 6-3s-3 0-6 3"/>

@@ -6,7 +6,7 @@ def load_theme() -> None:
     """Apply a modern, high-contrast, polished visual system with smooth animations."""
     st.html("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
     :root {
@@ -44,7 +44,7 @@ def load_theme() -> None:
 
       --ag-bg-base: #f4f8fa;
       --ag-surface: #ffffff;
-      --ag-surface-glass: rgba(255, 255, 255, 0.86);
+      --ag-surface-dark: #081a26;
       
       --ag-radius-sm: 8px;
       --ag-radius-md: 14px;
@@ -65,7 +65,7 @@ def load_theme() -> None:
                   radial-gradient(circle at 90% 88%, rgba(74, 222, 128, 0.16) 0%, transparent 45%),
                   radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, transparent 70%),
                   var(--ag-bg-base);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -86,7 +86,7 @@ def load_theme() -> None:
 
     /* Headings */
     h1, h2, h3, h4 {
-      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif !important;
+      font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif !important;
       color: var(--ag-ink);
       letter-spacing: -0.03em;
       font-weight: 750 !important;
@@ -118,21 +118,19 @@ def load_theme() -> None:
       font-size: 0.86rem;
     }
 
-    /* Transparent Glass Cards & Containers with Liquid Refraction */
+    /* Structured Modern Cards & Containers (No liquid glass) */
     [data-testid="stVerticalBlockBorderWrapper"] {
-      border: 1px solid rgba(255, 255, 255, 0.20) !important;
-      border-top: 1.5px solid rgba(255, 255, 255, 0.38) !important;
+      border: 1px solid rgba(56, 189, 248, 0.22) !important;
+      border-top: 1.5px solid rgba(56, 189, 248, 0.40) !important;
       border-radius: var(--ag-radius-md) !important;
-      background: rgba(2, 24, 36, 0.32) !important;
-      backdrop-filter: blur(16px) saturate(180%) !important;
-      -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      background: #081a26 !important;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"]:hover {
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(56, 189, 248, 0.25) !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.25) !important;
       border-color: rgba(56, 189, 248, 0.55) !important;
-      background: rgba(2, 24, 36, 0.48) !important;
+      background: #0b2231 !important;
       transform: translateY(-3px) !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"] h1,
@@ -148,10 +146,8 @@ def load_theme() -> None:
     }
     [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
     [data-testid="stVerticalBlockBorderWrapper"] button {
-      background: rgba(255, 255, 255, 0.10) !important;
-      backdrop-filter: blur(10px) !important;
-      -webkit-backdrop-filter: blur(10px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      background: #0f2738 !important;
+      border: 1px solid rgba(56, 189, 248, 0.28) !important;
       border-radius: 10px !important;
       color: #ffffff !important;
       font-weight: 700 !important;
@@ -165,7 +161,7 @@ def load_theme() -> None:
     }
     [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
     [data-testid="stVerticalBlockBorderWrapper"] button:hover {
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(74, 222, 128, 0.30) 100%) !important;
+      background: #0284c7 !important;
       border-color: rgba(56, 189, 248, 0.8) !important;
       color: #ffffff !important;
       box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
@@ -174,14 +170,12 @@ def load_theme() -> None:
 
     /* Metrics Cards with Cyan Bulb Accent */
     [data-testid="stMetric"] {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 249, 252, 0.88) 100%) !important;
+      background: #ffffff !important;
       border: 1px solid var(--ag-line) !important;
       border-top: 3.5px solid #0ea5e9 !important;
       border-radius: var(--ag-radius-md) !important;
       padding: 1.1rem 1.25rem !important;
       box-shadow: var(--ag-shadow-sm) !important;
-      backdrop-filter: blur(12px) !important;
-      -webkit-backdrop-filter: blur(12px) !important;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
     [data-testid="stMetric"]:hover {
@@ -207,7 +201,7 @@ def load_theme() -> None:
     /* Buttons with Cyan-to-Emerald Bioluminescent Glow */
     .stButton > button, [data-testid="stDownloadButton"] button {
       border-radius: 10px !important;
-      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif !important;
+      font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif !important;
       font-weight: 650 !important;
       font-size: 0.92rem !important;
       letter-spacing: 0.01em !important;
@@ -242,13 +236,11 @@ def load_theme() -> None:
       transform: translateY(-2px) scale(1.01) !important;
     }
 
-    /* Transparent Card Buttons override (Placed after generic button rules) */
+    /* Structured Card Buttons override (Placed after generic button rules) */
     [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
     [data-testid="stVerticalBlockBorderWrapper"] button {
-      background: rgba(255, 255, 255, 0.10) !important;
-      backdrop-filter: blur(10px) !important;
-      -webkit-backdrop-filter: blur(10px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      background: #0f2738 !important;
+      border: 1px solid rgba(56, 189, 248, 0.28) !important;
       border-radius: 10px !important;
       color: #ffffff !important;
       font-weight: 700 !important;
@@ -262,24 +254,22 @@ def load_theme() -> None:
     }
     [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
     [data-testid="stVerticalBlockBorderWrapper"] button:hover {
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(74, 222, 128, 0.30) 100%) !important;
+      background: #0284c7 !important;
       border-color: rgba(56, 189, 248, 0.8) !important;
       color: #ffffff !important;
       box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
       transform: translateY(-2px) !important;
     }
 
-    /* Navbar Transparent Buttons & Popovers (Placed after generic button rules) */
+    /* Navbar Modern Solid Buttons & Popovers */
     [data-testid="stHorizontalBlock"] button,
     [data-testid="stHorizontalBlock"] .stPopover > button,
     [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
-      background: rgba(255, 255, 255, 0.08) !important;
-      backdrop-filter: blur(14px) saturate(180%) !important;
-      -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
+      background: #081a26 !important;
       border-radius: 10px !important;
       min-height: 2.55rem !important;
       padding: 0.35rem 0.85rem !important;
-      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      border: 1px solid rgba(56, 189, 248, 0.25) !important;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-size: 0.88rem !important;
@@ -304,7 +294,7 @@ def load_theme() -> None:
     [data-testid="stHorizontalBlock"] button:hover,
     [data-testid="stHorizontalBlock"] .stPopover > button:hover,
     [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
-      background: rgba(255, 255, 255, 0.18) !important;
+      background: #0c2434 !important;
       border-color: rgba(56, 189, 248, 0.65) !important;
       box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
       transform: translateY(-1px) !important;

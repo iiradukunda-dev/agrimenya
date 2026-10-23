@@ -129,23 +129,23 @@ def render_pwa_support() -> None:
         if (!toast) {
           toast = parentDoc.createElement('div');
           toast.id = 'ag-pwa-connectivity-toast';
-          toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);z-index:999999;padding:0.65rem 1.25rem;border-radius:12px;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.88rem;font-weight:700;display:flex;align-items:center;gap:0.6rem;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 32px rgba(0,0,0,0.45);transition:transform 0.35s cubic-bezier(0.16,1,0.3,1),opacity 0.35s ease;opacity:0;pointer-events:none;';
+          toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);z-index:999999;padding:0.65rem 1.25rem;border-radius:12px;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.88rem;font-weight:700;display:flex;align-items:center;gap:0.6rem;box-shadow:0 12px 32px rgba(0,0,0,0.45);transition:transform 0.35s cubic-bezier(0.16,1,0.3,1),opacity 0.35s ease;opacity:0;pointer-events:none;';
           parentDoc.body.appendChild(toast);
         }
 
         function showToast(isOnline) {
           if (!isOnline) {
-            toast.style.background = 'rgba(245, 158, 11, 0.92)';
-            toast.style.border = '1px solid rgba(251, 191, 36, 0.6)';
+            toast.style.background = '#d97706';
+            toast.style.border = '1px solid #fbbf24';
             toast.style.color = '#021824';
-            toast.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>Offline Mode Active &mdash; Local Agro Data Ready</span>';
+            toast.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg><span>Offline Mode Active - Local Agro Data Ready</span>';
             toast.style.transform = 'translateX(-50%) translateY(0)';
             toast.style.opacity = '1';
           } else {
-            toast.style.background = 'rgba(5, 48, 63, 0.95)';
-            toast.style.border = '1px solid rgba(0, 229, 153, 0.6)';
+            toast.style.background = '#06283b';
+            toast.style.border = '1px solid #00E599';
             toast.style.color = '#00E599';
-            toast.innerHTML = '<span style="font-size:1.1rem;">✓</span><span>Back Online &mdash; Real-time Agro Stream Connected</span>';
+            toast.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Back Online - Real-time Agro Stream Connected</span>';
             toast.style.transform = 'translateX(-50%) translateY(0)';
             toast.style.opacity = '1';
             setTimeout(() => {
@@ -173,7 +173,7 @@ def render_pwa_support() -> None:
             installBtn = parentDoc.createElement('button');
             installBtn.id = 'ag-pwa-install-badge';
             installBtn.title = 'Install agrimenya as Progressive Web App';
-            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:99999;padding:0.45rem 0.95rem;border-radius:10px;background:rgba(2,24,36,0.92);border:1px solid rgba(56,189,248,0.5);color:#38bdf8;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:0.45rem;cursor:pointer;backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:all 0.2s;';
+            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:99999;padding:0.45rem 0.95rem;border-radius:10px;background:#061a26;border:1px solid rgba(56,189,248,0.5);color:#38bdf8;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:0.45rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:all 0.2s;';
             installBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Install App</span>';
             installBtn.addEventListener('click', async () => {
               if (window.parent.__agrimenya_deferred_prompt) {

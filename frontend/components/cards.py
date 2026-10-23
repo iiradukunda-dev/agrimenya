@@ -12,7 +12,7 @@ def pillar_card(
     tag: str = "WORKFLOW",
     accent_color: str = "#10b981",
 ) -> None:
-    """Render an interactive, animated glass workflow card with fluid micro-motions."""
+    """Render an interactive, animated workflow card with fluid micro-motions."""
     with col:
         with st.container(border=True):
             icon_markup = (
@@ -70,3 +70,4 @@ def pillar_card(
             st.markdown(html_block, unsafe_allow_html=True)
             if st.button(f"{btn_text} →", key=f"btn_{page_route}", width="stretch"):
                 st.switch_page(page_route)
+

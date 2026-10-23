@@ -76,7 +76,7 @@ def main():
     # Section 2: Interactive Operational Roadmap
     pipeline_badge = t("home.pipeline_badge", "OPERATIONAL PIPELINE")
     pipeline_title = t("home.pipeline_title", "A Practical Field Workflow")
-    pipeline_sub = t("home.pipeline_sub", "A streamlined three-stage cycle designed for agronomists, regional planners, and extension leaders.")
+    pipeline_sub = t("home.pipeline_sub", "A structured four-stage cycle designed for agronomists, regional planners, and extension leaders.")
 
     st.markdown(
         f"""
@@ -135,7 +135,7 @@ def main():
         unsafe_allow_html=True,
     )
 
-    steps = st.columns(3, gap="medium")
+    steps = st.columns(4, gap="medium")
     step_data = [
         (
             "01",
@@ -153,8 +153,15 @@ def main():
         ),
         (
             "03",
-            t("home.step3_title", "Coordinate Field Response"),
-            t("home.step3_desc", "Assign seasonal action items and notify field agents."),
+            t("home.step3_title", "Build Seasonal Plan"),
+            t("home.step3_desc", "Structure district timelines, tasks, and field milestones."),
+            """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>""",
+            "#f59e0b",
+        ),
+        (
+            "04",
+            t("home.step4_title", "Coordinate Field Response"),
+            t("home.step4_desc", "Assign seasonal action items and notify field agents."),
             """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>""",
             "#0ea5e9",
         ),

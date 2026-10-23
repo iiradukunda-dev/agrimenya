@@ -113,16 +113,8 @@ def render_floating_ai_widget() -> None:
         right: 76px !important;
         top: 50% !important;
         transform: translateY(-50%) translateX(12px) scale(0.96) !important;
-        background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.88) 0%,
-            rgba(224, 242, 254, 0.55) 35%,
-            rgba(220, 252, 231, 0.55) 70%,
-            rgba(187, 247, 208, 0.65) 100%
-        ) !important;
-        backdrop-filter: blur(16px) saturate(190%) !important;
-        -webkit-backdrop-filter: blur(16px) saturate(190%) !important;
-        color: #034b5c !important;
+        background: #041622 !important;
+        color: #ffffff !important;
         font-size: 0.86rem !important;
         font-weight: 750 !important;
         padding: 8px 18px !important;
@@ -132,16 +124,8 @@ def render_floating_ai_widget() -> None:
         opacity: 0 !important;
         visibility: hidden !important;
         transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        border: 1px solid rgba(255, 255, 255, 0.85) !important;
-        border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
-        border-bottom: 1px solid rgba(56, 189, 248, 0.45) !important;
-        box-shadow:
-            0 10px 30px rgba(2, 38, 48, 0.16),
-            0 2px 8px rgba(0, 0, 0, 0.05),
-            inset 0 1.5px 2px rgba(255, 255, 255, 1),
-            inset 0 -1.5px 2px rgba(56, 189, 248, 0.3),
-            inset 0 0 14px rgba(255, 255, 255, 0.6) !important;
-        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid rgba(56, 189, 248, 0.6) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
         letter-spacing: 0.02em !important;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         overflow: hidden !important;
@@ -150,10 +134,10 @@ def render_floating_ai_widget() -> None:
         gap: 6px !important;
         z-index: 10000000 !important;
     }}
-    .ag-glass-spark {{
-        color: #1b8a5a !important;
-        font-size: 0.85rem !important;
-        text-shadow: 0 0 6px rgba(45, 180, 110, 0.5) !important;
+    .ag-ai-spark {{
+        color: #38bdf8 !important;
+        display: flex !important;
+        align-items: center !important;
         line-height: 1 !important;
     }}
     .ag-floating-ai-tooltip::after {{
@@ -203,6 +187,6 @@ def render_floating_ai_widget() -> None:
     </style>
     <a href="/AI_Assistant" target="_self" class="ag-floating-ai-fab" aria-label="{ask_ai_text}" title="{ask_ai_text}">
         <img src="data:image/png;base64,{img_b64}" alt="AI Assistant" />
-        <div class="ag-floating-ai-tooltip"><span class="ag-glass-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#1b8a5a"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> {ask_ai_text}</div>
+        <div class="ag-floating-ai-tooltip"><span class="ag-ai-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#38bdf8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> {ask_ai_text}</div>
     </a>
     """, unsafe_allow_html=True)

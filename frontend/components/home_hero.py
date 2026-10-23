@@ -47,7 +47,7 @@ def _ensure_landing_video() -> str:
 
 
 def render_home_hero() -> None:
-    """Render full-page background video and a floating glassmorphic hero command center."""
+    """Render full-page background video and a floating hero command center."""
     video_url = _ensure_landing_video()
 
     badge_text = t("hero.badge", "Rwanda Agro-Climate Decision Engine")
@@ -86,25 +86,23 @@ def render_home_hero() -> None:
       div[data-testid="stCustomComponentV1"] {
         margin-bottom: 1.5rem !important;
       }
-      /* Action workflow cards: transparent frosted glass cards */
+      /* Action workflow cards: structured modern cards (no liquid glass) */
       [data-testid="stVerticalBlockBorderWrapper"] {
-        background: rgba(2, 24, 36, 0.32) !important;
-        backdrop-filter: blur(16px) saturate(190%) !important;
-        -webkit-backdrop-filter: blur(16px) saturate(190%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.20) !important;
-        border-top: 1.5px solid rgba(255, 255, 255, 0.40) !important;
-        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
+        background: #081a26 !important;
+        border: 1px solid rgba(56, 189, 248, 0.22) !important;
+        border-top: 1.5px solid rgba(56, 189, 248, 0.40) !important;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.40) !important;
         border-radius: 18px !important;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"]:hover {
-        background: rgba(2, 24, 36, 0.48) !important;
+        background: #0b2231 !important;
         border-color: rgba(56, 189, 248, 0.6) !important;
-        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.50), 0 0 24px rgba(56, 189, 248, 0.28) !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.50), 0 0 20px rgba(56, 189, 248, 0.28) !important;
         transform: translateY(-4px) !important;
       }
 
-      /* Headings & Text inside transparent cards */
+      /* Headings & Text inside cards */
       [data-testid="stVerticalBlockBorderWrapper"] h1,
       [data-testid="stVerticalBlockBorderWrapper"] h2,
       [data-testid="stVerticalBlockBorderWrapper"] h3,
@@ -118,14 +116,12 @@ def render_home_hero() -> None:
         text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7) !important;
       }
 
-      /* Transparent Card Buttons - High specificity override */
+      /* Structured Card Buttons - High specificity override */
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
       [data-testid="stVerticalBlockBorderWrapper"] button,
       [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"] {
-        background: rgba(255, 255, 255, 0.10) !important;
-        backdrop-filter: blur(10px) !important;
-        -webkit-backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+        background: #0f2738 !important;
+        border: 1px solid rgba(56, 189, 248, 0.28) !important;
         border-radius: 10px !important;
         color: #ffffff !important;
         font-weight: 700 !important;
@@ -142,7 +138,12 @@ def render_home_hero() -> None:
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
       [data-testid="stVerticalBlockBorderWrapper"] button:hover,
       [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:hover {
-        background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(74, 222, 128, 0.30) 100%) !important;
+        background: #0284c7 !important;
+        border-color: rgba(56, 189, 248, 0.8) !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
+        transform: translateY(-2px) !important;
+      }
         border-color: rgba(56, 189, 248, 0.8) !important;
         box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
         color: #ffffff !important;
@@ -189,7 +190,7 @@ def render_home_hero() -> None:
           height: 100%;
         }}
 
-        /* Floating transparent glassmorphic command center card (no video inside - video is full page background) */
+        /* Command center card (no video inside - video is full page background) */
         .ag-hero-wrapper {{
           position: relative;
           overflow: hidden;
@@ -198,17 +199,14 @@ def render_home_hero() -> None:
           color: #ffffff;
           background: linear-gradient(
             135deg,
-            rgba(2, 24, 36, 0.32) 0%,
-            rgba(3, 34, 46, 0.22) 42%,
-            rgba(6, 56, 48, 0.22) 78%,
-            rgba(4, 40, 32, 0.28) 100%
+            #071926 0%,
+            #0a2538 50%,
+            #071f28 100%
           );
-          backdrop-filter: blur(14px) saturate(170%);
-          -webkit-backdrop-filter: blur(14px) saturate(170%);
           border-radius: 22px;
-          border: 1px solid rgba(255, 255, 255, 0.22);
-          border-top: 1.5px solid rgba(255, 255, 255, 0.45);
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.40), 0 0 40px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.20);
+          border: 1px solid rgba(56, 189, 248, 0.25);
+          border-top: 1.5px solid rgba(56, 189, 248, 0.45);
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.40), 0 0 40px rgba(56, 189, 248, 0.12);
           animation: ag-hero-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }}
 
@@ -265,15 +263,15 @@ def render_home_hero() -> None:
           100% {{ transform: translate(35px, -20px) scale(1.12); }}
         }}
 
-        /* Grid Content Layer */
+        /* Symmetrical 2-Column Grid Layout */
         .ag-hero-grid {{
           position: relative;
           z-index: 2;
           display: grid;
-          grid-template-columns: 1.35fr 0.65fr;
-          gap: 2.2rem;
+          grid-template-columns: 1fr 1fr;
+          gap: 2.5rem;
           align-items: center;
-          padding: 2.5rem 3rem;
+          padding: 2.8rem 3rem;
           min-height: 380px;
         }}
 
@@ -286,9 +284,7 @@ def render_home_hero() -> None:
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: linear-gradient(135deg, rgba(56, 189, 248, 0.26) 0%, rgba(74, 222, 128, 0.22) 100%);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
+          background: #082130;
           border: 1px solid rgba(125, 211, 252, 0.5);
           padding: 5px 14px;
           border-radius: 9999px;
@@ -387,23 +383,21 @@ def render_home_hero() -> None:
           text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
         }}
 
-        /* Right Column: Liquid Glass Bulb Horizon Card with Subtle Float */
-        .ag-hero-glass-card {{
+        /* Right Column: Structured Horizon Card with Subtle Float */
+        .ag-hero-horizon-card {{
           position: relative;
-          background: linear-gradient(135deg, rgba(2, 24, 36, 0.35) 0%, rgba(4, 38, 51, 0.25) 40%, rgba(6, 56, 54, 0.25) 100%);
-          backdrop-filter: blur(14px) saturate(170%);
-          -webkit-backdrop-filter: blur(14px) saturate(170%);
-          border: 1px solid rgba(125, 211, 252, 0.30);
-          border-top: 1.5px solid rgba(255, 255, 255, 0.50);
+          background: #09202f;
+          border: 1px solid rgba(56, 189, 248, 0.28);
+          border-top: 1.5px solid rgba(56, 189, 248, 0.50);
           border-radius: 18px;
-          padding: 1.4rem 1.5rem;
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+          padding: 1.5rem 1.6rem;
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.40);
           animation: ag-hero-card-float 6s ease-in-out infinite alternate;
           transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }}
-        .ag-hero-glass-card:hover {{
-          transform: translateY(-5px) scale(1.02);
-          box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), 0 0 28px rgba(56, 189, 248, 0.35);
+        .ag-hero-horizon-card:hover {{
+          transform: translateY(-4px);
+          box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(56, 189, 248, 0.30);
           border-color: rgba(56, 189, 248, 0.6);
         }}
         .ag-hero-card-header {{
@@ -508,7 +502,7 @@ def render_home_hero() -> None:
             </div>
           </div>
 
-          <aside class="ag-hero-glass-card">
+          <aside class="ag-hero-horizon-card">
             <div class="ag-hero-card-header">
               <span class="ag-hero-card-title">{card_title}</span>
               <span class="ag-hero-card-tag">{card_tag}</span>

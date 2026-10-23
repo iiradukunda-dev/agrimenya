@@ -1,5 +1,5 @@
 """
-Admin view — operations, governance, and system health.
+Admin view: operations, governance, and system health.
 
 Implements Page 7 of the frontend handoff: zone/plan/alert management + health.
 """
@@ -267,7 +267,7 @@ def render_admin() -> None:
                 "for example ‘2026 Season C’. Accepted districts are Rwanda’s 30 districts."
             )
             with st.form("nisr_release_import", clear_on_submit=True):
-                source_release = st.text_input("NISR release title or reference", placeholder="Seasonal Agricultural Survey — Season C, 2026")
+                source_release = st.text_input("NISR release title or reference", placeholder="Seasonal Agricultural Survey: Season C, 2026")
                 season_label = st.text_input("Release season", placeholder="2026 Season C")
                 nisr_file = st.file_uploader("NISR CSV", type=["csv"], key="nisr_csv_upload")
                 import_clicked = st.form_submit_button("Validate and import release", type="primary")
@@ -335,7 +335,7 @@ def render_admin() -> None:
                     label = f"{account.get('display_name')} · {account.get('email')}"
                     with st.container(border=True):
                         status_col, action_col = st.columns([3, 1])
-                        status_col.write(f"{label} — {'Active' if account.get('is_active') else 'Disabled'}")
+                        status_col.write(f"{label}: {'Active' if account.get('is_active') else 'Disabled'}")
                         target_active = not bool(account.get("is_active"))
                         action = "Restore access" if target_active else "Disable account"
                         if action_col.button(action, key=f"admin_account_{account.get('id')}"):
@@ -432,9 +432,9 @@ def render_admin() -> None:
                     if target_kind == "post":
                         st.text(target.get("title", "Post"))
                     st.text(target.get("body", ""))
-                    buttons = st.columns(3)
+                    buttons = st.columns([1, 1, 1, 2])
                     actions = [("Hide content", "hide"), ("Delete content", "delete"), ("Dismiss report", "dismiss")]
-                    for column, (label, action) in zip(buttons, actions):
+                    for column, (label, action) in zip(buttons[:3], actions):
                         if column.button(label, key=f"community_mod_{report['id']}_{action}"):
                             payload = {
                                 "target_kind": target_kind,

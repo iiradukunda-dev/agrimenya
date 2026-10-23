@@ -1,5 +1,5 @@
 """
-Error page component — renders user-friendly error states.
+Error page component - renders user-friendly error states.
 """
 import os
 from html import escape
@@ -11,7 +11,7 @@ from utils.i18n import t
 
 def render_error_page(error_type: str, details: str = None) -> None:
     """
-    Renders a glassmorphic error page with contextual messaging.
+    Renders a modern user-friendly error page with contextual messaging.
 
     Args:
         error_type: One of '404', 'network', 'validation', 'system'.

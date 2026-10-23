@@ -9,14 +9,14 @@ templates are configured.
 
 ## Project layout
 
-- `frontend/` — Streamlit application for farmers, planners, cooperative
+- `frontend/`: Streamlit application for farmers, planners, cooperative
   leaders, and administrators.
-- `backend/app/` — FastAPI routes, services, database access, and yield logic.
-- `backend/app/db/migrations/` — ordered SQL migrations for the Supabase
+- `backend/app/`: FastAPI routes, services, database access, and yield logic.
+- `backend/app/db/migrations/`: ordered SQL migrations for the Supabase
   schema.
-- `backend/scripts/` — administrator provisioning, NISR data preparation, and
+- `backend/scripts/`: administrator provisioning, NISR data preparation, and
   offline evaluation tools.
-- `backend/docs/` — deployment, data import, retraining, model, and WhatsApp
+- `backend/docs/`: deployment, data import, retraining, model, and WhatsApp
   operating notes.
 
 ## Requirements

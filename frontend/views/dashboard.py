@@ -1,5 +1,5 @@
 """
-Dashboard view — high-level operational overview.
+Dashboard view - high-level operational overview.
 
 Surfaces KPIs, priority map, alerts, and quick actions in a single pane.
 """
@@ -34,7 +34,7 @@ def _metric_number(value, suffix: str = "", grouped: bool = False) -> str:
 def render_dashboard() -> None:
     try:
         st.markdown(
-            '<h1 style="font-family: \'Space Grotesk\', sans-serif; '
+            '<h1 style="font-family: \'Plus Jakarta Sans\', sans-serif; '
             'background: linear-gradient(135deg, #2D6A4F, #52B788); '
             '-webkit-background-clip: text; -webkit-text-fill-color: transparent; '
             'margin-bottom: 0.25rem;">Dashboard</h1>'

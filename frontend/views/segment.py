@@ -29,13 +29,12 @@ def render_segment():
             ]
             if "Unassessed" in set(df.get("Priority", [])):
                 priority_values.append("Unassessed")
-            filter_cols = st.columns(3)
+            filter_cols = st.columns(2)
             with filter_cols[0]:
                 selected_season = st.selectbox("Season", ["All seasons"] + season_values)
+                priority_level = st.multiselect(t("seg.priority_level"), priority_values, default=priority_values)
             with filter_cols[1]:
                 selected_crops = st.multiselect(t("seg.crops"), crop_values, default=crop_values)
-            with filter_cols[2]:
-                priority_level = st.multiselect(t("seg.priority_level"), priority_values, default=priority_values)
 
         if df.empty:
             st.info(t("seg.empty"))
