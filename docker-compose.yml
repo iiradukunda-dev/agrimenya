@@ -9,6 +9,11 @@ services:
       - "8000:8000"
     environment:
       - PORT=8000
+    env_file:
+      - path: ./backend/.env
+        required: false
+      - path: ./.env
+        required: false
     volumes:
       - ./backend:/app
     restart: unless-stopped
@@ -20,6 +25,7 @@ services:
     ports:
       - "8501:8501"
     environment:
+      - API_BASE_URL=http://backend:8000
       - BACKEND_URL=http://backend:8000
     volumes:
       - ./frontend:/app

@@ -59,7 +59,7 @@ def render_ai_assistant() -> None:
             # Chat input
             prompt = st.chat_input("Ask about a zone, crop, or recommendation...") if selected_zone_id else None
             if not selected_zone_id:
-                st.info("Add a zone to use the AI advisor.")
+                st.info("Select or create an agricultural zone to start asking questions with grounded soil and yield data.")
             if prompt:
                 # Add user message
                 st.session_state.ai_messages.append({"role": "user", "content": prompt})

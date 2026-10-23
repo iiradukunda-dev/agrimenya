@@ -196,7 +196,7 @@ def render_zones() -> None:
                     new_district = st.text_input("District", placeholder="e.g. Musanze")
                     new_sector = st.text_input("Sector (optional)")
                     new_cell = st.text_input("Cell (optional)")
-                    new_crop = st.selectbox("Crop (optional)", [""] + api_client.get_crops())
+                    new_crop = st.selectbox("Crop (optional)", [""] + (api_client.get_crops() or CROPS))
                 with zone_cols[1]:
                     new_latitude = st.number_input("Latitude", min_value=-90.0, max_value=90.0, value=None, format="%.6f", placeholder="Required")
                     new_longitude = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=None, format="%.6f", placeholder="Required")
