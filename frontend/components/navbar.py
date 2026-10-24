@@ -5,6 +5,7 @@ import streamlit as st
 from PIL import Image
 
 from utils.i18n import render_language_selector
+from utils.config import DEMO_MODE
 
 
 @st.cache_data(show_spinner=False)
@@ -34,3 +35,9 @@ def render_navbar() -> None:
     with right:
         render_language_selector(sidebar=False)
     st.markdown('<hr style="border:0;border-top:1px solid #e2e8df;margin:.8rem 0 1.2rem">', unsafe_allow_html=True)
+    if DEMO_MODE:
+        st.warning(
+            "DEMO ENVIRONMENT · Records are synthetic and for product testing only. "
+            "Do not use them for farming, funding, or policy decisions.",
+            icon="🧪",
+        )

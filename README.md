@@ -57,6 +57,11 @@ Open the app at `http://localhost:8501` and the API health page at
 live WhatsApp and AI-provider behavior require their own backend credentials.
 The setup and local development instructions below cover non-Docker options.
 
+For a populated, isolated synthetic environment to explore the product, use
+[`backend/docs/interactive_demo_data.md`](backend/docs/interactive_demo_data.md).
+The demo seed is guarded, repeatable, and must only target a separate demo
+Supabase project.
+
 Never commit `.env` files, service-role keys, WhatsApp/SMTP/LLM credentials,
 passwords, or local logs. The backend service-role key must stay in the
 backend environment; do not copy it to Streamlit or the browser.
