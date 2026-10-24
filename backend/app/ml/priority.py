@@ -4,67 +4,65 @@ from __future__ import annotations
 from typing import Any
 
 
-def _index_priority(yield_index: float | None) -> str:
-    if yield_index is None:
+def _percentile_priority(yield_percentile: float | None) -> str:
+    if yield_percentile is None:
         return "Unknown"
-    if yield_index < 0.75:
+    if yield_percentile < 25:
         return "High"
-    if yield_index < 0.95:
+    if yield_percentile < 50:
         return "Medium"
     return "Low"
 
 
-def baseline_priority(yield_kg_ha: float) -> str:
-    """Legacy yield thresholds retained for non-model fallback."""
-    if yield_kg_ha < 900:
-        return "High"
-    if yield_kg_ha < 1400:
-        return "Medium"
-    return "Low"
+def _relative_priority_result(yield_index: float | None, yield_percentile: float | None,
+                              crop_district_count: int,
+                              status: str) -> dict[str, Any]:
+    """Rank against observed same-crop district yields, never unlike crops by kg/ha."""
+    level = _percentile_priority(yield_percentile)
+    if yield_percentile is None:
+        reason = "No comparable same-crop district distribution is available; priority is unknown."
+    else:
+        reason = (
+            f"Yield is at the {yield_percentile:.0f}th percentile among districts for the same crop and season. "
+            "Rule: High below the 25th percentile, Medium from the 25th to below the 50th, Low at or above the 50th."
+        )
+    return {
+        "priority_level": level,
+        "underlying_priority_level": level,
+        "priority_status": status if yield_percentile is not None else "no_yield_data",
+        "low_evidence": crop_district_count < 10 or yield_percentile is None,
+        "reasons": [reason],
+        "components": {
+            "district_to_crop_mean_ratio": round(yield_index, 4) if yield_index is not None else None,
+            "district_yield_percentile": round(yield_percentile, 2) if yield_percentile is not None else None,
+            "crop_district_count": crop_district_count,
+            "rule": "High < P25; Medium P25 to < P50; Low >= P50",
+        },
+    }
 
 
 def classify_components(*, observed_yield: float, expected_yield: float | None,
                         residual_se: float | None, top_quartile_yield: float | None,
                         cultivated_area_ha: float | None, area_percentile: float | None,
-                        yield_index: float | None, crop_district_count: int,
+                        yield_index: float | None, yield_percentile: float | None = None,
+                        crop_district_count: int,
                         model_available: bool) -> dict[str, Any]:
     """Combine standardized shortfall, crop gap, and exposure when supported."""
     thin = crop_district_count < 10
     if thin:
-        level = _index_priority(yield_index)
-        return {
-            "priority_level": level,
-            "underlying_priority_level": level,
-            "priority_status": "low_evidence",
-            "low_evidence": True,
-            "reasons": [f"Thin crop evidence: {crop_district_count} districts; used crop-relative yield index "
-                        f"({yield_index:.3f}) only." if yield_index is not None else
-                        f"Thin crop evidence: {crop_district_count} districts; crop-relative yield index is unavailable."],
-            "components": {"yield_index": yield_index, "crop_district_count": crop_district_count},
-        }
+        result = _relative_priority_result(yield_index, yield_percentile, crop_district_count, "low_evidence")
+        result["reasons"].insert(0, f"Thin evidence: only {crop_district_count} districts have observations for this crop.")
+        return result
     if not model_available:
-        level = baseline_priority(observed_yield)
-        return {
-            "priority_level": level,
-            "underlying_priority_level": level,
-            "priority_status": "baseline_fallback",
-            "low_evidence": False,
-            "reasons": [f"No compatible yield model; retained baseline yield threshold for {observed_yield:.1f} kg/ha."],
-            "components": {"observed_yield_kg_ha": observed_yield, "baseline_rule": "<900 High; <1400 Medium; otherwise Low"},
-        }
+        return _relative_priority_result(yield_index, yield_percentile, crop_district_count, "nisr_percentile_baseline")
 
     if expected_yield is None or residual_se is None or residual_se <= 0:
-        level = baseline_priority(observed_yield)
-        return {
-            "priority_level": level,
-            "underlying_priority_level": level,
-            "priority_status": "low_evidence",
-            "low_evidence": True,
-            "reasons": ["Model exists, but held-out residual standard deviation is unavailable; used baseline rule."],
-            "components": {"observed_yield_kg_ha": observed_yield, "expected_yield_kg_ha": expected_yield,
-                           "residual_standard_deviation_kg_ha": residual_se,
-                           "residual_standard_error_kg_ha": residual_se},
-        }
+        result = _relative_priority_result(yield_index, yield_percentile, crop_district_count, "low_evidence")
+        result["reasons"].insert(0, "A calibrated residual scale is unavailable; used the NISR crop-relative baseline rule.")
+        result["components"].update({"observed_yield_kg_ha": observed_yield,
+                                     "expected_yield_kg_ha": expected_yield,
+                                     "residual_standard_deviation_kg_ha": residual_se})
+        return result
 
     # The supplied quantity is the standard deviation of held-out residuals,
     # not the standard error of a mean. Report standardized residual units.

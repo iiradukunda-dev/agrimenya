@@ -1,26 +1,21 @@
-# Satellite context and farmer community
+# Satellite imagery and farmer community
 
 ## Rwanda Space Agency map services
 
-The map overlay uses the publicly reachable Rwanda Space Agency ArcGIS cached
-map service:
+The application currently does not show a satellite imagery overlay. The
+publicly reachable Rwanda Space Agency ArcGIS cached map service previously
+reviewed was an orthomosaic cache with a small extent near Kigali and no capture
+date in its layer summary. That is insufficient for reliable nationwide,
+seasonal crop monitoring, so it was removed from the farmer/planner map rather
+than presented as useful coverage. The app does not derive crop health,
+moisture, planting dates, or yield from satellite imagery.
 
-`https://portal.space.gov.rw/server/rest/services/Hosted/Ortho_Orthomosaic/MapServer`
-
-Its tile endpoint is used as an optional, read-only map layer in the zone
-priority map. The service metadata describes an orthomosaic cache in Web
-Mercator and currently reports a small extent near Kigali. It does not provide
-a capture date in the layer summary reviewed for this integration. Other RSA
-portal services include agricultural land-cover feature layers, but those are
-classified/vector data rather than raw satellite imagery.
-
-This overlay is for visual orientation only. It is not converted to crop
-health, moisture, planting date, or yield signals and does not change a
-prediction or priority. Keep that separation until imagery coverage, capture
-dates, licensing, field boundaries, cloud/quality masks, and agronomic
-validation are established. The map service and its terms can change; confirm
-access and attribution with RSA before production use. The agency lists
-[contact information](https://www.space.gov.rw/contact) for data enquiries.
+Before adding imagery again, obtain a documented national/seasonal source with
+capture dates, licensing and attribution, suitable resolution, cloud/quality
+masks, and a validated method tied to crop and field boundaries. Treat any
+future imagery as dated evidence with provenance, not as a decorative layer or
+an automatic diagnosis. Contact the [Rwanda Space Agency](https://www.space.gov.rw/contact)
+to confirm current access and terms.
 
 The RSA describes its Earth-observation work and agriculture applications on
 its [official site](https://www.space.gov.rw/). The portal's public
@@ -30,8 +25,9 @@ mistaken for a time-series imagery API.
 
 ## Farmer community pilot
 
-Apply migrations `0009_farmer_community.sql` and `0010_field_observations.sql`
-after migrations `0001` through `0008`. Community members register with an email, display name, and password;
+Apply migrations `0009_farmer_community.sql`, `0010_field_observations.sql`,
+and `0011_community_unique_usernames.sql`
+after migrations `0001` through `0008`. Community members register with a unique username, email, and password;
 accounts currently default to the farmer role. Passwords are stored as scrypt
 hashes, sessions expire after one hour, and the community API checks account
 status and session version on each request. Rate limits apply to registration,
@@ -41,8 +37,11 @@ the Admin panel. Community tables have RLS enabled and no public policies;
 only the backend service role accesses them.
 
 This is a development pilot. Email ownership and farmer/organization roles are
-not yet verified, and account recovery is not yet available. The interface says
-so explicitly. Before public launch, add verified email or phone recovery,
+not yet verified. Password recovery uses a signed, expiring link delivered by
+SMTP in deployed environments and an on-screen link in local development.
+Account session versioning makes a reset link single-use. Set
+`COMMUNITY_PASSWORD_RESET_URL` to the public Community page URL for deployment.
+Before public launch, add verified email or phone ownership,
 verified organization roles where required, a published community standard and
 privacy notice, and durable abuse throttling/monitoring at the API edge. Never
 present a peer post as an official extension recommendation.

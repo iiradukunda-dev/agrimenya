@@ -35,9 +35,13 @@ class Settings:
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "groq").strip().lower()
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
     GROQ_MODEL: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
+    GROQ_VISION_MODEL: str = os.getenv("GROQ_VISION_MODEL", "qwen/qwen3.8-27b")
     LLM_API_KEY: str = os.getenv("LLM_API_KEY", "")
     LLM_MODEL: str = os.getenv("LLM_MODEL", "claude-sonnet-4-6")
     ADMIN_PASSWORD_RESET_URL: str = os.getenv("ADMIN_PASSWORD_RESET_URL", "").strip()
+    COMMUNITY_PASSWORD_RESET_URL: str = os.getenv(
+        "COMMUNITY_PASSWORD_RESET_URL", "http://localhost:8501/Community"
+    ).strip()
     USER_API_KEY: str = os.getenv("USER_API_KEY", "")
     MAX_UPLOAD_SIZE_MB: int = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10"))
     COMMUNITY_PHOTO_BUCKET: str = os.getenv("COMMUNITY_PHOTO_BUCKET", "community-field-reports").strip()
@@ -50,6 +54,8 @@ class Settings:
     WHATSAPP_MODE: str = os.getenv("WHATSAPP_MODE", "mock").strip().lower()
     WHATSAPP_GRAPH_VERSION: str = os.getenv("WHATSAPP_GRAPH_VERSION", "").strip()
     WHATSAPP_PHONE_NUMBER_ID: str = os.getenv("WHATSAPP_PHONE_NUMBER_ID", "").strip()
+    # Public E.164 sender number used for end-user click-to-chat links; not a secret.
+    WHATSAPP_PUBLIC_NUMBER: str = os.getenv("WHATSAPP_PUBLIC_NUMBER", "").strip()
     WHATSAPP_BUSINESS_ACCOUNT_ID: str = os.getenv("WHATSAPP_BUSINESS_ACCOUNT_ID", "").strip()
     WHATSAPP_ACCESS_TOKEN: str = os.getenv("WHATSAPP_ACCESS_TOKEN", "")
     WHATSAPP_APP_SECRET: str = os.getenv("WHATSAPP_APP_SECRET", "")
@@ -122,6 +128,9 @@ class Settings:
         reset_url = urlparse(self.ADMIN_PASSWORD_RESET_URL)
         if not self.SMTP_HOST or not self.EMAIL_FROM or reset_url.scheme != "https" or not reset_url.netloc:
             missing.append("SMTP_HOST, EMAIL_FROM, and HTTPS ADMIN_PASSWORD_RESET_URL (administrator password recovery)")
+        community_reset_url = urlparse(self.COMMUNITY_PASSWORD_RESET_URL)
+        if community_reset_url.scheme != "https" or not community_reset_url.netloc:
+            missing.append("HTTPS COMMUNITY_PASSWORD_RESET_URL (farmer account recovery)")
         if missing:
             raise RuntimeError("Production configuration is incomplete: " + "; ".join(missing))
 

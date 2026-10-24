@@ -71,3 +71,37 @@ def send_reset_email(email: str, display_name: str, token: str) -> None:
         if settings.SMTP_USER and settings.SMTP_PASSWORD:
             smtp.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
         smtp.send_message(message)
+
+
+def send_community_reset_email(email: str, display_name: str, token: str) -> None:
+    """Send a one-time community password link through the configured SMTP provider."""
+    reset_url = urlparse(settings.COMMUNITY_PASSWORD_RESET_URL)
+    local_development_url = (
+        settings.APP_ENV in {"development", "test"}
+        and reset_url.scheme == "http"
+        and reset_url.hostname in {"localhost", "127.0.0.1"}
+    )
+    secure_url = reset_url.scheme == "https" and bool(reset_url.netloc)
+    if not settings.SMTP_HOST or not settings.EMAIL_FROM or not (secure_url or local_development_url):
+        raise RuntimeError("Community password recovery email is not configured")
+    if bool(settings.SMTP_USER) != bool(settings.SMTP_PASSWORD):
+        raise RuntimeError("SMTP_USER and SMTP_PASSWORD must be configured together")
+
+    separator = "&" if "?" in settings.COMMUNITY_PASSWORD_RESET_URL else "?"
+    url = settings.COMMUNITY_PASSWORD_RESET_URL.rstrip("?") + separator + "community_reset_token=" + token
+    message = EmailMessage()
+    message["Subject"] = "Reset your Agri-Menya community password"
+    message["From"] = settings.EMAIL_FROM
+    message["To"] = email
+    message.set_content(
+        f"Hello {display_name},\n\nUse this one-time link to reset your Agri-Menya community password. "
+        f"It expires in 30 minutes and can only be used once.\n\n{url}\n\n"
+        "If you did not request this change, you can ignore this message."
+    )
+    client_factory = smtplib.SMTP_SSL if settings.SMTP_USE_SSL else smtplib.SMTP
+    with client_factory(settings.SMTP_HOST, settings.SMTP_PORT, timeout=15) as smtp:
+        if settings.SMTP_STARTTLS and not settings.SMTP_USE_SSL:
+            smtp.starttls()
+        if settings.SMTP_USER and settings.SMTP_PASSWORD:
+            smtp.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+        smtp.send_message(message)

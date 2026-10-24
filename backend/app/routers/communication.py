@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import smtplib
 import logging
 import threading
@@ -155,6 +156,18 @@ def whatsapp_status(_: dict = Depends(require_user)) -> dict[str, Any]:
         "sender_configured": sender_configured,
         "webhook_configured": webhook_configured,
     }
+
+
+@router.get("/whatsapp-info")
+def whatsapp_public_info() -> dict[str, Any]:
+    """Return only the public click-to-chat link, never provider credentials."""
+    number = settings.WHATSAPP_PUBLIC_NUMBER
+    configured_number = bool(re.fullmatch(r"\+[1-9]\d{7,14}", number))
+    available = settings.WHATSAPP_MODE == "live" and configured_number
+    if not available:
+        return {"available": False, "chat_url": None}
+    digits = number[1:]
+    return {"available": True, "chat_url": f"https://wa.me/{digits}?text=HELP"}
 
 
 def _deliver_smtp(email_message: EmailMessage) -> None:

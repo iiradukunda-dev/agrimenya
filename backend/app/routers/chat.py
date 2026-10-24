@@ -33,24 +33,32 @@ class ChatResponse(BaseModel):
     answer: str
     source: str = "grounded-context"
     district: str | None = None
+    evidence_sources: list[str] = Field(default_factory=list)
+    evidence_scope: str | None = None
+    answer_type: Literal["record_grounded", "general_guidance", "insufficient_evidence"] = "insufficient_evidence"
 
 
 class DiseaseDetectionRequest(BaseModel):
     zone_id: UUID
     crop: str = Field(..., min_length=1, max_length=50)
-    symptoms: str = Field(..., min_length=1, max_length=1000)
+    symptoms: str = Field(default="", max_length=1000)
     image_description: str | None = Field(default=None, max_length=1000)
     image_url: str | None = Field(default=None, max_length=500)
+    language: Literal["en", "rw"] = "en"
 
 
 class DiseaseDetectionResponse(BaseModel):
     zone_id: UUID
     crop: str
+    plant_identification: str = "Not confirmed"
     predicted_disease: str
     confidence: float | None = None
     risk_level: str
     recommended_actions: list[str]
-    source: str = "insufficient_validated_symptom_data"
+    source: str = "unavailable"
+    urgency: Literal["routine", "soon", "urgent", "unclear"] = "unclear"
+    observations: list[str] = Field(default_factory=list)
+    possible_causes: list[str] = Field(default_factory=list)
     interpretation_note: str | None = None
 
 
@@ -58,15 +66,23 @@ class DiseaseDetectionResponse(BaseModel):
 def chat(request: ChatRequest, http_request: Request, _: dict = Depends(require_user)):
     client_id = http_request.client.host if http_request.client else "unknown"
     enforce_request_limit(client_id)
-    answer, source, district = ask_assistant_with_source(request.zone_id, request.question,
-                                               request.crop, request.season,
-                                               [turn.model_dump() for turn in request.history])
+    answer, source, district, evidence_sources = ask_assistant_with_source(
+        request.zone_id, request.question, request.crop, request.season,
+        [turn.model_dump() for turn in request.history], include_sources=True,
+    )
+    answer_type = (
+        "general_guidance" if answer.casefold().startswith("general guidance:") else
+        "record_grounded" if evidence_sources else "insufficient_evidence"
+    )
     return ChatResponse(
         zone_id=request.zone_id,
         question=request.question,
         answer=answer,
         source=source,
         district=district,
+        evidence_sources=evidence_sources,
+        evidence_scope=" / ".join(str(value) for value in (district, request.crop, request.season) if value),
+        answer_type=answer_type,
     )
 
 
@@ -76,25 +92,34 @@ def disease_detect(request: DiseaseDetectionRequest, _: dict = Depends(require_u
     if not zone:
         raise HTTPException(status_code=404, detail="Zone not found")
 
-    result = detect_crop_disease(request.crop, request.symptoms, request.image_description)
+    if not request.symptoms.strip() and not request.image_description:
+        raise HTTPException(status_code=422, detail="Add a crop photo or describe the observed symptoms")
+    result = detect_crop_disease(
+        request.crop, request.symptoms, request.image_description, language=request.language
+    )
     return DiseaseDetectionResponse(
         zone_id=request.zone_id,
         crop=result["crop"],
+        plant_identification=result.get("plant_identification", "Not confirmed"),
         predicted_disease=result["predicted_disease"],
         confidence=result["confidence"],
         risk_level=result["risk_level"],
         recommended_actions=result["recommended_actions"],
-        source=result.get("source", "symptom-model"),
+        source=result.get("source", "unavailable"),
+        urgency=result.get("urgency", "unclear"),
+        observations=result.get("observations", []),
+        possible_causes=result.get("possible_causes", []),
         interpretation_note=result.get("interpretation_note"),
     )
 
 
-@router.post("/disease-detect-upload")
+@router.post("/disease-detect-upload", response_model=DiseaseDetectionResponse)
 async def disease_detect_upload(
     zone_id: UUID = Form(...),
-    crop: str = Form(...),
-    symptoms: str = Form(...),
+    crop: str = Form(default="Crop"),
+    symptoms: str = Form(default=""),
     image_description: str | None = Form(default=None),
+    language: Literal["en", "rw"] = Form(default="en"),
     image: UploadFile | None = File(default=None),
     _: dict = Depends(require_user),
 ):
@@ -119,6 +144,20 @@ async def disease_detect_upload(
                 if decoded.width * decoded.height > 20_000_000:
                     raise HTTPException(status_code=413, detail="Image dimensions are too large")
                 decoded.verify()
+            # Convert accepted upload formats to a bounded JPEG for the external
+            # vision endpoint. The original image is never persisted.
+            from PIL import ImageOps
+            with Image.open(BytesIO(image_bytes)) as decoded:
+                pil_image = ImageOps.exif_transpose(decoded).convert("RGB")
+                pil_image.thumbnail((1600, 1600))
+                normalized = BytesIO()
+                pil_image.save(normalized, format="JPEG", quality=82, optimize=True)
+                if normalized.tell() > 5 * 1024 * 1024:
+                    normalized = BytesIO()
+                    pil_image.save(normalized, format="JPEG", quality=65, optimize=True)
+                image_bytes = normalized.getvalue()
+                if len(image_bytes) > 5 * 1024 * 1024:
+                    raise HTTPException(status_code=413, detail="Photo is too large for crop triage; choose a smaller image")
         except ImportError:
             valid_signature = (
                 image_bytes.startswith(b"\x89PNG\r\n\x1a\n")
@@ -131,14 +170,20 @@ async def disease_detect_upload(
             raise HTTPException(status_code=422, detail="Uploaded file is not a valid image") from exc
         description = f"{description} Uploaded image: {image.filename}.".strip()
 
-    result = detect_crop_disease(crop, symptoms, description, image_bytes=image_bytes)
+    if not symptoms.strip() and not image_bytes:
+        raise HTTPException(status_code=422, detail="Add a crop photo or describe the observed symptoms")
+    result = detect_crop_disease(crop, symptoms, description, image_bytes=image_bytes, language=language)
     return DiseaseDetectionResponse(
         zone_id=zone_id,
         crop=result["crop"],
+        plant_identification=result.get("plant_identification", "Not confirmed"),
         predicted_disease=result["predicted_disease"],
         confidence=result["confidence"],
         risk_level=result["risk_level"],
         recommended_actions=result["recommended_actions"],
-        source=result.get("source", "symptom-model"),
+        source=result.get("source", "unavailable"),
+        urgency=result.get("urgency", "unclear"),
+        observations=result.get("observations", []),
+        possible_causes=result.get("possible_causes", []),
         interpretation_note=result.get("interpretation_note"),
     )

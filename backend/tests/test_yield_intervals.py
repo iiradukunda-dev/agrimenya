@@ -20,11 +20,10 @@ def test_conformal_interval_width_shrinks_with_more_representative_data():
 def test_serving_interval_contains_point_and_marks_thin_crop(monkeypatch, tmp_path):
     monkeypatch.setattr("app.ml.predict._yield_model_bundle", None)
     monkeypatch.setattr("app.ml.predict.ARTIFACTS_DIR", tmp_path)
-    monkeypatch.setattr("app.ml.predict._baselines", {
-        "schema_version": 2,
-        "district_crop_season_weighted_averages": {"Kigali|Maize|A": 1000.0},
-        "crop_season_weighted_averages": {"Maize|A": 900.0},
-    })
+    monkeypatch.setattr("app.ml.predict._live_yield_evidence", lambda _district, _crop: [{
+        "district": "Kigali", "crop": "Maize", "season": "2026 Season A",
+        "yield_kg_ha": 1000, "production_mt": 100, "harvested_area_ha": 100,
+    }])
     result = predict_with_interval("Kigali", "Maize", "Season A 2026")
     assert result["low"] < result["point"] < result["high"]
     assert result["basis"] == "district_crop_baseline"

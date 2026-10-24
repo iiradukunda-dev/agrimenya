@@ -10,7 +10,9 @@ client = TestClient(app)
 
 
 @patch("app.routers.communication.send_notification")
-def test_create_and_list_alerts(mock_send):
+def test_create_and_list_alerts(mock_send, monkeypatch):
+    from tests.auth_helpers import admin_headers
+    headers = admin_headers(monkeypatch)
     zone_id = uuid.uuid4()
     payload = {"zone_id": str(zone_id), "message": "Test alert", "severity": "Warning", "created_by": "tester"}
     mock_send.return_value = {"status": "unavailable", "deliveries": {}}
@@ -19,19 +21,20 @@ def test_create_and_list_alerts(mock_send):
         mock_create.return_value = {"id": str(uuid.uuid4()), **payload}
         mock_list.return_value = [mock_create.return_value]
 
-        r1 = client.post("/communication/alerts", json=payload)
+        r1 = client.post("/communication/alerts", json=payload, headers=headers)
         assert r1.status_code == 200
         assert r1.json()["severity"] == "Warning"
 
-        r2 = client.get(f"/communication/alerts?zone_id={zone_id}")
+        r2 = client.get(f"/communication/alerts?zone_id={zone_id}", headers=headers)
         assert r2.status_code == 200
         assert isinstance(r2.json(), list)
 
 
-def test_invalid_severity_rejected():
+def test_invalid_severity_rejected(monkeypatch):
+    from tests.auth_helpers import admin_headers
     zone_id = uuid.uuid4()
     payload = {"zone_id": str(zone_id), "message": "Bad severity", "severity": "Severe", "created_by": "tester"}
-    r = client.post("/communication/alerts", json=payload)
+    r = client.post("/communication/alerts", json=payload, headers=admin_headers(monkeypatch))
     assert r.status_code == 422
 
 
@@ -66,17 +69,36 @@ def test_send_notification_route(mock_send):
     assert mock_send.called
 
 
-@patch("app.routers.communication.send_notification")
 @patch("app.db.crud.create_alert")
-def test_alert_creation_triggers_notification(mock_create_alert, mock_send):
+def test_alert_creation_broadcasts_to_community_emails(mock_create_alert, monkeypatch):
+    from tests.auth_helpers import admin_headers
+    from app.core.config import settings
     zone_id = uuid.uuid4()
     payload = {"zone_id": str(zone_id), "message": "Flood risk detected.", "severity": "Critical", "created_by": "tester"}
     mock_create_alert.return_value = {"id": str(uuid.uuid4()), **payload}
-    mock_send.return_value = {"status": "queued", "channels": ["sms"], "simulated": True}
 
-    r = client.post("/communication/alerts", json=payload)
+    monkeypatch.setattr(settings, "SMTP_HOST", "smtp.example.com")
+    monkeypatch.setattr(settings, "SMTP_PORT", 587)
+    monkeypatch.setattr(settings, "SMTP_USER", "")
+    monkeypatch.setattr(settings, "SMTP_PASSWORD", "")
+    monkeypatch.setattr(settings, "SMTP_USE_SSL", False)
+    monkeypatch.setattr(settings, "SMTP_STARTTLS", True)
+    monkeypatch.setattr(settings, "EMAIL_FROM", "alerts@example.com")
+
+    with patch("app.db.crud.get_zone", return_value={"district": "Bugesera"}), \
+         patch("app.db.crud.list_active_community_emails", return_value=["one@example.com", "two@example.com"]), \
+         patch("app.routers.communication.smtplib.SMTP") as smtp_factory:
+        smtp = smtp_factory.return_value.__enter__.return_value
+        smtp.send_message.return_value = {}
+        r = client.post("/communication/alerts", json=payload, headers=admin_headers(monkeypatch))
+
     assert r.status_code == 200
-    assert mock_send.called
+    assert r.json()["email_delivery"] == {"status": "sent", "recipients": 2, "sent": 2, "failed": 0}
+    smtp_factory.assert_called_once_with("smtp.example.com", 587, timeout=20)
+    smtp.starttls.assert_called_once()
+    message, = smtp.send_message.call_args.args
+    assert message["To"] == "undisclosed-recipients:;"
+    assert smtp.send_message.call_args.kwargs["to_addrs"] == ["one@example.com", "two@example.com"]
 
 
 def test_contact_message_reports_unavailable_without_smtp(monkeypatch):
