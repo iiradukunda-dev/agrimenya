@@ -1,0 +1,101 @@
+{
+  "interval_level": 0.8,
+  "prediction_column": "district_crop_season_weighted",
+  "global_quantile_log": 0.36952245079227364,
+  "by_crop_category": {
+    "Perennial": {
+      "count": 598,
+      "quantile_log": 0.36952245079227364
+    },
+    "Legume": {
+      "count": 753,
+      "quantile_log": 0.36952245079227364
+    },
+    "Fodder": {
+      "count": 115,
+      "quantile_log": 0.7540965312789893
+    },
+    "Fruit": {
+      "count": 113,
+      "quantile_log": 0.6300166193216121
+    },
+    "Tuber": {
+      "count": 407,
+      "quantile_log": 0.40148380449091015
+    },
+    "Cereal": {
+      "count": 411,
+      "quantile_log": 0.36952245079227364
+    },
+    "Other": {
+      "count": 112,
+      "quantile_log": 1.485533012106652
+    },
+    "Vegetable": {
+      "count": 150,
+      "quantile_log": 0.36952245079227364
+    }
+  },
+  "source_district_counts": {
+    "Banana": 30,
+    "Banana For Beer": 30,
+    "Beans": 30,
+    "Bush Bean": 30,
+    "Cassava": 30,
+    "Climbing Bean": 30,
+    "Cooking Banana": 30,
+    "Dessert Banana": 30,
+    "Fodder Crops": 29,
+    "Fruits": 29,
+    "Groundnut": 23,
+    "Irish Potato": 29,
+    "Maize": 30,
+    "Other Cereals": 19,
+    "Other Crops": 30,
+    "Paddy Rice": 22,
+    "Pea": 29,
+    "Sorghum": 30,
+    "Soybean": 30,
+    "Sweet Potato": 30,
+    "Vegetables": 30,
+    "Wheat": 15,
+    "Yams & Taro": 30
+  },
+  "crop_category_by_crop": {
+    "Banana": "Perennial",
+    "Banana For Beer": "Perennial",
+    "Beans": "Legume",
+    "Bush Bean": "Legume",
+    "Cassava": "Perennial",
+    "Climbing Bean": "Legume",
+    "Cooking Banana": "Perennial",
+    "Dessert Banana": "Perennial",
+    "Fodder Crops": "Fodder",
+    "Fruits": "Fruit",
+    "Groundnut": "Legume",
+    "Irish Potato": "Tuber",
+    "Maize": "Cereal",
+    "Other Cereals": "Cereal",
+    "Other Crops": "Other",
+    "Paddy Rice": "Cereal",
+    "Pea": "Legume",
+    "Sorghum": "Cereal",
+    "Soybean": "Legume",
+    "Sweet Potato": "Tuber",
+    "Vegetables": "Vegetable",
+    "Yams & Taro": "Tuber",
+    "Wheat": "Cereal"
+  },
+  "minimum_districts": 10,
+  "thin_crop_rule": "Use at least global conformal width; mark insufficient_data when the crop has fewer than 10 source districts.",
+  "training_date_utc": "2026-10-21T13:15:10.421759+00:00",
+  "data_sha256": "3384e65e052d6202940b30fa9f26c6dad261a55eef28dda62fbb3b9a4956e425",
+  "versions": {
+    "python": "3.14.4",
+    "pandas": "3.0.6",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "xgboost": "3.4.1"
+  }
+}

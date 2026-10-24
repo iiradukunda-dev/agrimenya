@@ -1,0 +1,7673 @@
+{
+  "schema_version": 1,
+  "split": "leave_one_season_out",
+  "folds_run": 5,
+  "prediction_column": "district_crop_season_weighted",
+  "model_available": false,
+  "district_crop_combinations": 645,
+  "uncertain_combinations": 434,
+  "priority_changes_across_folds": 929,
+  "training_date_utc": "2026-10-22T16:57:28.984130+00:00",
+  "random_seed": 42,
+  "randomness_used": false,
+  "versions": {
+    "python": "3.14.4",
+    "pandas": "3.0.6",
+    "numpy": "2.5.3"
+  },
+  "input_hashes": {
+    "training_table_sha256": "3384e65e052d6202940b30fa9f26c6dad261a55eef28dda62fbb3b9a4956e425",
+    "oof_predictions_sha256": "7564f4281b4ad17c393f78aa9ffabe12754e55b6168f776d56f90595c1a8e562"
+  },
+  "by_district_crop": {
+    "Bugesera|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Burera|Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gakenke|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gasabo|Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gatsibo|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gicumbi|Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gisagara|Banana": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Huye|Banana": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kamonyi|Banana": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Karongi|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kayonza|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kicukiro|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kirehe|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Muhanga|Banana": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Musanze|Banana": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngoma|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngororero|Banana": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyabihu|Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyagatare|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamagabe|Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyamasheke|Banana": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyanza|Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyarugenge|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyaruguru|Banana": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rubavu|Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ruhango|Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Rulindo|Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rutsiro|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rwamagana|Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Bugesera|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Burera|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gakenke|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gasabo|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gatsibo|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gicumbi|Banana For Beer": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gisagara|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Huye|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kamonyi|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Karongi|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kayonza|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kicukiro|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kirehe|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Muhanga|Banana For Beer": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Musanze|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Ngoma|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngororero|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyabihu|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyagatare|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamagabe|Banana For Beer": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyamasheke|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyanza|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyarugenge|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyaruguru|Banana For Beer": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rubavu|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ruhango|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rulindo|Banana For Beer": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rutsiro|Banana For Beer": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rwamagana|Banana For Beer": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Bugesera|Beans": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Burera|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gakenke|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gasabo|Beans": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Gatsibo|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gicumbi|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gisagara|Beans": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Huye|Beans": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kamonyi|Beans": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Karongi|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kayonza|Beans": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kicukiro|Beans": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kirehe|Beans": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Muhanga|Beans": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Musanze|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Beans": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ngororero|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyabihu|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyagatare|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamagabe|Beans": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamasheke|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyanza|Beans": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyarugenge|Beans": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyaruguru|Beans": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rubavu|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ruhango|Beans": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rulindo|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rusizi|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rutsiro|Beans": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rwamagana|Beans": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Bugesera|Bush Bean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Burera|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gakenke|Bush Bean": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gasabo|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gatsibo|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gicumbi|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gisagara|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Huye|Bush Bean": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kamonyi|Bush Bean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Karongi|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kayonza|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kicukiro|Bush Bean": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kirehe|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Muhanga|Bush Bean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Musanze|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngororero|Bush Bean": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyabihu|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyagatare|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamagabe|Bush Bean": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyamasheke|Bush Bean": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyanza|Bush Bean": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Nyarugenge|Bush Bean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyaruguru|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rubavu|Bush Bean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ruhango|Bush Bean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rulindo|Bush Bean": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rutsiro|Bush Bean": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rwamagana|Bush Bean": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Bugesera|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Burera|Cassava": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gakenke|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gasabo|Cassava": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gatsibo|Cassava": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gicumbi|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gisagara|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Huye|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kamonyi|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Karongi|Cassava": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kayonza|Cassava": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kicukiro|Cassava": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kirehe|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Muhanga|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Musanze|Cassava": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngoma|Cassava": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ngororero|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyabihu|Cassava": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyagatare|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamagabe|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyamasheke|Cassava": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyanza|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyarugenge|Cassava": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyaruguru|Cassava": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Ruhango|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rulindo|Cassava": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rusizi|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rutsiro|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rwamagana|Cassava": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Bugesera|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Burera|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gakenke|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gasabo|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gatsibo|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gicumbi|Climbing Bean": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gisagara|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Huye|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kamonyi|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Karongi|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kayonza|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kicukiro|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kirehe|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Muhanga|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Musanze|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Climbing Bean": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ngororero|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyabihu|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyagatare|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyamagabe|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyamasheke|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyanza|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyarugenge|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyaruguru|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rubavu|Climbing Bean": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ruhango|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Rulindo|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rusizi|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rutsiro|Climbing Bean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rwamagana|Climbing Bean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Bugesera|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Burera|Cooking Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gakenke|Cooking Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gasabo|Cooking Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gatsibo|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gicumbi|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gisagara|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Huye|Cooking Banana": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kamonyi|Cooking Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Karongi|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kayonza|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kicukiro|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kirehe|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Muhanga|Cooking Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Musanze|Cooking Banana": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngoma|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngororero|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyabihu|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyagatare|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamagabe|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyamasheke|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyanza|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyarugenge|Cooking Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyaruguru|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rubavu|Cooking Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ruhango|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Rulindo|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Cooking Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rutsiro|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rwamagana|Cooking Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Bugesera|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Burera|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gakenke|Dessert Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gasabo|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gatsibo|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gicumbi|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gisagara|Dessert Banana": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Huye|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kamonyi|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Karongi|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kayonza|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kicukiro|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kirehe|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Muhanga|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Musanze|Dessert Banana": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngoma|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngororero|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyabihu|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyagatare|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyamagabe|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamasheke|Dessert Banana": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyanza|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyarugenge|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyaruguru|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rubavu|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ruhango|Dessert Banana": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rulindo|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rusizi|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rutsiro|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rwamagana|Dessert Banana": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Bugesera|Fodder Crops": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Burera|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gakenke|Fodder Crops": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Gasabo|Fodder Crops": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gatsibo|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gicumbi|Fodder Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Huye|Fodder Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kamonyi|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Karongi|Fodder Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kayonza|Fodder Crops": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kicukiro|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kirehe|Fodder Crops": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Muhanga|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Musanze|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngoma|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngororero|Fodder Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyabihu|Fodder Crops": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyagatare|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyamagabe|Fodder Crops": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyamasheke|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyanza|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyarugenge|Fodder Crops": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyaruguru|Fodder Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rubavu|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ruhango|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rulindo|Fodder Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rusizi|Fodder Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rutsiro|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rwamagana|Fodder Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Bugesera|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Burera|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gakenke|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gasabo|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gatsibo|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gicumbi|Fruits": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gisagara|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Huye|Fruits": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kamonyi|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Karongi|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kayonza|Fruits": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kicukiro|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kirehe|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Muhanga|Fruits": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Musanze|Fruits": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ngoma|Fruits": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyabihu|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyagatare|Fruits": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamagabe|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamasheke|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyanza|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyaruguru|Fruits": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rubavu|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rulindo|Fruits": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Fruits": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rutsiro|Fruits": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rwamagana|Fruits": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Bugesera|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gakenke|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gasabo|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gatsibo|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gicumbi|Groundnut": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gisagara|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Huye|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kamonyi|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Karongi|Groundnut": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kayonza|Groundnut": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Kicukiro|Groundnut": {
+      "fold_priorities": [
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Kirehe|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Muhanga|Groundnut": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngoma|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyagatare|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamasheke|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyanza|Groundnut": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyarugenge|Groundnut": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ruhango|Groundnut": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rulindo|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rwamagana|Groundnut": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Bugesera|Irish Potato": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Burera|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gakenke|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gasabo|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gatsibo|Irish Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gicumbi|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gisagara|Irish Potato": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Huye|Irish Potato": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kamonyi|Irish Potato": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Karongi|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kayonza|Irish Potato": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kirehe|Irish Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Muhanga|Irish Potato": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Musanze|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Irish Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ngororero|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyabihu|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyagatare|Irish Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyamagabe|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamasheke|Irish Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Nyanza|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyarugenge|Irish Potato": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyaruguru|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rubavu|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ruhango|Irish Potato": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Rulindo|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rusizi|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rutsiro|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rwamagana|Irish Potato": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Bugesera|Maize": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Burera|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gakenke|Maize": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gasabo|Maize": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gatsibo|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gicumbi|Maize": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gisagara|Maize": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Huye|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kamonyi|Maize": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Karongi|Maize": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kayonza|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kicukiro|Maize": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kirehe|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Muhanga|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Musanze|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Maize": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngororero|Maize": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyabihu|Maize": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyagatare|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamagabe|Maize": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamasheke|Maize": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Nyanza|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyarugenge|Maize": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyaruguru|Maize": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rubavu|Maize": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ruhango|Maize": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Rulindo|Maize": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Maize": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rutsiro|Maize": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rwamagana|Maize": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Bugesera|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gakenke|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gasabo|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gatsibo|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gicumbi|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gisagara|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Huye|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kamonyi|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kayonza|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kirehe|Other Cereals": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Muhanga|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyagatare|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamasheke|Other Cereals": {
+      "fold_priorities": [
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyanza|Other Cereals": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyaruguru|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ruhango|Other Cereals": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rwamagana|Other Cereals": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Bugesera|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Burera|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gakenke|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gasabo|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gicumbi|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Karongi|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kayonza|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kicukiro|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Muhanga|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Musanze|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Other Crops": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ngororero|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyabihu|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyagatare|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyamagabe|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyamasheke|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyarugenge|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyaruguru|Other Crops": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rubavu|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ruhango|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rulindo|Other Crops": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rusizi|Other Crops": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rutsiro|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rwamagana|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Bugesera|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gakenke|Paddy Rice": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gasabo|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gatsibo|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gisagara|Paddy Rice": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Huye|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kamonyi|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kayonza|Paddy Rice": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kicukiro|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kirehe|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Muhanga|Paddy Rice": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Ngoma|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyagatare|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamagabe|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyamasheke|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyanza|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyaruguru|Paddy Rice": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Ruhango|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rulindo|Paddy Rice": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rusizi|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rwamagana|Paddy Rice": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Bugesera|Pea": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Burera|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gakenke|Pea": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gasabo|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gatsibo|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gicumbi|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gisagara|Pea": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Huye|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kamonyi|Pea": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Karongi|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kayonza|Pea": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kirehe|Pea": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Muhanga|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Musanze|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ngoma|Pea": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Ngororero|Pea": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyabihu|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyagatare|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyamagabe|Pea": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyamasheke|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyanza|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyaruguru|Pea": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rubavu|Pea": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Ruhango|Pea": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rulindo|Pea": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rusizi|Pea": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rutsiro|Pea": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rwamagana|Pea": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Bugesera|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Burera|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gatsibo|Sorghum": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gicumbi|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gisagara|Sorghum": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kayonza|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kirehe|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Musanze|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngororero|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyabihu|Sorghum": {
+      "fold_priorities": [
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyagatare|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamasheke|Sorghum": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyanza|Sorghum": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyaruguru|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ruhango|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rutsiro|Sorghum": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Rwamagana|Sorghum": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Bugesera|Soybean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Gakenke|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gasabo|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gatsibo|Soybean": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gicumbi|Soybean": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gisagara|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Huye|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kamonyi|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Karongi|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kayonza|Soybean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kicukiro|Soybean": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kirehe|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Muhanga|Soybean": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Musanze|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Soybean": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Ngororero|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyabihu|Soybean": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyagatare|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamagabe|Soybean": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamasheke|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyanza|Soybean": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyarugenge|Soybean": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyaruguru|Soybean": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Rubavu|Soybean": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ruhango|Soybean": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Rulindo|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rutsiro|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rwamagana|Soybean": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Bugesera|Sweet Potato": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Burera|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gakenke|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gasabo|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gatsibo|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gicumbi|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gisagara|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Huye|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kamonyi|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Karongi|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kayonza|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kicukiro|Sweet Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kirehe|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Muhanga|Sweet Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Musanze|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Sweet Potato": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ngororero|Sweet Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyabihu|Sweet Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyagatare|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyamagabe|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamasheke|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyanza|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyarugenge|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyaruguru|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rubavu|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Ruhango|Sweet Potato": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Rulindo|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Sweet Potato": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rutsiro|Sweet Potato": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rwamagana|Sweet Potato": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Bugesera|Vegetables": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Burera|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gakenke|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gasabo|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gatsibo|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gicumbi|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gisagara|Vegetables": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Huye|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Kamonyi|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Karongi|Vegetables": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kayonza|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kicukiro|Vegetables": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kirehe|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Muhanga|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Musanze|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngoma|Vegetables": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Ngororero|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyabihu|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyagatare|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamagabe|Vegetables": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamasheke|Vegetables": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyanza|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Nyarugenge|Vegetables": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyaruguru|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rubavu|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ruhango|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rulindo|Vegetables": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rusizi|Vegetables": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rutsiro|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rwamagana|Vegetables": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Bugesera|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Burera|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gakenke|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gasabo|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gatsibo|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gicumbi|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Gisagara|Yams & Taro": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Huye|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Kamonyi|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Karongi|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kayonza|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Kicukiro|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Kirehe|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Muhanga|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Ngoma|Yams & Taro": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngororero|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyagatare|Yams & Taro": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyamagabe|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyamasheke|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyanza|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyaruguru|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rubavu|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Ruhango|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rulindo|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rusizi|Yams & Taro": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rutsiro|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Rwamagana|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Burera|Wheat": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gatsibo|Wheat": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gicumbi|Wheat": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kayonza|Wheat": {
+      "fold_priorities": [
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Kirehe|Wheat": {
+      "fold_priorities": [
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Musanze|Wheat": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Ngororero|Wheat": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyabihu|Wheat": {
+      "fold_priorities": [
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamagabe|Wheat": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyaruguru|Wheat": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 3,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Rulindo|Wheat": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Rubavu|Cassava": {
+      "fold_priorities": [
+        "Medium",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Ngororero|Fruits": {
+      "fold_priorities": [
+        "High",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Ruhango|Fruits": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyaruguru|Groundnut": {
+      "fold_priorities": [
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Gatsibo|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Gisagara|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Huye|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Kamonyi|Other Crops": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kirehe|Other Crops": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Nyanza|Other Crops": {
+      "fold_priorities": [
+        "Medium",
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Kicukiro|Pea": {
+      "fold_priorities": [
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gakenke|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Gasabo|Sorghum": {
+      "fold_priorities": [
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Huye|Sorghum": {
+      "fold_priorities": [
+        "Medium",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Kamonyi|Sorghum": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Karongi|Sorghum": {
+      "fold_priorities": [
+        "Medium",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Kicukiro|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Muhanga|Sorghum": {
+      "fold_priorities": [
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Low",
+      "underlying_priority_level": "Low",
+      "uncertain": false
+    },
+    "Nyamagabe|Sorghum": {
+      "fold_priorities": [
+        "High",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyarugenge|Sorghum": {
+      "fold_priorities": [
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Rubavu|Sorghum": {
+      "fold_priorities": [
+        "High",
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Rulindo|Sorghum": {
+      "fold_priorities": [
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Burera|Soybean": {
+      "fold_priorities": [
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Musanze|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyabihu|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "Medium"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Medium",
+      "uncertain": true
+    },
+    "Nyarugenge|Yams & Taro": {
+      "fold_priorities": [
+        "Low",
+        "High",
+        "Low"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Gakenke|Wheat": {
+      "fold_priorities": [
+        "Medium",
+        "Low",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Karongi|Wheat": {
+      "fold_priorities": [
+        "High",
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    },
+    "Muhanga|Wheat": {
+      "fold_priorities": [
+        "Medium",
+        "Low"
+      ],
+      "priority_changes_across_folds": 1,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "Low",
+      "uncertain": true
+    },
+    "Nyagatare|Wheat": {
+      "fold_priorities": [
+        "High",
+        "Low",
+        "High"
+      ],
+      "priority_changes_across_folds": 2,
+      "priority_level": "Uncertain",
+      "underlying_priority_level": "High",
+      "uncertain": true
+    },
+    "Burera|Other Cereals": {
+      "fold_priorities": [
+        "Medium"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "Medium",
+      "underlying_priority_level": "Medium",
+      "uncertain": false
+    },
+    "Ngororero|Paddy Rice": {
+      "fold_priorities": [
+        "High"
+      ],
+      "priority_changes_across_folds": 0,
+      "priority_level": "High",
+      "underlying_priority_level": "High",
+      "uncertain": false
+    }
+  }
+}

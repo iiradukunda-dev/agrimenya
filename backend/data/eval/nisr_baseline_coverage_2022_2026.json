@@ -1,0 +1,141 @@
+{
+  "purpose": "Official NISR SAS baseline source data. Used only as a historical fallback when no matching database release exists.",
+  "source_note": "Overall district tables only. SITE subgroup estimates and farmer-submitted reports are excluded. Production is calculated as published yield times harvested area divided by 1,000.",
+  "row_count": 6791,
+  "rows_by_year": {
+    "2022": 1368,
+    "2023": 1354,
+    "2024": 1410,
+    "2025": 1413,
+    "2026": 1246
+  },
+  "seasons": [
+    "2022 Season A",
+    "2022 Season B",
+    "2022 Season C",
+    "2023 Season A",
+    "2023 Season B",
+    "2023 Season C",
+    "2024 Season A",
+    "2024 Season B",
+    "2024 Season C",
+    "2025 Season A",
+    "2025 Season B",
+    "2025 Season C",
+    "2026 Season A",
+    "2026 Season B"
+  ],
+  "output_sha256": "9027263705d8e939ac825567585994a18e985bc68f23daf873ae77630a311345",
+  "coverage": {
+    "2022-Annual": {
+      "source_filename": "SAS 2022_Tables_0.xlsx",
+      "yield_cells": 1370,
+      "harvested_area_cells": 1395,
+      "usable_rows": 1368,
+      "district_count": 30,
+      "crop_count": 22,
+      "source_sheets": [
+        "Table 17",
+        "Table 18 ",
+        "Table 19",
+        "Table 14",
+        "Table 15 ",
+        "Table 16",
+        "Table 11",
+        "Table 12 ",
+        "Table 13"
+      ]
+    },
+    "2023-Annual": {
+      "source_filename": "SAS 2023_Annual Tables (3).xlsx",
+      "yield_cells": 1357,
+      "harvested_area_cells": 1376,
+      "usable_rows": 1354,
+      "district_count": 30,
+      "crop_count": 22,
+      "source_sheets": [
+        "Table 16",
+        "Table 17",
+        "Table 18",
+        "Table 13",
+        "Table 14",
+        "Table 15",
+        "Table 10",
+        "Table 11",
+        "Table 12"
+      ]
+    },
+    "2024-Annual": {
+      "source_filename": "SAS 2024_Annual Tables.xlsx",
+      "yield_cells": 1410,
+      "harvested_area_cells": 1413,
+      "usable_rows": 1410,
+      "district_count": 30,
+      "crop_count": 23,
+      "source_sheets": [
+        "Table 16",
+        "Table 17",
+        "Table 18",
+        "Table 13",
+        "Table 14",
+        "Table 15",
+        "Table 10",
+        "Table 11",
+        "Table 12"
+      ]
+    },
+    "2025-Annual": {
+      "source_filename": "SAS 2025_Annual Tables.xlsx",
+      "yield_cells": 1413,
+      "harvested_area_cells": 1415,
+      "usable_rows": 1413,
+      "district_count": 30,
+      "crop_count": 23,
+      "source_sheets": [
+        "Table 19",
+        "Table 20",
+        "Table 21",
+        "Table 16",
+        "Table 17",
+        "Table 18",
+        "Table 13",
+        "Table 14",
+        "Table 15"
+      ]
+    },
+    "2026-Season A": {
+      "source_filename": "Tables_2026 Season A.xlsx",
+      "yield_cells": 618,
+      "harvested_area_cells": 618,
+      "usable_rows": 618,
+      "district_count": 30,
+      "crop_count": 23,
+      "source_sheets": [
+        "Table 13",
+        "Table 12",
+        "Table 11"
+      ]
+    },
+    "2026-Season B": {
+      "source_filename": "Tables_2026 Season B.xlsx",
+      "yield_cells": 628,
+      "harvested_area_cells": 628,
+      "usable_rows": 628,
+      "district_count": 30,
+      "crop_count": 23,
+      "source_sheets": [
+        "Table 11",
+        "Table 10",
+        "Table 9"
+      ]
+    }
+  },
+  "source_workbook_sha256": {
+    "2022-Annual": "8576cd4a462d7fb015b491bcccfafc9488e34db338917858f436b4f23e0b6de6",
+    "2023-Annual": "fc07b45002c7aff36a0d6ee437acc47ff4bfea33b8bf240f264a78b41322fc82",
+    "2024-Annual": "5c7c6024d9a7b766d9911348aa3b5d5316555c6aa4a8c53f10dc290e2d8906e6",
+    "2025-Annual": "3a6ed44f1e973578e46221b392e54833bb39e73b681be6e54fa2b44efe5fe1f7",
+    "2026-Season A": "c4e4cb4c4e697febac1cb332280189a4dc6ff7f10d0de956bff279b284c5d4c2",
+    "2026-Season B": "5ca81c6b0a54c4a282ed718d134423920cc75279a5827bbe772fe6eb1a4e9d27"
+  }
+}

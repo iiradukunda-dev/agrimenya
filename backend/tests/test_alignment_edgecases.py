@@ -6,29 +6,21 @@ from app.services.alignment_calculator import (
 )
 
 
-def test_credit_score_prefers_yield_index():
-    # when yield_index provided, ensure it's used
-    s_without = calculate_credit_insurance_score(2000.0, 1.0, 800.0, None)
-    s_with = calculate_credit_insurance_score(None, None, None, 1.5)
-    assert s_with != s_without
+def test_credit_score_is_unavailable_without_validated_method():
+    assert calculate_credit_insurance_score(2000.0, 1.0, 800.0, 1.5) is None
 
 
-def test_climate_risk_none_is_medium():
-    assert calculate_climate_risk(None) == "Medium"
+def test_climate_risk_is_unavailable_without_validated_method():
+    assert calculate_climate_risk(None) is None
 
 
-def test_export_readiness_requires_both():
-    # low priority but low index -> not ready
-    assert calculate_export_readiness(2000.0, 1.0, "Low", 1.0) is False
-    # low priority and index high enough -> ready
-    assert calculate_export_readiness(2000.0, 1.0, "Low", 1.2) is True
-    # high index but priority not Low -> not ready
-    assert calculate_export_readiness(2000.0, 1.0, "High", 1.3) is False
+def test_export_readiness_is_unavailable_without_compliance_evidence():
+    assert calculate_export_readiness(2000.0, 1.0, "Low", 1.2) is None
 
 
-def test_nutrition_maps_from_priority():
-    # Use calculate_alignment_metrics which maps nutrition from priority
+def test_alignment_estimates_are_unavailable_without_validated_methods():
     m = calculate_alignment_metrics(2000.0, 1.0, None, "High", 1.0)
-    assert m["nutrition_risk_level"] == "High"
-    m2 = calculate_alignment_metrics(2000.0, 1.0, None, "Low", 1.2)
-    assert m2["nutrition_risk_level"] == "Low"
+    assert m["nutrition_risk_level"] is None
+    assert m["climate_risk_level"] is None
+    assert m["export_readiness_flag"] is None
+    assert m["estimated_jobs_supported"] is None
