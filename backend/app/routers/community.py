@@ -1,5 +1,6 @@
 """Authenticated farmer discussion board and administrator moderation."""
 from collections import defaultdict, deque
+import hashlib
 import logging
 import re
 import secrets
@@ -7,7 +8,7 @@ import threading
 import time
 from typing import Literal
 from uuid import UUID, uuid4
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from io import BytesIO
 from urllib.parse import urlencode, urlparse
 
@@ -19,7 +20,7 @@ from app.core.audit import audit_admin_action
 from app.core.config import settings
 from app.db import crud
 from app.services.admin_auth import (
-    hash_password, send_community_reset_email, verify_password,
+    hash_password, send_community_reset_email, send_community_verification_email, verify_password,
 )
 
 router = APIRouter(prefix="/community", tags=["Farmer Community"])
@@ -31,6 +32,18 @@ _DUMMY_PASSWORD_HASH = hash_password(secrets.token_urlsafe(32))
 
 
 def _rate_limit(store: dict[str, deque[float]], key: str, maximum: int, window: int = 60) -> None:
+    if settings.APP_ENV not in {"development", "test"}:
+        try:
+            # Rate-limit identifiers can contain email addresses; never persist those in the shared bucket table.
+            prefix, _, identifier = key.partition(":")
+            scope = f"community:{prefix}:{hashlib.sha256(identifier.encode('utf-8')).hexdigest()}"
+            allowed = crud.consume_api_rate_limit(scope, maximum, window)
+        except Exception as exc:
+            logger.exception("Shared community rate limit is unavailable")
+            raise HTTPException(status_code=503, detail="Community service is temporarily unavailable") from exc
+        if not allowed:
+            raise HTTPException(status_code=429, detail="Too many requests. Please wait and try again.")
+        return
     now = time.monotonic()
     with _limits_lock:
         if key not in store and len(store) >= 4096:
@@ -100,8 +113,61 @@ class CommunityForgotPassword(BaseModel):
 
 
 class CommunityResetPassword(BaseModel):
-    token: str = Field(min_length=20, max_length=200)
+    token: str = Field(min_length=20, max_length=4096)
     new_password: str = Field(min_length=12, max_length=256)
+
+
+class CommunityVerifyEmail(BaseModel):
+    # Signed verification JWTs exceed the password-reset token's former
+    # 200-character cap; the token is still validated for signature/expiry below.
+    token: str = Field(min_length=20, max_length=4096)
+
+
+class CommunityResendVerification(BaseModel):
+    email: str = Field(min_length=3, max_length=254)
+
+    @field_validator("email")
+    @classmethod
+    def email_normalized(cls, value: str) -> str:
+        value = value.strip().lower()
+        if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", value):
+            raise ValueError("Enter a valid email address")
+        return value
+
+
+def _send_verification(account: dict) -> dict:
+    token = create_token("community_verify", 86400, {
+        "sub": str(account["id"]), "purpose": "community_email_verification",
+        "ver": int(account.get("session_version", 1)),
+    })
+    token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()
+    expires_at = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+    crud.create_community_email_verification_token(str(account["id"]), token_hash, expires_at)
+    response = {"message": "Check your email for a verification link. You can request another link if it does not arrive."}
+    reset_host = (urlparse(settings.COMMUNITY_PASSWORD_RESET_URL).hostname or "").casefold()
+    local_development = settings.APP_ENV in {"development", "test"} and reset_host in {"localhost", "127.0.0.1"}
+    smtp_ready = bool(settings.SMTP_HOST and settings.EMAIL_FROM) and (bool(settings.SMTP_USER) == bool(settings.SMTP_PASSWORD))
+    if smtp_ready:
+        try:
+            send_community_verification_email(account["email"], account["display_name"], token)
+            if local_development:
+                response["development_email_status"] = "accepted"
+        except Exception:
+            if not local_development:
+                raise
+            logger.exception("Development SMTP delivery failed; returning local verification link")
+            response["development_email_status"] = "failed"
+    elif local_development:
+        response["development_email_status"] = "not_configured"
+    else:
+        raise RuntimeError("Community verification email is not configured")
+    if local_development:
+        separator = "&" if "?" in settings.COMMUNITY_PASSWORD_RESET_URL else "?"
+        response["development_verification_url"] = (
+            settings.COMMUNITY_PASSWORD_RESET_URL.rstrip("?") + separator
+            + urlencode({"community_verify_token": token})
+        )
+    return response
 
 
 class PostCreate(BaseModel):
@@ -181,10 +247,53 @@ def register(payload: CommunityRegister, request: Request):
             pass
         logger.exception("Community registration failed")
         raise HTTPException(status_code=503, detail="Account registration is temporarily unavailable") from exc
-    token = create_token("community", 3600, {"sub": str(account["id"]), "ver": int(account.get("session_version", 1))})
-    return {"access_token": token, "token_type": "bearer", "expires_in": 3600,
-            "account": {"id": str(account["id"]), "display_name": account["display_name"],
-                        "role": account["role"]}}
+    try:
+        return _send_verification(account)
+    except Exception as exc:
+        logger.exception("Community verification email could not be prepared")
+        raise HTTPException(status_code=503, detail="Account created, but verification email could not be sent. Use resend verification or contact support.") from exc
+
+
+@router.post("/email/verify")
+def verify_community_email(payload: CommunityVerifyEmail, request: Request):
+    _ensure_secure_sessions()
+    ip = request.client.host if request.client else "unknown"
+    _rate_limit(_login_attempts, f"verify-email:{ip}", 10)
+    try:
+        claims = verify_token(payload.token, expected_role="community_verify")
+        if claims.get("purpose") != "community_email_verification" or not claims.get("sub"):
+            raise HTTPException(status_code=400, detail="Verification link is invalid, expired, or already used")
+        token_hash = hashlib.sha256(payload.token.encode("utf-8")).hexdigest()
+        if not crud.verify_community_email(token_hash):
+            raise HTTPException(status_code=400, detail="Verification link is invalid, expired, or already used")
+    except HTTPException as exc:
+        if exc.status_code == 401:
+            raise HTTPException(status_code=400, detail="Verification link is invalid, expired, or already used") from exc
+        raise
+    except Exception as exc:
+        logger.exception("Community email verification failed")
+        raise HTTPException(status_code=503, detail="Email verification is temporarily unavailable") from exc
+    return {"message": "Email verified. You can now sign in."}
+
+
+@router.post("/email/verification/resend")
+def resend_community_verification(payload: CommunityResendVerification, request: Request):
+    _ensure_secure_sessions()
+    ip = request.client.host if request.client else "unknown"
+    _rate_limit(_login_attempts, f"resend-verification-ip:{ip}", 5, 3600)
+    _rate_limit(_login_attempts, f"resend-verification-email:{payload.email}", 3, 3600)
+    response = {"message": "If an unverified active account matches that email, a new verification link will be sent."}
+    local = (settings.APP_ENV in {"development", "test"}
+             and (urlparse(settings.COMMUNITY_PASSWORD_RESET_URL).hostname or "").casefold() in {"localhost", "127.0.0.1"})
+    try:
+        account = crud.get_community_account_by_email(payload.email)
+        if account and account.get("is_active") and not account.get("email_verified_at"):
+            response.update(_send_verification(account))
+    except Exception as exc:
+        logger.exception("Community verification resend failed")
+        if local:
+            response["development_error"] = "Could not send the link. Confirm SMTP and database configuration."
+    return response
 
 
 @router.post("/login")
@@ -203,6 +312,8 @@ def login(payload: CommunityLogin, request: Request):
     )
     if not account or not account.get("is_active") or not password_matches:
         raise HTTPException(status_code=401, detail="Email or password is incorrect")
+    if not account.get("email_verified_at"):
+        raise HTTPException(status_code=403, detail="Verify your email before signing in. Request a new verification link if needed.")
     token = create_token("community", 3600, {"sub": str(account["id"]), "ver": int(account.get("session_version", 1))})
     return {"access_token": token, "token_type": "bearer", "expires_in": 3600,
             "account": {"id": str(account["id"]), "display_name": account["display_name"],
@@ -245,6 +356,8 @@ def community_forgot_password(payload: CommunityForgotPassword, request: Request
                     response["development_email_status"] = "accepted"
             elif not local_development:
                 raise RuntimeError("Community password reset email is not configured")
+            else:
+                response["development_email_status"] = "not_configured"
     except Exception as exc:
         # Keep the response indistinguishable for unknown addresses and provider/database errors.
         logger.exception("Community password recovery request failed")

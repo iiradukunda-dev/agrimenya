@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from datetime import date
 from uuid import UUID
 import math
+from pydantic import BaseModel, Field
 from app.core.auth import require_user
 from app.models.plan import PlanCreate
 from app.db import crud
@@ -9,6 +10,11 @@ from app.services.disease_detector import detect_crop_disease
 from app.services.resource_estimator import estimate_resources
 
 router = APIRouter(prefix="/planification", tags=["Planification"])
+
+
+class PlanActionStatusUpdate(BaseModel):
+    status: str = Field(pattern="^(planned|in_progress|completed|blocked)$")
+    change_note: str = Field(default="", max_length=1000)
 
 
 @router.get("/resources/{zone_id}")
@@ -100,6 +106,37 @@ def create_roadmap(plan: PlanCreate, _: dict = Depends(require_user)):
 @router.get("/plans/{zone_id}")
 def get_plans(zone_id: UUID, _: dict = Depends(require_user)):
     return crud.list_plans(zone_id)
+
+
+@router.patch("/plans/{plan_id}/actions/{step_number}")
+def update_plan_action(plan_id: UUID, step_number: int, payload: PlanActionStatusUpdate,
+                       account: dict = Depends(require_user)):
+    if step_number < 1:
+        raise HTTPException(status_code=422, detail="Action number must be positive")
+    if not crud.get_plan(plan_id):
+        raise HTTPException(status_code=404, detail="Plan not found")
+    try:
+        updated = crud.update_plan_action_status(
+            plan_id, step_number, payload.status, payload.change_note.strip(),
+            str(account.get("account_id") or account.get("role") or "user"),
+        )
+        if not updated:
+            raise HTTPException(status_code=404, detail="Plan not found")
+        return updated
+    except HTTPException:
+        raise
+    except Exception as exc:
+        if "Plan action was not found" in str(exc):
+            raise HTTPException(status_code=404, detail="Plan action not found") from exc
+        raise HTTPException(status_code=503, detail="Could not update plan action") from exc
+
+
+@router.get("/plans/{plan_id}/history")
+def get_plan_action_history(plan_id: UUID, step_number: int | None = Query(default=None, ge=1),
+                            _: dict = Depends(require_user)):
+    if not crud.get_plan(plan_id):
+        raise HTTPException(status_code=404, detail="Plan not found")
+    return crud.list_plan_action_history(plan_id, step_number)
 
 
 @router.post("/disease-plan")
