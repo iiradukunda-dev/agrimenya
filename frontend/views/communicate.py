@@ -128,6 +128,21 @@ def render_communicate():
 
                 with right:
                     st.markdown("**Record consent and alert preferences**")
+                    zones = api_client.get_zones() or []
+                    zone_options = {}
+                    for zone in zones:
+                        if not zone.get("id"):
+                            continue
+                        label_parts = [
+                            zone.get("district") or "Unknown district",
+                            zone.get("sector") or zone.get("cell"),
+                            zone.get("crop_type") or zone.get("crop"),
+                        ]
+                        label = " / ".join(str(part) for part in label_parts if part)
+                        if label in zone_options:
+                            label = f"{label} | {str(zone['id'])[:8]}"
+                        zone_options[label] = zone["id"]
+
                     active_contacts = [c for c in contacts if not c.get("deleted_at")]
                     if active_contacts:
                         contact_labels = {

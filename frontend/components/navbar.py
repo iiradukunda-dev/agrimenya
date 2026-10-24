@@ -1,4 +1,4 @@
-"""Dual-island floating pill navigation tailored to the agrimenya theme."""
+"""Unified centered floating pill navigation tailored to the agrimenya theme."""
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
 from utils.i18n import render_language_selector, t
@@ -6,51 +6,74 @@ from utils.pwa import render_pwa_support
 
 
 def render_navbar() -> None:
-    """Render the dual-island floating pill navigation styled with agrimenya theme tokens."""
+    """Render the unified centered floating pill navigation styled with agrimenya theme tokens."""
     st.markdown("""
       <style>
       @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
       [data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; }
 
-      /* Top Navbar Row Alignment */
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) {
-        align-items: center !important;
-        padding: 0.5rem 0 0.8rem 0 !important;
-      }
-
       /* =========================================================
-         LEFT ISLAND: Floating Pill Capsule for Nav Links
+         AGRIMENYA CENTERED FLOATING NAVBAR
          ========================================================= */
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stHorizontalBlock"],
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:first-child [data-testid="stHorizontalBlock"] {
-        background: #ffffff !important;
-        border-radius: 9999px !important;
-        padding: 5px 8px !important;
-        box-shadow: 0 4px 20px rgba(2, 132, 199, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-        border: 1px solid rgba(2, 132, 199, 0.18) !important;
-        display: inline-flex !important;
+      /* Outer Container: Centered horizontally on the page */
+      .st-key-ag_navbar,
+      .st-key-ag_navbar > div {
+        display: flex !important;
         flex-direction: row !important;
+        justify-content: center !important;
         align-items: center !important;
-        width: fit-content !important;
+        width: 100% !important;
         max-width: 100% !important;
-        gap: 4px !important;
-      }
-
-      /* Ensure each sub-column in left island shrinks to its natural item width */
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stHorizontalBlock"] [data-testid="column"],
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:first-child [data-testid="stHorizontalBlock"] [data-testid="stColumn"] {
-        flex: 0 0 auto !important;
-        width: auto !important;
-        min-width: unset !important;
+        margin: 0.25rem auto 0.75rem auto !important;
         padding: 0 !important;
       }
 
-      /* General styling for inactive nav links inside the left pill (Overview, Zones, Decisions) */
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"],
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"] {
+      /* The Unified Floating Pill Capsule */
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"],
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) {
+        display: inline-flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: auto !important;
+        max-width: fit-content !important;
+        margin: 0.2rem auto 0.6rem auto !important;
+        padding: 6px 16px !important;
+        background: #ffffff !important;
+        border-radius: 9999px !important;
+        border: 1px solid rgba(2, 132, 199, 0.22) !important;
+        box-shadow: 0 8px 30px rgba(2, 132, 199, 0.14), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+        gap: 6px !important;
+      }
+
+      /* Ensure each sub-column shrinks to content width and aligns center */
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] > [data-testid="column"],
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) > [data-testid="column"],
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) > [data-testid="stColumn"] {
+        display: inline-flex !important;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: unset !important;
+        max-width: unset !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      /* Base nav links inside the pill (Overview, Zones, Decisions) */
+      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active),
+      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active),
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active),
+      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active),
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) {
         background: transparent !important;
+        background-color: transparent !important;
         border: none !important;
         border-radius: 9999px !important;
+        height: 2.35rem !important;
         min-height: 2.35rem !important;
         padding: 0.45rem 1.15rem !important;
         box-shadow: none !important;
@@ -59,128 +82,151 @@ def render_navbar() -> None:
         text-align: center !important;
         display: inline-flex !important;
         text-decoration: none !important;
+        line-height: 1 !important;
+        margin: 0 !important;
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
       }
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] p,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"] p {
+      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
+      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
+      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) p {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.88rem !important;
         font-weight: 600 !important;
         color: #0a1f26 !important;
         letter-spacing: -0.01em !important;
         margin: 0 !important;
+        line-height: 1 !important;
         transition: color 0.2s ease !important;
       }
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:hover {
+      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
+      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
+      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover {
         background: rgba(2, 132, 199, 0.08) !important;
+        background-color: rgba(2, 132, 199, 0.08) !important;
         transform: none !important;
       }
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:hover p {
+      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
+      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
+      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p {
         color: #0284c7 !important;
       }
 
-      /* ACTIVE NAV LINK: Agrimenya's Signature Cyan-Emerald Pill with White Text and Outline Home Icon */
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href="/"]),
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href=""]),
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href$="/Home"]),
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href*="Home.py"]),
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"],
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:first-child [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"],
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"][aria-current="page"],
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has([aria-current="page"]) {
-        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      /* ACTIVE / SELECTED TAB: Soft Sage Capsule from User Specification (#c8d7cc) */
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"],
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"],
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink-NavLink"][aria-current="page"],
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"].ag-nav-active,
+      .st-key-ag_navbar a[aria-current="page"],
+      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"],
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"],
+      .st-key-ag_navbar a.ag-nav-active,
+      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active {
+        background: #c8d7cc !important;
+        background-color: #c8d7cc !important;
         border: none !important;
         border-radius: 9999px !important;
+        height: 2.35rem !important;
+        min-height: 2.35rem !important;
         padding: 0.45rem 1.35rem !important;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
         display: inline-flex !important;
         align-items: center !important;
-        gap: 0.45rem !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
       }
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href="/"]) p,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href=""]) p,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href$="/Home"]) p,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href*="Home.py"]) p,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] p,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:first-child [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"] p,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"][aria-current="page"] p,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has([aria-current="page"]) p {
-        color: #ffffff !important;
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"] p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"] p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink-NavLink"][aria-current="page"] p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"].ag-nav-active p,
+      .st-key-ag_navbar a[aria-current="page"] p,
+      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"] p,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] p,
+      .st-key-ag_navbar a.ag-nav-active p,
+      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active p {
+        color: #1b2a26 !important;
         font-weight: 700 !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+        text-shadow: none !important;
       }
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href="/"]):hover,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href=""]):hover,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href$="/Home"]):hover,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href*="Home.py"]):hover,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:hover,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:first-child [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"]:hover,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"][aria-current="page"]:hover {
-        background: linear-gradient(135deg, #0275b1 0%, #02527d 100%) !important;
-        box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45) !important;
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"]:hover,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active:hover,
+      .st-key-ag_navbar a[aria-current="page"]:hover,
+      .st-key-ag_navbar a.ag-nav-active:hover {
+        background: #bcd0c3 !important;
+        background-color: #bcd0c3 !important;
         transform: none !important;
       }
 
-      /* Outline Home Vector Icon on Active Button */
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href="/"])::before,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href=""])::before,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href$="/Home"])::before,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]:has(a[href*="Home.py"])::before,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stHorizontalBlock"] [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"]::before,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:first-child [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:first-child [data-testid="stPageLink-NavLink"]::before,
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"][aria-current="page"]::before {
-        content: "" !important;
-        display: inline-block !important;
-        width: 17px !important;
-        height: 17px !important;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2.5L3 9.5V19.5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9.5L12 2.5z'%3E%3C/path%3E%3Ccircle cx='12' cy='14.5' r='2.5'%3E%3C/circle%3E%3C/svg%3E") !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
-        background-size: contain !important;
-        margin-right: 0.35rem !important;
+      /* More Popover Button inside the Pill: Pure transparent, pixel-aligned */
+      .st-key-ag_navbar div[data-testid="stPopover"],
+      .st-key-ag_navbar .stPopover {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
       }
-
-      /* More Popover Button inside the Left Island Pill */
-      div[data-testid="stPopover"] button {
+      .st-key-ag_navbar div[data-testid="stPopover"] button,
+      .st-key-ag_navbar div[data-testid="stPopover"] button:hover,
+      .st-key-ag_navbar .stPopover > button,
+      .st-key-ag_navbar .stPopover > button:hover {
         background: transparent !important;
+        background-color: transparent !important;
         border: none !important;
         border-radius: 9999px !important;
+        height: 2.35rem !important;
         min-height: 2.35rem !important;
         padding: 0.45rem 1.15rem !important;
         box-shadow: none !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
+        margin: 0 !important;
+        line-height: 1 !important;
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
       }
-      div[data-testid="stPopover"] button::before,
-      div[data-testid="stPopover"] button::after {
+      .st-key-ag_navbar div[data-testid="stPopover"] button::before,
+      .st-key-ag_navbar div[data-testid="stPopover"] button::after {
         display: none !important;
         content: none !important;
       }
-      div[data-testid="stPopover"] button p {
+      .st-key-ag_navbar div[data-testid="stPopover"] button p,
+      .st-key-ag_navbar div[data-testid="stPopover"] button span,
+      .st-key-ag_navbar div[data-testid="stPopover"] button * {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.88rem !important;
         font-weight: 600 !important;
         color: #0a1f26 !important;
         letter-spacing: -0.01em !important;
         margin: 0 !important;
+        line-height: 1 !important;
         visibility: visible !important;
         opacity: 1 !important;
         display: inline-block !important;
         transition: color 0.2s ease !important;
       }
-      div[data-testid="stPopover"] button:hover {
+      .st-key-ag_navbar div[data-testid="stPopover"] button:hover {
         background: rgba(2, 132, 199, 0.08) !important;
-        transform: none !important;
+        background-color: rgba(2, 132, 199, 0.08) !important;
       }
-      div[data-testid="stPopover"] button:hover p {
+      .st-key-ag_navbar div[data-testid="stPopover"] button:hover p,
+      .st-key-ag_navbar div[data-testid="stPopover"] button:hover span,
+      .st-key-ag_navbar div[data-testid="stPopover"] button:hover * {
         color: #0284c7 !important;
       }
-      /* Hide default expand chevron in More popover button */
-      div[data-testid="stPopover"] button [data-testid="stIconMaterial"],
-      div[data-testid="stPopover"] button svg,
-      div[data-testid="stPopover"] button .material-symbols-rounded {
+      /* Hide default chevron inside More popover */
+      .st-key-ag_navbar div[data-testid="stPopover"] button [data-testid="stIconMaterial"],
+      .st-key-ag_navbar div[data-testid="stPopover"] button svg,
+      .st-key-ag_navbar div[data-testid="stPopover"] button .material-symbols-rounded {
         display: none !important;
         visibility: hidden !important;
         width: 0 !important;
@@ -196,6 +242,7 @@ def render_navbar() -> None:
         box-shadow: 0 16px 40px rgba(4, 31, 38, 0.14), 0 4px 12px rgba(2, 132, 199, 0.08) !important;
         padding: 0.75rem 0.65rem !important;
       }
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink"],
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] {
         min-height: 2.2rem !important;
         padding: 0.4rem 0.85rem !important;
@@ -205,15 +252,18 @@ def render_navbar() -> None:
         border-radius: 10px !important;
         justify-content: flex-start !important;
       }
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink"] p,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] p {
         font-size: 0.86rem !important;
         font-weight: 600 !important;
         color: #0a1f26 !important;
       }
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
         background: rgba(2, 132, 199, 0.12) !important;
         border-color: rgba(2, 132, 199, 0.35) !important;
       }
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover p,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover p {
         color: #0284c7 !important;
       }
@@ -232,79 +282,92 @@ def render_navbar() -> None:
       }
 
       /* =========================================================
-         RIGHT ISLAND: Sign In Capsule & Language Selector
+         Sign In Capsule Button inside the Pill
          ========================================================= */
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:last-child [data-testid="stHorizontalBlock"],
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:last-child [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: flex-end !important;
-        gap: 12px !important;
-        width: 100% !important;
-      }
-
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="column"]:last-child [data-testid="stHorizontalBlock"] [data-testid="column"],
-      [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) [data-testid="stColumn"]:last-child [data-testid="stHorizontalBlock"] [data-testid="stColumn"] {
-        flex: 0 0 auto !important;
-        width: auto !important;
-        min-width: unset !important;
-        padding: 0 !important;
-      }
-
-      /* Sign In Button: Crisp Cyan-accented Outline Capsule */
-      [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]) {
-        background: #ffffff !important;
-        border: 1.5px solid rgba(2, 132, 199, 0.35) !important;
+      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]),
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]),
+      .st-key-ag_navbar a[href*="Admin"] {
+        background: rgba(2, 132, 199, 0.08) !important;
+        background-color: rgba(2, 132, 199, 0.08) !important;
+        border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
         border-radius: 9999px !important;
-        min-height: 2.35rem !important;
-        padding: 0.45rem 1.35rem !important;
-        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08) !important;
+        height: 2.25rem !important;
+        min-height: 2.25rem !important;
+        padding: 0.4rem 1.15rem !important;
+        box-shadow: none !important;
         justify-content: center !important;
         text-align: center !important;
         display: inline-flex !important;
         align-items: center !important;
         text-decoration: none !important;
+        line-height: 1 !important;
+        margin: 0 !important;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
       }
-      [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]) p {
+      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]) p,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]) p,
+      .st-key-ag_navbar a[href*="Admin"] p {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 0.88rem !important;
+        font-size: 0.86rem !important;
         font-weight: 700 !important;
         color: #0284c7 !important;
         letter-spacing: -0.01em !important;
         margin: 0 !important;
+        line-height: 1 !important;
         transition: color 0.2s ease !important;
       }
-      [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]):hover {
+      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]):hover,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]):hover,
+      .st-key-ag_navbar a[href*="Admin"]:hover {
         border-color: #0284c7 !important;
         background: #0284c7 !important;
-        box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35) !important;
+        background-color: #0284c7 !important;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
         transform: translateY(-1px) !important;
       }
-      [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]):hover p {
+      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]):hover p,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]):hover p,
+      .st-key-ag_navbar a[href*="Admin"]:hover p {
         color: #ffffff !important;
       }
 
-      /* Language Selector Button in Right Island ONLY */
-      .st-key-lang_cycle_btn button {
-        background: #ffffff !important;
-        border: 1.5px solid rgba(2, 132, 199, 0.35) !important;
+      /* =========================================================
+         Language Selector Button inside the Pill (Single Globe)
+         ========================================================= */
+      .st-key-ag_navbar .st-key-lang_cycle_btn,
+      .st-key-ag_navbar .st-key-lang_cycle_btn > div {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .st-key-lang_cycle_btn button,
+      .st-key-lang_cycle_btn button:hover,
+      .st-key-ag_navbar .st-key-lang_cycle_btn button,
+      .st-key-ag_navbar .st-key-lang_cycle_btn button:hover {
+        background: rgba(2, 132, 199, 0.08) !important;
+        background-color: rgba(2, 132, 199, 0.08) !important;
+        border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
         border-radius: 50% !important;
-        min-height: 2.35rem !important;
-        width: 2.35rem !important;
-        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08) !important;
+        height: 2.25rem !important;
+        min-height: 2.25rem !important;
+        width: 2.25rem !important;
+        box-shadow: none !important;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         padding: 0 !important;
+        margin: 0 !important;
         position: relative !important;
       }
-      .st-key-lang_cycle_btn button:hover {
-        background: #f0f9ff !important;
+      .st-key-lang_cycle_btn button:hover,
+      .st-key-ag_navbar .st-key-lang_cycle_btn button:hover {
+        background: #0284c7 !important;
+        background-color: #0284c7 !important;
         border-color: #0284c7 !important;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28) !important;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
         transform: translateY(-1px) scale(1.05) !important;
       }
       .st-key-lang_cycle_btn button * {
@@ -319,16 +382,17 @@ def render_navbar() -> None:
       .st-key-lang_cycle_btn button::before {
         content: '' !important;
         display: block !important;
-        width: 17px !important;
-        height: 17px !important;
+        width: 16px !important;
+        height: 16px !important;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='2' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'%3E%3C/path%3E%3C/svg%3E") !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
         background-size: contain !important;
         pointer-events: none !important;
-        transition: transform 0.25s ease !important;
+        transition: all 0.25s ease !important;
       }
       .st-key-lang_cycle_btn button:hover::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='2' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'%3E%3C/path%3E%3C/svg%3E") !important;
         transform: rotate(18deg) scale(1.1) !important;
       }
 
@@ -336,24 +400,25 @@ def render_navbar() -> None:
       .ag-nav-rule {
         border: 0;
         height: 1px;
-        background: linear-gradient(90deg, rgba(2, 132, 199, 0.25) 0%, rgba(16, 185, 129, 0.2) 50%, rgba(2, 132, 199, 0.1) 100%);
-        margin: 0.4rem 0 1.2rem;
+        background: transparent;
+        margin: 0.2rem 0 1rem;
       }
 
-      @media(max-width:900px) {
-        [data-testid="stHorizontalBlock"]:has([data-testid="stPageLink-NavLink"]) {
+      @media(max-width:950px) {
+        .st-key-ag_navbar [data-testid="stHorizontalBlock"],
+        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) {
           flex-wrap: wrap !important;
-          gap: 0.75rem !important;
+          border-radius: 20px !important;
+          gap: 0.5rem !important;
         }
       }
       </style>
     """, unsafe_allow_html=True)
 
-    col_nav, col_right = st.columns([4.2, 1.2], vertical_alignment="center", gap="medium")
-
-    with col_nav:
-        c_home, c_overview, c_zones, c_decide, c_more = st.columns(
-            [1.15, 1.1, 0.95, 1.15, 0.9], vertical_alignment="center"
+    # Single Centered Row Container
+    with st.container(key="ag_navbar"):
+        c_home, c_overview, c_zones, c_decide, c_more, c_sep, c_signin, c_lang = st.columns(
+            [1.15, 1.1, 0.95, 1.15, 0.9, 0.08, 1.05, 0.45], vertical_alignment="center"
         )
         with c_home:
             st.page_link("Home.py", label=t("nav.home", "Home"))
@@ -381,9 +446,11 @@ def render_navbar() -> None:
                     f'<a href="/app/static/offline.html" target="_blank" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#0284c7;background:rgba(2,132,199,0.08);border:1px solid rgba(2,132,199,0.22);margin-top:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> {t("nav.offline_hub", "Offline Field Hub")}</a>',
                     unsafe_allow_html=True,
                 )
-
-    with col_right:
-        c_signin, c_lang = st.columns([1.1, 0.45], vertical_alignment="center")
+        with c_sep:
+            st.markdown(
+                '<div style="width:1.5px;height:20px;background:rgba(2,132,199,0.25);margin:0 4px;border-radius:1px;"></div>',
+                unsafe_allow_html=True,
+            )
         with c_signin:
             st.page_link("pages/10_Admin.py", label=t("nav.signin", "Sign In"))
         with c_lang:
