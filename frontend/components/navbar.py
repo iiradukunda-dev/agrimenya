@@ -64,11 +64,11 @@ def render_navbar() -> None:
       }
 
       /* Base nav links inside the pill (Overview, Zones, Decisions) */
-      .st-key-ag_navbar [data-testid="stPageLink"],
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"],
-      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"],
-      .st-key-ag_navbar [data-testid="stPageLink"] a,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"] {
+      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active),
+      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active),
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active),
+      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active),
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) {
         background: transparent !important;
         background-color: transparent !important;
         border: none !important;
@@ -86,11 +86,11 @@ def render_navbar() -> None:
         margin: 0 !important;
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
       }
-      .st-key-ag_navbar [data-testid="stPageLink"] p,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"] p,
-      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"] p,
-      .st-key-ag_navbar [data-testid="stPageLink"] a p,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"] p {
+      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
+      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
+      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) p {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.88rem !important;
         font-weight: 600 !important;
@@ -100,80 +100,69 @@ def render_navbar() -> None:
         line-height: 1 !important;
         transition: color 0.2s ease !important;
       }
-      .st-key-ag_navbar [data-testid="stPageLink"]:hover,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:hover,
-      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:hover,
-      .st-key-ag_navbar [data-testid="stPageLink"] a:hover,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:hover {
+      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
+      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
+      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover {
         background: rgba(2, 132, 199, 0.08) !important;
         background-color: rgba(2, 132, 199, 0.08) !important;
         transform: none !important;
       }
-      .st-key-ag_navbar [data-testid="stPageLink"]:hover p,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:hover p,
-      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:hover p,
-      .st-key-ag_navbar [data-testid="stPageLink"] a:hover p,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:hover p {
+      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
+      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
+      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p {
         color: #0284c7 !important;
       }
 
-      /* ACTIVE NAV LINK: Agrimenya Cyan Gradient Pill */
-      .st-key-ag_navbar [data-testid="column"]:first-child [data-testid="stPageLink"],
-      .st-key-ag_navbar [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"],
-      .st-key-ag_navbar [data-testid="column"]:first-child a,
-      .st-key-ag_navbar a[href="Home"],
-      .st-key-ag_navbar a[href="/"],
-      .st-key-ag_navbar a[href=""],
+      /* ACTIVE / SELECTED TAB: Soft Sage Capsule from User Specification (#c8d7cc) */
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"],
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"],
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink-NavLink"][aria-current="page"],
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"].ag-nav-active,
       .st-key-ag_navbar a[aria-current="page"],
       .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"],
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] {
-        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
-        background-color: #0284c7 !important;
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"],
+      .st-key-ag_navbar a.ag-nav-active,
+      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active {
+        background: #c8d7cc !important;
+        background-color: #c8d7cc !important;
         border: none !important;
         border-radius: 9999px !important;
         height: 2.35rem !important;
         min-height: 2.35rem !important;
         padding: 0.45rem 1.35rem !important;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 0.45rem !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
       }
-      .st-key-ag_navbar [data-testid="column"]:first-child [data-testid="stPageLink"] p,
-      .st-key-ag_navbar [data-testid="column"]:first-child [data-testid="stPageLink-NavLink"] p,
-      .st-key-ag_navbar [data-testid="column"]:first-child a p,
-      .st-key-ag_navbar a[href="Home"] p,
-      .st-key-ag_navbar a[href="/"] p,
-      .st-key-ag_navbar a[href=""] p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"] p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"] p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink-NavLink"][aria-current="page"] p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"].ag-nav-active p,
       .st-key-ag_navbar a[aria-current="page"] p,
       .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"] p,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] p {
-        color: #ffffff !important;
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] p,
+      .st-key-ag_navbar a.ag-nav-active p,
+      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active p {
+        color: #1b2a26 !important;
         font-weight: 700 !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+        text-shadow: none !important;
       }
-      .st-key-ag_navbar [data-testid="column"]:first-child a:hover,
-      .st-key-ag_navbar a[href="Home"]:hover,
-      .st-key-ag_navbar a[aria-current="page"]:hover {
-        background: linear-gradient(135deg, #0275b1 0%, #02527d 100%) !important;
-        box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45) !important;
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"]:hover,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active:hover,
+      .st-key-ag_navbar a[aria-current="page"]:hover,
+      .st-key-ag_navbar a.ag-nav-active:hover {
+        background: #bcd0c3 !important;
+        background-color: #bcd0c3 !important;
         transform: none !important;
-      }
-
-      /* Outline Home Vector Icon on Active Button */
-      .st-key-ag_navbar [data-testid="column"]:first-child a::before,
-      .st-key-ag_navbar a[href="Home"]::before,
-      .st-key-ag_navbar [data-testid="column"]:first-child [data-testid="stPageLink"]::before {
-        content: "" !important;
-        display: inline-block !important;
-        width: 17px !important;
-        height: 17px !important;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2.5L3 9.5V19.5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9.5L12 2.5z'%3E%3C/path%3E%3Ccircle cx='12' cy='14.5' r='2.5'%3E%3C/circle%3E%3C/svg%3E") !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
-        background-size: contain !important;
-        margin-right: 0.35rem !important;
       }
 
       /* More Popover Button inside the Pill: Pure transparent, pixel-aligned */
