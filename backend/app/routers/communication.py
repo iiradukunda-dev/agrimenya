@@ -148,13 +148,14 @@ def whatsapp_status(_: dict = Depends(require_user)) -> dict[str, Any]:
     webhook_configured = bool(settings.WHATSAPP_APP_SECRET and settings.WHATSAPP_VERIFY_TOKEN)
     live_ready = bool(settings.WHATSAPP_GRAPH_VERSION and sender_configured and credentials_configured and webhook_configured)
     return {
-        "ready": settings.WHATSAPP_MODE == "mock" or live_ready,
+        "ready": settings.WHATSAPP_MODE == "mock" or (live_ready and settings.WHATSAPP_PUBLIC_CHAT_ENABLED),
         "mode": settings.WHATSAPP_MODE,
         "provider": "meta_cloud_api",
         "business_account_configured": bool(settings.WHATSAPP_BUSINESS_ACCOUNT_ID),
         "credentials_configured": credentials_configured,
         "sender_configured": sender_configured,
         "webhook_configured": webhook_configured,
+        "public_chat_enabled": settings.WHATSAPP_PUBLIC_CHAT_ENABLED,
     }
 
 
@@ -163,7 +164,12 @@ def whatsapp_public_info() -> dict[str, Any]:
     """Return only the public click-to-chat link, never provider credentials."""
     number = settings.WHATSAPP_PUBLIC_NUMBER
     configured_number = bool(re.fullmatch(r"\+[1-9]\d{7,14}", number))
-    available = settings.WHATSAPP_MODE == "live" and configured_number
+    # Credentials alone do not prove Meta sender/template approval or a successful opt-in test.
+    available = (
+        settings.WHATSAPP_MODE == "live"
+        and settings.WHATSAPP_PUBLIC_CHAT_ENABLED
+        and configured_number
+    )
     if not available:
         return {"available": False, "chat_url": None}
     digits = number[1:]
