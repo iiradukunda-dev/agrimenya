@@ -25,6 +25,12 @@ DEFAULT_LANGUAGE = "en"
 FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "en": {
         "common.language": "Language",
+        "nav.home": "Home",
+        "nav.overview": "Overview",
+        "nav.zones": "Zones",
+        "nav.decisions": "Decisions",
+        "nav.more": "More",
+        "nav.signin": "Sign In",
         "common.all_regions": "All Regions",
         "common.crop": "Crop",
         "common.district": "District",
@@ -205,6 +211,12 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
     },
     "rw": {
         "common.language": "Ururimi",
+        "nav.home": "Ahabanza",
+        "nav.overview": "Incamake",
+        "nav.zones": "Uturere",
+        "nav.decisions": "Ibyemezo",
+        "nav.more": "Ibindi",
+        "nav.signin": "Injira",
         "common.all_regions": "Intara Zose",
         "common.crop": "Igihingwa",
         "common.district": "Akarere",
@@ -385,6 +397,12 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
     },
     "fr": {
         "common.language": "Langue",
+        "nav.home": "Accueil",
+        "nav.overview": "Aperçu",
+        "nav.zones": "Zones",
+        "nav.decisions": "Décisions",
+        "nav.more": "Plus",
+        "nav.signin": "Connexion",
         "common.all_regions": "Toutes les Régions",
         "common.crop": "Culture",
         "common.district": "District",
