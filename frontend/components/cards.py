@@ -1,10 +1,73 @@
+"""Creative, animated workflow cards with rich micro-motions for the agrimenya frontend."""
 import streamlit as st
 
-def pillar_card(col, title: str, desc: str, btn_text: str, page_route: str) -> None:
+
+def pillar_card(
+    col,
+    title: str,
+    desc: str,
+    btn_text: str,
+    page_route: str,
+    icon: str = "",
+    tag: str = "WORKFLOW",
+    accent_color: str = "#10b981",
+) -> None:
+    """Render an interactive, animated workflow card with fluid micro-motions."""
     with col:
         with st.container(border=True):
-            st.markdown(f"### {title}")
-            st.write(desc)
-            st.write("")
-            if st.button(btn_text, key=f"btn_{page_route}", width="stretch"):
+            icon_markup = (
+                icon
+                if icon
+                else f"""<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{accent_color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>"""
+            )
+            html_block = f"""
+            <style>
+            @keyframes ag-badge-pulse {{
+                0%, 100% {{ transform: scale(1); box-shadow: 0 2px 8px {accent_color}25; }}
+                50% {{ transform: scale(1.04); box-shadow: 0 0 14px {accent_color}50; }}
+            }}
+            .ag-workflow-icon-wrap {{
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                background: linear-gradient(135deg, {accent_color}25 0%, {accent_color}10 100%);
+                border: 1px solid {accent_color}55;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 14px {accent_color}30, inset 0 1px 1px rgba(255, 255, 255, 0.4);
+                transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+            }}
+            [data-testid="stVerticalBlockBorderWrapper"]:hover .ag-workflow-icon-wrap {{
+                transform: translateY(-3px) scale(1.08) rotate(-4deg);
+                box-shadow: 0 8px 20px {accent_color}50, inset 0 1px 1px rgba(255, 255, 255, 0.6);
+            }}
+            .ag-workflow-tag {{
+                font-size: 0.7rem;
+                font-weight: 750;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                color: {accent_color};
+                background: {accent_color}22;
+                padding: 3px 9px;
+                border-radius: 9999px;
+                border: 1px solid {accent_color}50;
+                box-shadow: 0 2px 8px {accent_color}20;
+                transition: all 0.3s ease;
+            }}
+            [data-testid="stVerticalBlockBorderWrapper"]:hover .ag-workflow-tag {{
+                animation: ag-badge-pulse 2s infinite ease-in-out;
+                border-color: {accent_color}85;
+            }}
+            </style>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                <div class="ag-workflow-icon-wrap">{icon_markup}</div>
+                <span class="ag-workflow-tag">{tag}</span>
+            </div>
+            <h3 style="margin:0.2rem 0 0.45rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.15rem;font-weight:750;color:#ffffff;letter-spacing:-0.02em;text-shadow:0 2px 8px rgba(0,0,0,0.7);transition:color 0.25s ease;">{title}</h3>
+            <p style="color:#e0f2fe;font-size:0.88rem;line-height:1.55;min-height:42px;margin:0 0 0.85rem;text-shadow:0 1px 6px rgba(0,0,0,0.7);">{desc}</p>
+            """
+            st.markdown(html_block, unsafe_allow_html=True)
+            if st.button(f"{btn_text} →", key=f"btn_{page_route}", width="stretch"):
                 st.switch_page(page_route)
+

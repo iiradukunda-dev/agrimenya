@@ -10,8 +10,8 @@ client = TestClient(app)
 
 
 def _admin(monkeypatch):
-    monkeypatch.setattr(settings, "ADMIN_API_KEY", "test-admin-secret")
-    return {"X-Admin-Key": "test-admin-secret"}
+    from tests.auth_helpers import admin_headers
+    return admin_headers(monkeypatch)
 
 
 def test_contact_creation_normalizes_and_masks_phone(monkeypatch):

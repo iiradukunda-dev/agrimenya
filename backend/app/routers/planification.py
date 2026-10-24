@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from datetime import date
 from uuid import UUID
 import math
 from app.core.auth import require_user
@@ -18,6 +19,19 @@ def get_resource_estimate(zone_id: UUID, area_cultivated: float | None = None,
                            urea_rate_kg_ha: float | None = None, urea_price_rwf_kg: float | None = None,
                            irrigation_liters_ha: float | None = None,
                            irrigation_price_rwf_1000_liters: float | None = None,
+                           labor_days_ha: float | None = None, labor_price_rwf_day: float | None = None,
+                           land_preparation_cost_rwf_ha: float | None = None,
+                           crop_protection_cost_rwf_ha: float | None = None,
+                           equipment_hire_cost_rwf_ha: float | None = None,
+                           transport_cost_rwf_ha: float | None = None,
+                           postharvest_cost_rwf_ha: float | None = None,
+                           storage_packaging_cost_rwf_ha: float | None = None,
+                           other_cost_rwf_ha: float | None = None,
+                           contingency_pct: float | None = None,
+                           area_source: str | None = Query(default=None, max_length=40),
+                           rate_source: str | None = Query(default=None, max_length=200),
+                           price_source: str | None = Query(default=None, max_length=200),
+                           prices_checked_on: date | None = None,
                            _: dict = Depends(require_user)):
     if not crud.get_zone(zone_id):
         raise HTTPException(status_code=404, detail="Zone not found")
@@ -27,11 +41,29 @@ def get_resource_estimate(zone_id: UUID, area_cultivated: float | None = None,
         "urea_rate_kg_ha": urea_rate_kg_ha, "urea_price_rwf_kg": urea_price_rwf_kg,
         "irrigation_liters_ha": irrigation_liters_ha,
         "irrigation_price_rwf_1000_liters": irrigation_price_rwf_1000_liters,
+        "labor_days_ha": labor_days_ha, "labor_price_rwf_day": labor_price_rwf_day,
+        "land_preparation_cost_rwf_ha": land_preparation_cost_rwf_ha,
+        "crop_protection_cost_rwf_ha": crop_protection_cost_rwf_ha,
+        "equipment_hire_cost_rwf_ha": equipment_hire_cost_rwf_ha,
+        "transport_cost_rwf_ha": transport_cost_rwf_ha,
+        "postharvest_cost_rwf_ha": postharvest_cost_rwf_ha,
+        "storage_packaging_cost_rwf_ha": storage_packaging_cost_rwf_ha,
+        "other_cost_rwf_ha": other_cost_rwf_ha, "contingency_pct": contingency_pct,
     }
     supplied_values = [area_cultivated, rainfall_mm, *inputs.values()]
     if any(value is not None and (not math.isfinite(value) or value < 0) for value in supplied_values):
         raise HTTPException(status_code=422, detail="Resource rates and prices must be non-negative")
+    if contingency_pct is not None and contingency_pct > 100:
+        raise HTTPException(status_code=422, detail="Contingency must be between 0 and 100 percent")
+    if prices_checked_on is not None and prices_checked_on > date.today():
+        raise HTTPException(status_code=422, detail="Price check date cannot be in the future")
     result = estimate_resources(area_cultivated, rainfall_mm, **inputs)
+    result.update({
+        "area_source": area_source,
+        "rate_source": rate_source.strip() if rate_source and rate_source.strip() else None,
+        "price_source": price_source.strip() if price_source and price_source.strip() else None,
+        "prices_checked_on": prices_checked_on.isoformat() if prices_checked_on else None,
+    })
     quantities = result["quantities"]
     if "dap_kg" in quantities or "urea_kg" in quantities:
         result["fertilizer_kg"] = quantities.get("fertilizer_kg")
@@ -50,8 +82,16 @@ def create_roadmap(plan: PlanCreate, _: dict = Depends(require_user)):
     record = {
         "zone_id": str(plan.zone_id),
         "title": plan.title,
-        "roadmap_json": [step.model_dump() for step in plan.roadmap],
-        "resources_json": plan.resources.model_dump(),
+        "roadmap_json": [step.model_dump(mode="json") for step in plan.roadmap],
+        "resources_json": {
+            **plan.resources.model_dump(),
+            "plan_context": {
+                "scenario": plan.scenario,
+                "crop": plan.crop,
+                "season": plan.season,
+                "decision_context": plan.decision_context,
+            },
+        },
         "created_by": plan.created_by,
     }
     return crud.create_plan(record)

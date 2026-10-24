@@ -18,7 +18,7 @@ an operator can reset an account from a trusted backend shell with
 
 ## WhatsApp notifications
 
-WhatsApp Cloud API support is being added as an offline-first feature. The
+WhatsApp Cloud API support is available as an offline-first feature. The
 default `WHATSAPP_MODE=mock` sends only to an in-memory mock provider. Live mode
 requires the Meta access token, app secret, verify token, graph version, and
 phone number ID in the backend environment. Never configure these in
@@ -30,6 +30,10 @@ WhatsApp send path is disabled; WhatsApp messages must use the consent and
 approved-dispatch flow. API acceptance is not delivery confirmation; status
 webhooks provide delivery state. Follow Meta's current rules for opt-in,
 customer-service windows, approved utility templates, and pricing.
+See [`docs/whatsapp_meta_cloud_api_setup.md`](docs/whatsapp_meta_cloud_api_setup.md)
+for Meta Business setup, backend environment mapping, webhook configuration,
+and the test-to-live checklist. Template names and parameters are documented in
+[`docs/whatsapp_templates.md`](docs/whatsapp_templates.md).
 
 ## AI assistant provider
 
@@ -51,11 +55,30 @@ improve products.
 
 ## Yield baseline and offline model work
 
-Yield predictions use the latest validated NISR observations stored in
-Supabase. The serving path does not read the bundled baseline CSV or JSON.
-`GET /decision/model-info` identifies the database baseline and reports the
-separate offline evaluation record. Until model features and validation use
-the versioned database releases too, trained candidates are not served.
+Yield predictions prefer validated NISR observations stored in Supabase and
+fill missing district/crop/season coverage from the bundled official SAS
+tables for 2022–2026. The versioned source is
+`data/nisr_official_yields_2022_2026.csv`; it contains overall district tables
+only, with farmer reports and SITE subgroup estimates excluded. Database rows
+supersede a bundled row for the same district, crop, and season. If an exact
+year is unavailable, the baseline can pool the same season from available
+years; prediction responses identify the source, period, and scope.
+`GET /decision/model-info` reports the bundled source coverage. To rebuild the
+CSV and its SHA-256 coverage report from the supplied official workbooks, run:
+
+```powershell
+python scripts/build_official_sas_baseline.py `
+  --sas-2022 "C:\path\SAS 2022_Tables_0.xlsx" `
+  --sas-2023 "C:\path\SAS 2023_Annual Tables.xlsx" `
+  --sas-2024 "C:\path\SAS 2024_Annual Tables.xlsx" `
+  --sas-2025 "C:\path\SAS 2025_Annual Tables.xlsx" `
+  --sas-2026-a "C:\path\Tables_2026 Season A.xlsx" `
+  --sas-2026-b "C:\path\Tables_2026 Season B.xlsx"
+```
+
+The active serving approach remains the validated observational baseline.
+Trained candidates are not served until evaluation demonstrates that they
+outperform it with the same versioned evidence and grouped validation.
 
 Run the grouped model comparison from the backend directory:
 
@@ -70,20 +93,22 @@ baseline on both split types. Current checked-in evaluation says `KEEP BASELINE`
 so deploys should report baseline mode. Do not commit `yield_model.pkl`; model
 artifacts can be large and tied to a particular data and library version.
 
-The runtime image needs the interval calibration artifact and database access;
-training tables and baseline-generation files stay in the offline retraining
-workflow. Readiness returns unavailable if the database has no yield evidence.
+The runtime image includes the compact official SAS CSV fallback and interval
+calibration. The app still requires database access for zones and other live
+features; yield estimates can fall back to bundled official SAS data if the
+database has no matching yield records.
 
-Apply migrations `0001` through `0011` in order to Supabase before deploying
+Apply migrations `0001` through `0012` in order to Supabase before deploying
 this version. They add field reports, unknown prediction priority, readiness
 and work records, WhatsApp consent and delivery, alert approval, versioned NISR
 releases, named administrator accounts with hashed password recovery tokens,
 and an individually authenticated farmer discussion board. The community is a
-pilot: roles and email addresses are not verified and account recovery is not
-available yet.
+pilot: roles and email addresses are not verified. Farmer password recovery
+uses a 30-minute, single-use email link sent through configured SMTP.
 
-The Rwanda Space Agency's public orthomosaic map layer is optional visual
-context, not a numeric input to yield predictions or priority rankings. See
+Satellite imagery is not currently shown: the reviewed Rwanda Space Agency
+public mosaic had limited, undated coverage and is not a reliable national
+crop-monitoring layer. See
 [`docs/satellite_and_community.md`](docs/satellite_and_community.md) before
 using either feature beyond development.
 
@@ -94,6 +119,6 @@ without validated methods and evidence. Evidence checklists and observed
 worker-day records are descriptive inputs, not those scores. Weather requests
 return unavailable on an unknown district or provider failure; they do not
 substitute a fixed snapshot.
-Symptom-only disease inputs return unconfirmed, and image-model scores are
-labelled uncalibrated. These changes remove heuristic figures that could be
-mistaken for measured results.
+Crop photos are sent to the configured Groq vision model for preliminary,
+unconfirmed triage when available. The app does not display an uncalibrated
+confidence score or treat the result as an agronomist's diagnosis.

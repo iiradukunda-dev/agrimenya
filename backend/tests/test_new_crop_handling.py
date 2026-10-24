@@ -7,15 +7,9 @@ from app.ml import predict
 from scripts.ingest_new_crop_data import ingest, validate_source
 
 
-def test_unknown_crop_is_explicit_and_category_proxy_is_opt_in(tmp_path, monkeypatch):
-    training = tmp_path / "training.csv"
-    pd.DataFrame([
-        {"crop": "Beans", "crop_category": "Legume", "district": "Kigali", "season_code": "A", "yield_kg_ha": 1000},
-        {"crop": "Beans", "crop_category": "Legume", "district": "Huye", "season_code": "A", "yield_kg_ha": 2000},
-    ]).to_csv(training, index=False)
-    monkeypatch.setattr(predict, "TRAINING_TABLE_PATH", training)
+def test_unknown_crop_does_not_receive_an_unverified_category_proxy(monkeypatch):
+    monkeypatch.setattr(predict, "_live_yield_evidence", lambda _district, _crop: [])
     monkeypatch.setattr(predict, "_yield_model_bundle", None)
-    monkeypatch.setattr(predict, "_baselines", {"crop_weighted_averages": {"Beans": 1500}})
 
     default = predict.predict_with_interval("Kigali", "New Bean", "Season A 2026")
     assert default["point"] is None
@@ -23,13 +17,10 @@ def test_unknown_crop_is_explicit_and_category_proxy_is_opt_in(tmp_path, monkeyp
     assert default["thin"] is True
     assert predict.predict_yield("Kigali", "New Bean", "Season A 2026")[0] is None
 
-    proxy = predict.predict_with_interval("Kigali", "New Bean", "Season A 2026",
-                                          allow_category_proxy=True, crop_category="Legume")
-    assert proxy["basis"] == "category_proxy"
-    assert proxy["point"] == 1500
-    assert proxy["low"] < proxy["point"] < proxy["high"]
-    assert proxy["warning"] and "assumed" in proxy["warning"]
-    assert proxy["thin"] is True
+    proxy_opt_in = predict.predict_with_interval("Kigali", "New Bean", "Season A 2026",
+                                                 allow_category_proxy=True, crop_category="Legume")
+    assert proxy_opt_in["point"] is None
+    assert proxy_opt_in["basis"] == "no_data"
 
 
 def test_ingest_validates_then_appends_and_rebuilds_baseline(tmp_path):

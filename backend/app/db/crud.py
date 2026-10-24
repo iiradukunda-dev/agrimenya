@@ -51,6 +51,18 @@ def get_community_account_by_id(account_id: str) -> dict | None:
     return rows[0] if rows else None
 
 
+def reset_community_password_once(account_id: str, expected_version: int, password_hash: str) -> bool:
+    """Atomically consume a signed reset link by advancing the account session version."""
+    result = get_supabase().table("community_accounts").update({
+        "password_hash": password_hash,
+        "session_version": expected_version + 1,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", account_id).eq("is_active", True).eq(
+        "session_version", expected_version
+    ).select("id").execute()
+    return bool(result.data)
+
+
 def create_community_account(email: str, display_name: str, password_hash: str) -> dict:
     result = get_supabase().table("community_accounts").insert({
         "email": email.lower(), "display_name": display_name, "password_hash": password_hash,
@@ -154,6 +166,19 @@ def list_community_comments(post_id: str, limit: int = 100) -> list[dict]:
         .select("id,post_id,body,author_id,status,created_at,author:community_accounts(display_name,role)")
         .eq("post_id", post_id).eq("status", "published")
         .order("created_at").limit(max(1, min(int(limit), 200)))
+    )
+
+
+def list_community_comments_for_posts(post_ids: list[str], limit: int = 500) -> list[dict]:
+    """Fetch one feed page of replies in a single query instead of per post."""
+    ids = list(dict.fromkeys(str(post_id) for post_id in post_ids))[:50]
+    if not ids:
+        return []
+    return _exec_query_get_data(
+        get_supabase().table("community_comments")
+        .select("id,post_id,body,author_id,status,created_at,author:community_accounts(display_name,role)")
+        .in_("post_id", ids).eq("status", "published")
+        .order("created_at", desc=True).limit(max(1, min(int(limit), 1000)))
     )
 
 
@@ -316,12 +341,23 @@ def get_yield_evidence(district: str | None, crop: str) -> list[dict]:
         newest_by_season.setdefault(str(item.get("season", "")).casefold(), item)
     import_ids = [item["id"] for item in newest_by_season.values() if item.get("id")]
     if import_ids:
-        query = sb.table("nisr_yield_records").select(
+        base = sb.table("nisr_yield_records")
+        query = base.select(
+            "district,crop,season,yield_kg_ha,production_mt,cultivated_area_ha,harvested_area_ha,import_id"
+        ).eq("crop", crop).in_("import_id", import_ids)
+        legacy_query = base.select(
             "district,crop,season,yield_kg_ha,production_mt,cultivated_area_ha,import_id"
         ).eq("crop", crop).in_("import_id", import_ids)
         if district:
             query = query.eq("district", district)
-        imported = _exec_query_get_all(query)
+            legacy_query = legacy_query.eq("district", district)
+        try:
+            imported = _exec_query_get_all(query)
+        except HTTPException:
+            # Keep existing baseline reads working until migration 0012 is applied.
+            imported = _exec_query_get_all(legacy_query)
+            for row in imported:
+                row["harvested_area_ha"] = None
     else:
         imported = []
 
@@ -341,6 +377,7 @@ def get_yield_evidence(district: str | None, crop: str) -> list[dict]:
         "yield_kg_ha": row.get("yield_actual"),
         "production_mt": row.get("production_mt"),
         "cultivated_area_ha": row.get("area_cultivated"),
+        "harvested_area_ha": None,
     } for row in rows]
     imported_keys = {(str(row.get("district", "")).casefold(), str(row.get("crop", "")).casefold(), str(row.get("season", "")).casefold()) for row in imported}
     return imported + [row for row in legacy if (
@@ -381,11 +418,20 @@ def get_district_yield_evidence(district: str) -> list[dict]:
     import_ids = [item["id"] for item in newest_by_season.values() if item.get("id")]
     imported = []
     if import_ids:
-        imported = _exec_query_get_all(
-            sb.table("nisr_yield_records").select(
-                "district,crop,season,yield_kg_ha,production_mt,cultivated_area_ha,import_id"
-            ).eq("district", district).in_("import_id", import_ids)
-        )
+        base = sb.table("nisr_yield_records")
+        query = base.select(
+            "district,crop,season,yield_kg_ha,production_mt,cultivated_area_ha,harvested_area_ha,import_id"
+        ).eq("district", district).in_("import_id", import_ids)
+        legacy_query = base.select(
+            "district,crop,season,yield_kg_ha,production_mt,cultivated_area_ha,import_id"
+        ).eq("district", district).in_("import_id", import_ids)
+        try:
+            imported = _exec_query_get_all(query)
+        except HTTPException:
+            # Keep existing baseline reads working until migration 0012 is applied.
+            imported = _exec_query_get_all(legacy_query)
+            for row in imported:
+                row["harvested_area_ha"] = None
     zones = list_zones(district=district)
     zone_ids = [str(zone["id"]) for zone in zones if zone.get("id")]
     legacy = []
@@ -399,6 +445,7 @@ def get_district_yield_evidence(district: str) -> list[dict]:
             "district": district, "crop": row.get("crop"), "season": row.get("season"),
             "yield_kg_ha": row.get("yield_actual"), "production_mt": row.get("production_mt"),
             "cultivated_area_ha": row.get("area_cultivated"),
+            "harvested_area_ha": None,
         } for row in rows]
     imported_keys = {(str(row.get("crop", "")).casefold(), str(row.get("season", "")).casefold()) for row in imported}
     return imported + [row for row in legacy if (
@@ -680,6 +727,29 @@ def _exec_query_get_all(query, page_size: int = 500, max_pages: int = 100) -> li
     raise HTTPException(status_code=503, detail="Database result exceeds the configured pagination limit")
 
 
+def _exec_query_get_page(query, *, offset: int, limit: int) -> tuple[list[dict], int | None]:
+    """Fetch one bounded PostgREST page with an exact count when available."""
+    start = max(0, int(offset))
+    size = max(1, min(int(limit), 200))
+    attempt = 0
+    while True:
+        try:
+            response = query.range(start, start + size - 1).execute()
+            return response.data or [], response.count
+        except postgrest_exceptions.APIError as exc:
+            logging.exception("Supabase page query failed: %r", exc)
+            raise HTTPException(status_code=503, detail="Database request failed")
+        except (httpx.ConnectError, httpx.ReadError, httpx.ConnectTimeout) as exc:
+            attempt += 1
+            if attempt >= 3:
+                logging.exception("Max retries reached for paginated database query: %r", exc)
+                raise HTTPException(status_code=503, detail="Network error connecting to Supabase")
+            time.sleep(0.5 * (2 ** (attempt - 1)))
+        except Exception as exc:
+            logging.exception("Unexpected paginated database query error: %r", exc)
+            raise HTTPException(status_code=503, detail="Unexpected error connecting to the database")
+
+
 def _update_record(table_name: str, record_id: UUID | str, payload: dict) -> dict | None:
     """Standard admin update helper for a single record.
 
@@ -705,6 +775,96 @@ def _delete_record(table_name: str, record_id: UUID | str) -> dict | None:
 
 # ---------- zones ----------
 
+def _zone_identity_key(zone: dict) -> str:
+    """Stable key for one district/subdistrict/crop/season registry entry."""
+    fields = ("district", "sector", "cell", "crop_type", "season")
+    normalized = [" ".join(str(zone.get(field) or "").split()).casefold() for field in fields]
+    return "|".join(normalized)
+
+
+def find_zone_by_identity(zone: dict) -> tuple[dict | None, bool]:
+    """Find an existing logical zone; bool reports whether indexed key storage exists."""
+    sb = get_supabase()
+    key = _zone_identity_key(zone)
+    try:
+        result = sb.table("zones").select("*").eq("identity_key", key).limit(1).execute()
+        return (result.data[0] if result.data else None), True
+    except Exception:
+        # Compatibility before migration 0013: restrict fallback lookup to the
+        # same district, then compare normalized identity in application code.
+        district = str(zone.get("district") or "").strip()
+        rows = _exec_query_get_all(
+            sb.table("zones").select("*").ilike("district", district)
+            .order("created_at").order("id")
+        )
+        existing = next((row for row in rows if _zone_identity_key(row) == key), None)
+        return existing, False
+
+
+def list_zones_page(
+    *, zone_id: str | None = None, district: str | None = None, crop: str | None = None, season: str | None = None,
+    search: str | None = None, limit: int = 50, offset: int = 0,
+) -> dict:
+    """Return a bounded, searchable zone page with exact total when supported."""
+    sb = get_supabase()
+    query = sb.table("zones").select("*", count="exact")
+    if zone_id:
+        query = query.eq("id", zone_id)
+    if district:
+        query = query.ilike("district", district.strip())
+    if crop:
+        query = query.ilike("crop_type", crop.strip())
+    if season:
+        query = query.ilike("season", season.strip())
+    term = "".join(char for char in str(search or "") if char.isalnum() or char in " -").strip()
+    if term:
+        pattern = f"*{term}*"
+        query = query.or_(
+            f"district.ilike.{pattern},sector.ilike.{pattern},cell.ilike.{pattern},"
+            f"crop_type.ilike.{pattern},season.ilike.{pattern}"
+        )
+    query = query.order("created_at", desc=True).order("id")
+    rows, total = _exec_query_get_page(query, offset=offset, limit=limit)
+    return {"items": rows, "offset": offset, "limit": limit,
+            "total": total, "has_more": offset + len(rows) < total if total is not None else len(rows) == limit}
+
+
+def zone_registry_summary() -> dict:
+    """Return small coverage counts instead of sending every zone to the UI."""
+    rows = _exec_query_get_all(
+        get_supabase().table("zones")
+        .select("id,district,sector,cell,crop_type,season")
+        .order("created_at").order("id")
+    )
+    district_counts: dict[str, dict] = {}
+    identity_groups: dict[str, list[dict]] = {}
+    crops: set[str] = set()
+    for row in rows:
+        district = str(row.get("district") or "").strip()
+        district_key = district.casefold()
+        summary = district_counts.setdefault(district_key, {
+            "district": district, "zone_records": 0, "with_sector_or_cell": 0,
+        })
+        summary["zone_records"] += 1
+        summary["with_sector_or_cell"] += bool(row.get("sector") or row.get("cell"))
+        crop = str(row.get("crop_type") or "").strip()
+        if crop:
+            crops.add(crop)
+        identity_groups.setdefault(_zone_identity_key(row), []).append(row)
+    duplicates = [
+        {"identity": key, "canonical_id": group[0].get("id"),
+         "duplicate_ids": [row.get("id") for row in group[1:]],
+         "record_count": len(group)}
+        for key, group in identity_groups.items() if len(group) > 1
+    ]
+    return {
+        "total_zones": len(rows),
+        "districts": sorted(district_counts.values(), key=lambda item: item["district"].casefold()),
+        "crops": sorted(crops, key=str.casefold),
+        "duplicate_record_count": sum(len(group["duplicate_ids"]) for group in duplicates),
+        "duplicate_groups": duplicates,
+    }
+
 def list_zones(district: str | None = None) -> list[dict]:
     sb = get_supabase()
     query = sb.table("zones").select("*")
@@ -715,8 +875,22 @@ def list_zones(district: str | None = None) -> list[dict]:
 
 def create_zone(zone: dict) -> dict:
     sb = get_supabase()
-    result = sb.table("zones").insert(zone).execute()
-    return result.data[0]
+    payload = dict(zone)
+    identity_key = _zone_identity_key(payload)
+    existing, identity_column_available = find_zone_by_identity(payload)
+    if existing:
+        return {**existing, "already_exists": True}
+    if identity_column_available:
+        payload["identity_key"] = identity_key
+    try:
+        result = sb.table("zones").insert(payload).execute()
+        return result.data[0]
+    except postgrest_exceptions.APIError:
+        if identity_column_available:
+            existing, _ = find_zone_by_identity(payload)
+            if existing:
+                return {**existing, "already_exists": True}
+        raise
 
 
 def get_zone(zone_id: UUID) -> dict | None:
@@ -760,6 +934,28 @@ def list_agri_metrics(zone_id: UUID | None = None, season: str | None = None,
     if district:
         rows = [r for r in rows if (r.get("zones") or {}).get("district") == district]
     return rows
+
+
+def list_agri_metrics_page(
+    *, district: str | None = None, crop: str | None = None, season: str | None = None,
+    search: str | None = None, limit: int = 50, offset: int = 0,
+) -> dict:
+    """Return a bounded, searchable yield-observation page."""
+    query = get_supabase().table("agri_metrics").select("*, zones(district, sector, cell)", count="exact")
+    if district:
+        query = query.eq("zones.district", district.strip())
+    if crop:
+        query = query.ilike("crop", crop.strip())
+    if season:
+        query = query.ilike("season", season.strip())
+    term = "".join(char for char in str(search or "") if char.isalnum() or char in " -").strip()
+    if term:
+        pattern = f"*{term}*"
+        query = query.or_(f"crop.ilike.{pattern},season.ilike.{pattern}")
+    query = query.order("season").order("crop").order("zone_id")
+    rows, total = _exec_query_get_page(query, offset=offset, limit=limit)
+    return {"items": rows, "offset": offset, "limit": limit,
+            "total": total, "has_more": offset + len(rows) < total if total is not None else len(rows) == limit}
 
 
 def list_district_agri_metrics(district: str, season: str | None = None) -> list[dict]:
@@ -851,11 +1047,13 @@ def delete_prediction(prediction_id: UUID | str) -> dict | None:
     return _delete_record("predictions", prediction_id)
 
 
-def list_predictions(zone_id: UUID | None = None) -> list[dict]:
+def list_predictions(zone_id: UUID | None = None, zone_ids: list[str] | None = None) -> list[dict]:
     sb = get_supabase()
     query = sb.table("predictions").select("*")
     if zone_id:
         query = query.eq("zone_id", str(zone_id))
+    if zone_ids:
+        query = query.in_("zone_id", [str(value) for value in zone_ids])
     return _exec_query_get_all(query.order("created_at", desc=True).order("id"))
 
 

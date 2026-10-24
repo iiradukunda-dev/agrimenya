@@ -23,6 +23,7 @@ from app.ml.priority import apply_stability, classify_components
 
 ARTIFACTS_DIR = Path(__file__).parent / "artifacts"
 YIELD_MODEL_PATH = ARTIFACTS_DIR / "yield_model.pkl"
+OFFICIAL_YIELD_DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "nisr_official_yields_2022_2026.csv"
 MODEL_CARD_PATH = ARTIFACTS_DIR / "model_card.json"
 EVALUATION_REPORT_PATH = Path(__file__).resolve().parents[2] / "data" / "eval" / "yield_model_evaluation.json"
 MIN_CROP_DISTRICTS = 10
@@ -137,7 +138,7 @@ def load_model_artifacts() -> dict | None:
 
 def model_provenance() -> dict:
     return {
-        "model_version": "nisr-database-baseline",
+        "model_version": "nisr-database-plus-official-sas-baseline",
         "basis": "baseline",
         "model_trained_on": {"data_hash": None, "date": None},
     }
@@ -150,12 +151,17 @@ def get_model_info() -> dict:
     except (OSError, json.JSONDecodeError):
         report = {}
     span = report.get("training_data_span")
-    return {"active_basis": "baseline", "model_version": "nisr-database-baseline",
+    official_rows = _load_official_evidence()
+    official_years = sorted({str(row.get("year")) for row in official_rows if row.get("year")})
+    return {"active_basis": "baseline", "model_version": "nisr-database-plus-official-sas-baseline",
             "winner": report.get("winner", "KEEP BASELINE"), "metrics": report.get("splits", {}),
             "training_data_span": span,
             "features": report.get("feature_list", []),
             "known_limitations": ["Baseline predictions are observational aggregates and do not account for unmeasured local conditions.",
-                                  "Current prediction baselines are calculated from yield observations stored in the database; district, crop, and season coverage varies."],
+                                  "Exact district/crop/season/year coverage varies; missing seasons use clearly labeled pooled historical evidence.",
+                                  "Bundled official tables cover overall district estimates; SITE subgroup estimates and farmer reports are excluded."],
+            "official_sas_observation_rows": len(official_rows),
+            "official_sas_years": official_years,
             "date": None, "data_hash": None}
 
 
@@ -191,7 +197,7 @@ def _district_crop_baseline(district: str, crop: str, season: str | None) -> flo
 
 
 def _aggregate_yield_evidence(rows: list[dict], season: str | None = None) -> float | None:
-    """Compute an area-weighted observed yield from current database evidence."""
+    """Aggregate observed yield without substituting cultivated for harvested area."""
     selected = list(rows)
     code = _season_code(season)
     if code:
@@ -209,7 +215,11 @@ def _aggregate_yield_evidence(rows: list[dict], season: str | None = None) -> fl
     for row in selected:
         try:
             production = float(row.get("production_mt"))
-            area = float(row.get("cultivated_area_ha"))
+            # Production can be converted to a yield only with harvested area.
+            # Cultivated area describes a different denominator and must never
+            # silently replace a missing harvested-area value.
+            area_value = row.get("harvested_area_ha")
+            area = float(area_value)
         except (TypeError, ValueError):
             continue
         if math.isfinite(production) and production >= 0 and math.isfinite(area) and area > 0:
@@ -228,6 +238,39 @@ def _aggregate_yield_evidence(rows: list[dict], season: str | None = None) -> fl
     return round(mean(yields), 1) if yields else None
 
 
+_official_evidence_cache: list[dict] | None = None
+_official_evidence_lock = threading.Lock()
+
+
+def _load_official_evidence() -> list[dict]:
+    """Load the bundled, workbook-derived NISR observations once per process."""
+    global _official_evidence_cache
+    if _official_evidence_cache is not None:
+        return _official_evidence_cache
+    with _official_evidence_lock:
+        if _official_evidence_cache is None:
+            import csv
+            rows: list[dict] = []
+            try:
+                with OFFICIAL_YIELD_DATA_PATH.open(newline="", encoding="utf-8-sig") as stream:
+                    for row in csv.DictReader(stream):
+                        row["data_source"] = "official_nisr_sas"
+                        rows.append(row)
+            except OSError:
+                logging.exception("Bundled official NISR baseline data is unavailable")
+            _official_evidence_cache = rows
+    return _official_evidence_cache
+
+
+def _evidence_key(row: dict) -> tuple[str, str, str]:
+    season = str(row.get("season", ""))
+    code = _season_code(season)
+    year = re.search(r"20\d{2}", season)
+    normalized_season = f"{year.group(0)}-{code}" if year and code else season.casefold().strip()
+    return (str(row.get("district", "")).casefold().strip(),
+            str(row.get("crop", "")).casefold().strip(), normalized_season)
+
+
 _yield_model_bundle = None
 _yield_model_lock = threading.Lock()
 _yield_evidence_cache: dict[tuple[str | None, str], tuple[float, list[dict]]] = {}
@@ -241,8 +284,44 @@ def _live_yield_evidence(district: str | None, crop: str) -> list[dict]:
         cached = _yield_evidence_cache.get(key)
         if cached and now - cached[0] < 60:
             return cached[1]
-    from app.db import crud
-    rows = crud.get_yield_evidence(district, crop)
+    official = [row for row in _load_official_evidence()
+                if str(row.get("crop", "")).casefold() == crop.casefold()
+                and (not district or str(row.get("district", "")).casefold() == district.casefold())]
+    try:
+        from app.db import crud
+        database_rows = crud.get_yield_evidence(district, crop)
+    except Exception:
+        logging.exception("Database yield evidence unavailable; using bundled official NISR records")
+        database_rows = []
+    # An active DB release supersedes the bundled SAS row for the same
+    # district/crop/season. Older seasons remain available as historical context.
+    database_keys = {_evidence_key(row) for row in database_rows}
+    rows = [{**row, "data_source": "database"} for row in database_rows]
+    rows.extend(row for row in official if _evidence_key(row) not in database_keys)
+    with _yield_evidence_cache_lock:
+        _yield_evidence_cache[key] = (now, rows)
+    return rows
+
+
+def _live_district_yield_evidence(district: str) -> list[dict]:
+    """Combine all crops for one district, preferring current database rows."""
+    key = (district.casefold(), "*")
+    now = time.monotonic()
+    with _yield_evidence_cache_lock:
+        cached = _yield_evidence_cache.get(key)
+        if cached and now - cached[0] < 60:
+            return cached[1]
+    official = [row for row in _load_official_evidence()
+                if str(row.get("district", "")).casefold() == district.casefold()]
+    try:
+        from app.db import crud
+        database_rows = crud.get_district_yield_evidence(district)
+    except Exception:
+        logging.exception("Database district yield evidence unavailable; using bundled official NISR records")
+        database_rows = []
+    database_keys = {_evidence_key(row) for row in database_rows}
+    rows = [{**row, "data_source": "database"} for row in database_rows]
+    rows.extend(row for row in official if _evidence_key(row) not in database_keys)
     with _yield_evidence_cache_lock:
         _yield_evidence_cache[key] = (now, rows)
     return rows
@@ -312,7 +391,7 @@ def predict_with_interval(district: str | None, crop: str, season: str | None = 
     bundle = None
     stats = crop_observation_stats(crop, season)
     basis = "district_crop_baseline"
-    version = "nisr-database-baseline"
+    version = "nisr-database-plus-official-sas-baseline"
     point = None
     if point is None or not math.isfinite(point) or point <= 0:
         if district:
@@ -373,21 +452,46 @@ def predict_with_interval(district: str | None, crop: str, season: str | None = 
     # narrow tail interval from fewer than ten source districts.
     q = max(global_q, crop_q) if source_count < int(calibration.get("minimum_districts", 10)) else crop_q
     low, high = log_interval(float(point), q)
+    evidence_rows = _live_yield_evidence(district if basis == "district_crop_baseline" else None, crop)
+    code = _season_code(season)
+    selected_evidence = [row for row in evidence_rows if not code or _season_code(row.get("season")) == code]
+    year_match = re.search(r"20\d{2}", str(season or ""))
+    if year_match:
+        by_year = [row for row in selected_evidence if year_match.group(0) in str(row.get("season", ""))]
+        selected_evidence = by_year or selected_evidence
+    sources = {row.get("data_source") for row in selected_evidence}
+    years = sorted({match.group(0) for row in selected_evidence
+                    if (match := re.search(r"20\d{2}", str(row.get("season", ""))))})
+    source_label = ("Database release and official NISR SAS history" if len(sources) > 1 else
+                    "Official NISR SAS history (bundled fallback)" if sources == {"official_nisr_sas"} else
+                    "Database NISR observations")
+    scope_label = "District and crop" if basis == "district_crop_baseline" else "Rwanda crop aggregate"
     return {"point": round(float(point), 1), "low": round(low, 1), "high": round(high, 1),
             "interval_level": float(calibration.get("interval_level", 0.8)), "basis": basis,
             "insufficient_data": source_count < int(calibration.get("minimum_districts", 10)),
-            "model_version": version, **stats, "warning": None}
+            "model_version": version, "evidence_source": source_label,
+            "evidence_period": f"{years[0]}-{years[-1]}" if years else "period not stated",
+            "evidence_scope": scope_label, **stats, "warning": None}
 
 
 def known_crops() -> List[str]:
-    """Return crops with live database observations."""
-    crops: set[str] = set()
+    """Return the unique crop labels in official and live yield evidence."""
+    crops_by_key: dict[str, str] = {}
+    # Prefer the labels in the bundled official evidence so database imports
+    # that differ only in capitalization do not create duplicate choices.
+    for row in _load_official_evidence():
+        name = str(row.get("crop") or "").strip()
+        if name:
+            crops_by_key.setdefault(name.casefold(), name)
     try:
         from app.db import crud
-        crops.update(crud.get_yield_crop_names())
+        for value in crud.get_yield_crop_names():
+            name = str(value or "").strip()
+            if name:
+                crops_by_key.setdefault(name.casefold(), name)
     except Exception:
         logging.exception("Unable to load crop list from database yield evidence")
-    return sorted(crops)
+    return sorted(crops_by_key.values(), key=str.casefold)
 
 
 def has_data() -> bool:
@@ -401,6 +505,76 @@ def crop_mean(crop: str, season: str | None = None) -> float | None:
         logging.exception("Unable to read database crop baseline for %s", crop)
         return None
     return _aggregate_yield_evidence(rows, season)
+
+
+def get_district_evidence_ranking(crop: str, season: str | None = None) -> dict:
+    """Observed district comparison with explicit coverage and source provenance."""
+    rows = _live_yield_evidence(None, crop)
+    seasons = sorted({str(row.get("season")).strip() for row in rows if row.get("season")}, reverse=True)
+    code = _season_code(season)
+    selected = rows
+    if code:
+        matching = [row for row in rows if _season_code(row.get("season")) == code]
+        year = re.search(r"20\d{2}", str(season or ""))
+        exact = [row for row in matching if year and year.group(0) in str(row.get("season", ""))]
+        selected = exact or matching
+
+    grouped: dict[str, list[dict]] = {}
+    for row in selected:
+        district = str(row.get("district") or "").strip()
+        if district:
+            grouped.setdefault(district, []).append(row)
+    values = {}
+    for district, evidence in grouped.items():
+        value = _aggregate_yield_evidence(evidence)
+        if value is None:
+            continue
+        history_by_season: dict[str, list[dict]] = {}
+        for row in rows:
+            if str(row.get("district") or "").casefold() == district.casefold() and row.get("season"):
+                history_by_season.setdefault(str(row["season"]).strip(), []).append(row)
+        def season_order(label: str) -> tuple[int, int, str]:
+            year_match = re.search(r"20\d{2}", label)
+            code = _season_code(label)
+            return (int(year_match.group(0)) if year_match else 0,
+                    {"A": 1, "B": 2, "C": 3}.get(code, 0), label.casefold())
+        history = []
+        for label, season_rows in sorted(history_by_season.items(), key=lambda item: season_order(item[0])):
+            season_yield = _aggregate_yield_evidence(season_rows)
+            if season_yield is not None:
+                history.append({"season": label, "yield_kg_ha": season_yield,
+                                "record_count": len(season_rows),
+                                "sources": sorted({
+                                    "Active database release" if row.get("data_source") == "database"
+                                    else "Bundled official NISR SAS history"
+                                    for row in season_rows
+                                })})
+        trend_season_code = _season_code(history[-1]["season"]) if history else None
+        comparable_history = [item for item in history
+                              if not trend_season_code or _season_code(item["season"]) == trend_season_code]
+        trend_sources = sorted({source for item in comparable_history
+                                 for source in item.get("sources", [])})
+        trend_pct = None
+        if len(comparable_history) >= 2 and comparable_history[0]["yield_kg_ha"] > 0:
+            trend_pct = round((comparable_history[-1]["yield_kg_ha"] /
+                               comparable_history[0]["yield_kg_ha"] - 1) * 100, 1)
+        sources = sorted({"Active database release" if row.get("data_source") == "database"
+                          else "Bundled official NISR SAS history" for row in evidence})
+        values[district] = {
+            "district": district, "yield_kg_ha": value, "observation_count": len(evidence),
+            "seasons": sorted({str(row.get("season")) for row in evidence if row.get("season")}),
+            "sources": sources, "seasonal_history": history,
+            "trend_history": comparable_history, "trend_season_code": trend_season_code,
+            "trend_change_pct": trend_pct, "trend_sources": trend_sources,
+        }
+    ordered = sorted(values.values(), key=lambda item: item["yield_kg_ha"], reverse=True)
+    for index, item in enumerate(ordered, start=1):
+        item["rank"] = index
+    national = crop_mean(crop, season)
+    return {"crop": crop, "requested_season": season or "All available seasons",
+            "available_seasons": seasons, "national_reference_kg_ha": national,
+            "districts_with_evidence": len(ordered), "rows": ordered,
+            "interpretation": "District-level observational comparison; it does not predict a farm result or explain causes."}
 
 
 def get_yield_per_hectare(district: str | None, crop: str, season: str | None = None) -> float | None:
@@ -485,9 +659,10 @@ def get_yield_gap(district: str, crop: str, season: str | None = None) -> dict:
 def predict_yield(district: str | None, crop: str, season: str | None = None,
                   rainfall_mm: float | None = None, area_cultivated: float | None = None,
                   household_size: float | None = None, allow_category_proxy: bool = False,
-                  crop_category: str | None = None) -> tuple[float | None, float, str]:
+                  crop_category: str | None = None) -> tuple[float | None, None, str]:
     """
-    Returns (predicted_yield, confidence, model_version). predicted_yield is
+    Returns (predicted_yield, confidence, model_version). Confidence is None
+    because the empirical interval is not a calibrated probability. predicted_yield is
     the total predicted output for the given cultivated area (kg); divide by
     area to get yield per hectare (see classify_priority).
     """
@@ -495,17 +670,15 @@ def predict_yield(district: str | None, crop: str, season: str | None = None,
     interval = predict_with_interval(district, crop, season, allow_category_proxy=allow_category_proxy,
                                      crop_category=crop_category)
     if interval["point"] is None:
-        return None, 0.0, "no-yield-data"
+        return None, None, "no-yield-data"
     yield_per_ha = interval["point"]
-    relative_width = (interval["high"] - interval["low"]) / max(2.0 * yield_per_ha, 1e-9)
-    confidence = min(1.0, max(0.0, 1.0 / (1.0 + relative_width)))
     model_version = interval.get("model_version") or interval["basis"]
 
     if area is None:
         # A total harvest cannot be stated without an observed area.
-        return None, confidence, model_version
+        return None, None, model_version
     predicted_total = round(yield_per_ha * area, 1)
-    return predicted_total, confidence, model_version
+    return predicted_total, None, model_version
 
 
 def _priority_stability(district: str | None, crop: str) -> list[str] | None:
@@ -536,6 +709,7 @@ def classify_priority(predicted_yield: float, area_cultivated: float | None,
     observed_area = area
     residual_se = None
     yield_index = None
+    yield_percentile = None
 
     if crop:
         try:
@@ -573,6 +747,10 @@ def classify_priority(predicted_yield: float, area_cultivated: float | None,
         reference_yield = actual if actual is not None else yield_per_ha
         if crop_mean_value and crop_mean_value > 0:
             yield_index = reference_yield / crop_mean_value
+        if np.isfinite(reference_yield) and len(peer_yields):
+            less = int((peer_yields < reference_yield).sum())
+            tied = int((peer_yields == reference_yield).sum())
+            yield_percentile = 100.0 * (less + 0.5 * tied) / len(peer_yields)
         areas = pd.to_numeric(data.get("cultivated_area_ha"), errors="coerce").dropna()
         if observed_area is not None and len(areas):
             area_percentile = float((areas <= observed_area).mean())
@@ -588,6 +766,7 @@ def classify_priority(predicted_yield: float, area_cultivated: float | None,
             observed_yield=observed, expected_yield=expected, residual_se=residual_se,
             top_quartile_yield=top_quartile, cultivated_area_ha=observed_area,
             area_percentile=area_percentile, yield_index=yield_index,
+            yield_percentile=yield_percentile,
             crop_district_count=crop_district_count, model_available=True,
         )
     elif crop_district_count < 10:
@@ -595,6 +774,7 @@ def classify_priority(predicted_yield: float, area_cultivated: float | None,
             observed_yield=observed, expected_yield=None, residual_se=None,
             top_quartile_yield=top_quartile, cultivated_area_ha=observed_area,
             area_percentile=area_percentile, yield_index=yield_index,
+            yield_percentile=yield_percentile,
             crop_district_count=crop_district_count, model_available=False,
         )
     else:
@@ -602,6 +782,7 @@ def classify_priority(predicted_yield: float, area_cultivated: float | None,
             observed_yield=observed, expected_yield=None, residual_se=None,
             top_quartile_yield=top_quartile, cultivated_area_ha=observed_area,
             area_percentile=area_percentile, yield_index=yield_index,
+            yield_percentile=yield_percentile,
             crop_district_count=max(crop_district_count, 10), model_available=False,
         )
     return apply_stability(result, _priority_stability(district, crop or ""))

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>agrimenya: Offline Agro-Intelligence Hub</title>
+  <link rel="manifest" href="/app/static/manifest.json">
+  <meta name="theme-color" content="#05303f">
+  <link rel="icon" type="image/png" href="/app/static/icon-192.png">
+  <link rel="apple-touch-icon" href="/app/static/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #021824;
+      --card-bg: rgba(6, 40, 56, 0.72);
+      --card-border: rgba(56, 189, 248, 0.22);
+      --accent: #00E599;
+      --sky: #38bdf8;
+      --text: #f0fdf4;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 15%, #05303f 0%, #021824 100%);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 1.5rem 1rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 980px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0.8rem 1.4rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      
+      margin-bottom: 2rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: #fff;
+    }
+    .brand img {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      background: #fff;
+      padding: 2px;
+    }
+    .brand h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+    .status-badge.online {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(6, 40, 56, 0.85), rgba(2, 24, 36, 0.9));
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner h2 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    .hero-banner p {
+      color: #cbd5e1;
+      font-size: 0.96rem;
+      max-width: 680px;
+      line-height: 1.6;
+      margin-bottom: 1.2rem;
+    }
+    .btn-reconnect {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #fff;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-reconnect:hover {
+      background: linear-gradient(135deg, #0369a1, #075985);
+      transform: translateY(-1px);
+    }
+    .tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 0.55rem 1.1rem;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: rgba(56, 189, 248, 0.6);
+      color: #38bdf8;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .crop-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.3rem;
+      
+    }
+    .crop-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .crop-badge {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      background: rgba(0, 229, 153, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(0, 229, 153, 0.3);
+    }
+    .crop-card ul {
+      list-style: none;
+      font-size: 0.86rem;
+      line-height: 1.7;
+      color: #cbd5e1;
+      margin-top: 0.5rem;
+    }
+    .crop-card li strong {
+      color: #fff;
+    }
+    .scratchpad-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .scratchpad-box input, .scratchpad-box select, .scratchpad-box textarea {
+      width: 100%;
+      background: rgba(2, 24, 36, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+      margin-bottom: 0.9rem;
+      font-family: inherit;
+    }
+    .scratchpad-box textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+    .notes-list {
+      margin-top: 1.2rem;
+    }
+    .note-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .contact-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .contact-card h4 {
+      color: #38bdf8;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+    .contact-card .number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0.4rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="brand">
+        <img src="/app/static/icon-192.png" alt="agrimenya logo">
+        <h1>agrimenya</h1>
+      </a>
+      <div id="connectionStatus" class="status-badge">
+        <span class="pulse-dot"></span>
+        <span id="statusText">Offline Mode Active</span>
+      </div>
+    </header>
+
+    <div class="hero-banner">
+      <h2>Offline Agricultural Intelligence Hub</h2>
+      <p>
+        No active connection detected. You are viewing locally cached Rwanda seasonal planting baselines,
+        district soil metrics, and emergency agro-support tools.
+      </p>
+      <button class="btn-reconnect" onclick="checkConnection(true)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        Retry Live Connection
+      </button>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('crops')">Crops &amp; Field Calendars</button>
+      <button class="tab-btn" onclick="switchTab('districts')">30 Districts Baselines</button>
+      <button class="tab-btn" onclick="switchTab('scratchpad')">Offline Field Notes</button>
+      <button class="tab-btn" onclick="switchTab('contacts')">Emergency Contacts</button>
+    </div>
+
+    <!-- TAB 1: CROPS -->
+    <div id="tab-crops" class="tab-content active">
+      <div class="card-grid">
+        <div class="crop-card">
+          <h3>Maize (Ibigori) <span class="crop-badge">Season A / B</span></h3>
+          <ul>
+            <li><strong>Optimal Window:</strong> Sept 15 to Oct 20 (Season A)</li>
+            <li><strong>Soil pH:</strong> 5.5 to 6.8 (Liming if pH &lt; 5.2)</li>
+            <li><strong>Fertilizer:</strong> 100 kg/ha DAP at planting, 50 kg/ha Urea at knee-high</li>
+            <li><strong>Pest Watch:</strong> Fall Armyworm (FAW): spray neem or Emamectin benzoate at first leaf holes</li>
+            <li><strong>NISR Benchmark:</strong> 2.2 to 3.8 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Climbing Beans (Ibishyimbo) <span class="crop-badge">Season A / B</span></h3>
+          <ul>
+            <li><strong>Optimal Window:</strong> Sept 25 to Oct 30</li>
+            <li><strong>Soil pH:</strong> 5.8 to 6.5</li>
+            <li><strong>Staking:</strong> 2 to 2.5m stakes at 2 weeks post-emergence</li>
+            <li><strong>Fertilizer:</strong> NPK 17-17-17 (50 kg/ha) + rhizobium inoculant</li>
+            <li><strong>Disease Watch:</strong> Anthracnose &amp; Angular leaf spot: ensure spacing</li>
+            <li><strong>NISR Benchmark:</strong> 1.5 to 2.4 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Irish Potato (Ibirayi) <span class="crop-badge">Volcanic / High</span></h3>
+          <ul>
+            <li><strong>Priority Zones:</strong> Musanze, Nyabihu, Rubavu, Burera</li>
+            <li><strong>Altitude:</strong> 1,800 to 2,600m</li>
+            <li><strong>Fertilizer:</strong> NPK 17-17-17 (300 kg/ha) at planting</li>
+            <li><strong>Disease Watch:</strong> Late Blight (Phytophthora): preventive copper spraying</li>
+            <li><strong>NISR Benchmark:</strong> 12.0 to 18.5 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Rice (Umuceri) <span class="crop-badge">Marshland</span></h3>
+          <ul>
+            <li><strong>Priority Zones:</strong> Bugarama, Rwamagana, Bugesera, Kirehe</li>
+            <li><strong>Water Regimen:</strong> Continuous saturation from transplanting to heading</li>
+            <li><strong>Fertilizer:</strong> Basal NPK + split Urea (tillering &amp; panicle initiation)</li>
+            <li><strong>NISR Benchmark:</strong> 4.5 to 6.2 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Cassava (Imyumbati) <span class="crop-badge">Perennial</span></h3>
+          <ul>
+            <li><strong>Priority Zones:</strong> Bugesera, Ruhango, Kamonyi, Gatsibo</li>
+            <li><strong>Varieties:</strong> CBSD &amp; CMD resistant clones (e.g. NASE 14, Gahene)</li>
+            <li><strong>Spacing:</strong> 1m x 1m (10,000 cuttings/ha)</li>
+            <li><strong>NISR Benchmark:</strong> 14.0 to 22.0 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Soybean (Soya) <span class="crop-badge">Rotational</span></h3>
+          <ul>
+            <li><strong>Priority Zones:</strong> Eastern &amp; Southern Provinces</li>
+            <li><strong>Inoculation:</strong> Bradyrhizobium japonicum before planting</li>
+            <li><strong>Optimal pH:</strong> 6.0 to 6.8</li>
+            <li><strong>NISR Benchmark:</strong> 1.1 to 1.8 MT/ha</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DISTRICTS -->
+    <div id="tab-districts" class="tab-content">
+      <div class="scratchpad-box">
+        <h3 style="margin-bottom:0.8rem;color:#38bdf8;">Rwanda 30 Districts Regional Agro-Baselines</h3>
+        <input type="text" id="districtSearch" placeholder="Type district name (e.g. Bugesera, Musanze, Gasabo)..." oninput="filterDistricts()">
+        <div id="districtsGrid" class="card-grid" style="margin-top:1rem;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: FIELD NOTES SCRATCHPAD -->
+    <div id="tab-scratchpad" class="tab-content">
+      <div class="scratchpad-box">
+        <h3 style="color:#00E599;margin-bottom:0.5rem;">Offline Field Observation Logger</h3>
+        <p style="color:#94a3b8;font-size:0.88rem;margin-bottom:1rem;">
+          Recorded observations are safely stored in your browser's local memory and can be exported or synchronized once connected.
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+          <div>
+            <label style="font-size:0.82rem;font-weight:700;">District &amp; Sector</label>
+            <input type="text" id="noteDistrict" placeholder="e.g. Bugesera - Nyamata">
+          </div>
+          <div>
+            <label style="font-size:0.82rem;font-weight:700;">Crop &amp; Area</label>
+            <input type="text" id="noteCrop" placeholder="e.g. Maize - 1.5 Ha">
+          </div>
+        </div>
+        <label style="font-size:0.82rem;font-weight:700;">Field Observations &amp; Pest / Soil Conditions</label>
+        <textarea id="noteContent" placeholder="Describe plant vigor, rainfall adequacy, pest sightings, or fertilizer timing..."></textarea>
+        <button class="btn-reconnect" style="background:#059669;border-color:#10b981;" onclick="saveNote()">
+          Save Observation Locally
+        </button>
+        <button class="btn-reconnect" style="background:#475569;border-color:#64748b;margin-left:0.5rem;" onclick="exportNotes()">
+          Export Notes (JSON)
+        </button>
+
+        <div class="notes-list" id="savedNotesContainer">
+          <h4 style="font-size:0.95rem;margin:1rem 0 0.5rem;color:#e0f2fe;">Stored Field Records (<span id="noteCount">0</span>)</h4>
+          <div id="notesList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: CONTACTS -->
+    <div id="tab-contacts" class="tab-content">
+      <div class="contacts-grid">
+        <div class="contact-card">
+          <h4>RAB Agro Hotline</h4>
+          <div class="number">8008</div>
+          <p style="color:#94a3b8;font-size:0.82rem;">Rwanda Agriculture Board Toll-Free</p>
+        </div>
+        <div class="contact-card">
+          <h4>Meteo Rwanda</h4>
+          <div class="number">4121</div>
+          <p style="color:#94a3b8;font-size:0.82rem;">Weather &amp; Seasonal Advisories</p>
+        </div>
+        <div class="contact-card">
+          <h4>Emergency Dispatch</h4>
+          <div class="number">112</div>
+          <p style="color:#94a3b8;font-size:0.82rem;">Police / Disaster Management</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching logic
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('tab-' + name).classList.add('active');
+    }
+
+    // Connection monitoring & auto-recovery
+    function checkConnection(manual = false) {
+      const badge = document.getElementById('connectionStatus');
+      const text = document.getElementById('statusText');
+      
+      fetch('/_stcore/health', { cache: 'no-cache' })
+        .then(res => {
+          if (res.ok) {
+            badge.className = 'status-badge online';
+            text.textContent = 'Back Online: Redirecting...';
+            setTimeout(() => { window.location.href = '/'; }, 1000);
+          } else {
+            throw new Error('Not healthy');
+          }
+        })
+        .catch(() => {
+          badge.className = 'status-badge';
+          text.textContent = 'Offline Mode Active';
+          if (manual) alert('Still offline. Offline baselines and tools remain available.');
+        });
+    }
+
+    window.addEventListener('online', () => { checkConnection(); });
+    setInterval(checkConnection, 6000);
+
+    // District data baselines
+    const DISTRICTS = [
+      { name: 'Bugesera', prov: 'Eastern', alt: 'Lowland (1,300 to 1,500m)', rain: '850 to 1,000mm', crops: 'Cassava, Maize, Sorghum, Beans' },
+      { name: 'Musanze', prov: 'Northern', alt: 'Volcanic Highland (1,850 to 2,500m)', rain: '1,200 to 1,600mm', crops: 'Irish Potato, Maize, Pyrethrum, Wheat' },
+      { name: 'Gasabo', prov: 'Kigali', alt: 'Midland (1,400 to 1,650m)', rain: '950 to 1,100mm', crops: 'Vegetables, Maize, Beans, Fruits' },
+      { name: 'Nyagatare', prov: 'Eastern', alt: 'Lowland (1,250 to 1,450m)', rain: '800 to 950mm', crops: 'Maize, Soya, Beans, Dairy Pasture' },
+      { name: 'Huye', prov: 'Southern', alt: 'Midland (1,600 to 1,800m)', rain: '1,100 to 1,250mm', crops: 'Coffee, Beans, Maize, Cassava' },
+      { name: 'Rubavu', prov: 'Western', alt: 'Lakeside / Volcanic (1,460 to 2,200m)', rain: '1,200 to 1,500mm', crops: 'Irish Potato, Vegetables, Maize, Tea' },
+      { name: 'Gicumbi', prov: 'Northern', alt: 'Highland (1,800 to 2,300m)', rain: '1,200 to 1,450mm', crops: 'Wheat, Tea, Irish Potato, Beans' },
+      { name: 'Rwamagana', prov: 'Eastern', alt: 'Midland (1,400 to 1,600m)', rain: '900 to 1,050mm', crops: 'Banana, Maize, Rice (Marshlands), Soya' },
+      { name: 'Rusizi', prov: 'Western', alt: 'Lowland / Bugarama (900 to 1,600m)', rain: '1,300 to 1,600mm', crops: 'Rice, Coffee, Cassava, Oil Palm' },
+      { name: 'Muhanga', prov: 'Southern', alt: 'Midland (1,550 to 1,850m)', rain: '1,150 to 1,300mm', crops: 'Cassava, Beans, Maize, Coffee' }
+    ];
+
+    function renderDistricts(list) {
+      const el = document.getElementById('districtsGrid');
+      el.innerHTML = list.map(d => `
+        <div class="crop-card">
+          <h3>${d.name} <span class="crop-badge">${d.prov}</span></h3>
+          <ul>
+            <li><strong>Altitude:</strong> ${d.alt}</li>
+            <li><strong>Rainfall:</strong> ${d.rain}</li>
+            <li><strong>Key Crops:</strong> ${d.crops}</li>
+          </ul>
+        </div>
+      `).join('');
+    }
+
+    function filterDistricts() {
+      const q = document.getElementById('districtSearch').value.toLowerCase();
+      renderDistricts(DISTRICTS.filter(d => d.name.toLowerCase().includes(q) || d.prov.toLowerCase().includes(q) || d.crops.toLowerCase().includes(q)));
+    }
+    renderDistricts(DISTRICTS);
+
+    // Scratchpad localStorage
+    function loadNotes() {
+      const notes = JSON.parse(localStorage.getItem('agrimenya_offline_notes') || '[]');
+      document.getElementById('noteCount').textContent = notes.length;
+      const list = document.getElementById('notesList');
+      if (notes.length === 0) {
+        list.innerHTML = '<p style="color:#64748b;font-size:0.85rem;">No offline notes logged yet.</p>';
+        return;
+      }
+      list.innerHTML = notes.map((n, idx) => `
+        <div class="note-item">
+          <div>
+            <strong style="color:#38bdf8;">${n.district || 'General'}: ${n.crop || 'Field'}</strong>
+            <p style="color:#cbd5e1;font-size:0.85rem;margin-top:0.25rem;">${n.content}</p>
+            <span style="color:#64748b;font-size:0.75rem;">${n.date}</span>
+          </div>
+          <button onclick="deleteNote(${idx})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:0.82rem;">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function saveNote() {
+      const district = document.getElementById('noteDistrict').value.trim();
+      const crop = document.getElementById('noteCrop').value.trim();
+      const content = document.getElementById('noteContent').value.trim();
+      if (!content) { alert('Please enter observation details.'); return; }
+      const notes = JSON.parse(localStorage.getItem('agrimenya_offline_notes') || '[]');
+      notes.unshift({ district, crop, content, date: new Date().toLocaleString() });
+      localStorage.setItem('agrimenya_offline_notes', JSON.stringify(notes));
+      document.getElementById('noteContent').value = '';
+      loadNotes();
+    }
+
+    function deleteNote(idx) {
+      const notes = JSON.parse(localStorage.getItem('agrimenya_offline_notes') || '[]');
+      notes.splice(idx, 1);
+      localStorage.setItem('agrimenya_offline_notes', JSON.stringify(notes));
+      loadNotes();
+    }
+
+    function exportNotes() {
+      const data = localStorage.getItem('agrimenya_offline_notes') || '[]';
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'agrimenya_field_observations.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    loadNotes();
+  </script>
+</body>
+</html>

@@ -9,8 +9,8 @@ from utils.i18n import t
 
 # Shared Plotly layout settings matching the agrimenya design system
 AG_PLOTLY_LAYOUT = dict(
-    font=dict(family="Inter, sans-serif", color="#374151"),
-    title_font=dict(family="Space Grotesk, sans-serif", size=16, color="#1B3A2D"),
+    font=dict(family="Outfit, sans-serif", color="#374151"),
+    title_font=dict(family="Plus Jakarta Sans, sans-serif", size=16, color="#1B3A2D"),
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
     legend=dict(
@@ -23,7 +23,7 @@ AG_PLOTLY_LAYOUT = dict(
     hoverlabel=dict(
         bgcolor="white",
         font_size=12,
-        font_family="Inter, sans-serif",
+        font_family="Outfit, sans-serif",
     ),
 )
 

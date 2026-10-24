@@ -12,6 +12,7 @@ import csv
 import hashlib
 import json
 import math
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -56,12 +57,21 @@ def build(rows: list[dict[str, str]]) -> dict:
     weighted: dict[tuple[str, ...], list[float]] = defaultdict(lambda: [0.0, 0.0])
     legacy: dict[tuple[str, str], list[float]] = defaultdict(list)
     extension: dict[tuple[str, ...], list[float]] = defaultdict(list)
+    weighted_by_year: dict[tuple[str, ...], list[float]] = defaultdict(lambda: [0.0, 0.0])
+    years: set[int] = set()
     for row in rows:
         district = (row.get("district") or "").strip()
         crop = (row.get("crop") or "").strip()
         season = (row.get("season_code") or "").strip().upper()
+        year_value = _number(row, "year")
+        if year_value is None:
+            match = re.search(r"20\d{2}", row.get("season", ""))
+            year_value = float(match.group(0)) if match else None
+        year = int(year_value) if year_value is not None and year_value.is_integer() else None
         if not district or not crop or season not in {"A", "B", "C"}:
             continue
+        if year is not None:
+            years.add(year)
         yield_value = _number(row, "yield_kg_ha")
         if (row.get("data_source") or "").strip() == "extension_survey" and yield_value is not None and yield_value > 0:
             extension[(district, crop, season)].append(yield_value)
@@ -79,6 +89,11 @@ def build(rows: list[dict[str, str]]) -> dict:
         for key in ((district, crop, season), (district, crop), (crop, season), (crop,), ("__overall__",)):
             weighted[key][0] += production_kg
             weighted[key][1] += area
+        if year is not None:
+            for key in ((district, crop, season, str(year)), (district, crop, str(year)),
+                        (crop, season, str(year)), (crop, str(year))):
+                weighted_by_year[key][0] += production_kg
+                weighted_by_year[key][1] += area
 
     district_crop_season = {
         "|".join(key): value for key, totals in weighted.items()
@@ -101,6 +116,8 @@ def build(rows: list[dict[str, str]]) -> dict:
         and (value := _weighted_yield(tuple(totals))) is not None
     }
     overall = _weighted_yield(tuple(weighted[("__overall__",)]))
+    year_averages = {"|".join(key): value for key, totals in weighted_by_year.items()
+                     if (value := _weighted_yield(tuple(totals))) is not None}
     legacy_means = {
         f"{district}|{crop}": round(sum(vals) / len(vals), 1)
         for (district, crop), vals in legacy.items() if vals
@@ -115,6 +132,24 @@ def build(rows: list[dict[str, str]]) -> dict:
         "district_crop_weighted_averages": district_crop,
         "crop_season_weighted_averages": crop_season,
         "crop_weighted_averages": crop_weighted,
+        "district_crop_season_year_weighted_averages": {
+            key: value for key, value in year_averages.items() if key.count("|") == 3
+        },
+        "district_crop_year_weighted_averages": {
+            key: value for key, value in year_averages.items()
+            if key.count("|") == 2 and key.split("|")[-1].isdigit()
+        },
+        "crop_season_year_weighted_averages": {
+            key: value for key, value in year_averages.items()
+            if key.count("|") == 2 and key.split("|")[-1].isdigit()
+            and key.split("|")[1] in {"A", "B", "C"}
+        },
+        "crop_year_weighted_averages": {
+            key: value for key, value in year_averages.items()
+            if key.count("|") == 1 and key.split("|")[-1].isdigit()
+        },
+        "data_years": sorted(years),
+        "official_observation_rows": len(rows),
         "overall_weighted_average": overall,
         "legacy_simple_mean_district_crop_averages": legacy_means,
         "extension_observation_definition": "arithmetic mean of direct extension-survey kg/ha observations; not area weighted",

@@ -99,7 +99,7 @@ The evaluation marks a crop as thin below 10 districts. All 23 evaluated crops h
 
 ## Priority-label stability
 
-`data/eval/priority_stability.json` evaluates 645 district/crop combinations across five leave-one-season-out folds, using the district-season baseline (`model_available: false`). **84/645 (13.023255813953%)** combinations are marked uncertain, and there are **185 priority changes across folds**. These are baseline-rule priority labels, not validation of a trained-model priority system. The flip rate is material: an individual priority should not be treated as a stable ranking without its uncertainty status.
+`data/eval/priority_stability.json` evaluates 645 district/crop combinations across five leave-one-season-out folds, using the NISR district-yield percentile rule (`model_available: false`). **434/645 (67.3%)** combinations are marked uncertain, with **929 priority changes across folds**. These results show that crop-relative district priorities vary substantially between seasons; the app should surface those cases as uncertain instead of treating a single ranking as stable. This is an evaluation of the baseline rule, not a trained-model validation.
 
 ## Known limitations
 

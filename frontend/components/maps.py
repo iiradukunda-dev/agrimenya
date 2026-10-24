@@ -11,7 +11,7 @@ import folium
 import streamlit as st
 from streamlit_folium import st_folium
 
-# Priority zone color palette — matches the design system semantic colors
+# Priority zone color palette - matches the design system semantic colors
 PRIORITY_COLORS = {
     "High":   "#DC2626",
     "Medium": "#D97706",
@@ -82,7 +82,7 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
             crop = html.escape(str(row.get("Crop", "N/A")))
             priority = html.escape(str(row.get("Priority", "N/A")))
             popup_html = (
-                f"<div style='font-family: Inter, sans-serif; font-size: 13px; line-height: 1.5;'>"
+                f"<div style='font-family: Outfit, sans-serif; font-size: 13px; line-height: 1.5;'>"
                 f"<strong style='color: #1B3A2D;'>{district}</strong><br/>"
                 f"Crop: {crop}<br/>"
                 f"Estimated production: {production_text} MT<br/>"

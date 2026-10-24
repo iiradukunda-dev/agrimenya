@@ -1,6 +1,6 @@
-# Agri-Menya
+# agrimenya
 
-Agri-Menya is a Rwanda-focused agricultural decision and planning support
+agrimenya is a Rwanda-focused agricultural decision and planning support
 system. The Streamlit frontend calls a FastAPI backend, which reads and writes
 application data in Supabase. Yield estimates use validated NISR observations
 stored in the database. WhatsApp is an optional access and notification
@@ -9,93 +9,99 @@ templates are configured.
 
 ## Project layout
 
-- `frontend/` — Streamlit application for farmers, planners, cooperative
+- `frontend/`: Streamlit application for farmers, planners, cooperative
   leaders, and administrators.
-- `backend/app/` — FastAPI routes, services, database access, and yield logic.
-- `backend/app/db/migrations/` — ordered SQL migrations for the Supabase
+- `frontend/static/`: PWA service worker, web manifest, and offline hub for
+  field extension workers in low-connectivity areas.
+- `backend/app/`: FastAPI routes, services, database access, and yield logic.
+- `backend/app/db/migrations/`: ordered SQL migrations for the Supabase
   schema.
-- `backend/scripts/` — administrator provisioning, NISR data preparation, and
+- `backend/scripts/`: administrator provisioning, NISR data preparation, and
   offline evaluation tools.
-- `backend/docs/` — deployment, data import, retraining, model, and WhatsApp
+- `backend/docs/`: deployment, data import, retraining, model, and WhatsApp
   operating notes.
 
 ## Requirements
 
-- Python 3.12 for the Docker images (Python 3.11 or newer for local
-  development).
+- Python 3.12 for Docker images (Python 3.11 or newer for local development).
 - Docker Desktop with Docker Compose, or separate Python environments for
   local development.
 - A Supabase project with migrations applied. The backend needs the project
-  URL and keys appropriate to the environment.
+  URL and service role key appropriate to the environment.
 
-## Team B handoff
+## Timezone
 
-Use the shared feature branch so you receive the current backend, frontend,
-database migrations, and yield evaluation data:
+The system default timezone is strictly Central Africa Time (CAT) UTC+2
+(`Africa/Kigali`). All backend operations, observation timestamps, weather
+forecasts, and user-facing dates reflect CAT.
+
+## Git workflow and branch policy
+
+The active development branch is `develop`.
+
+- Always branch from and merge into `develop`.
+- Do not push directly to `main` without explicit instruction.
+- Never commit `.env` files, API credentials, passwords, or local logs.
 
 ```powershell
-git clone --branch feature/ci-logging-debug https://github.com/iiradukunda-dev/agrimenya.git
-cd agrimenya/backend
-Copy-Item .env.example .env
+git clone --branch develop https://github.com/iiradukunda-dev/agrimenya.git
+cd agrimenya
 ```
 
-Fill `backend/.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the
-project you are authorized to use. To see the same live records as Team A, both
-teams need access to the same Supabase project; exchange its credentials
-through an approved secure channel, never by committing `.env` to GitHub. Apply
-migrations `0001` through `0011` if they are not already applied. Set
-`JWT_SECRET` to a private random value of at least 32 characters for community
-sessions. Then start both
-services:
+## Running with Docker Compose
+
+Create `backend/.env` from `backend/.env.example` and set at minimum the
+Supabase settings (`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`).
+
+### Option A: Run from the repository root (recommended)
+
+Running Compose from the root starts both the FastAPI backend on port 8000
+and the Streamlit frontend on port 8501. The frontend automatically connects
+to the backend using the internal Docker network (`http://backend:8000`).
 
 ```powershell
+Copy-Item backend\.env.example backend\.env
+# Edit backend/.env and set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY
 docker compose up --build
 ```
 
-Open the app at `http://localhost:8501` and the API health page at
-`http://localhost:8000/health`. The shared branch runs WhatsApp in mock mode;
-live WhatsApp and AI-provider behavior require their own backend credentials.
-The setup and local development instructions below cover non-Docker options.
+### Option B: Run from the backend directory
 
-Never commit `.env` files, service-role keys, WhatsApp/SMTP/LLM credentials,
-passwords, or local logs. The backend service-role key must stay in the
-backend environment; do not copy it to Streamlit or the browser.
-
-## Run both services with Docker Compose
-
-Create `backend/.env` from the example and fill in at least the Supabase
-settings. Run Compose from the `backend` directory so its `.env` file is used
-for API settings and Compose variable interpolation:
+You can also run Compose directly from `backend/`:
 
 ```powershell
+cd backend
 Copy-Item .env.example .env
-# Edit .env and set the required Supabase values.
+# Edit .env with Supabase credentials
 docker compose up --build
 ```
 
-Open the frontend at `http://localhost:8501`; the API is available at
-`http://localhost:8000`. Compose configures the frontend to call the API by its
-internal service name. Stop the services with `Ctrl+C`, or run
-`docker compose down` from `backend/`. View service status and logs with:
+Once running, access:
+- Streamlit application: `http://localhost:8501`
+- FastAPI health check: `http://localhost:8000/health`
+- FastAPI OpenAPI documentation: `http://localhost:8000/docs`
+
+Stop the containers with `Ctrl+C` or by running:
+
+```powershell
+docker compose down
+```
+
+View running containers and logs:
 
 ```powershell
 docker compose ps
-docker compose logs -f api frontend
+docker compose logs -f
 ```
-
-Set `FRONTEND_PORT` in the Compose environment to change the host port. The
-frontend image excludes local environments, secrets, logs, and editor files;
-the backend build also excludes `.env` and offline datasets. Compose requires
-the backend `.env` file to exist before startup.
 
 ## Local development without Docker
 
 Create `backend/.env` from `backend/.env.example`, then set `SUPABASE_URL` and
 `SUPABASE_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`). The publishable key supports
-only operations allowed by the database's RLS policies; server-side writes
-need the service-role key. Do not put the service-role key in the frontend.
+only operations allowed by the database RLS policies; server-side writes need
+the service-role key. Never place the service-role key in the frontend.
 
-In PowerShell, install and run the API:
+In PowerShell terminal 1, install and start the API:
 
 ```powershell
 cd backend
@@ -105,7 +111,7 @@ python -m pip install -r requirements.txt
 python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-In a second terminal, install and run Streamlit:
+In PowerShell terminal 2, install and start Streamlit:
 
 ```powershell
 cd frontend
@@ -123,22 +129,23 @@ operations. Restart the relevant service after changing environment values.
 ## Database setup
 
 Apply the SQL files in `backend/app/db/migrations/` to Supabase in numeric
-order, `0001` through `0011`, using the Supabase SQL editor or your migration
-runner. Migrations `0005` and `0006` add WhatsApp contacts, message tracking,
-consent, and alert approval; `0007` enables versioned NISR yield imports; and
-`0008` adds named administrator accounts and password recovery tokens; `0009`
-adds individually authenticated farmer discussions and moderation reports; `0010`
-adds dated farmer field observations with optional private, compressed photos;
-`0011` enforces unique lowercase community usernames.
-These observations stay separate from official NISR yield records and are never
-used as NISR baselines. Check
-the migration comments and `backend/docs/` before applying these changes to a
-production database.
+order, `0001` through `0011`, using the Supabase SQL editor or migration runner.
+
+- `0001` to `0004`: Baseline zones, predictions, roadmaps, and alerts schema.
+- `0005` and `0006`: WhatsApp contacts, message tracking, consent, and alert approval.
+- `0007`: Versioned NISR yield imports and activation.
+- `0008`: Named administrator accounts and secure password recovery tokens.
+- `0009`: Authenticated farmer discussions and moderation reports.
+- `0010`: Dated farmer field observations with optional private photos.
+- `0011`: Unique lowercase community usernames.
+
+Observations stay separate from official NISR yield records and are never
+used as NISR baselines. Check the migration comments and `backend/docs/`
+before applying these changes to production.
 
 After startup, check `http://localhost:8000/health`. For prediction readiness,
 the database needs yield observations; the health endpoint reports whether
-they are present. A healthy API connection alone does not mean yield data is
-available.
+they are present.
 
 ## Administrator access and recovery
 
@@ -161,61 +168,73 @@ the account with:
 python scripts/reset_admin_password.py admin@example.org
 ```
 
-This invalidates existing administrator sessions. Do not configure the
-service-role key in frontend settings. See
-[`backend/docs/production_deployment.md`](backend/docs/production_deployment.md)
-for production settings and administrator operations.
+This invalidates existing administrator sessions. See
+`backend/docs/production_deployment.md` for production settings and
+administrator operations.
 
 ## NISR yield data
 
 Administrators can import a normalized NISR CSV after migration `0007` is
-applied. The required columns are `district`, `crop`, `season`, and positive
+applied. Required columns are `district`, `crop`, `season`, and positive
 `yield_kg_ha`; optional columns are `production_mt` and `cultivated_area_ha`.
-Review each release's source and mapped values before import. The server stages
+Review each release source and mapped values before import. The server stages
 and validates rows before activation; predictions read active database
-observations rather than a few bundled CSV files. Import history and the full
-format are documented in
-[`backend/docs/nisr_imports_and_access.md`](backend/docs/nisr_imports_and_access.md).
+observations rather than bundled CSV files. Import history and the format are
+documented in `backend/docs/nisr_imports_and_access.md`.
 
 Training and evaluation are offline workflows. They may use source datasets
-that are intentionally excluded from the runtime Docker image and should be
-handled according to their source and access terms. See
-[`backend/docs/retraining.md`](backend/docs/retraining.md) before creating
-training artifacts.
+that are intentionally excluded from the runtime Docker image. See
+`backend/docs/retraining.md` before creating training artifacts.
 
 ## Users, WhatsApp, and production readiness
 
-The frontend presents role-oriented experiences for citizens/farmers,
-planners, cooperative leaders, and administrators. Administrator access uses
-named accounts. Individual citizen/planner/cooperative accounts and complete
-server-enforced ownership or membership scopes are still required before
-those experiences can be treated as production access control; see the access
-model in `backend/docs/nisr_imports_and_access.md`.
+The frontend presents role-oriented views for citizens/farmers, planners,
+cooperative leaders, and administrators. Administrator access uses named
+accounts. Complete server-enforced ownership scopes are documented in
+`backend/docs/nisr_imports_and_access.md`.
 
-The optional farmer discussion pilot supports posts, comments, abuse reports,
-and administrator moderation. Accounts and roles are currently self-reported;
-email verification and account recovery are not yet available. The Rwanda
-Space Agency orthomosaic is an optional visual map layer only, not a signal used
-to predict yield or prioritize zones. See
-[`backend/docs/satellite_and_community.md`](backend/docs/satellite_and_community.md)
-for data limitations and safeguards.
+The farmer discussion pilot supports posts, comments, abuse reports, and
+administrator moderation. Accounts and roles are currently self-reported. The
+Rwanda Space Agency orthomosaic is an optional visual map layer only, not a
+signal used to predict yield or prioritize zones. See
+`backend/docs/satellite_and_community.md` for data limitations.
 
 WhatsApp starts in mock mode. Live messaging requires Meta Cloud API
 credentials, verified webhooks, opt-in records, and approved templates. Keep
 all provider credentials in the backend environment. Configure production
 secrets, HTTPS origins, allowed hostnames, email recovery, and operational
-backups as described in
-[`backend/docs/production_deployment.md`](backend/docs/production_deployment.md).
+backups as described in `backend/docs/production_deployment.md`.
 
-## Validation
+## Offline and PWA support
 
-Run the backend suite from `backend/` after installing its requirements:
+Agri-Menya includes a Progressive Web App service worker located in
+`frontend/static/sw.js` and an offline fallback hub at
+`frontend/static/offline.html`. When field workers navigate remote zones with
+unstable network coverage, cached crop guides, offline field notes, and
+emergency agronomy procedures remain accessible without an active connection.
+
+## Validation and tests
+
+### Backend test suite
+
+Run the backend pytest suite from `backend/`:
 
 ```powershell
+cd backend
 python -m pytest tests -q
 ```
 
-Docker image builds can be checked from `backend/` with:
+### Frontend test suite
+
+Run the frontend test suite from the root directory:
+
+```powershell
+python -m pytest -o pythonpath=frontend frontend/utils/ -q
+```
+
+### Docker image builds
+
+Verify that both Docker images build cleanly:
 
 ```powershell
 docker compose build

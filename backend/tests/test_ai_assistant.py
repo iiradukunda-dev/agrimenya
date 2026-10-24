@@ -43,8 +43,14 @@ def test_no_llm_returns_safe_grounded_fallback(monkeypatch):
         r = client.post("/chat", json=payload)
         assert r.status_code == 200
         assert "Choose a crop" not in r.json()["answer"]
-        assert "NISR SAS baseline" in r.json()["answer"]
+        assert ("Official NISR SAS historical table" in r.json()["answer"]
+                or "NISR database release" in r.json()["answer"])
+        assert "historical district observations" in r.json()["answer"]
         assert "Banana" in r.json()["answer"]
+        assert ("Official NISR SAS historical table" in r.json()["evidence_sources"]
+                or "NISR database release" in r.json()["evidence_sources"])
+        assert r.json()["answer_type"] == "record_grounded"
+        assert "Gasabo" in r.json()["evidence_scope"]
 
 
 def test_configured_llm_uses_anthropic_messages_api(monkeypatch):

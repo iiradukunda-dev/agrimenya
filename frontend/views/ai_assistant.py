@@ -1,5 +1,5 @@
 """
-AI Assistant view — conversational AI + crop disease detection.
+AI Assistant view: conversational AI + crop disease detection.
 
 Implements Page 4 of the frontend handoff: chat + disease detection.
 """
@@ -59,7 +59,7 @@ def render_ai_assistant() -> None:
             # Chat input
             prompt = st.chat_input("Ask about a zone, crop, or recommendation...") if selected_zone_id else None
             if not selected_zone_id:
-                st.info("Add a zone to use the AI advisor.")
+                st.info("Select or create an agricultural zone to start asking questions with grounded soil and yield data.")
             if prompt:
                 # Add user message
                 st.session_state.ai_messages.append({"role": "user", "content": prompt})
@@ -154,23 +154,21 @@ def render_ai_assistant() -> None:
                     else:
                         st.caption(f"Analysis source: {result.get('source', 'symptom-model')}")
 
-                    result_cols = st.columns(3)
+                    result_cols = st.columns(2, gap="medium")
                     with result_cols[0]:
                         with st.container(border=True):
                             st.markdown("**Probable Disease**")
                             st.markdown(f"### {result.get('predicted_disease', 'Unknown')}")
+                            confidence = result.get("confidence", 0)
+                            conf_str = f"{confidence:.0%}" if isinstance(confidence, float) else f"{confidence}"
+                            st.caption(f"Model Confidence: **{conf_str}**")
 
                     with result_cols[1]:
                         with st.container(border=True):
-                            st.markdown("**Confidence**")
-                            confidence = result.get("confidence", 0)
-                            st.markdown(f"### {confidence:.0%}" if isinstance(confidence, float) else f"### {confidence}")
-
-                    with result_cols[2]:
-                        with st.container(border=True):
-                            st.markdown("**Risk Level**")
+                            st.markdown("**Risk Assessment**")
                             risk = result.get("risk_level", "Unknown")
                             priority_badge(risk if risk in ("High", "Medium", "Low") else "Not assessed")
+                            st.caption(f"Diagnostic Engine: {result.get('source', 'symptom-model')}")
 
                     # Recommended actions
                     actions = result.get("recommended_actions", result.get("actions", []))

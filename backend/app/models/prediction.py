@@ -28,9 +28,12 @@ class PredictionResult(BaseModel):
     crop: str
     predicted_yield: Optional[float] = None
     priority_level: Literal["Low", "Medium", "High", "Uncertain", "Unknown"]
-    confidence: float
+    confidence: Optional[float] = None
     confidence_basis: Optional[str] = None
     model_version: str
+    evidence_source: Optional[str] = None
+    evidence_period: Optional[str] = None
+    evidence_scope: Optional[str] = None
     model_trained_on: dict = Field(default_factory=lambda: {"data_hash": None, "date": None})
     basis: Literal["model", "baseline", "category_proxy"] = "baseline"
     yield_data_status: Literal["available", "no_data", "category_proxy"] = "available"

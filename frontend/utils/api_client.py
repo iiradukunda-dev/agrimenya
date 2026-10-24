@@ -726,7 +726,7 @@ def get_live_context(payload: dict[str, Any]) -> dict[str, Any] | None:
 # ═══════════════════════════════════════════════════════════════════
 
 def get_admin_zones() -> list[dict[str, Any]]:
-    """GET /admin/zones — zone management list."""
+    """GET /admin/zones: zone management list."""
     data = _request_admin("GET", "/admin/zones")
     if data and isinstance(data, list):
         return data
@@ -734,7 +734,7 @@ def get_admin_zones() -> list[dict[str, Any]]:
 
 
 def get_admin_plans() -> list[dict[str, Any]]:
-    """GET /admin/plans — plan management list."""
+    """GET /admin/plans: plan management list."""
     data = _request_admin("GET", "/admin/plans")
     if data and isinstance(data, list):
         return data
@@ -742,7 +742,7 @@ def get_admin_plans() -> list[dict[str, Any]]:
 
 
 def get_admin_alerts() -> list[dict[str, Any]]:
-    """GET /admin/alerts — alert management list."""
+    """GET /admin/alerts: alert management list."""
     data = _request_admin("GET", "/admin/alerts")
     if data and isinstance(data, list):
         return data
@@ -875,7 +875,7 @@ def upload_nisr_release(filename: str, content: bytes, source_release: str, seas
 
 
 def get_health() -> dict[str, Any] | None:
-    """GET /health — system health check."""
+    """GET /health: system health check."""
     return _get_api("/health")
 
 

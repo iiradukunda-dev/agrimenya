@@ -5,7 +5,7 @@ def _model_priority(*, actual, expected, se, top, area_percentile):
     return classify_components(
         observed_yield=actual, expected_yield=expected, residual_se=se,
         top_quartile_yield=top, cultivated_area_ha=100.0,
-        area_percentile=area_percentile, yield_index=0.8,
+        area_percentile=area_percentile, yield_index=0.8, yield_percentile=20,
         crop_district_count=20, model_available=True,
     )
 
@@ -36,21 +36,22 @@ def test_thin_crop_uses_only_yield_index_and_marks_low_evidence():
     result = classify_components(
         observed_yield=2500, expected_yield=1000, residual_se=50,
         top_quartile_yield=4000, cultivated_area_ha=1000, area_percentile=1.0,
-        yield_index=0.7, crop_district_count=8, model_available=True,
+        yield_index=0.7, yield_percentile=10, crop_district_count=8, model_available=True,
     )
     assert result["priority_level"] == "High"
     assert result["low_evidence"] is True
-    assert set(result["components"]) == {"yield_index", "crop_district_count"}
+    assert result["components"]["district_yield_percentile"] == 10
+    assert result["components"]["crop_district_count"] == 8
 
 
-def test_no_model_keeps_existing_baseline_thresholds():
+def test_no_model_uses_same_crop_observation_percentile():
     result = classify_components(
         observed_yield=800, expected_yield=None, residual_se=None,
         top_quartile_yield=2000, cultivated_area_ha=5, area_percentile=0.5,
-        yield_index=0.9, crop_district_count=15, model_available=False,
+        yield_index=0.9, yield_percentile=20, crop_district_count=15, model_available=False,
     )
     assert result["priority_level"] == "High"
-    assert result["priority_status"] == "baseline_fallback"
+    assert result["priority_status"] == "nisr_percentile_baseline"
 
 
 def test_fold_disagreement_marks_priority_uncertain():
