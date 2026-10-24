@@ -118,20 +118,58 @@ def load_theme() -> None:
       font-size: 0.86rem;
     }
 
-    /* Structured Modern Cards & Containers (No liquid glass) */
+    /* Structured Modern Cards with Classic Motion Designs */
     [data-testid="stVerticalBlockBorderWrapper"] {
+      position: relative !important;
+      overflow: hidden !important;
       border: 1px solid rgba(56, 189, 248, 0.22) !important;
       border-top: 1.5px solid rgba(56, 189, 248, 0.40) !important;
       border-radius: var(--ag-radius-md) !important;
       background: #081a26 !important;
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.3s ease,
+                  background 0.3s ease !important;
+      will-change: transform, box-shadow;
     }
+    /* Subtle reflective sheen sweep across card on hover */
+    [data-testid="stVerticalBlockBorderWrapper"]::after {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -130%;
+      width: 70%;
+      height: 220%;
+      background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.04) 45%,
+        rgba(56, 189, 248, 0.08) 50%,
+        rgba(255, 255, 255, 0.04) 55%,
+        transparent 80%
+      );
+      transform: rotate(25deg);
+      transition: left 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 1;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover::after {
+      left: 140%;
+    }
+    /* Classic Elevation & Glow on Hover */
     [data-testid="stVerticalBlockBorderWrapper"]:hover {
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.25) !important;
-      border-color: rgba(56, 189, 248, 0.55) !important;
-      background: #0b2231 !important;
-      transform: translateY(-3px) !important;
+      box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.65), 0 0 26px rgba(56, 189, 248, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+      border-color: rgba(56, 189, 248, 0.65) !important;
+      border-top-color: #38bdf8 !important;
+      background: #0c2435 !important;
+      transform: translateY(-6px) scale(1.012) !important;
+    }
+    /* Tactile Active Press State */
+    [data-testid="stVerticalBlockBorderWrapper"]:active {
+      transform: translateY(-2px) scale(0.995) !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), 0 0 14px rgba(56, 189, 248, 0.2) !important;
+      transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.12s ease !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"] h1,
     [data-testid="stVerticalBlockBorderWrapper"] h2,
@@ -139,6 +177,10 @@ def load_theme() -> None:
     [data-testid="stVerticalBlockBorderWrapper"] h4 {
       color: #ffffff !important;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+      transition: color 0.25s ease, text-shadow 0.25s ease !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover h3 {
+      text-shadow: 0 2px 12px rgba(56, 189, 248, 0.45) !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"] p {
       color: #e0f2fe !important;
@@ -152,23 +194,33 @@ def load_theme() -> None:
       color: #ffffff !important;
       font-weight: 700 !important;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
-      transition: all 0.25s ease !important;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
     [data-testid="stVerticalBlockBorderWrapper"] button * {
       color: #ffffff !important;
       font-weight: 700 !important;
     }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover .stButton > button,
+    [data-testid="stVerticalBlockBorderWrapper"]:hover button {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      border-color: rgba(56, 189, 248, 0.85) !important;
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4) !important;
+    }
     [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
     [data-testid="stVerticalBlockBorderWrapper"] button:hover {
-      background: #0284c7 !important;
-      border-color: rgba(56, 189, 248, 0.8) !important;
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+      border-color: #38bdf8 !important;
       color: #ffffff !important;
-      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
-      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.55) !important;
+      transform: translateY(-2px) scale(1.02) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:active,
+    [data-testid="stVerticalBlockBorderWrapper"] button:active {
+      transform: translateY(0) scale(0.98) !important;
     }
 
-    /* Metrics Cards with Cyan Bulb Accent */
+    /* Metrics Cards with Classic Elevation & Glow */
     [data-testid="stMetric"] {
       background: #ffffff !important;
       border: 1px solid var(--ag-line) !important;
@@ -176,12 +228,19 @@ def load_theme() -> None:
       border-radius: var(--ag-radius-md) !important;
       padding: 1.1rem 1.25rem !important;
       box-shadow: var(--ag-shadow-sm) !important;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.3s ease !important;
+      will-change: transform, box-shadow;
     }
     [data-testid="stMetric"]:hover {
-      transform: translateY(-3px) !important;
-      box-shadow: var(--ag-shadow-md), 0 0 20px rgba(56, 189, 248, 0.28) !important;
+      transform: translateY(-5px) scale(1.01) !important;
+      box-shadow: 0 14px 34px rgba(4, 31, 38, 0.10), 0 0 24px rgba(56, 189, 248, 0.28) !important;
       border-top-color: #38bdf8 !important;
+    }
+    [data-testid="stMetric"]:active {
+      transform: translateY(-1px) scale(0.995) !important;
+      box-shadow: var(--ag-shadow-sm) !important;
     }
     [data-testid="stMetricLabel"] p {
       color: var(--ag-muted) !important;

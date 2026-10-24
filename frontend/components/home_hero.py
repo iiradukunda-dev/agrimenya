@@ -86,20 +86,32 @@ def render_home_hero() -> None:
       div[data-testid="stCustomComponentV1"] {
         margin-bottom: 1.5rem !important;
       }
-      /* Action workflow cards: structured modern cards (no liquid glass) */
+      /* Action workflow cards: structured modern cards with classic motion */
       [data-testid="stVerticalBlockBorderWrapper"] {
+        position: relative !important;
+        overflow: hidden !important;
         background: #081a26 !important;
         border: 1px solid rgba(56, 189, 248, 0.22) !important;
         border-top: 1.5px solid rgba(56, 189, 248, 0.40) !important;
         box-shadow: 0 10px 28px rgba(0, 0, 0, 0.40) !important;
         border-radius: 18px !important;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                    border-color 0.3s ease,
+                    background 0.3s ease !important;
+        will-change: transform, box-shadow;
       }
       [data-testid="stVerticalBlockBorderWrapper"]:hover {
-        background: #0b2231 !important;
-        border-color: rgba(56, 189, 248, 0.6) !important;
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.50), 0 0 20px rgba(56, 189, 248, 0.28) !important;
-        transform: translateY(-4px) !important;
+        background: #0c2435 !important;
+        border-color: rgba(56, 189, 248, 0.65) !important;
+        border-top-color: #38bdf8 !important;
+        box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.65), 0 0 26px rgba(56, 189, 248, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+        transform: translateY(-6px) scale(1.012) !important;
+      }
+      [data-testid="stVerticalBlockBorderWrapper"]:active {
+        transform: translateY(-2px) scale(0.995) !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), 0 0 14px rgba(56, 189, 248, 0.2) !important;
+        transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.12s ease !important;
       }
 
       /* Headings & Text inside cards */
