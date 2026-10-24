@@ -11,10 +11,12 @@ RUN python -m pip install --upgrade pip \
 
 COPY app ./app
 COPY data/eval/yield_model_evaluation.json ./data/eval/yield_model_evaluation.json
+COPY data/nisr_official_yields_2022_2026.csv ./data/nisr_official_yields_2022_2026.csv
 
-# Baseline estimates come from database observations. The interval calibration
-# is a compact evaluation artifact; training tables remain in the offline job.
+# Database releases take precedence; published NISR SAS observations provide
+# a provenance-tracked historical fallback. Training tables remain offline.
 RUN test -s app/ml/artifacts/yield_intervals.json
+RUN test -s data/nisr_official_yields_2022_2026.csv
 
 RUN groupadd --system app \
     && useradd --system --gid app --home-dir /app app \

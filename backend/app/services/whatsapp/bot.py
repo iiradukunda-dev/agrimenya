@@ -9,8 +9,8 @@ from app.core.config import settings
 from app.db import crud
 from app.services.ai_assistant import ask_assistant_with_source
 
-HELP_EN = "Commands: HELP, DISTRICT <name>, CROP <name>, SUBSCRIBE <district> [crop], STATUS, RANK <crop>, ALERTS, LANG EN|RW, STOP."
-HELP_RW = "Amabwiriza: HELP, DISTRICT <akarere>, CROP <igihingwa>, SUBSCRIBE <akarere> [igihingwa], STATUS, RANK <igihingwa>, ALERTS, LANG EN|RW, SHIRA."
+HELP_EN = "Commands: HELP; DISTRICT <name>; CROP <name>; RANK <crop>; SUBSCRIBE <district> [crop]; STATUS; ALERTS; LANG EN|RW. Reply START to opt in to alerts or STOP to opt out."
+HELP_RW = "Amabwiriza: HELP; DISTRICT <akarere>; CROP <igihingwa>; RANK <igihingwa>; SUBSCRIBE <akarere> [igihingwa]; STATUS; ALERTS; LANG EN|RW. Ohereza EMERA kugira ngo wemere amatangazo, cyangwa SHIRA kugira ngo uyahagarike."
 UNKNOWN_EN = "I did not recognize that command. "
 UNKNOWN_RW = "Sinumva iryo tegeko. "
 SAFE_FALLBACK = "I can't answer that reliably. Send HELP for options."
@@ -152,8 +152,8 @@ def _subscribe(argument: str, contact: dict[str, Any]) -> str:
         return _finish("That district has no zone records.", "Akarere nta zone kanditseho.", contact)
     crop_label = f" for {crop}" if crop else ""
     return _finish(
-        f"Subscribed to {district_match}{crop_label} alerts.",
-        f"Wiyandikishije ku butumwa bwo mu karere ka {district_match}{crop_label}.",
+        f"Subscription saved for {district_match}{crop_label}. To receive WhatsApp alerts, reply START to opt in; reply STOP to opt out.",
+        f"Wiyandikishije ku butumwa bwo mu karere ka {district_match}{crop_label}. Kugira ngo ubyakire kuri WhatsApp, ohereza EMERA; kugira ngo uhagarike, ohereza SHIRA.",
         contact,
     )
 

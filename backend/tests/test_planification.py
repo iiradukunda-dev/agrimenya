@@ -26,7 +26,7 @@ def test_plan_roundtrip(mock_create_plan, mock_list_plans, mock_get_zone):
     mock_create_plan.return_value = {"id": str(uuid.uuid4()), "zone_id": str(zone_id)}
 
     roadmap = [
-        {"step_number": 1, "title": "Test", "description": "Do X"}
+        {"step_number": 1, "title": "Test", "description": "Do X", "due_date": "2026-11-01"}
     ]
     resources = {"seeds_kg": 10.0, "fertilizer_kg": 20.0, "irrigation_liters": 0.0, "estimated_cost_rwf": 1000}
     payload = {
@@ -40,6 +40,9 @@ def test_plan_roundtrip(mock_create_plan, mock_list_plans, mock_get_zone):
     resp = client.post("/planification/roadmap", json=payload)
     assert resp.status_code == 200
     mock_create_plan.assert_called_once()
+    saved_step = mock_create_plan.call_args.args[0]["roadmap_json"][0]
+    assert saved_step["status"] == "planned"
+    assert saved_step["due_date"] == "2026-11-01"
 
     # verify get plans forwards to crud.list_plans (we can't patch it easily here but ensure endpoint exists)
     resp2 = client.get(f"/planification/plans/{zone_id}")

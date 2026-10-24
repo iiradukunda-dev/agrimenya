@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,7 +18,7 @@ async def lifespan(_: FastAPI):
     if not IS_DEVELOPMENT:
         settings.validate_production()
     import logging
-    logging.getLogger(__name__).info("Yield serving basis: NISR database observations")
+    logging.getLogger(__name__).info("Yield serving basis: database observations with official SAS historical fallback")
     yield
 
 
@@ -80,13 +81,15 @@ if IS_DEVELOPMENT:
 @app.get("/health")
 def health_check():
     database_status = "unavailable"
+    bundled_baseline = Path(__file__).resolve().parent.parent / "data" / "nisr_official_yields_2022_2026.csv"
+    has_baseline_rows = bundled_baseline.is_file() and bundled_baseline.stat().st_size > 0
     try:
         from app.core.supabase_client import get_supabase
 
         sb = get_supabase()
         sb.table("zones").select("id").limit(1).execute()
         database_status = "ok"
-        has_baseline_rows = bool(sb.table("agri_metrics").select("id").limit(1).execute().data)
+        has_baseline_rows = has_baseline_rows or bool(sb.table("agri_metrics").select("id").limit(1).execute().data)
         try:
             has_baseline_rows = has_baseline_rows or bool(
                 sb.table("nisr_yield_records").select("id").limit(1).execute().data
@@ -96,7 +99,7 @@ def health_check():
             pass
     except Exception:
         logging.getLogger(__name__).exception("Health check database probe failed")
-        has_baseline_rows = False
+        pass
 
     return {
         "status": "ok" if database_status == "ok" else "degraded",
@@ -105,7 +108,10 @@ def health_check():
         "model_present": False,
         "model_version": None,
         "baselines_present": has_baseline_rows,
-        "yield_source": "database observations" if has_baseline_rows else "unavailable",
+        "yield_source": ("database observations with official NISR SAS historical fallback"
+                         if database_status == "ok" and has_baseline_rows else
+                         "official NISR SAS historical fallback; database unavailable"
+                         if has_baseline_rows else "unavailable"),
         "baselines_overall_average": None,
     }
 

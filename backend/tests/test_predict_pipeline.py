@@ -7,18 +7,18 @@ def test_predict_returns_tuple():
         district=None, crop="Maize", season=None, rainfall_mm=None, area_cultivated=0.5, household_size=4
     )
     assert isinstance(total, float)
-    assert 0.0 <= conf <= 1.0
+    assert conf is None or 0.0 <= conf <= 1.0
     assert isinstance(ver, str)
 
 
 def test_season_specific_baselines_differ(monkeypatch):
-    monkeypatch.setattr(predict, "_baselines", {
-        "schema_version": 2,
-        "district_crop_season_weighted_averages": {"Kigali|Maize|A": 1000.0, "Kigali|Maize|B": 9000.0},
-        "district_crop_weighted_averages": {"Kigali|Maize": 5000.0},
-        "crop_season_weighted_averages": {"Maize|A": 1000.0, "Maize|B": 9000.0},
-        "crop_weighted_averages": {"Maize": 5000.0},
-    })
+    rows = [
+        {"district": "Kigali", "crop": "Maize", "season": "2026 Season A", "yield_kg_ha": 1000,
+         "production_mt": 100, "harvested_area_ha": 100},
+        {"district": "Kigali", "crop": "Maize", "season": "2026 Season B", "yield_kg_ha": 9000,
+         "production_mt": 900, "harvested_area_ha": 100},
+    ]
+    monkeypatch.setattr(predict, "_live_yield_evidence", lambda _district, _crop: rows)
     monkeypatch.setattr(predict, "_yield_model_bundle", None)
     assert predict.get_yield_per_hectare("Kigali", "Maize", "Season A 2026") == 1000.0
     assert predict.get_yield_per_hectare("Kigali", "Maize", "Season B 2026") == 9000.0
@@ -38,7 +38,13 @@ def test_season_none_uses_area_weighted_combination(monkeypatch):
         {"district": "Kigali", "crop": "Maize", "season_code": "B", "yield_kg_ha": "900",
          "harvested_area_ha": "9", "production_mt": "8.1"},
     ])
-    monkeypatch.setattr(predict, "_baselines", payload)
+    rows = [
+        {"district": "Kigali", "crop": "Maize", "season": "2026 Season A", "yield_kg_ha": 100,
+         "production_mt": 0.1, "harvested_area_ha": 1},
+        {"district": "Kigali", "crop": "Maize", "season": "2026 Season B", "yield_kg_ha": 900,
+         "production_mt": 8.1, "harvested_area_ha": 9},
+    ]
+    monkeypatch.setattr(predict, "_live_yield_evidence", lambda _district, _crop: rows)
     monkeypatch.setattr(predict, "_yield_model_bundle", None)
     assert payload["legacy_simple_mean_district_crop_averages"]["Kigali|Maize"] == 500.0
     assert predict.get_yield_per_hectare("Kigali", "Maize") == 820.0

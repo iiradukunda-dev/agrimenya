@@ -1,8 +1,4 @@
-"""
-Turns a priority level + zone metrics into concrete recommendations.
-Rule-based today; can be extended to pull from an LLM or a richer
-rules table without changing the calling code in routers/decision.py.
-"""
+"""Turn saved assessment evidence into cautious, reviewable next steps."""
 
 
 def get_recommendations(priority_level: str, rainfall_mm: float | None,
@@ -11,19 +7,19 @@ def get_recommendations(priority_level: str, rainfall_mm: float | None,
     recs: list[str] = []
 
     if priority_level == "High":
-        recs.append("Prioritize this zone for immediate extension officer visit and resource allocation.")
-        recs.append("Assess irrigation feasibility given current yield gap.")
+        recs.append("Review this assessment with the local extension team before prioritising support.")
+        recs.append("Confirm the season, cultivated area, and current field conditions before planning a response.")
     elif priority_level == "Medium":
-        recs.append("Schedule a routine extension visit within the season.")
-        recs.append("Monitor rainfall trends; flag for re-assessment if conditions worsen.")
+        recs.append("Review the recorded evidence during routine seasonal follow-up.")
+        recs.append("Check for newer field observations before changing the existing plan.")
     else:
-        recs.append("Maintain current practices; zone is performing within expected range.")
+        recs.append("Keep the current records under review; this assessment alone does not verify field conditions.")
 
-    if rainfall_mm is not None and rainfall_mm < 600:
-        recs.append("Low rainfall detected - consider drought-resistant crop varieties or supplemental irrigation.")
+    if rainfall_mm is not None:
+        recs.append("Review the rainfall value and reporting period with a current local forecast before making water decisions.")
 
     if soil_type and soil_type.lower() in {"sandy", "poor", "degraded"}:
-        recs.append(f"Soil type '{soil_type}' may limit yield - recommend soil improvement (compost, terracing).")
+        recs.append(f"Verify the recorded soil description ('{soil_type}') with a field assessment before selecting soil-management actions.")
 
     for factor in factors or []:
         name = factor.get("feature")

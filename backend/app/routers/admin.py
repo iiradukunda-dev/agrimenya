@@ -4,6 +4,7 @@ import math
 import csv
 import hashlib
 import io
+import json
 import logging
 import re
 from datetime import datetime, timezone
@@ -75,6 +76,28 @@ def list_admin_plans(_: dict = Depends(require_role("admin"))):
 @router.patch("/plans/{plan_id}")
 def update_admin_plan(plan_id: UUID, payload: dict[str, Any], request: Request, _: dict = Depends(require_role("admin"))):
     _check_patch("plans", payload)
+    if "roadmap_json" in payload:
+        roadmap = payload["roadmap_json"]
+        if isinstance(roadmap, str):
+            try:
+                roadmap = json.loads(roadmap)
+            except json.JSONDecodeError as exc:
+                raise HTTPException(status_code=422, detail="Plan activities must be valid JSON") from exc
+        if not isinstance(roadmap, list) or len(roadmap) > 25:
+            raise HTTPException(status_code=422, detail="Plan activities must be a list with at most 25 steps")
+        allowed_statuses = {"planned", "in_progress", "completed", "blocked"}
+        for step in roadmap:
+            if not isinstance(step, dict) or not str(step.get("title") or "").strip():
+                raise HTTPException(status_code=422, detail="Each plan activity must include a title")
+            if step.get("status", "planned") not in allowed_statuses:
+                raise HTTPException(status_code=422, detail="Activity status is invalid")
+            due_date = step.get("due_date")
+            if due_date is not None:
+                try:
+                    datetime.strptime(str(due_date), "%Y-%m-%d")
+                except ValueError as exc:
+                    raise HTTPException(status_code=422, detail="Activity due dates must use YYYY-MM-DD") from exc
+        payload["roadmap_json"] = roadmap
     plan = crud.list_plans()
     if not any(str(item.get("id")) == str(plan_id) for item in plan):
         raise HTTPException(status_code=404, detail="Plan not found")
@@ -209,14 +232,18 @@ async def import_nisr_release(
                 if key in seen:
                     raise ValueError(f"row {line}: duplicate district/crop/season record")
                 seen.add(key)
-                normalized.append({
+                normalized_row = {
                     "district": district,
                     "crop": crop,
                     "season": season,
                     "yield_kg_ha": number(row, "yield_kg_ha", line, required_value=True, positive=True),
                     "production_mt": number(row, "production_mt", line),
                     "cultivated_area_ha": number(row, "cultivated_area_ha", line, positive=True),
-                })
+                }
+                harvested_area = number(row, "harvested_area_ha", line, positive=True)
+                if harvested_area is not None:
+                    normalized_row["harvested_area_ha"] = harvested_area
+                normalized.append(normalized_row)
             except ValueError as exc:
                 errors.append(str(exc))
                 if len(errors) >= 10:

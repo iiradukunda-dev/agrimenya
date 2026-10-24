@@ -9,15 +9,18 @@ from typing import Literal
 from uuid import UUID, uuid4
 from datetime import date
 from io import BytesIO
+from urllib.parse import urlencode, urlparse
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile, status
 from pydantic import BaseModel, Field, field_validator
 
-from app.core.auth import create_token, require_admin, require_community
+from app.core.auth import create_token, require_admin, require_community, verify_token
 from app.core.audit import audit_admin_action
 from app.core.config import settings
 from app.db import crud
-from app.services.admin_auth import hash_password, verify_password
+from app.services.admin_auth import (
+    hash_password, send_community_reset_email, verify_password,
+)
 
 router = APIRouter(prefix="/community", tags=["Farmer Community"])
 logger = logging.getLogger(__name__)
@@ -82,6 +85,23 @@ class CommunityLogin(BaseModel):
     @classmethod
     def email_normalized(cls, value: str) -> str:
         return value.strip().lower()
+
+
+class CommunityForgotPassword(BaseModel):
+    email: str = Field(min_length=3, max_length=254)
+
+    @field_validator("email")
+    @classmethod
+    def email_normalized(cls, value: str) -> str:
+        value = value.strip().lower()
+        if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", value):
+            raise ValueError("Enter a valid email address")
+        return value
+
+
+class CommunityResetPassword(BaseModel):
+    token: str = Field(min_length=20, max_length=200)
+    new_password: str = Field(min_length=12, max_length=256)
 
 
 class PostCreate(BaseModel):
@@ -189,6 +209,79 @@ def login(payload: CommunityLogin, request: Request):
                         "role": account["role"]}}
 
 
+@router.post("/password/forgot")
+def community_forgot_password(payload: CommunityForgotPassword, request: Request):
+    """Always return the same message so account existence cannot be queried."""
+    _ensure_secure_sessions()
+    ip = request.client.host if request.client else "unknown"
+    _rate_limit(_login_attempts, f"community-reset-ip:{ip}", 5, 3600)
+    _rate_limit(_login_attempts, f"community-reset-email:{payload.email}", 3, 3600)
+    response = {"message": "If an active community account matches that email, reset instructions will be sent."}
+    reset_host = (urlparse(settings.COMMUNITY_PASSWORD_RESET_URL).hostname or "").casefold()
+    local_development = (
+        settings.APP_ENV in {"development", "test"}
+        and reset_host in {"localhost", "127.0.0.1"}
+    )
+    smtp_ready = bool(settings.SMTP_HOST and settings.EMAIL_FROM) and (
+        bool(settings.SMTP_USER) == bool(settings.SMTP_PASSWORD)
+    )
+    try:
+        account = crud.get_community_account_by_email(payload.email)
+        if account and account.get("is_active"):
+            session_version = int(account.get("session_version", 1))
+            token = create_token("community_reset", 1800, {
+                "sub": str(account["id"]), "ver": session_version,
+                "purpose": "community_password_reset",
+            })
+            if local_development:
+                separator = "&" if "?" in settings.COMMUNITY_PASSWORD_RESET_URL else "?"
+                response["development_reset_url"] = (
+                    settings.COMMUNITY_PASSWORD_RESET_URL.rstrip("?") + separator
+                    + urlencode({"community_reset_token": token})
+                )
+            if smtp_ready:
+                send_community_reset_email(account["email"], account["display_name"], token)
+                if local_development:
+                    response["development_email_status"] = "accepted"
+            elif not local_development:
+                raise RuntimeError("Community password reset email is not configured")
+    except Exception as exc:
+        # Keep the response indistinguishable for unknown addresses and provider/database errors.
+        logger.exception("Community password recovery request failed")
+        if local_development:
+            response["development_email_status"] = "failed"
+            response["development_error"] = "Reset email could not be sent; use the local one-time link instead."
+    return response
+
+
+@router.post("/password/reset")
+def community_reset_password(payload: CommunityResetPassword, request: Request):
+    _ensure_secure_sessions()
+    ip = request.client.host if request.client else "unknown"
+    _rate_limit(_login_attempts, f"community-reset-complete:{ip}", 10)
+    try:
+        try:
+            claims = verify_token(payload.token, expected_role="community_reset")
+        except HTTPException as exc:
+            raise HTTPException(status_code=400, detail="Reset link is invalid, expired, or already used") from exc
+        account_id = claims.get("sub")
+        version = claims.get("ver")
+        if (claims.get("purpose") != "community_password_reset" or not account_id
+                or not isinstance(version, int)):
+            raise HTTPException(status_code=400, detail="Reset link is invalid, expired, or already used")
+        updated = crud.reset_community_password_once(
+            str(account_id), version, hash_password(payload.new_password)
+        )
+        if not updated:
+            raise HTTPException(status_code=400, detail="Reset link is invalid, expired, or already used")
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Community password could not be reset")
+        raise HTTPException(status_code=503, detail="Password reset is temporarily unavailable") from exc
+    return {"message": "Password updated. Sign in with your new password."}
+
+
 @router.get("/posts")
 def posts(limit: int = Query(default=30, ge=1, le=50), offset: int = Query(default=0, ge=0, le=10000),
           _: dict = Depends(require_community)):
@@ -197,6 +290,17 @@ def posts(limit: int = Query(default=30, ge=1, le=50), offset: int = Query(defau
     except Exception as exc:
         logger.exception("Community feed could not be loaded")
         raise HTTPException(status_code=503, detail="Community feed is temporarily unavailable") from exc
+
+
+@router.get("/comments")
+def comments_for_feed(post_ids: list[UUID] = Query(min_length=1, max_length=50),
+                      _: dict = Depends(require_community)):
+    """Fetch replies for a feed page with one bounded request."""
+    try:
+        return crud.list_community_comments_for_posts([str(post_id) for post_id in post_ids])
+    except Exception as exc:
+        logger.exception("Community feed replies could not be loaded")
+        raise HTTPException(status_code=503, detail="Replies are temporarily unavailable") from exc
 
 
 @router.get("/field-reports")

@@ -147,11 +147,21 @@ async def _process_message(message: Any, contact_info: dict[str, Any]) -> None:
         first_opt_out = contact.get("opt_out_at") is None
         crud.set_opt_out(contact["id"])
         if first_opt_out:
-            await _send_logged_reply(contact, "You are unsubscribed from Agri-Menya WhatsApp alerts. Reply START to opt in again.", "optout_confirm")
+            confirmation = (
+                "Ntuzongera kwakira amatangazo ya Agri-Menya kuri WhatsApp. Ohereza EMERA niba ushaka kongera kuyemera."
+                if contact.get("language") == "rw"
+                else "You are unsubscribed from Agri-Menya WhatsApp alerts. Reply START to opt in again."
+            )
+            await _send_logged_reply(contact, confirmation, "optout_confirm")
         return
     if keyword == "START":
         crud.set_opt_in(contact["id"], "whatsapp_keyword", "whatsapp-keyword-v1")
-        await _send_logged_reply(contact, "You are subscribed to Agri-Menya WhatsApp alerts. Reply STOP to unsubscribe.", "optin_confirm")
+        confirmation = (
+            "Wemeye kwakira amatangazo ya Agri-Menya kuri WhatsApp. Ohereza SHIRA kugira ngo uyahagarike."
+            if contact.get("language") == "rw"
+            else "You are subscribed to Agri-Menya WhatsApp alerts. Reply STOP to unsubscribe."
+        )
+        await _send_logged_reply(contact, confirmation, "optin_confirm")
         return
 
     if text:

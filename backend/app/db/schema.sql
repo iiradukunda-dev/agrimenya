@@ -20,6 +20,8 @@ create table if not exists zones (
     longitude       double precision not null,
     crop_type       text,
     season          text,               -- e.g. 'Season A 2026', 'Season B 2025', 'Annual 2025'
+    identity_key    text,
+    duplicate_of    uuid references zones(id) on delete set null,
     created_at      timestamptz default now()
 );
 
@@ -221,6 +223,7 @@ create table if not exists users (
 
 -- Helpful indexes
 create index if not exists idx_agri_metrics_zone on agri_metrics(zone_id);
+create index if not exists agri_metrics_crop_season_zone_idx on agri_metrics(crop, season, zone_id);
 create index if not exists idx_predictions_zone on predictions(zone_id);
 create index if not exists idx_alignment_zone on alignment_metrics(zone_id);
 create index if not exists idx_plans_zone on plans(zone_id);
