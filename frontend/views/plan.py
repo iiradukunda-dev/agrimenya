@@ -65,7 +65,7 @@ def render_plan() -> None:
         with st.form("save_plan_form", clear_on_submit=True):
             title = st.text_input(t("plan.plan_title", "Plan title"), placeholder="For example, first-season planting plan")
             roadmap = []
-            for index in range(int(action_count)):
+            for index in range(action_count):
                 st.markdown(f"**Action {index + 1}**")
                 action_title = st.text_input("Action", key=f"plan_action_title_{index}", placeholder="What needs to happen?")
                 detail_cols = st.columns([2, 1])
@@ -144,7 +144,8 @@ def render_plan() -> None:
                     st.error("Enter a cultivated area greater than zero.")
                 else:
                     estimate_inputs["area_cultivated"] = area
-                    estimate_inputs["rainfall_mm"] = rainfall
+                    if rainfall is not None:
+                        estimate_inputs["rainfall_mm"] = rainfall
                     result = api_client.get_zone_resources(selected_zone_id, **estimate_inputs)
                     if not result:
                         st.error("Resource quantities could not be calculated. Check the zone and backend connection.")
