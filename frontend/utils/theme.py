@@ -543,6 +543,75 @@ def load_theme() -> None:
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
     }
 
+    /* Form inputs inside Dark Liquid Glass Cards */
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="input"] > div,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="select"] > div,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTextArea"] textarea {
+      background: #061520 !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+      border-radius: 11px !important;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+      color: #ffffff !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="input"] input,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTextArea"] textarea {
+      color: #ffffff !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 0.94rem !important;
+      font-weight: 550 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="input"] input::placeholder,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTextArea"] textarea::placeholder {
+      color: rgba(203, 229, 245, 0.45) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="input"] > div:focus-within,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="select"] > div:focus-within,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTextArea"] textarea:focus {
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35), 0 0 16px rgba(56, 189, 248, 0.2) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stWidgetLabel"] p,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stWidgetLabel"] label {
+      color: #f1f5f9 !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 0.88rem !important;
+      font-weight: 650 !important;
+      letter-spacing: 0.01em !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stExpander"] {
+      border: 1px solid rgba(56, 189, 248, 0.22) !important;
+      border-radius: 11px !important;
+      background: rgba(6, 21, 32, 0.75) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stExpander"] summary {
+      color: #38bdf8 !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 0.88rem !important;
+      font-weight: 650 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stExpander"] summary:hover {
+      color: #7dd3fc !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stExpander"] summary svg {
+      fill: #38bdf8 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab-list"] {
+      border-bottom: 1.5px solid rgba(56, 189, 248, 0.25) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab"] {
+      color: #94a3b8 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab"]:hover {
+      color: #38bdf8 !important;
+      background: rgba(56, 189, 248, 0.08) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab"][aria-selected="true"] {
+      color: #ffffff !important;
+      border-bottom: 2.5px solid #38bdf8 !important;
+    }
+
     /* Tabs */
     [data-baseweb="tab-list"] {
       gap: 0.5rem !important;
