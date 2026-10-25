@@ -175,6 +175,36 @@ def render_pwa_support() -> None:
               box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
               color: #f0fdf4 !important;
             }
+            /* Persistent non-animated AI bulb styles */
+            .ag-floating-ai-fab {
+              position: fixed !important;
+              bottom: 24px !important;
+              right: 24px !important;
+              width: 72px !important;
+              height: 104px !important;
+              z-index: 9999999 !important;
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              background: transparent !important;
+              border: none !important;
+              box-shadow: none !important;
+              padding: 0 !important;
+              cursor: pointer !important;
+              animation: none !important;
+              text-decoration: none !important;
+            }
+            .ag-floating-ai-fab img {
+              width: 58px !important;
+              height: auto !important;
+              max-height: 92px !important;
+              object-fit: contain !important;
+              animation: none !important;
+              filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85))
+                      drop-shadow(0 0 14px rgba(74, 222, 128, 0.75))
+                      drop-shadow(0 0 24px rgba(34, 197, 94, 0.4))
+                      drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25)) !important;
+            }
           `;
           parentDoc.head.appendChild(styleEl);
         }
