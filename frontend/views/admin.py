@@ -4,6 +4,7 @@ Admin view: operations, governance, and system health.
 Implements Page 7 of the frontend handoff: zone/plan/alert management + health.
 """
 import logging
+from typing import Any
 
 import pandas as pd
 import requests
@@ -109,7 +110,7 @@ def render_admin() -> None:
                             if not district.strip():
                                 st.error("A zone must have a district.")
                             else:
-                                payload = {
+                                payload: dict[str, Any] = {
                                     "district": district.strip(), "sector": sector.strip() or None,
                                     "cell": cell.strip() or None, "crop_type": crop.strip() or None,
                                     "season": season.strip() or None,

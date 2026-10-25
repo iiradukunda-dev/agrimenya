@@ -116,8 +116,10 @@ def _field_reports(token: str, language: str) -> None:
                 photo = st.file_uploader(c["photo"], type=["jpg", "jpeg", "png", "webp"], accept_multiple_files=False)
                 submit = st.form_submit_button(c["save_report"], type="primary", use_container_width=True)
             if submit:
-                zone = zones_by_district.get(district)
-                if not crop.strip():
+                zone = zones_by_district.get(str(district))
+                if not zone or not zone.get("id"):
+                    st.error(c.get("unavailable", "Zone information is unavailable."))
+                elif not crop.strip():
                     st.error(c["crop_required"])
                 else:
                     files = None
