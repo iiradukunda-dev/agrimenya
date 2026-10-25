@@ -1023,7 +1023,7 @@ def set_language(lang_code: str) -> None:
     """Set active language code."""
     _l10n_manager.set_language(lang_code)
 
-def t(key: str, default: str = None, **kwargs) -> str:
+def t(key: str, default: str | None = None, **kwargs) -> str:
     """Alias for standard translation method."""
     return _l10n_manager.translate(key, default, **kwargs)
 
