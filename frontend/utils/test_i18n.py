@@ -51,3 +51,28 @@ def test_navbar_and_home_translation_keys():
     for lang in ["en", "rw", "fr"]:
         for key in keys:
             assert key in FALLBACK_TRANSLATIONS[lang], f"Key '{key}' missing for lang '{lang}'"
+
+
+def test_all_pages_translation_keys_exist():
+    """Verify that all main application pages have corresponding translation keys."""
+    page_keys = [
+        "dashboard.title",
+        "dashboard.kpi.zones_alignment",
+        "dashboard.weather.live_title",
+        "zones.title",
+        "zones.register_expander",
+        "ai.title",
+        "ai.tab.advisor",
+        "ai.tab.disease",
+        "about.title",
+        "about.sections_title",
+        "contact.title",
+        "contact.submit",
+        "guide.title",
+        "admin.title",
+    ]
+    for lang in ["en", "rw", "fr"]:
+        for key in page_keys:
+            assert key in FALLBACK_TRANSLATIONS[lang], f"Key '{key}' missing for lang '{lang}'"
+            assert len(FALLBACK_TRANSLATIONS[lang][key]) > 0
+
