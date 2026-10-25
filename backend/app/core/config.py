@@ -56,6 +56,7 @@ class Settings:
     WHATSAPP_PHONE_NUMBER_ID: str = os.getenv("WHATSAPP_PHONE_NUMBER_ID", "").strip()
     # Public E.164 sender number used for end-user click-to-chat links; not a secret.
     WHATSAPP_PUBLIC_NUMBER: str = os.getenv("WHATSAPP_PUBLIC_NUMBER", "").strip()
+    WHATSAPP_PUBLIC_CHAT_ENABLED: bool = _env_bool("WHATSAPP_PUBLIC_CHAT_ENABLED", False)
     WHATSAPP_BUSINESS_ACCOUNT_ID: str = os.getenv("WHATSAPP_BUSINESS_ACCOUNT_ID", "").strip()
     WHATSAPP_ACCESS_TOKEN: str = os.getenv("WHATSAPP_ACCESS_TOKEN", "")
     WHATSAPP_APP_SECRET: str = os.getenv("WHATSAPP_APP_SECRET", "")

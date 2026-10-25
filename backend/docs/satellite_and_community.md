@@ -26,7 +26,7 @@ mistaken for a time-series imagery API.
 ## Farmer community pilot
 
 Apply migrations `0009_farmer_community.sql`, `0010_field_observations.sql`,
-and `0011_community_unique_usernames.sql`
+`0011_community_unique_usernames.sql`, and `0015_community_verification_and_shared_rate_limits.sql`
 after migrations `0001` through `0008`. Community members register with a unique username, email, and password;
 accounts currently default to the farmer role. Passwords are stored as scrypt
 hashes, sessions expire after one hour, and the community API checks account
@@ -36,14 +36,18 @@ administrators review reports and hide, restore, or soft-delete content from
 the Admin panel. Community tables have RLS enabled and no public policies;
 only the backend service role accesses them.
 
-This is a development pilot. Email ownership and farmer/organization roles are
-not yet verified. Password recovery uses a signed, expiring link delivered by
-SMTP in deployed environments and an on-screen link in local development.
-Account session versioning makes a reset link single-use. Set
+Email verification is required before sign-in. Verification uses a hashed,
+single-use token that expires after 24 hours, delivered by SMTP in deployed
+environments and shown as a local link during development. Existing accounts
+must use the resend-verification flow after migration `0015`. Farmer and
+organization roles remain self-reported. Password recovery uses a signed,
+expiring link delivered by SMTP in deployed environments and an on-screen link
+in local development. Account session versioning makes a reset link single-use. Set
 `COMMUNITY_PASSWORD_RESET_URL` to the public Community page URL for deployment.
-Before public launch, add verified email or phone ownership,
-verified organization roles where required, a published community standard and
-privacy notice, and durable abuse throttling/monitoring at the API edge. Never
+Before public launch, add verified organization roles where required, a
+published community standard and privacy notice, and abuse monitoring at the
+API edge. Shared API rate limits are stored in Supabase; monitor this table as
+part of routine operations. Never
 present a peer post as an official extension recommendation.
 
 Migration `0010` adds a compact field observation flow with district, crop,

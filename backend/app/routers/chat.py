@@ -34,6 +34,7 @@ class ChatResponse(BaseModel):
     source: str = "grounded-context"
     district: str | None = None
     evidence_sources: list[str] = Field(default_factory=list)
+    evidence_source_details: list[dict[str, str]] = Field(default_factory=list)
     evidence_scope: str | None = None
     answer_type: Literal["record_grounded", "general_guidance", "insufficient_evidence"] = "insufficient_evidence"
 
@@ -81,6 +82,14 @@ def chat(request: ChatRequest, http_request: Request, _: dict = Depends(require_
         source=source,
         district=district,
         evidence_sources=evidence_sources,
+        evidence_source_details=([{
+            "title": "NISR Seasonal Agricultural Survey (SAS)",
+            "url": "https://statistics.gov.rw/data-sources/surveys/Seasonal-Agricultural-Survey?page=0",
+            "publisher": "National Institute of Statistics of Rwanda",
+            "scope": " / ".join(str(value) for value in (district, request.crop, request.season) if value),
+            "coverage": request.season or "Historical periods are listed in the answer",
+            "limitations": "District survey context; not a current farm measurement, forecast, or proof of cause.",
+        } for source in evidence_sources if "nisr" in source.casefold() or "sas" in source.casefold()]),
         evidence_scope=" / ".join(str(value) for value in (district, request.crop, request.season) if value),
         answer_type=answer_type,
     )
