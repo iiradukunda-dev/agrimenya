@@ -224,7 +224,7 @@ def render_home_hero() -> None:
 
         @keyframes ag-text-shimmer {{
           0% {{ filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.45)); }}
-          50% {{ filter: drop-shadow(0 0 24px rgba(74, 222, 128, 0.75)); }}
+          50% {{ filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.75)); }}
           100% {{ filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.6)); }}
         }}
 
@@ -318,7 +318,7 @@ def render_home_hero() -> None:
         }}
         @keyframes ag-beacon-radar {{
           0% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8); }}
-          50% {{ box-shadow: 0 0 0 6px rgba(74, 222, 128, 0.35); }}
+          50% {{ box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.35); }}
           100% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }}
         }}
 
@@ -333,7 +333,7 @@ def render_home_hero() -> None:
           text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7) !important;
         }}
         .ag-hero-glow-text {{
-          background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 35%, #4ade80 75%, #a7f3d0 100%) !important;
+          background: linear-gradient(135deg, #ffffff 0%, #bae6fd 45%, #38bdf8 100%) !important;
           -webkit-background-clip: text !important;
           -webkit-text-fill-color: transparent !important;
           display: inline-block !important;

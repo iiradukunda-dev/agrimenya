@@ -158,7 +158,7 @@ def login_card_header(
         <div style="
             height: 1px;
             width: 100%;
-            background: linear-gradient(90deg, transparent 0%, {accent_color}60 30%, rgba(74, 222, 128, 0.45) 70%, transparent 100%);
+            background: linear-gradient(90deg, transparent 0%, {accent_color}66 50%, transparent 100%);
             margin: 0.7rem 0 1.15rem 0;
         "></div>
     </div>
@@ -225,7 +225,7 @@ def authenticated_session_badge(
                 width: 44px;
                 height: 44px;
                 border-radius: 12px;
-                background: linear-gradient(135deg, #0284c7 0%, #059669 100%);
+                background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
                 display: flex;
                 align-items: center;
                 justify-content: center;

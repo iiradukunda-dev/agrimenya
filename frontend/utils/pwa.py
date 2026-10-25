@@ -111,7 +111,7 @@ def render_pwa_support() -> None:
           styleEl.textContent = `
             @keyframes agBulbPulse {
               0%, 100% { transform: scale(1); filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.45)); }
-              50% { transform: scale(1.05); filter: drop-shadow(0 0 28px rgba(74, 222, 128, 0.65)); }
+              50% { transform: scale(1.05); filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.75)); }
             }
             @keyframes agIndeterminateBar {
               0% { left: -35%; width: 35%; }
@@ -142,7 +142,7 @@ def render_pwa_support() -> None:
             #ag-top-progress .ag-top-bar {
               position: absolute;
               height: 100%;
-              background: linear-gradient(90deg, #0284c7 0%, #10b981 100%);
+              background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%);
               border-radius: 9999px;
               animation: agIndeterminateBar 1.4s infinite linear;
             }
@@ -200,10 +200,8 @@ def render_pwa_support() -> None:
               max-height: 92px !important;
               object-fit: contain !important;
               animation: none !important;
-              filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85))
-                      drop-shadow(0 0 14px rgba(74, 222, 128, 0.75))
-                      drop-shadow(0 0 24px rgba(34, 197, 94, 0.4))
-                      drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25)) !important;
+              filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75))
+                      drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) !important;
             }
           `;
           parentDoc.head.appendChild(styleEl);
@@ -246,13 +244,13 @@ def render_pwa_support() -> None:
           pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at 50% 25%, #05303f 0%, #021824 100%);z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
           pageLoader.innerHTML = `
             <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
-              <div style="position:absolute;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(74,222,128,0.12) 50%, transparent 70%);animation:agBulbPulse 2s infinite ease-in-out;"></div>
+              <div style="position:absolute;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(14,165,233,0.12) 50%, transparent 70%);animation:agBulbPulse 2s infinite ease-in-out;"></div>
               <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;position:relative;z-index:2;animation:agBulbPulse 2.2s infinite ease-in-out;">
             </div>
             <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-0.03em;color:#f0fdf4;margin:0 0 0.35rem 0;">agrimenya</h1>
             <p id="ag-loader-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:500;color:#94a3b8;margin:0 0 1.6rem 0;">Loading agro-climate intelligence...</p>
             <div style="width:190px;height:4px;background:rgba(255,255,255,0.08);border-radius:9999px;overflow:hidden;position:relative;">
-              <div style="position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg, #0284c7 0%, #10b981 100%);border-radius:9999px;animation:agIndeterminateBar 1.5s infinite ease-in-out;"></div>
+              <div style="position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg, #0284c7 0%, #0369a1 100%);border-radius:9999px;animation:agIndeterminateBar 1.5s infinite ease-in-out;"></div>
             </div>
           `;
           parentDoc.body.appendChild(pageLoader);
@@ -557,7 +555,7 @@ def render_pwa_support() -> None:
               <div style="background:#041f26;border:1.5px solid rgba(56,189,248,0.65);border-radius:20px;max-width:440px;width:100%;padding:2rem 1.8rem;box-shadow:0 24px 60px rgba(0,0,0,0.7), 0 0 30px rgba(56,189,248,0.35);color:#ffffff;font-family:\'Plus Jakarta Sans\',sans-serif;position:relative;text-align:center;">
                 <button id="ag-modal-close" style="position:absolute;top:14px;right:16px;background:transparent;border:none;color:#94a3b8;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px;transition:color 0.2s;">&times;</button>
                 <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
-                  <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya logo" style="width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(56,189,248,0.95)) drop-shadow(0 0 20px rgba(74,222,128,0.6));">
+                  <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya logo" style="width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(56,189,248,0.85));">
                 </div>
                 <h3 style="margin:0 0 0.35rem 0;font-size:1.45rem;font-weight:800;letter-spacing:-0.02em;color:#ffffff;text-shadow:0 2px 10px rgba(0,0,0,0.5);">Install agrimenya</h3>
                 <p style="color:#7dd3fc;font-size:0.86rem;margin:0 0 1.4rem 0;font-weight:600;">Fast offline field access &amp; instant satellite intelligence</p>
@@ -566,7 +564,7 @@ def render_pwa_support() -> None:
                   <div style="margin-bottom:0.75rem;"><strong style="color:#4ade80;display:block;margin-bottom:2px;">iPhone &amp; iPad (Safari):</strong> Tap the <strong>Share</strong> button (&#9083;), scroll down and choose <strong>Add to Home Screen</strong>.</div>
                   <div><strong style="color:#f59e0b;display:block;margin-bottom:2px;">Android (Chrome):</strong> Tap the three-dot menu (&vellip;) and tap <strong>Install app</strong> or <strong>Add to Home screen</strong>.</div>
                 </div>
-                <button id="ag-modal-gotit" style="width:100%;padding:0.75rem;border-radius:10px;background:linear-gradient(135deg,#0284c7 0%,#10b981 100%);border:1px solid rgba(56,189,248,0.8);color:#ffffff;font-size:0.92rem;font-weight:750;cursor:pointer;box-shadow:0 4px 16px rgba(14,165,233,0.4);transition:all 0.2s;">Got It</button>
+                <button id="ag-modal-gotit" style="width:100%;padding:0.75rem;border-radius:10px;background:linear-gradient(135deg,#0284c7 0%,#0369a1 100%);border:1px solid rgba(56,189,248,0.8);color:#ffffff;font-size:0.92rem;font-weight:750;cursor:pointer;box-shadow:0 4px 16px rgba(14,165,233,0.4);transition:all 0.2s;">Got It</button>
               </div>
             `;
             parentDoc.body.appendChild(modal);
@@ -588,9 +586,9 @@ def render_pwa_support() -> None:
             const installBtn = parentDoc.createElement('button');
             installBtn.id = 'ag-pwa-install-badge';
             installBtn.title = 'Install agrimenya App';
-            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:999999;padding:0.4rem 1.1rem 0.4rem 0.65rem;border-radius:9999px;background:linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%);border:1.5px solid rgba(56,189,248,0.75);color:#ffffff;font-family:"Plus Jakarta Sans",sans-serif;display:flex;align-items:center;gap:0.55rem;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38),0 0 8px rgba(74,222,128,0.25);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);';
+            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:999999;padding:0.4rem 1.1rem 0.4rem 0.65rem;border-radius:9999px;background:linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%);border:1.5px solid rgba(56,189,248,0.75);color:#ffffff;font-family:"Plus Jakarta Sans",sans-serif;display:flex;align-items:center;gap:0.55rem;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);';
             installBtn.innerHTML = `
-              <img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(56,189,248,0.95)) drop-shadow(0 0 12px rgba(74,222,128,0.6));pointer-events:none;">
+              <img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(56,189,248,0.95));pointer-events:none;">
               <div style="display:flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:1.15;pointer-events:none;">
                 <span style="font-size:0.84rem;font-weight:800;color:#ffffff;letter-spacing:-0.01em;">Install App</span>
                 <span style="font-size:0.68rem;font-weight:700;color:#38bdf8;letter-spacing:0.02em;">agrimenya</span>

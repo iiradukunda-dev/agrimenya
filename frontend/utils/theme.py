@@ -55,26 +55,25 @@ def load_theme() -> None:
       --ag-shadow-md: 0 8px 24px rgba(4, 31, 38, 0.08);
       --ag-shadow-lg: 0 20px 48px rgba(4, 31, 38, 0.12);
       --ag-shadow-glow: 0 0 28px rgba(56, 189, 248, 0.25);
-      --ag-shadow-bulb: 0 8px 30px rgba(14, 165, 233, 0.22), 0 0 20px rgba(74, 222, 128, 0.18);
+      --ag-shadow-bulb: 0 8px 30px rgba(14, 165, 233, 0.25);
     }
 
     /* Base Typography & Background */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
       color: var(--ag-ink);
-      background: radial-gradient(circle at 10% 8%, rgba(56, 189, 248, 0.18) 0%, transparent 45%),
-                  radial-gradient(circle at 90% 88%, rgba(74, 222, 128, 0.16) 0%, transparent 45%),
-                  radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, transparent 70%),
+      background: radial-gradient(circle at 15% 10%, rgba(2, 132, 199, 0.08) 0%, transparent 55%),
+                  radial-gradient(circle at 85% 90%, rgba(14, 165, 233, 0.05) 0%, transparent 55%),
                   var(--ag-bg-base);
       font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Custom smooth scrollbar with bulb cyan-emerald gradient */
+    /* Custom smooth scrollbar with clean sky blue styling */
     ::-webkit-scrollbar { width: 7px; height: 7px; }
     ::-webkit-scrollbar-track { background: #eaf1f4; }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #38bdf8 0%, #34d399 100%); border-radius: var(--ag-radius-pill); }
-    ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #0ea5e9 0%, #10b981 100%); }
+    ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: var(--ag-radius-pill); }
+    ::-webkit-scrollbar-thumb:hover { background: #0284c7; }
 
     [data-testid="stMainBlockContainer"] {
       max-width: 1440px;
@@ -126,10 +125,8 @@ def load_theme() -> None:
       max-height: 92px !important;
       object-fit: contain !important;
       animation: none !important;
-      filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85))
-              drop-shadow(0 0 14px rgba(74, 222, 128, 0.75))
-              drop-shadow(0 0 24px rgba(34, 197, 94, 0.4))
-              drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25)) !important;
+      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75))
+              drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) !important;
     }
 
     /* Headings */
@@ -377,17 +374,17 @@ def load_theme() -> None:
       transform: translateY(0) scale(0.99) !important;
     }
 
-    /* 3. Primary Action & Form Submit Buttons: Vibrant bioluminescent cyan-to-emerald gradient */
+    /* 3. Primary Action & Form Submit Buttons: Cohesive executive blue */
     .stButton > button[kind="primary"],
     .stButton > button[data-testid="stBaseButton-primary"],
     [data-testid="stBaseButton-primary"],
     [data-testid="stFormSubmitButton"] > button {
-      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 35%, #10b981 85%, #059669 100%) !important;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
       background-color: #0284c7 !important;
       border: 1.5px solid rgba(56, 189, 248, 0.85) !important;
       color: #ffffff !important;
-      box-shadow: 0 4px 18px rgba(14, 165, 233, 0.42), 0 0 14px rgba(74, 222, 128, 0.28) !important;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
     }
     .stButton > button[kind="primary"] *,
     .stButton > button[data-testid="stBaseButton-primary"] *,
@@ -395,16 +392,16 @@ def load_theme() -> None:
     [data-testid="stFormSubmitButton"] > button * {
       color: #ffffff !important;
       font-weight: 750 !important;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
     }
     .stButton > button[kind="primary"]:hover,
     .stButton > button[data-testid="stBaseButton-primary"]:hover,
     [data-testid="stBaseButton-primary"]:hover,
     [data-testid="stFormSubmitButton"] > button:hover {
-      background: linear-gradient(135deg, #0369a1 0%, #0284c7 35%, #059669 85%, #047857 100%) !important;
+      background: linear-gradient(135deg, #0369a1 0%, #075985 100%) !important;
       border-color: #38bdf8 !important;
       color: #ffffff !important;
-      box-shadow: 0 8px 28px rgba(14, 165, 233, 0.60), 0 0 24px rgba(74, 222, 128, 0.48) !important;
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45) !important;
       transform: translateY(-2px) scale(1.015) !important;
     }
     .stButton > button[kind="primary"]:active,

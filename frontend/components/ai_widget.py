@@ -60,7 +60,7 @@ def render_floating_ai_widget() -> None:
         width: 70px !important;
         height: 100px !important;
         transform: translate(-50%, -52%) !important;
-        background: radial-gradient(ellipse at 50% 40%, rgba(56, 189, 248, 0.45) 0%, rgba(74, 222, 128, 0.35) 35%, rgba(34, 197, 94, 0.18) 60%, rgba(14, 165, 233, 0) 80%) !important;
+        background: radial-gradient(ellipse at 50% 40%, rgba(56, 189, 248, 0.4) 0%, rgba(14, 165, 233, 0.18) 45%, transparent 75%) !important;
         border-radius: 50% !important;
         filter: blur(12px) !important;
         pointer-events: none !important;
@@ -83,18 +83,14 @@ def render_floating_ai_widget() -> None:
         max-height: 92px !important;
         object-fit: contain !important;
         animation: none !important;
-        filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85))
-                drop-shadow(0 0 14px rgba(74, 222, 128, 0.75))
-                drop-shadow(0 0 24px rgba(34, 197, 94, 0.4))
-                drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25)) !important;
+        filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75))
+                drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) !important;
         transition: filter 0.25s ease, transform 0.25s ease !important;
     }}
     .ag-floating-ai-fab:hover img {{
         animation: none !important;
-        filter: drop-shadow(0 0 12px rgba(125, 211, 252, 0.95))
-                drop-shadow(0 0 24px rgba(56, 189, 248, 0.85))
-                drop-shadow(0 0 36px rgba(74, 222, 128, 0.7))
-                drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25)) !important;
+        filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.9))
+                drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35)) !important;
     }}
     .ag-floating-ai-tooltip {{
         position: absolute !important;
