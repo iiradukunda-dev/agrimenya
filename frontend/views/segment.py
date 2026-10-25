@@ -19,15 +19,21 @@ def render_segment():
         # Keep filters visible in the page: the shared navbar hides Streamlit's sidebar.
         with st.container(border=True):
             st.subheader(t("seg.filters"))
-            season_values = sorted(
-                str(value) for value in df.get("season", []).dropna().unique()
-            ) if "season" in df.columns else []
-            crop_values = sorted(str(value) for value in df.get("Crop", []).dropna().unique()) if "Crop" in df.columns else []
+            season_values = (
+                sorted(str(value) for value in df["season"].dropna().unique())
+                if "season" in df.columns
+                else []
+            )
+            crop_values = (
+                sorted(str(value) for value in df["Crop"].dropna().unique())
+                if "Crop" in df.columns
+                else []
+            )
             priority_values = [
                 value for value in ("High", "Medium", "Low")
                 if "Priority" in df.columns and value in set(df["Priority"].dropna())
             ]
-            if "Unassessed" in set(df.get("Priority", [])):
+            if "Priority" in df.columns and "Unassessed" in set(df["Priority"].dropna()):
                 priority_values.append("Unassessed")
             all_seasons_label = t("common.all_seasons", "All seasons")
             filter_cols = st.columns(2)
@@ -70,8 +76,15 @@ def render_segment():
                 st.divider()
                 st.subheader(t("seg.summary_title"))
                 if "Production_MT" in filtered_df.columns:
-                    display_df = filtered_df[["District", "Crop", "Priority", "Production_MT"]].sort_values("Production_MT", ascending=False).copy()
-                    display_df.columns = [t("seg.col_district"), t("seg.col_crop"), t("seg.col_priority"), t("seg.col_yield")]
+                    cols_to_show = [c for c in ["District", "Crop", "Priority", "Production_MT"] if c in filtered_df.columns]
+                    display_df = filtered_df[cols_to_show].sort_values("Production_MT", ascending=False).rename(
+                        columns={
+                            "District": t("seg.col_district"),
+                            "Crop": t("seg.col_crop"),
+                            "Priority": t("seg.col_priority"),
+                            "Production_MT": t("seg.col_yield"),
+                        }
+                    )
                     st.dataframe(
                         display_df,
                         width="stretch",
