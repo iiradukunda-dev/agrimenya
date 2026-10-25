@@ -156,11 +156,6 @@ def render_home_hero() -> None:
         box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
         transform: translateY(-2px) !important;
       }
-        border-color: rgba(56, 189, 248, 0.8) !important;
-        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
-        color: #ffffff !important;
-        transform: translateY(-1px) !important;
-      }
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover *,
       [data-testid="stVerticalBlockBorderWrapper"] button:hover * {
         color: #ffffff !important;
