@@ -342,7 +342,7 @@ def get_priority_data() -> pd.DataFrame:
             }, inplace=True)
             # Saved predictions are total kg for the selected zone area.
             if "Production_MT" in df.columns:
-                df["Production_MT"] = pd.to_numeric(df["Production_MT"], errors="coerce") / 1000
+                df["Production_MT"] = pd.Series(pd.to_numeric(df["Production_MT"], errors="coerce"), dtype=float) / 1000.0
             if "Crop" not in df.columns:
                 df["Crop"] = df["crop_type"] if "crop_type" in df.columns else "Unknown"
             if "Crop" in df.columns:
