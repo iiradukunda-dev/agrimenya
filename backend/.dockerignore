@@ -16,6 +16,7 @@ data/*
 data/eval/*
 !data/eval/yield_model_evaluation.json
 !data/training_table.csv
+!data/nisr_official_yields_2022_2026.csv
 !app/ml/
 app/ml/artifacts/*
 !app/ml/artifacts/yield_baselines.json

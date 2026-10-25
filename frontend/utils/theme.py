@@ -305,73 +305,170 @@ def load_theme() -> None:
       letter-spacing: -0.02em !important;
     }
 
-    /* Buttons with Cyan-to-Emerald Bioluminescent Glow */
-    .stButton > button, [data-testid="stDownloadButton"] button {
-      border-radius: 10px !important;
+    /* =========================================================
+       AGRIMENYA GLOBAL BUTTON ARCHITECTURE: HIGH-CONTRAST & ULTRA-CLEAR
+       ========================================================= */
+
+    /* 1. Base Button Styles (Applies to all Streamlit buttons) */
+    .stButton > button,
+    [data-testid="stBaseButton-secondary"],
+    [data-testid="stBaseButton-primary"],
+    [data-testid="stFormSubmitButton"] > button,
+    [data-testid="stDownloadButton"] button {
+      border-radius: 12px !important;
       font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif !important;
-      font-weight: 650 !important;
-      font-size: 0.92rem !important;
-      letter-spacing: 0.01em !important;
-      min-height: 2.75rem !important;
-      padding: 0.5rem 1.3rem !important;
-      border: 1px solid var(--ag-line) !important;
+      font-weight: 700 !important;
+      font-size: 0.94rem !important;
+      letter-spacing: -0.01em !important;
+      min-height: 2.85rem !important;
+      padding: 0.55rem 1.45rem !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.5rem !important;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      will-change: transform, box-shadow;
+    }
+
+    /* 2. Secondary / Standard Buttons: Crisp, high-contrast outline on light canvas */
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]),
+    [data-testid="stBaseButton-secondary"] {
       background: #ffffff !important;
-      color: var(--ag-forest) !important;
-      box-shadow: 0 2px 4px rgba(4, 31, 38, 0.03) !important;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    }
-    .stButton > button:hover {
-      border-color: #38bdf8 !important;
+      background-color: #ffffff !important;
+      border: 1.5px solid #0284c7 !important;
       color: #0284c7 !important;
-      transform: translateY(-2px) !important;
-      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.25) !important;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
     }
-    .stButton > button:active {
-      transform: translateY(0) !important;
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]) *,
+    [data-testid="stBaseButton-secondary"] * {
+      color: #0284c7 !important;
+      font-weight: 700 !important;
     }
-    .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
-      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 35%, #10b981 85%, #059669 100%) !important;
-      border: 1px solid rgba(56, 189, 248, 0.4) !important;
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]) span[data-testid="stIconMaterial"],
+    [data-testid="stBaseButton-secondary"] span[data-testid="stIconMaterial"],
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]) svg,
+    [data-testid="stBaseButton-secondary"] svg {
+      color: #0284c7 !important;
+      stroke: #0284c7 !important;
+    }
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):hover,
+    [data-testid="stBaseButton-secondary"]:hover {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      background-color: #0284c7 !important;
+      border-color: #38bdf8 !important;
       color: #ffffff !important;
-      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.38), 0 0 12px rgba(74, 222, 128, 0.22) !important;
-    }
-    .stButton > button[kind="primary"]:hover, .stButton > button[data-testid="stBaseButton-primary"]:hover {
-      background: linear-gradient(135deg, #0369a1 0%, #0284c7 35%, #059669 85%, #047857 100%) !important;
-      border-color: rgba(56, 189, 248, 0.6) !important;
-      color: #ffffff !important;
-      box-shadow: 0 8px 26px rgba(14, 165, 233, 0.55), 0 0 22px rgba(74, 222, 128, 0.4) !important;
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.38) !important;
       transform: translateY(-2px) scale(1.01) !important;
     }
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):hover *,
+    [data-testid="stBaseButton-secondary"]:hover * {
+      color: #ffffff !important;
+    }
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):hover span[data-testid="stIconMaterial"],
+    [data-testid="stBaseButton-secondary"]:hover span[data-testid="stIconMaterial"],
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):hover svg,
+    [data-testid="stBaseButton-secondary"]:hover svg {
+      color: #ffffff !important;
+      stroke: #ffffff !important;
+    }
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):active,
+    [data-testid="stBaseButton-secondary"]:active {
+      transform: translateY(0) scale(0.99) !important;
+    }
 
-    /* Structured Card Buttons override (Placed after generic button rules) */
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
-    [data-testid="stVerticalBlockBorderWrapper"] button {
-      background: #0f2738 !important;
-      border: 1px solid rgba(56, 189, 248, 0.28) !important;
-      border-radius: 10px !important;
+    /* 3. Primary Action & Form Submit Buttons: Vibrant bioluminescent cyan-to-emerald gradient */
+    .stButton > button[kind="primary"],
+    .stButton > button[data-testid="stBaseButton-primary"],
+    [data-testid="stBaseButton-primary"],
+    [data-testid="stFormSubmitButton"] > button {
+      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 35%, #10b981 85%, #059669 100%) !important;
+      background-color: #0284c7 !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.85) !important;
       color: #ffffff !important;
-      font-weight: 700 !important;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
-      transition: all 0.25s ease !important;
+      box-shadow: 0 4px 18px rgba(14, 165, 233, 0.42), 0 0 14px rgba(74, 222, 128, 0.28) !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
-    [data-testid="stVerticalBlockBorderWrapper"] button * {
+    .stButton > button[kind="primary"] *,
+    .stButton > button[data-testid="stBaseButton-primary"] *,
+    [data-testid="stBaseButton-primary"] *,
+    [data-testid="stFormSubmitButton"] > button * {
       color: #ffffff !important;
+      font-weight: 750 !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+    }
+    .stButton > button[kind="primary"]:hover,
+    .stButton > button[data-testid="stBaseButton-primary"]:hover,
+    [data-testid="stBaseButton-primary"]:hover,
+    [data-testid="stFormSubmitButton"] > button:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 35%, #059669 85%, #047857 100%) !important;
+      border-color: #38bdf8 !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 28px rgba(14, 165, 233, 0.60), 0 0 24px rgba(74, 222, 128, 0.48) !important;
+      transform: translateY(-2px) scale(1.015) !important;
+    }
+    .stButton > button[kind="primary"]:active,
+    .stButton > button[data-testid="stBaseButton-primary"]:active,
+    [data-testid="stBaseButton-primary"]:active,
+    [data-testid="stFormSubmitButton"] > button:active {
+      transform: translateY(0) scale(0.99) !important;
+    }
+
+    /* 4. Download / Export Buttons */
+    [data-testid="stDownloadButton"] button,
+    .stDownloadButton > button {
+      background: #ffffff !important;
+      border: 1.5px solid #10b981 !important;
+      color: #047857 !important;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15) !important;
+    }
+    [data-testid="stDownloadButton"] button *,
+    .stDownloadButton > button * {
+      color: #047857 !important;
       font-weight: 700 !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
-    [data-testid="stVerticalBlockBorderWrapper"] button:hover {
-      background: #0284c7 !important;
-      border-color: rgba(56, 189, 248, 0.8) !important;
+    [data-testid="stDownloadButton"] button:hover,
+    .stDownloadButton > button:hover {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+      border-color: #34d399 !important;
       color: #ffffff !important;
-      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35) !important;
       transform: translateY(-2px) !important;
     }
+    [data-testid="stDownloadButton"] button:hover *,
+    .stDownloadButton > button:hover * {
+      color: #ffffff !important;
+    }
 
-    /* Navbar Modern Solid Buttons & Popovers */
-    [data-testid="stHorizontalBlock"] button,
-    [data-testid="stHorizontalBlock"] .stPopover > button,
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
+    /* 5. Buttons inside Dark Cards & Bordered Containers */
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]),
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]) {
+      background: linear-gradient(135deg, #0e3044 0%, #082130 100%) !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.55) !important;
+      border-radius: 12px !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+      transition: all 0.28s ease !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]) *,
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]) * {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]):hover,
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]):hover {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      border-color: #38bdf8 !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.5) !important;
+      transform: translateY(-2px) scale(1.015) !important;
+    }
+
+    /* 6. Scoped Navbar Pill Buttons & Popovers */
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
       background: #081a26 !important;
       border-radius: 10px !important;
       min-height: 2.55rem !important;
@@ -385,32 +482,32 @@ def load_theme() -> None:
       text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
       transition: all 0.25s ease !important;
     }
-    [data-testid="stHorizontalBlock"] button p,
-    [data-testid="stHorizontalBlock"] .stPopover > button p,
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p {
       color: #ffffff !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-weight: 700 !important;
     }
-    [data-testid="stHorizontalBlock"] button span[data-testid="stIconMaterial"],
-    [data-testid="stHorizontalBlock"] .stPopover > button span[data-testid="stIconMaterial"],
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span[data-testid="stIconMaterial"] {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button span[data-testid="stIconMaterial"],
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button span[data-testid="stIconMaterial"],
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span[data-testid="stIconMaterial"] {
       color: #ffffff !important;
       font-family: "Material Symbols Rounded", "Material Symbols Outlined" !important;
     }
-    [data-testid="stHorizontalBlock"] button:hover,
-    [data-testid="stHorizontalBlock"] .stPopover > button:hover,
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
       background: #0c2434 !important;
       border-color: rgba(56, 189, 248, 0.65) !important;
       box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
       transform: translateY(-1px) !important;
     }
-    [data-testid="stHorizontalBlock"] button:hover p,
-    [data-testid="stHorizontalBlock"] .stPopover > button:hover p,
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
-    [data-testid="stHorizontalBlock"] button:hover span[data-testid="stIconMaterial"],
-    [data-testid="stHorizontalBlock"] .stPopover > button:hover span[data-testid="stIconMaterial"] {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover span[data-testid="stIconMaterial"],
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover span[data-testid="stIconMaterial"] {
       color: #38bdf8 !important;
     }
 

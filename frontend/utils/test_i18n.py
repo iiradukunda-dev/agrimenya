@@ -70,6 +70,7 @@ def test_all_pages_translation_keys_exist():
         "contact.submit",
         "guide.title",
         "admin.title",
+        "nav.install_app",
     ]
     for lang in ["en", "rw", "fr"]:
         for key in page_keys:
