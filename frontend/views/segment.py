@@ -29,9 +29,10 @@ def render_segment():
             ]
             if "Unassessed" in set(df.get("Priority", [])):
                 priority_values.append("Unassessed")
+            all_seasons_label = t("common.all_seasons", "All seasons")
             filter_cols = st.columns(2)
             with filter_cols[0]:
-                selected_season = st.selectbox("Season", ["All seasons"] + season_values)
+                selected_season = st.selectbox(t("seg.season", "Season"), [all_seasons_label] + season_values)
                 priority_level = st.multiselect(t("seg.priority_level"), priority_values, default=priority_values)
             with filter_cols[1]:
                 selected_crops = st.multiselect(t("seg.crops"), crop_values, default=crop_values)
@@ -41,7 +42,7 @@ def render_segment():
         else:
             # Filter dataframe
             filtered_df = df.copy()
-            if selected_season != "All seasons" and "season" in filtered_df.columns:
+            if selected_season != all_seasons_label and "season" in filtered_df.columns:
                 filtered_df = filtered_df[filtered_df["season"] == selected_season]
             if "Crop" in filtered_df.columns:
                 selected_crop_keys = {crop.casefold() for crop in selected_crops}
