@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 def render_admin() -> None:
     try:
         if not api_client.render_admin_login("admin_panel"):
-            st.info("Sign in with your administrator email and password to use these operations.")
             return
         render_icon_title(
             "assets/compass.svg",

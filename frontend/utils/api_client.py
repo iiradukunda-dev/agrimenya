@@ -62,57 +62,116 @@ def admin_session_authenticated() -> bool:
 
 def render_admin_login(key_prefix: str = "admin") -> bool:
     """Require a named administrator account before using admin APIs."""
+    from components.cards import login_card_header, security_trust_footer, authenticated_session_badge
+
     reset_token = st.query_params.get("reset_token")
     if reset_token:
-        st.subheader("Reset administrator password")
-        with st.form(f"{key_prefix}_reset_form"):
-            password = st.text_input("New password (12 characters minimum)", type="password", key=f"{key_prefix}_new_password")
-            confirmation = st.text_input("Confirm new password", type="password", key=f"{key_prefix}_confirm_password")
-            submit = st.form_submit_button("Set new password", type="primary")
-        if submit:
-            if len(password) < 12:
-                st.error("Use at least 12 characters for your password.")
-            elif password != confirmation:
-                st.error("The passwords do not match.")
-            else:
-                result = reset_admin_password(reset_token, password)
-                if result:
-                    st.success("Password updated. Sign in with your new password.")
-                    st.query_params.clear()
-                    st.rerun()
-                else:
-                    st.error(get_admin_api_error("/auth/admin/password/reset") or "This reset link is invalid or expired.")
+        col_l, col_center, col_r = st.columns([1, 1.8, 1])
+        with col_center:
+            with st.container(border=True):
+                login_card_header(
+                    title="Reset Password",
+                    subtitle="Set a new secure password for your administrator account.",
+                    badge_text="SECURITY RECOVERY",
+                    accent_color="#0284c7",
+                )
+                with st.form(f"{key_prefix}_reset_form"):
+                    password = st.text_input(
+                        "New password (12 characters minimum)",
+                        type="password",
+                        placeholder="Min. 12 characters",
+                        key=f"{key_prefix}_new_password",
+                    )
+                    confirmation = st.text_input(
+                        "Confirm new password",
+                        type="password",
+                        placeholder="Re-enter password",
+                        key=f"{key_prefix}_confirm_password",
+                    )
+                    submit = st.form_submit_button("Update Password →", type="primary", use_container_width=True)
+                if submit:
+                    if len(password) < 12:
+                        st.error("Use at least 12 characters for your password.")
+                    elif password != confirmation:
+                        st.error("The passwords do not match.")
+                    else:
+                        result = reset_admin_password(reset_token, password)
+                        if result:
+                            st.success("Password updated. Sign in with your new password.")
+                            st.query_params.clear()
+                            st.rerun()
+                        else:
+                            st.error(get_admin_api_error("/auth/admin/password/reset") or "This reset link is invalid or expired.")
+                security_trust_footer()
         return False
+
     if admin_session_authenticated():
         identity = st.session_state.get("admin_identity", {})
-        st.caption(f"Signed in as {identity.get('display_name') or identity.get('email') or 'administrator'} (session expires after 30 minutes).")
-        if st.button("Sign out of admin", key=f"{key_prefix}_signout"):
+        display_name = identity.get("display_name") or identity.get("email") or "Administrator"
+        email = identity.get("email") or ""
+        if authenticated_session_badge(display_name=display_name, email=email, role="System Administrator", key_prefix=key_prefix):
             st.session_state.pop("admin_session_expires_at", None)
             st.session_state.pop("admin_access_token", None)
             st.session_state.pop("admin_identity", None)
             st.rerun()
         return True
+
     widget_key = f"{key_prefix}_password"
-    with st.form(f"{key_prefix}_login_form"):
-        st.text_input("Administrator email", key=f"{key_prefix}_email")
-        st.text_input("Password", type="password", key=widget_key)
-        st.form_submit_button(
-            "Sign in",
-            on_click=_authenticate_admin_session,
-            args=(widget_key,),
-        )
-    login_error = st.session_state.pop("admin_login_error", None)
-    if login_error:
-        st.error(login_error)
-    with st.expander("Forgot your password?"):
-        with st.form(f"{key_prefix}_forgot_form"):
-            email = st.text_input("Administrator email", key=f"{key_prefix}_forgot_email")
-            forgot = st.form_submit_button("Send reset link")
-        if forgot:
-            if request_admin_password_reset(email):
-                st.success("If an active account matches that email, reset instructions will be sent.")
-            else:
-                st.error(get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
+    is_main_page = key_prefix == "admin_panel"
+
+    if is_main_page:
+        col_l, col_center, col_r = st.columns([1, 1.8, 1])
+        card_col = col_center
+    else:
+        card_col = st.container()
+
+    with card_col:
+        with st.container(border=True):
+            login_card_header(
+                title="Administrator Portal",
+                subtitle="Sign in with authorized credentials to access zone management, NISR data ingestion, and system controls.",
+                badge_text="SECURITY PROTOCOL",
+                accent_color="#0284c7",
+            )
+            login_error = st.session_state.pop("admin_login_error", None)
+            if login_error:
+                st.error(login_error)
+            with st.form(f"{key_prefix}_login_form"):
+                st.text_input(
+                    "Administrator email",
+                    placeholder="admin@agrimenya.rw",
+                    key=f"{key_prefix}_email",
+                )
+                st.text_input(
+                    "Password",
+                    type="password",
+                    placeholder="••••••••••••",
+                    key=widget_key,
+                )
+                st.form_submit_button(
+                    "Authenticate Session →",
+                    type="primary",
+                    use_container_width=True,
+                    on_click=_authenticate_admin_session,
+                    args=(widget_key,),
+                )
+            with st.expander("Forgot your administrator password?"):
+                with st.form(f"{key_prefix}_forgot_form"):
+                    email = st.text_input(
+                        "Administrator email",
+                        placeholder="admin@agrimenya.rw",
+                        key=f"{key_prefix}_forgot_email",
+                    )
+                    forgot = st.form_submit_button("Send reset link →", use_container_width=True)
+                if forgot:
+                    if request_admin_password_reset(email):
+                        st.success("If an active account matches that email, reset instructions will be sent.")
+                    else:
+                        st.error(get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
+            security_trust_footer(
+                message="256-bit TLS encrypted session",
+                session_info="30-minute auto-expiry timeout",
+            )
     return admin_session_authenticated()
 
 
