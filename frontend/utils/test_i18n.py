@@ -76,3 +76,37 @@ def test_all_pages_translation_keys_exist():
             assert key in FALLBACK_TRANSLATIONS[lang], f"Key '{key}' missing for lang '{lang}'"
             assert len(FALLBACK_TRANSLATIONS[lang][key]) > 0
 
+
+def test_dynamic_language_switching_across_all_pages():
+    """Verify that switching language dynamically updates page text across all views."""
+    # Test English
+    set_language("en")
+    assert t("dashboard.title") == "Dashboard"
+    assert t("about.title") == "About agrimenya"
+    assert t("contact.title") == "Send feedback"
+    assert t("guide.title") == "Data guide"
+    assert t("zones.title") == "Agricultural Zones"
+    assert t("ai.title") == "AI Assistant"
+
+    # Test Kinyarwanda
+    set_language("rw")
+    assert t("dashboard.title") == "Incamake"
+    assert t("about.title") == "Ibyerekeye agrimenya"
+    assert t("contact.title") == "Tanga ibitekerezo"
+    assert t("guide.title") == "Igitabo cy'Amakuru"
+    assert t("zones.title") == "Uduce tw'Ubuhinzi"
+    assert t("ai.title") == "Ubufasha bwa AI"
+
+    # Test French
+    set_language("fr")
+    assert t("dashboard.title") == "Tableau de Bord"
+    assert t("about.title") == "À propos d'agrimenya"
+    assert t("contact.title") == "Envoyer un retour"
+    assert t("guide.title") == "Guide des données"
+    assert t("zones.title") == "Zones Agricoles"
+    assert t("ai.title") == "Assistant IA"
+
+    # Reset to English
+    set_language("en")
+
+
