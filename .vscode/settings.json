@@ -1,6 +1,7 @@
 {
-    "python.analysis.extraPaths":  [
-                                       "frontend",
-                                       "backend/app"
-                                   ]
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python.analysis.extraPaths": [
+        "frontend",
+        "backend/app"
+    ]
 }
