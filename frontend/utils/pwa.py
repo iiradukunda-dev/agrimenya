@@ -528,31 +528,93 @@ def render_pwa_support() -> None:
         setTimeout(syncActiveNavbarTab, 400);
         setTimeout(syncActiveNavbarTab, 900);
 
-        // 11. Handle native PWA install prompt button
+        // 11. Custom Install App button and modal themed to the agrimenya logo
         window.parent.addEventListener('beforeinstallprompt', (e) => {
           e.preventDefault();
           window.parent.__agrimenya_deferred_prompt = e;
+        });
 
-          let installBtn = parentDoc.getElementById('ag-pwa-install-badge');
-          if (!installBtn) {
-            installBtn = parentDoc.createElement('button');
-            installBtn.id = 'ag-pwa-install-badge';
-            installBtn.title = 'Install agrimenya as Progressive Web App';
-            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:99999;padding:0.45rem 0.95rem;border-radius:10px;background:#061a26;border:1px solid rgba(56,189,248,0.5);color:#38bdf8;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:0.45rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:all 0.2s;';
-            installBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Install App</span>';
-            installBtn.addEventListener('click', async () => {
-              if (window.parent.__agrimenya_deferred_prompt) {
-                window.parent.__agrimenya_deferred_prompt.prompt();
-                const { outcome } = await window.parent.__agrimenya_deferred_prompt.userChoice;
-                if (outcome === 'accepted') {
-                  installBtn.remove();
-                }
-                window.parent.__agrimenya_deferred_prompt = null;
+        // Global install trigger function
+        window.parent.__agrimenya_trigger_install = function() {
+          if (window.parent.__agrimenya_deferred_prompt) {
+            window.parent.__agrimenya_deferred_prompt.prompt();
+            window.parent.__agrimenya_deferred_prompt.userChoice.then((choice) => {
+              if (choice.outcome === 'accepted') {
+                const btn = parentDoc.getElementById('ag-pwa-install-badge');
+                if (btn) btn.style.display = 'none';
               }
+              window.parent.__agrimenya_deferred_prompt = null;
+            });
+            return;
+          }
+          // If native prompt is not active, display the themed instructions modal
+          let modal = parentDoc.getElementById('ag-install-modal');
+          if (!modal) {
+            modal = parentDoc.createElement('div');
+            modal.id = 'ag-install-modal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(3,29,42,0.85);backdrop-filter:blur(10px);z-index:99999999;display:flex;align-items:center;justify-content:center;padding:1.5rem;box-sizing:border-box;';
+            modal.innerHTML = `
+              <div style="background:#041f26;border:1.5px solid rgba(56,189,248,0.65);border-radius:20px;max-width:440px;width:100%;padding:2rem 1.8rem;box-shadow:0 24px 60px rgba(0,0,0,0.7), 0 0 30px rgba(56,189,248,0.35);color:#ffffff;font-family:\'Plus Jakarta Sans\',sans-serif;position:relative;text-align:center;">
+                <button id="ag-modal-close" style="position:absolute;top:14px;right:16px;background:transparent;border:none;color:#94a3b8;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px;transition:color 0.2s;">&times;</button>
+                <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
+                  <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya logo" style="width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(56,189,248,0.95)) drop-shadow(0 0 20px rgba(74,222,128,0.6));">
+                </div>
+                <h3 style="margin:0 0 0.35rem 0;font-size:1.45rem;font-weight:800;letter-spacing:-0.02em;color:#ffffff;text-shadow:0 2px 10px rgba(0,0,0,0.5);">Install agrimenya</h3>
+                <p style="color:#7dd3fc;font-size:0.86rem;margin:0 0 1.4rem 0;font-weight:600;">Fast offline field access &amp; instant satellite intelligence</p>
+                <div style="text-align:left;background:#082736;border:1px solid rgba(56,189,248,0.25);border-radius:12px;padding:1rem;margin-bottom:1.4rem;font-size:0.85rem;line-height:1.55;color:#e0f2fe;">
+                  <div style="margin-bottom:0.75rem;"><strong style="color:#38bdf8;display:block;margin-bottom:2px;">Desktop (Chrome, Edge):</strong> Click the install icon (&#8853;) in the address bar or browser menu &gt; <em>Install agrimenya</em>.</div>
+                  <div style="margin-bottom:0.75rem;"><strong style="color:#4ade80;display:block;margin-bottom:2px;">iPhone &amp; iPad (Safari):</strong> Tap the <strong>Share</strong> button (&#9083;), scroll down and choose <strong>Add to Home Screen</strong>.</div>
+                  <div><strong style="color:#f59e0b;display:block;margin-bottom:2px;">Android (Chrome):</strong> Tap the three-dot menu (&vellip;) and tap <strong>Install app</strong> or <strong>Add to Home screen</strong>.</div>
+                </div>
+                <button id="ag-modal-gotit" style="width:100%;padding:0.75rem;border-radius:10px;background:linear-gradient(135deg,#0284c7 0%,#10b981 100%);border:1px solid rgba(56,189,248,0.8);color:#ffffff;font-size:0.92rem;font-weight:750;cursor:pointer;box-shadow:0 4px 16px rgba(14,165,233,0.4);transition:all 0.2s;">Got It</button>
+              </div>
+            `;
+            parentDoc.body.appendChild(modal);
+            const closeBtn = modal.querySelector('#ag-modal-close');
+            const gotItBtn = modal.querySelector('#ag-modal-gotit');
+            const closeModal = () => modal.remove();
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (gotItBtn) gotItBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (ev) => {
+              if (ev.target === modal) closeModal();
+            });
+          }
+        };
+
+        // Render the floating Install App button themed to the logo
+        if (!parentDoc.getElementById('ag-pwa-install-badge')) {
+          const isStandalone = window.parent.matchMedia('(display-mode: standalone)').matches || window.parent.navigator.standalone === true;
+          if (!isStandalone) {
+            const installBtn = parentDoc.createElement('button');
+            installBtn.id = 'ag-pwa-install-badge';
+            installBtn.title = 'Install agrimenya App';
+            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:999999;padding:0.4rem 1.1rem 0.4rem 0.65rem;border-radius:9999px;background:linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%);border:1.5px solid rgba(56,189,248,0.75);color:#ffffff;font-family:"Plus Jakarta Sans",sans-serif;display:flex;align-items:center;gap:0.55rem;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38),0 0 8px rgba(74,222,128,0.25);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);';
+            installBtn.innerHTML = `
+              <img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(56,189,248,0.95)) drop-shadow(0 0 12px rgba(74,222,128,0.6));pointer-events:none;">
+              <div style="display:flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:1.15;pointer-events:none;">
+                <span style="font-size:0.84rem;font-weight:800;color:#ffffff;letter-spacing:-0.01em;">Install App</span>
+                <span style="font-size:0.68rem;font-weight:700;color:#38bdf8;letter-spacing:0.02em;">agrimenya</span>
+              </div>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;pointer-events:none;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            `;
+            installBtn.addEventListener('mouseenter', () => {
+              installBtn.style.transform = 'translateY(-3px) scale(1.03)';
+              installBtn.style.borderColor = '#38bdf8';
+              installBtn.style.boxShadow = '0 16px 36px rgba(0,0,0,0.6), 0 0 26px rgba(56,189,248,0.65), 0 0 16px rgba(74,222,128,0.45)';
+              installBtn.style.background = 'linear-gradient(135deg, #063143 0%, #0a465e 55%, #042533 100%)';
+            });
+            installBtn.addEventListener('mouseleave', () => {
+              installBtn.style.transform = 'translateY(0) scale(1)';
+              installBtn.style.borderColor = 'rgba(56,189,248,0.75)';
+              installBtn.style.boxShadow = '0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38),0 0 8px rgba(74,222,128,0.25)';
+              installBtn.style.background = 'linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%)';
+            });
+            installBtn.addEventListener('click', () => {
+              window.parent.__agrimenya_trigger_install();
             });
             parentDoc.body.appendChild(installBtn);
           }
-        });
+        }
 
       } catch (err) {
         console.error('PWA initialization error:', err);
