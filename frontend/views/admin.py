@@ -11,6 +11,7 @@ import streamlit as st
 from components.errors import render_error_page
 from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
+from utils.i18n import t
 
 logger = logging.getLogger(__name__)
 
@@ -22,11 +23,19 @@ def render_admin() -> None:
             return
         render_icon_title(
             "assets/compass.svg",
-            "Admin Panel",
-            "System operations, zone management, and health monitoring",
+            t("admin.title", "Admin Panel"),
+            t("admin.subtitle", "System operations, zone management, and health monitoring"),
         )
 
-        admin_tabs = st.tabs(["System Health", "Zone Management", "Plan Management", "Alert Management", "NISR Data", "Access Management", "Community Moderation"])
+        admin_tabs = st.tabs([
+            t("admin.tab.health", "System Health"),
+            t("admin.tab.zones", "Zone Management"),
+            t("admin.tab.plans", "Plan Management"),
+            t("admin.tab.alerts", "Alert Management"),
+            t("admin.tab.nisr", "NISR Data"),
+            t("admin.tab.access", "Access Management"),
+            t("admin.tab.moderation", "Community Moderation"),
+        ])
 
         # ═════════════════════════════════════════════════════════════
         # TAB 1: System Health

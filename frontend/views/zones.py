@@ -184,12 +184,12 @@ def _render_work_records(zone: dict, crops: list[str]) -> None:
 
 def render_zones() -> None:
     try:
-        render_icon_title("assets/map.svg", "Agricultural Zones", "Explore, filter, and inspect zones across Rwanda")
+        render_icon_title("assets/map.svg", t("zones.title", "Agricultural Zones"), t("zones.subtitle", "Registered district and sector zone profiles, yield predictions, and field readiness"))
 
         zones = api_client.get_zones()
 
-        with st.expander("Register a zone", expanded=False):
-            st.caption("Add a district level map point. Use decimal latitude and longitude for the location.")
+        with st.expander(t("zones.register_expander", "Register a zone"), expanded=False):
+            st.caption(t("zones.register_desc", "Add a district level map point. Use decimal latitude and longitude for the location."))
             with st.form("create_zone_form"):
                 zone_cols = st.columns(2)
                 with zone_cols[0]:
@@ -201,7 +201,7 @@ def render_zones() -> None:
                     new_latitude = st.number_input("Latitude", min_value=-90.0, max_value=90.0, value=None, format="%.6f", placeholder="Required")
                     new_longitude = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=None, format="%.6f", placeholder="Required")
                     new_season = st.text_input("Season (optional)", placeholder="e.g. Season A 2026")
-                create_submitted = st.form_submit_button("Register zone", type="primary")
+                create_submitted = st.form_submit_button(t("zones.register_btn", "Register zone"), type="primary")
 
             if create_submitted:
                 if not new_district.strip() or new_latitude is None or new_longitude is None:
@@ -229,13 +229,13 @@ def render_zones() -> None:
         all_priorities = sorted({str(z.get("priority") or "Not assessed") for z in zones})
 
         with filter_cols[0]:
-            selected_districts = st.multiselect("District", all_districts, default=all_districts)
+            selected_districts = st.multiselect(t("zones.filter.district", "District"), all_districts, default=all_districts)
         with filter_cols[1]:
-            selected_crops = st.multiselect("Crop", all_crops, default=all_crops)
+            selected_crops = st.multiselect(t("zones.filter.crop", "Crop"), all_crops, default=all_crops)
         with filter_cols[2]:
-            selected_priorities = st.multiselect("Priority", all_priorities, default=all_priorities)
+            selected_priorities = st.multiselect(t("zones.filter.priority", "Priority"), all_priorities, default=all_priorities)
         with filter_cols[3]:
-            search_query = st.text_input("Search zones", placeholder="e.g. Musanze")
+            search_query = st.text_input(t("zones.filter.search", "Search zones"), placeholder="e.g. Musanze")
 
         # ── Apply filters ────────────────────────────────────────────
         filtered = [
@@ -274,7 +274,7 @@ def render_zones() -> None:
         st.divider()
 
         # ── Zone detail panel ────────────────────────────────────────
-        render_icon_subheader("assets/compass.svg", "Zone Detail")
+        render_icon_subheader("assets/compass.svg", t("zones.detail_title", "Zone Detail"))
 
         zone_by_id = {str(zone["id"]): zone for zone in filtered if zone.get("id")}
         zone_ids = list(zone_by_id)
@@ -324,7 +324,7 @@ def render_zones() -> None:
                 with workers_tab:
                     _render_work_records(selected_zone, crops)
 
-            with st.expander("Run a yield prediction"):
+            with st.expander(t("zones.predict_title", "Run a yield prediction")):
                 st.caption(
                     "This is a historical NISR-observation baseline for the selected district, crop, and season. "
                     "It is not a weather-adjusted forecast; satellite imagery is visual context and does not change this estimate."
@@ -342,7 +342,7 @@ def render_zones() -> None:
                         "Cultivated area (ha)", min_value=0.0, value=float(selected_zone.get("area_ha") or 0.0),
                         placeholder="Required to estimate total output", key=f"prediction_area_{zone_id}",
                     )
-                    predict_submitted = st.form_submit_button("Predict yield", type="primary")
+                    predict_submitted = st.form_submit_button(t("zones.predict_btn", "Run prediction"), type="primary")
                 if predict_submitted:
                     if not prediction_season.strip() or prediction_area <= 0:
                         st.error("Enter the season and a cultivated area greater than zero.")
