@@ -146,6 +146,26 @@ def render_pwa_support() -> None:
               border-radius: 9999px;
               animation: agIndeterminateBar 1.4s infinite linear;
             }
+            /* Permanently suppress native sidebar and toolbar on client */
+            [data-testid="stSidebar"],
+            [data-testid="collapsedControl"],
+            section[data-testid="stSidebar"],
+            aside[data-testid="stSidebar"],
+            [data-testid="stSidebarNav"],
+            [data-testid="stSidebarNavItems"] {
+              display: none !important;
+              width: 0 !important;
+              max-width: 0 !important;
+              min-width: 0 !important;
+              visibility: hidden !important;
+              pointer-events: none !important;
+            }
+            [data-testid="stDeployButton"],
+            button[data-testid="stDeployButton"],
+            button[data-testid="stToolbarActions"],
+            [data-testid="stToolbar"] {
+              display: none !important;
+            }
             /* Style Streamlit native connection status dialogs */
             div[data-testid="stConnectionStatus"],
             .stConnectionStatus {
@@ -193,7 +213,7 @@ def render_pwa_support() -> None:
         if (!pageLoader) {
           pageLoader = parentDoc.createElement('div');
           pageLoader.id = 'ag-page-loader';
-          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at 50% 25%, #05303f 0%, #021824 100%);z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.4s ease, visibility 0.4s ease;pointer-events:all;';
+          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at 50% 25%, #05303f 0%, #021824 100%);z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
           pageLoader.innerHTML = `
             <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
               <div style="position:absolute;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(74,222,128,0.12) 50%, transparent 70%);animation:agBulbPulse 2s infinite ease-in-out;"></div>
@@ -215,16 +235,58 @@ def render_pwa_support() -> None:
             pageLoader.style.pointerEvents = 'none';
             setTimeout(() => {
               if (pageLoader) pageLoader.style.visibility = 'hidden';
-            }, 450);
+            }, 350);
           }
         }
 
-        // Check if content is already rendered
-        if (parentDoc.querySelector('[data-testid="stAppViewContainer"]') || parentDoc.querySelector('.st-key-ag_navbar')) {
-          setTimeout(dismissPageLoader, 350);
-        } else {
-          setTimeout(dismissPageLoader, 1200);
+        function showPageLoader(msg) {
+          if (pageLoader) {
+            if (msg) {
+              const msgEl = parentDoc.getElementById('ag-loader-msg');
+              if (msgEl) msgEl.textContent = msg;
+            }
+            pageLoader.style.visibility = 'visible';
+            pageLoader.style.opacity = '1';
+            pageLoader.style.pointerEvents = 'all';
+          }
+          if (topProgress) {
+            topProgress.style.opacity = '1';
+          }
         }
+
+        // Intercept navigation clicks to smoothly display the branded loader during page loading
+        if (!parentDoc.__ag_nav_listener_attached) {
+          parentDoc.__ag_nav_listener_attached = true;
+          parentDoc.addEventListener('click', (e) => {
+            const link = e.target.closest('a[href], [data-testid="stPageLink"] a, [data-testid="stPageLink"]');
+            if (link) {
+              const href = link.getAttribute('href') || link.querySelector('a')?.getAttribute('href') || '';
+              if (href && !href.startsWith('#') && !link.target && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                const targetText = (link.textContent || 'page').trim();
+                showPageLoader('Opening ' + targetText + '...');
+              }
+            }
+          }, true);
+        }
+
+        // Intelligent Page Ready Detection:
+        function checkContentReady() {
+          const mainBlocks = parentDoc.querySelectorAll('[data-testid="stMainBlockContainer"] > div, .main .block-container > div');
+          const hasContent = mainBlocks && mainBlocks.length >= 2;
+          const statusWidget = parentDoc.querySelector('[data-testid="stStatusWidget"]');
+          const isBusy = statusWidget && statusWidget.textContent && (statusWidget.textContent.includes('RUNNING') || statusWidget.textContent.includes('Stop'));
+
+          if (hasContent && !isBusy) {
+            dismissPageLoader();
+            if (topProgress) topProgress.style.opacity = '0';
+          }
+        }
+
+        // Check readiness and auto-dismiss
+        setTimeout(checkContentReady, 250);
+        setTimeout(checkContentReady, 550);
+        setTimeout(checkContentReady, 950);
+        setTimeout(dismissPageLoader, 1600);
 
         // 8. CUSTOMIZED DESIGNED NETWORK LOST (OFFLINE) SCREEN
         let offlineScreen = parentDoc.getElementById('ag-network-lost-screen');

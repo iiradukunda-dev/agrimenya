@@ -83,6 +83,23 @@ def load_theme() -> None:
     }
 
     #MainMenu, footer, header[data-testid="stHeader"] { visibility: hidden; height: 0; }
+    [data-testid="stSidebar"],
+    [data-testid="collapsedControl"],
+    section[data-testid="stSidebar"],
+    aside[data-testid="stSidebar"],
+    [data-testid="stSidebarNav"],
+    [data-testid="stSidebarNavItems"] {
+      display: none !important;
+      width: 0 !important;
+      max-width: 0 !important;
+      min-width: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    [data-testid="stDeployButton"],
+    button[data-testid="stDeployButton"] {
+      display: none !important;
+    }
 
     /* Headings */
     h1, h2, h3, h4 {
