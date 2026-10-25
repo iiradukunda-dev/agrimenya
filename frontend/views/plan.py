@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def render_plan() -> None:
     try:
-        render_icon_title("assets/calendar.svg", "Seasonal planning", "Build a practical action list for a selected agricultural zone.")
+        render_icon_title("assets/calendar.svg", t("plan.header", "Planification"), t("plan.subtitle", "Roadmaps and execution timelines for agricultural interventions."))
         if st.session_state.pop("plan_saved_flash", False):
             st.success("Plan saved.")
         zones = api_client.get_zones()
@@ -39,7 +39,7 @@ def render_plan() -> None:
         ]
         st.caption(" | ".join(f"{label}: {value}" for label, value in context if value not in (None, "")) or "Zone details have not been recorded yet.")
 
-        st.markdown("## Plans for this zone")
+        st.markdown(f"## {t('plan.zone_plans', 'Plans for this zone')}")
         plans = api_client.get_zone_plans(selected_zone_id)
         if not plans:
             st.info("There are no saved plans for this zone yet.")
@@ -58,12 +58,12 @@ def render_plan() -> None:
                     if missing:
                         st.caption("Resource estimate incomplete; missing inputs: " + ", ".join(str(item) for item in missing))
 
-        st.markdown("## Create a plan")
+        st.markdown(f"## {t('plan.create_plan', 'Create a plan')}")
         st.caption("Write the actions your team has agreed on. Nothing is pre-filled with generic farming advice.")
         st.caption("If you calculate resource quantities below before saving, that estimate will be attached to this zone's plan.")
-        action_count = st.number_input("Number of actions", min_value=1, max_value=8, value=1, step=1, key="plan_action_count")
+        action_count = st.number_input(t("plan.action_count", "Number of actions"), min_value=1, max_value=8, value=1, step=1, key="plan_action_count")
         with st.form("save_plan_form", clear_on_submit=True):
-            title = st.text_input("Plan title", placeholder="For example, first-season planting plan")
+            title = st.text_input(t("plan.plan_title", "Plan title"), placeholder="For example, first-season planting plan")
             roadmap = []
             for index in range(int(action_count)):
                 st.markdown(f"**Action {index + 1}**")
@@ -74,7 +74,7 @@ def render_plan() -> None:
                 with detail_cols[1]:
                     timeframe = st.text_input("When", key=f"plan_action_time_{index}", placeholder="Date or period")
                 roadmap.append({"step_number": index + 1, "title": action_title.strip(), "description": description.strip(), "timeframe": timeframe.strip() or None})
-            submitted = st.form_submit_button("Save plan", type="primary", width="stretch")
+            submitted = st.form_submit_button(t("plan.save_plan", "Save plan"), type="primary", width="stretch")
 
         if submitted:
             if not title.strip() or any(not step["title"] or not step["description"] for step in roadmap):
