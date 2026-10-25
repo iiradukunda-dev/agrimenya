@@ -1,11 +1,39 @@
+# Environment variables
 .env
 .env.*
 !**/.env.example
+
+# Python cache & virtual environments
 __pycache__/
 *.py[cod]
+*$py.class
 .venv/
 venv/
+ENV/
+env/
+
+# Test & lint caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+backend/tests/.pytest_tmp/
+
+# Logs & temporary run dumps
+*.log
+backend/logs/
 backend/logs/*.log
+backend/health.json
+backend/response.json
+frontend/test.py
+scratch/
+
+# OS and IDE junk
+.DS_Store
+Thumbs.db
+
+# Static PWA and web assets
 frontend/static/*
 !frontend/static/manifest.json
 !frontend/static/sw.js

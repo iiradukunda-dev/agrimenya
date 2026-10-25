@@ -126,6 +126,31 @@ COPY = {
         "verify_dev_error": "Ntibyashobotse gutegura umurongo wo kwemeza. Reba backend na database.",
         "register_sent": "Konti yafunguwe. Reba imeyili yawe uyemeze mbere yo kwinjira.",
     },
+    "fr": {
+        "title": "Communauté des agriculteurs", "intro": "Partagez votre expérience pratique, posez des questions et apprenez d'autres producteurs.",
+        "language": "Langue / Ururimi", "warning": "Les observations des agriculteurs sont des rapports communautaires, et non des statistiques officielles du NISR ou des avis agronomiques vérifiés.",
+        "reports": "Observations de terrain", "report_help": "Une brève note de terrain peut aider les autres à comprendre ce qui se passe localement.",
+        "district": "District", "crop": "Culture", "date": "Date d'observation", "symptoms": "Qu'avez-vous remarqué ? (optionnel)",
+        "notes": "Détails supplémentaires (optionnel)", "photo": "Photo (optionnel, compressée avant l'envoi)", "save_report": "Partager l'observation de terrain",
+        "saved": "Observation partagée.", "no_reports": "Aucune observation de terrain pour le moment.", "unknown_author": "Membre de la communauté",
+        "signin": "Connexion", "create": "Créer un compte", "email": "Adresse e-mail", "password": "Mot de passe",
+        "name": "Nom d'utilisateur (3-30 lettres, chiffres ou _)", "create_farmer": "Créer un compte agriculteur", "signout": "Déconnexion",
+        "new_post": "Partager une actualité ou une question", "topic": "Sujet", "post_body": "Votre expérience ou question",
+        "publish": "Publier dans la communauté", "posted": "Votre publication a été partagée.", "replies": "Lire les réponses et participer à la discussion",
+        "reply": "Ajouter une réponse", "send_reply": "Répondre", "report": "Signaler le contenu", "reason": "Motif (obligatoire)",
+        "send_report": "Envoyer aux administrateurs", "report_sent": "Signalement envoyé pour examen administratif.",
+        "privacy": "Les comptes pilotes ne sont pas vérifiés par e-mail. Évitez de partager des informations financières, familiales ou de contact privées.",
+        "account_name": "Publié par", "farmer": "Compte agriculteur", "empty": "Aucune discussion pour l'instant. Lancez la première en partageant une observation ou une question.",
+        "unavailable": "Choix de districts indisponibles. Vérifiez votre connexion et réessayez.", "crop_required": "Entrez le nom de la culture.",
+        "valid_photo": "Choisissez une photo valide.", "photo_too_large": "La photo est trop volumineuse. Choisissez une image plus petite.",
+        "farmer_observation": "Observation d'agriculteur", "photo_caption": "Photo soumise par un agriculteur",
+        "posting_as": "Publié en tant que", "reply_author": "Membre de la communauté", "role_farmer": "agriculteur",
+        "delete_post": "Supprimer ma publication", "delete_confirm": "Supprimer cette publication ? Cette action est irréversible.",
+        "post_deleted": "Votre publication a été supprimée.",
+        "discussion_tab": "Discussions", "field_tab": "Observations de terrain", "reply_count": "Réponses",
+        "delete_observation": "Supprimer mon observation", "observation_deleted": "Observation de terrain supprimée.",
+        "observation_delete_confirm": "Supprimer cette observation de terrain et sa photo ? Cette action est irréversible.",
+    },
 }
 
 
@@ -166,8 +191,10 @@ def _field_reports(token: str, language: str) -> None:
                 photo = st.file_uploader(c["photo"], type=["jpg", "jpeg", "png", "webp"], accept_multiple_files=False)
                 submit = st.form_submit_button(c["save_report"], type="primary", use_container_width=True)
             if submit:
-                zone = zone_by_label.get(selected_zone_label)
-                if not crop.strip():
+                zone = zones_by_district.get(str(district))
+                if not zone or not zone.get("id"):
+                    st.error(c.get("unavailable", "Zone information is unavailable."))
+                elif not crop.strip():
                     st.error(c["crop_required"])
                 else:
                     files = None
@@ -309,58 +336,66 @@ def _error_message(exc: requests.RequestException, language: str = "en") -> str:
 def render_community() -> None:
     st.markdown('''<style>@media(max-width:700px){.block-container{padding:1rem .8rem 3rem!important}[data-testid="stButton"] button,[data-testid="stFormSubmitButton"] button{min-height:3rem;width:100%}[data-testid="stTextInput"] input,[data-testid="stTextArea"] textarea{font-size:16px}}</style>''', unsafe_allow_html=True)
     language = get_current_language()
+    if language not in COPY:
+        language = "en"
     c = COPY[language]
-    st.title(c["title"])
-    st.write(c["intro"])
-    st.caption(c["warning"])
 
-    google_code = st.query_params.get("community_google_code")
-    if google_code:
-        try:
-            response = _request("POST", "/community/auth/google/exchange", payload={"code": google_code})
-            _store_community_session(response)
-            del st.query_params["community_google_code"]
-            st.rerun()
-        except requests.RequestException as exc:
-            del st.query_params["community_google_code"]
-            st.error(_error_message(exc, language))
-    google_error = st.query_params.get("community_google_error")
-    if google_error:
-        error_key = f"google_error_{google_error}"
-        st.error(c.get(error_key, c["google_error_generic"]))
-        del st.query_params["community_google_error"]
-
-    try:
-        whatsapp_info = requests.get(f"{API_BASE_URL}/communication/whatsapp-info", timeout=5)
-        whatsapp_info.raise_for_status()
-        whatsapp_info = whatsapp_info.json()
-    except requests.RequestException:
-        whatsapp_info = None
-    with st.container(border=True):
-        st.subheader(c["wa_title"])
-        st.write(c["wa_intro"])
-        if whatsapp_info and whatsapp_info.get("available") and whatsapp_info.get("chat_url"):
-            st.link_button(c["wa_open"], whatsapp_info["chat_url"], type="primary")
-            st.caption(c["wa_commands"])
-        elif whatsapp_info is None:
-            st.info(c["wa_unavailable"])
-        else:
-            st.info(c["wa_pending"])
-
-    reset_token = st.query_params.get("community_reset_token")
-    verification_token = st.query_params.get("community_verify_token")
-    if verification_token:
-        with st.container(border=True):
-            st.subheader(c["verify_title"])
-            st.caption(c["verify_help"])
-            if st.button(c["verify_button"], type="primary", key="community_verify_email"):
-                try:
-                    _request("POST", "/community/email/verify", payload={"token": verification_token})
-                    del st.query_params["community_verify_token"]
-                    st.session_state["community_email_verified"] = True
-                    st.rerun()
-                except requests.RequestException as exc:
-                    st.error(_error_message(exc, language))
+    if not st.session_state.get("community_access_token"):
+        from components.cards import centralized_login_container, login_card_header, security_trust_footer
+        with centralized_login_container():
+            sprout_icon = """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 20h10"/>
+                <path d="M10 20c0-4 1-6 2-10"/>
+                <path d="M12 10a4 4 0 0 1 7-3 4 4 0 0 1-3 7 4 4 0 0 1-4-4z"/>
+                <path d="M12 14a4 4 0 0 0-7-3 4 4 0 0 0 3 7 4 4 0 0 0 4-4z"/>
+            </svg>"""
+            badge_title = "GROWER NETWORK" if language == "en" else "UMURYANGO W'ABAHINZI" if language == "rw" else "RÉSEAU AGRICOLE"
+            login_card_header(
+                title=c["title"],
+                subtitle=c["intro"],
+                badge_text=badge_title,
+                icon=sprout_icon,
+                accent_color="#10b981",
+            )
+            sign_in, create_account = st.tabs([c["signin"], c["create"]])
+            with sign_in:
+                with st.form("community_sign_in"):
+                    email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_login_email")
+                    password = st.text_input(c["password"], type="password", placeholder="••••••••••••", key="community_login_password")
+                    submit = st.form_submit_button(f"{c['signin']} →", type="primary", use_container_width=True)
+                if submit:
+                    try:
+                        response = _request("POST", "/community/login", payload={"email": email, "password": password})
+                        st.session_state["community_access_token"] = response["access_token"]
+                        st.session_state["community_account"] = response.get("account", {})
+                        st.rerun()
+                    except requests.RequestException as exc:
+                        st.error(_error_message(exc, language))
+            with create_account:
+                with st.form("community_register"):
+                    display_name = st.text_input(c["name"], placeholder="e.g. Jean_Gasabo", max_chars=80)
+                    email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_register_email")
+                    password = st.text_input(
+                        c["password"] + (" (at least 12 characters)" if language == "en" else " (inyuguti nibura 12)"),
+                        type="password",
+                        placeholder="Min. 12 characters",
+                        key="community_register_password",
+                    )
+                    submit = st.form_submit_button(f"{c['create_farmer']} →", type="primary", use_container_width=True)
+                if submit:
+                    try:
+                        response = _request("POST", "/community/register", payload={
+                            "display_name": display_name, "email": email, "password": password,
+                        })
+                        st.session_state["community_access_token"] = response["access_token"]
+                        st.session_state["community_account"] = response.get("account", {})
+                        st.rerun()
+                    except requests.RequestException as exc:
+                        st.error(_error_message(exc, language))
+            security_trust_footer(
+                message="Privacy Protected" if language == "en" else "Umutekano urarinzwe" if language == "rw" else "Confidentialité Protégée",
+                session_info="Verified Grower Network" if language == "en" else "Koperative z'Abahinzi" if language == "rw" else "Réseau Coopératif",
+            )
         return
     if st.session_state.pop("community_email_verified", False):
         st.success(c["verify_success"])
@@ -475,14 +510,18 @@ def render_community() -> None:
                         st.error(_error_message(exc, language))
             return
 
+    st.title(c["title"])
+    st.write(c["intro"])
+    st.caption(c["warning"])
+
     account = st.session_state.get("community_account", {})
-    top_left, top_right = st.columns([5, 1])
-    with top_left:
-        st.text(f"{c['posting_as']} {account.get('display_name', c['reply_author'])} · {c['farmer']}")
-    with top_right:
-        if st.button("Sign out", key="community_sign_out"):
-            _clear_community_session()
-            st.rerun()
+    from components.cards import authenticated_session_badge
+    display_name = account.get('display_name') or c['reply_author']
+    email = account.get('email', '')
+    if authenticated_session_badge(display_name=display_name, email=email, role=c['farmer'], key_prefix="community"):
+        st.session_state.pop("community_access_token", None)
+        st.session_state.pop("community_account", None)
+        st.rerun()
 
     selected_section = st.radio(
         "Community feed", [c["discussion_tab"], c["field_tab"]],

@@ -11,7 +11,7 @@ from utils.timezone import setup_system_timezone
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
 LOGO_PATH = os.path.join(ASSETS_DIR, "ai_assistant_bulb.png")
 
-st.set_page_config(page_title="agrimenya", page_icon=LOGO_PATH, layout="wide")
+st.set_page_config(page_title="agrimenya", page_icon=LOGO_PATH, layout="wide", initial_sidebar_state="collapsed")
 setup_system_timezone()
 load_theme()
 render_navbar()
@@ -83,14 +83,14 @@ def main():
         <style>
         @keyframes ag-glow-line {{
             0%, 100% {{ opacity: 0.75; filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4)); }}
-            50% {{ opacity: 1; filter: drop-shadow(0 0 14px rgba(74, 222, 128, 0.7)); }}
+            50% {{ opacity: 1; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.75)); }}
         }}
         .ag-pipeline-badge {{
             display: inline-flex;
             align-items: center;
             gap: 8px;
             padding: 5px 14px;
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.28) 0%, rgba(16, 185, 129, 0.22) 100%);
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.25) 0%, rgba(2, 132, 199, 0.15) 100%);
             border: 1px solid rgba(56, 189, 248, 0.55);
             border-radius: 9999px;
             font-size: 0.74rem;

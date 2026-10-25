@@ -1,0 +1,3 @@
+python_interpreter = ".venv/Scripts/python.exe"
+search-path = ["frontend", "backend/app", "."]
+site-package-path = [".venv/Lib/site-packages"]

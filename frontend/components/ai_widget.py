@@ -18,7 +18,12 @@ def _get_ai_icon_base64() -> str:
 
 
 def render_floating_ai_widget() -> None:
-    """Renders a clean floating AI Assistant icon without cyclic borders."""
+    """Renders a persistent, static floating AI Assistant bulb in the bottom right corner.
+
+    The bulb has a steady, clean bio-luminescent glow with zero continuous pulsing
+    animations and is anchored persistently to the top-level window body so that on page
+    reload, refresh, or navigation it always stays in place without flickering or restarting animations.
+    """
     img_b64 = _get_ai_icon_base64()
     if not img_b64:
         return
@@ -27,30 +32,7 @@ def render_floating_ai_widget() -> None:
 
     st.markdown(f"""
     <style>
-    @keyframes ag-bulb-glow {{
-        0%, 100% {{
-            filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85))
-                    drop-shadow(0 0 14px rgba(74, 222, 128, 0.75))
-                    drop-shadow(0 0 26px rgba(34, 197, 94, 0.45))
-                    drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25)) !important;
-        }}
-        50% {{
-            filter: drop-shadow(0 0 10px rgba(125, 211, 252, 0.95))
-                    drop-shadow(0 0 22px rgba(56, 189, 248, 0.85))
-                    drop-shadow(0 0 38px rgba(74, 222, 128, 0.65))
-                    drop-shadow(0 6px 14px rgba(0, 0, 0, 0.2)) !important;
-        }}
-    }}
-    @keyframes ag-ambient-light {{
-        0%, 100% {{
-            opacity: 0.65;
-            transform: translate(-50%, -52%) scale(0.95);
-        }}
-        50% {{
-            opacity: 1;
-            transform: translate(-50%, -52%) scale(1.15);
-        }}
-    }}
+    /* Static, steady glow without continuous pulsing animations */
     .ag-floating-ai-fab {{
         position: fixed !important;
         bottom: 24px !important;
@@ -66,7 +48,8 @@ def render_floating_ai_widget() -> None:
         box-shadow: none !important;
         padding: 0 !important;
         cursor: pointer !important;
-        transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+        animation: none !important;
+        transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1) !important;
         text-decoration: none !important;
     }}
     .ag-floating-ai-fab::before {{
@@ -77,36 +60,37 @@ def render_floating_ai_widget() -> None:
         width: 70px !important;
         height: 100px !important;
         transform: translate(-50%, -52%) !important;
-        background: radial-gradient(ellipse at 50% 40%, rgba(56, 189, 248, 0.5) 0%, rgba(74, 222, 128, 0.4) 35%, rgba(34, 197, 94, 0.22) 60%, rgba(14, 165, 233, 0) 80%) !important;
+        background: radial-gradient(ellipse at 50% 40%, rgba(56, 189, 248, 0.4) 0%, rgba(14, 165, 233, 0.18) 45%, transparent 75%) !important;
         border-radius: 50% !important;
         filter: blur(12px) !important;
         pointer-events: none !important;
         z-index: -1 !important;
-        animation: ag-ambient-light 2.8s ease-in-out infinite alternate !important;
-        transition: all 0.3s ease !important;
+        animation: none !important;
+        opacity: 0.85 !important;
+        transition: opacity 0.25s ease, transform 0.25s ease !important;
     }}
     .ag-floating-ai-fab:hover {{
-        transform: translateY(-5px) scale(1.08) !important;
+        transform: translateY(-4px) scale(1.05) !important;
     }}
     .ag-floating-ai-fab:hover::before {{
         opacity: 1 !important;
-        transform: translate(-50%, -52%) scale(1.25) !important;
-        filter: blur(16px) !important;
+        transform: translate(-50%, -52%) scale(1.15) !important;
+        filter: blur(14px) !important;
     }}
     .ag-floating-ai-fab img {{
         width: 58px !important;
         height: auto !important;
         max-height: 92px !important;
         object-fit: contain !important;
-        animation: ag-bulb-glow 2.8s ease-in-out infinite !important;
-        transition: transform 0.3s ease !important;
+        animation: none !important;
+        filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75))
+                drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) !important;
+        transition: filter 0.25s ease, transform 0.25s ease !important;
     }}
     .ag-floating-ai-fab:hover img {{
         animation: none !important;
-        filter: drop-shadow(0 0 14px rgba(125, 211, 252, 1))
-                drop-shadow(0 0 28px rgba(56, 189, 248, 0.95))
-                drop-shadow(0 0 48px rgba(74, 222, 128, 0.75))
-                drop-shadow(0 8px 18px rgba(0, 0, 0, 0.25)) !important;
+        filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.9))
+                drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35)) !important;
     }}
     .ag-floating-ai-tooltip {{
         position: absolute !important;
@@ -123,7 +107,7 @@ def render_floating_ai_widget() -> None:
         pointer-events: none !important;
         opacity: 0 !important;
         visibility: hidden !important;
-        transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         border: 1px solid rgba(56, 189, 248, 0.6) !important;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
         letter-spacing: 0.02em !important;
@@ -140,28 +124,12 @@ def render_floating_ai_widget() -> None:
         align-items: center !important;
         line-height: 1 !important;
     }}
-    .ag-floating-ai-tooltip::after {{
-        content: "" !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: -120% !important;
-        width: 70% !important;
-        height: 100% !important;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent) !important;
-        transform: skewX(-25deg) !important;
-        transition: left 0.75s ease !important;
-        pointer-events: none !important;
-    }}
     .ag-floating-ai-fab:hover .ag-floating-ai-tooltip,
     .ag-floating-ai-fab:focus .ag-floating-ai-tooltip,
     .ag-floating-ai-fab:active .ag-floating-ai-tooltip {{
         opacity: 1 !important;
         visibility: visible !important;
         transform: translateY(-50%) translateX(0) scale(1) !important;
-    }}
-    .ag-floating-ai-fab:hover .ag-floating-ai-tooltip::after,
-    .ag-floating-ai-fab:focus .ag-floating-ai-tooltip::after {{
-        left: 150% !important;
     }}
     @media (max-width: 600px) {{
         .ag-floating-ai-fab {{
@@ -185,8 +153,33 @@ def render_floating_ai_widget() -> None:
         }}
     }}
     </style>
-    <a href="/AI_Assistant" target="_self" class="ag-floating-ai-fab" aria-label="{ask_ai_text}" title="{ask_ai_text}">
-        <img src="data:image/png;base64,{img_b64}" alt="AI Assistant" />
-        <div class="ag-floating-ai-tooltip"><span class="ag-ai-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#38bdf8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> {ask_ai_text}</div>
-    </a>
+    <script>
+    (function ensurePersistentAiBulb() {{
+        try {{
+            const parentDoc = window.parent.document || document;
+            if (!parentDoc) return;
+
+            // Check if already anchored on parent document body
+            let fab = parentDoc.getElementById('ag-persistent-ai-fab');
+            if (!fab) {{
+                fab = parentDoc.createElement('a');
+                fab.id = 'ag-persistent-ai-fab';
+                fab.href = '/AI_Assistant';
+                fab.target = '_self';
+                fab.className = 'ag-floating-ai-fab';
+                fab.setAttribute('aria-label', '{ask_ai_text}');
+                fab.setAttribute('title', '{ask_ai_text}');
+                fab.innerHTML = `
+                    <img src="data:image/png;base64,{img_b64}" alt="AI Assistant" />
+                    <div class="ag-floating-ai-tooltip">
+                        <span class="ag-ai-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#38bdf8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> {ask_ai_text}
+                    </div>
+                `;
+                parentDoc.body.appendChild(fab);
+            }}
+        }} catch(e) {{
+            console.debug('Persistent AI bulb note:', e);
+        }}
+    }})();
+    </script>
     """, unsafe_allow_html=True)

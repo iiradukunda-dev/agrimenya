@@ -55,26 +55,25 @@ def load_theme() -> None:
       --ag-shadow-md: 0 8px 24px rgba(4, 31, 38, 0.08);
       --ag-shadow-lg: 0 20px 48px rgba(4, 31, 38, 0.12);
       --ag-shadow-glow: 0 0 28px rgba(56, 189, 248, 0.25);
-      --ag-shadow-bulb: 0 8px 30px rgba(14, 165, 233, 0.22), 0 0 20px rgba(74, 222, 128, 0.18);
+      --ag-shadow-bulb: 0 8px 30px rgba(14, 165, 233, 0.25);
     }
 
     /* Base Typography & Background */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
       color: var(--ag-ink);
-      background: radial-gradient(circle at 10% 8%, rgba(56, 189, 248, 0.18) 0%, transparent 45%),
-                  radial-gradient(circle at 90% 88%, rgba(74, 222, 128, 0.16) 0%, transparent 45%),
-                  radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, transparent 70%),
+      background: radial-gradient(circle at 15% 10%, rgba(2, 132, 199, 0.08) 0%, transparent 55%),
+                  radial-gradient(circle at 85% 90%, rgba(14, 165, 233, 0.05) 0%, transparent 55%),
                   var(--ag-bg-base);
       font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Custom smooth scrollbar with bulb cyan-emerald gradient */
+    /* Custom smooth scrollbar with clean sky blue styling */
     ::-webkit-scrollbar { width: 7px; height: 7px; }
     ::-webkit-scrollbar-track { background: #eaf1f4; }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #38bdf8 0%, #34d399 100%); border-radius: var(--ag-radius-pill); }
-    ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #0ea5e9 0%, #10b981 100%); }
+    ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: var(--ag-radius-pill); }
+    ::-webkit-scrollbar-thumb:hover { background: #0284c7; }
 
     [data-testid="stMainBlockContainer"] {
       max-width: 1440px;
@@ -83,6 +82,52 @@ def load_theme() -> None:
     }
 
     #MainMenu, footer, header[data-testid="stHeader"] { visibility: hidden; height: 0; }
+    [data-testid="stSidebar"],
+    [data-testid="collapsedControl"],
+    section[data-testid="stSidebar"],
+    aside[data-testid="stSidebar"],
+    [data-testid="stSidebarNav"],
+    [data-testid="stSidebarNavItems"] {
+      display: none !important;
+      width: 0 !important;
+      max-width: 0 !important;
+      min-width: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    [data-testid="stDeployButton"],
+    button[data-testid="stDeployButton"] {
+      display: none !important;
+    }
+
+    /* Static Persistent Floating AI Bulb (Zero continuous animation) */
+    .ag-floating-ai-fab {
+      position: fixed !important;
+      bottom: 24px !important;
+      right: 24px !important;
+      width: 72px !important;
+      height: 104px !important;
+      z-index: 9999999 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      cursor: pointer !important;
+      animation: none !important;
+      text-decoration: none !important;
+    }
+    .ag-floating-ai-fab img {
+      width: 58px !important;
+      height: auto !important;
+      max-height: 92px !important;
+      object-fit: contain !important;
+      animation: none !important;
+      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75))
+              drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) !important;
+    }
 
     /* Headings */
     h1, h2, h3, h4 {
@@ -118,20 +163,58 @@ def load_theme() -> None:
       font-size: 0.86rem;
     }
 
-    /* Structured Modern Cards & Containers (No liquid glass) */
+    /* Structured Modern Cards with Classic Motion Designs */
     [data-testid="stVerticalBlockBorderWrapper"] {
+      position: relative !important;
+      overflow: hidden !important;
       border: 1px solid rgba(56, 189, 248, 0.22) !important;
       border-top: 1.5px solid rgba(56, 189, 248, 0.40) !important;
       border-radius: var(--ag-radius-md) !important;
       background: #081a26 !important;
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.3s ease,
+                  background 0.3s ease !important;
+      will-change: transform, box-shadow;
     }
+    /* Subtle reflective sheen sweep across card on hover */
+    [data-testid="stVerticalBlockBorderWrapper"]::after {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -130%;
+      width: 70%;
+      height: 220%;
+      background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.04) 45%,
+        rgba(56, 189, 248, 0.08) 50%,
+        rgba(255, 255, 255, 0.04) 55%,
+        transparent 80%
+      );
+      transform: rotate(25deg);
+      transition: left 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 1;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover::after {
+      left: 140%;
+    }
+    /* Classic Elevation & Glow on Hover */
     [data-testid="stVerticalBlockBorderWrapper"]:hover {
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.25) !important;
-      border-color: rgba(56, 189, 248, 0.55) !important;
-      background: #0b2231 !important;
-      transform: translateY(-3px) !important;
+      box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.65), 0 0 26px rgba(56, 189, 248, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+      border-color: rgba(56, 189, 248, 0.65) !important;
+      border-top-color: #38bdf8 !important;
+      background: #0c2435 !important;
+      transform: translateY(-6px) scale(1.012) !important;
+    }
+    /* Tactile Active Press State */
+    [data-testid="stVerticalBlockBorderWrapper"]:active {
+      transform: translateY(-2px) scale(0.995) !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), 0 0 14px rgba(56, 189, 248, 0.2) !important;
+      transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.12s ease !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"] h1,
     [data-testid="stVerticalBlockBorderWrapper"] h2,
@@ -139,6 +222,10 @@ def load_theme() -> None:
     [data-testid="stVerticalBlockBorderWrapper"] h4 {
       color: #ffffff !important;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+      transition: color 0.25s ease, text-shadow 0.25s ease !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover h3 {
+      text-shadow: 0 2px 12px rgba(56, 189, 248, 0.45) !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"] p {
       color: #e0f2fe !important;
@@ -152,23 +239,33 @@ def load_theme() -> None:
       color: #ffffff !important;
       font-weight: 700 !important;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
-      transition: all 0.25s ease !important;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
     [data-testid="stVerticalBlockBorderWrapper"] button * {
       color: #ffffff !important;
       font-weight: 700 !important;
     }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover .stButton > button,
+    [data-testid="stVerticalBlockBorderWrapper"]:hover button {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      border-color: rgba(56, 189, 248, 0.85) !important;
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4) !important;
+    }
     [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
     [data-testid="stVerticalBlockBorderWrapper"] button:hover {
-      background: #0284c7 !important;
-      border-color: rgba(56, 189, 248, 0.8) !important;
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+      border-color: #38bdf8 !important;
       color: #ffffff !important;
-      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
-      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.55) !important;
+      transform: translateY(-2px) scale(1.02) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:active,
+    [data-testid="stVerticalBlockBorderWrapper"] button:active {
+      transform: translateY(0) scale(0.98) !important;
     }
 
-    /* Metrics Cards with Cyan Bulb Accent */
+    /* Metrics Cards with Classic Elevation & Glow */
     [data-testid="stMetric"] {
       background: #ffffff !important;
       border: 1px solid var(--ag-line) !important;
@@ -176,12 +273,19 @@ def load_theme() -> None:
       border-radius: var(--ag-radius-md) !important;
       padding: 1.1rem 1.25rem !important;
       box-shadow: var(--ag-shadow-sm) !important;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.3s ease !important;
+      will-change: transform, box-shadow;
     }
     [data-testid="stMetric"]:hover {
-      transform: translateY(-3px) !important;
-      box-shadow: var(--ag-shadow-md), 0 0 20px rgba(56, 189, 248, 0.28) !important;
+      transform: translateY(-5px) scale(1.01) !important;
+      box-shadow: 0 14px 34px rgba(4, 31, 38, 0.10), 0 0 24px rgba(56, 189, 248, 0.28) !important;
       border-top-color: #38bdf8 !important;
+    }
+    [data-testid="stMetric"]:active {
+      transform: translateY(-1px) scale(0.995) !important;
+      box-shadow: var(--ag-shadow-sm) !important;
     }
     [data-testid="stMetricLabel"] p {
       color: var(--ag-muted) !important;
@@ -198,73 +302,170 @@ def load_theme() -> None:
       letter-spacing: -0.02em !important;
     }
 
-    /* Buttons with Cyan-to-Emerald Bioluminescent Glow */
-    .stButton > button, [data-testid="stDownloadButton"] button {
-      border-radius: 10px !important;
+    /* =========================================================
+       AGRIMENYA GLOBAL BUTTON ARCHITECTURE: HIGH-CONTRAST & ULTRA-CLEAR
+       ========================================================= */
+
+    /* 1. Base Button Styles (Applies to all Streamlit buttons) */
+    .stButton > button,
+    [data-testid="stBaseButton-secondary"],
+    [data-testid="stBaseButton-primary"],
+    [data-testid="stFormSubmitButton"] > button,
+    [data-testid="stDownloadButton"] button {
+      border-radius: 12px !important;
       font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif !important;
-      font-weight: 650 !important;
-      font-size: 0.92rem !important;
-      letter-spacing: 0.01em !important;
-      min-height: 2.75rem !important;
-      padding: 0.5rem 1.3rem !important;
-      border: 1px solid var(--ag-line) !important;
+      font-weight: 700 !important;
+      font-size: 0.94rem !important;
+      letter-spacing: -0.01em !important;
+      min-height: 2.85rem !important;
+      padding: 0.55rem 1.45rem !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.5rem !important;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      will-change: transform, box-shadow;
+    }
+
+    /* 2. Secondary / Standard Buttons: Crisp, high-contrast outline on light canvas */
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]),
+    [data-testid="stBaseButton-secondary"] {
       background: #ffffff !important;
-      color: var(--ag-forest) !important;
-      box-shadow: 0 2px 4px rgba(4, 31, 38, 0.03) !important;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    }
-    .stButton > button:hover {
-      border-color: #38bdf8 !important;
+      background-color: #ffffff !important;
+      border: 1.5px solid #0284c7 !important;
       color: #0284c7 !important;
-      transform: translateY(-2px) !important;
-      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.25) !important;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
     }
-    .stButton > button:active {
-      transform: translateY(0) !important;
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]) *,
+    [data-testid="stBaseButton-secondary"] * {
+      color: #0284c7 !important;
+      font-weight: 700 !important;
     }
-    .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
-      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 35%, #10b981 85%, #059669 100%) !important;
-      border: 1px solid rgba(56, 189, 248, 0.4) !important;
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]) span[data-testid="stIconMaterial"],
+    [data-testid="stBaseButton-secondary"] span[data-testid="stIconMaterial"],
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]) svg,
+    [data-testid="stBaseButton-secondary"] svg {
+      color: #0284c7 !important;
+      stroke: #0284c7 !important;
+    }
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):hover,
+    [data-testid="stBaseButton-secondary"]:hover {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      background-color: #0284c7 !important;
+      border-color: #38bdf8 !important;
       color: #ffffff !important;
-      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.38), 0 0 12px rgba(74, 222, 128, 0.22) !important;
-    }
-    .stButton > button[kind="primary"]:hover, .stButton > button[data-testid="stBaseButton-primary"]:hover {
-      background: linear-gradient(135deg, #0369a1 0%, #0284c7 35%, #059669 85%, #047857 100%) !important;
-      border-color: rgba(56, 189, 248, 0.6) !important;
-      color: #ffffff !important;
-      box-shadow: 0 8px 26px rgba(14, 165, 233, 0.55), 0 0 22px rgba(74, 222, 128, 0.4) !important;
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.38) !important;
       transform: translateY(-2px) scale(1.01) !important;
     }
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):hover *,
+    [data-testid="stBaseButton-secondary"]:hover * {
+      color: #ffffff !important;
+    }
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):hover span[data-testid="stIconMaterial"],
+    [data-testid="stBaseButton-secondary"]:hover span[data-testid="stIconMaterial"],
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):hover svg,
+    [data-testid="stBaseButton-secondary"]:hover svg {
+      color: #ffffff !important;
+      stroke: #ffffff !important;
+    }
+    .stButton > button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):active,
+    [data-testid="stBaseButton-secondary"]:active {
+      transform: translateY(0) scale(0.99) !important;
+    }
 
-    /* Structured Card Buttons override (Placed after generic button rules) */
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
-    [data-testid="stVerticalBlockBorderWrapper"] button {
-      background: #0f2738 !important;
-      border: 1px solid rgba(56, 189, 248, 0.28) !important;
-      border-radius: 10px !important;
+    /* 3. Primary Action & Form Submit Buttons: Cohesive executive blue */
+    .stButton > button[kind="primary"],
+    .stButton > button[data-testid="stBaseButton-primary"],
+    [data-testid="stBaseButton-primary"],
+    [data-testid="stFormSubmitButton"] > button {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      background-color: #0284c7 !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.85) !important;
       color: #ffffff !important;
-      font-weight: 700 !important;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
-      transition: all 0.25s ease !important;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
-    [data-testid="stVerticalBlockBorderWrapper"] button * {
+    .stButton > button[kind="primary"] *,
+    .stButton > button[data-testid="stBaseButton-primary"] *,
+    [data-testid="stBaseButton-primary"] *,
+    [data-testid="stFormSubmitButton"] > button * {
       color: #ffffff !important;
+      font-weight: 750 !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    }
+    .stButton > button[kind="primary"]:hover,
+    .stButton > button[data-testid="stBaseButton-primary"]:hover,
+    [data-testid="stBaseButton-primary"]:hover,
+    [data-testid="stFormSubmitButton"] > button:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #075985 100%) !important;
+      border-color: #38bdf8 !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45) !important;
+      transform: translateY(-2px) scale(1.015) !important;
+    }
+    .stButton > button[kind="primary"]:active,
+    .stButton > button[data-testid="stBaseButton-primary"]:active,
+    [data-testid="stBaseButton-primary"]:active,
+    [data-testid="stFormSubmitButton"] > button:active {
+      transform: translateY(0) scale(0.99) !important;
+    }
+
+    /* 4. Download / Export Buttons */
+    [data-testid="stDownloadButton"] button,
+    .stDownloadButton > button {
+      background: #ffffff !important;
+      border: 1.5px solid #10b981 !important;
+      color: #047857 !important;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15) !important;
+    }
+    [data-testid="stDownloadButton"] button *,
+    .stDownloadButton > button * {
+      color: #047857 !important;
       font-weight: 700 !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
-    [data-testid="stVerticalBlockBorderWrapper"] button:hover {
-      background: #0284c7 !important;
-      border-color: rgba(56, 189, 248, 0.8) !important;
+    [data-testid="stDownloadButton"] button:hover,
+    .stDownloadButton > button:hover {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+      border-color: #34d399 !important;
       color: #ffffff !important;
-      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35) !important;
       transform: translateY(-2px) !important;
     }
+    [data-testid="stDownloadButton"] button:hover *,
+    .stDownloadButton > button:hover * {
+      color: #ffffff !important;
+    }
 
-    /* Navbar Modern Solid Buttons & Popovers */
-    [data-testid="stHorizontalBlock"] button,
-    [data-testid="stHorizontalBlock"] .stPopover > button,
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
+    /* 5. Buttons inside Dark Cards & Bordered Containers */
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]),
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]) {
+      background: linear-gradient(135deg, #0e3044 0%, #082130 100%) !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.55) !important;
+      border-radius: 12px !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+      transition: all 0.28s ease !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]) *,
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]) * {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]):hover,
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]):hover {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      border-color: #38bdf8 !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.5) !important;
+      transform: translateY(-2px) scale(1.015) !important;
+    }
+
+    /* 6. Scoped Navbar Pill Buttons & Popovers */
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
       background: #081a26 !important;
       border-radius: 10px !important;
       min-height: 2.55rem !important;
@@ -278,32 +479,32 @@ def load_theme() -> None:
       text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
       transition: all 0.25s ease !important;
     }
-    [data-testid="stHorizontalBlock"] button p,
-    [data-testid="stHorizontalBlock"] .stPopover > button p,
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p {
       color: #ffffff !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-weight: 700 !important;
     }
-    [data-testid="stHorizontalBlock"] button span[data-testid="stIconMaterial"],
-    [data-testid="stHorizontalBlock"] .stPopover > button span[data-testid="stIconMaterial"],
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span[data-testid="stIconMaterial"] {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button span[data-testid="stIconMaterial"],
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button span[data-testid="stIconMaterial"],
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span[data-testid="stIconMaterial"] {
       color: #ffffff !important;
       font-family: "Material Symbols Rounded", "Material Symbols Outlined" !important;
     }
-    [data-testid="stHorizontalBlock"] button:hover,
-    [data-testid="stHorizontalBlock"] .stPopover > button:hover,
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
       background: #0c2434 !important;
       border-color: rgba(56, 189, 248, 0.65) !important;
       box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
       transform: translateY(-1px) !important;
     }
-    [data-testid="stHorizontalBlock"] button:hover p,
-    [data-testid="stHorizontalBlock"] .stPopover > button:hover p,
-    [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
-    [data-testid="stHorizontalBlock"] button:hover span[data-testid="stIconMaterial"],
-    [data-testid="stHorizontalBlock"] .stPopover > button:hover span[data-testid="stIconMaterial"] {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover span[data-testid="stIconMaterial"],
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover span[data-testid="stIconMaterial"] {
       color: #38bdf8 !important;
     }
 
@@ -337,6 +538,75 @@ def load_theme() -> None:
     [data-baseweb="input"] > div:focus-within, [data-baseweb="select"] > div:focus-within, [data-testid="stTextArea"] textarea:focus {
       border-color: #0ea5e9 !important;
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+    }
+
+    /* Form inputs inside Dark Liquid Glass Cards */
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="input"] > div,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="select"] > div,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTextArea"] textarea {
+      background: #061520 !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+      border-radius: 11px !important;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+      color: #ffffff !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="input"] input,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTextArea"] textarea {
+      color: #ffffff !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 0.94rem !important;
+      font-weight: 550 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="input"] input::placeholder,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTextArea"] textarea::placeholder {
+      color: rgba(203, 229, 245, 0.45) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="input"] > div:focus-within,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="select"] > div:focus-within,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTextArea"] textarea:focus {
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35), 0 0 16px rgba(56, 189, 248, 0.2) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stWidgetLabel"] p,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stWidgetLabel"] label {
+      color: #f1f5f9 !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 0.88rem !important;
+      font-weight: 650 !important;
+      letter-spacing: 0.01em !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stExpander"] {
+      border: 1px solid rgba(56, 189, 248, 0.22) !important;
+      border-radius: 11px !important;
+      background: rgba(6, 21, 32, 0.75) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stExpander"] summary {
+      color: #38bdf8 !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 0.88rem !important;
+      font-weight: 650 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stExpander"] summary:hover {
+      color: #7dd3fc !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stExpander"] summary svg {
+      fill: #38bdf8 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab-list"] {
+      border-bottom: 1.5px solid rgba(56, 189, 248, 0.25) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab"] {
+      color: #94a3b8 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab"]:hover {
+      color: #38bdf8 !important;
+      background: rgba(56, 189, 248, 0.08) !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab"][aria-selected="true"] {
+      color: #ffffff !important;
+      border-bottom: 2.5px solid #38bdf8 !important;
     }
 
     /* Tabs */

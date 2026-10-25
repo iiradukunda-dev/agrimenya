@@ -56,7 +56,7 @@ def ensure_pwa_assets() -> None:
 
 
 def render_pwa_support() -> None:
-    """Inject PWA manifest, service worker registration, install banner, and offline indicator."""
+    """Inject PWA manifest, service worker, branded loading screen, network-lost screen, and error screens."""
     ensure_pwa_assets()
 
     pwa_script = """
@@ -104,7 +104,110 @@ def render_pwa_support() -> None:
           parentDoc.head.appendChild(appleIcon);
         }
 
-        // 4. Register Service Worker with fallback
+        // 4. Inject Dynamic Global Styles for Loaders, Modals, and Animations
+        if (!parentDoc.getElementById('ag-dynamic-runtime-styles')) {
+          const styleEl = parentDoc.createElement('style');
+          styleEl.id = 'ag-dynamic-runtime-styles';
+          styleEl.textContent = `
+            @keyframes agBulbPulse {
+              0%, 100% { transform: scale(1); filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.45)); }
+              50% { transform: scale(1.05); filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.75)); }
+            }
+            @keyframes agIndeterminateBar {
+              0% { left: -35%; width: 35%; }
+              50% { left: 30%; width: 50%; }
+              100% { left: 100%; width: 35%; }
+            }
+            @keyframes agFadeInUp {
+              from { opacity: 0; transform: translateY(16px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes agPulseDot {
+              0%, 100% { opacity: 1; transform: scale(1); }
+              50% { opacity: 0.35; transform: scale(0.85); }
+            }
+            #ag-top-progress {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 3px;
+              background: rgba(2, 132, 199, 0.2);
+              z-index: 9999999;
+              overflow: hidden;
+              opacity: 0;
+              transition: opacity 0.25s ease;
+              pointer-events: none;
+            }
+            #ag-top-progress .ag-top-bar {
+              position: absolute;
+              height: 100%;
+              background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%);
+              border-radius: 9999px;
+              animation: agIndeterminateBar 1.4s infinite linear;
+            }
+            /* Permanently suppress native sidebar and toolbar on client */
+            [data-testid="stSidebar"],
+            [data-testid="collapsedControl"],
+            section[data-testid="stSidebar"],
+            aside[data-testid="stSidebar"],
+            [data-testid="stSidebarNav"],
+            [data-testid="stSidebarNavItems"] {
+              display: none !important;
+              width: 0 !important;
+              max-width: 0 !important;
+              min-width: 0 !important;
+              visibility: hidden !important;
+              pointer-events: none !important;
+            }
+            [data-testid="stDeployButton"],
+            button[data-testid="stDeployButton"],
+            button[data-testid="stToolbarActions"],
+            [data-testid="stToolbar"] {
+              display: none !important;
+            }
+            /* Style Streamlit native connection status dialogs */
+            div[data-testid="stConnectionStatus"],
+            .stConnectionStatus {
+              border-radius: 16px !important;
+              background: #021824 !important;
+              border: 1px solid rgba(56, 189, 248, 0.35) !important;
+              box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+              color: #f0fdf4 !important;
+            }
+            /* Persistent non-animated AI bulb styles */
+            .ag-floating-ai-fab {
+              position: fixed !important;
+              bottom: 24px !important;
+              right: 24px !important;
+              width: 72px !important;
+              height: 104px !important;
+              z-index: 9999999 !important;
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              background: transparent !important;
+              border: none !important;
+              box-shadow: none !important;
+              padding: 0 !important;
+              cursor: pointer !important;
+              animation: none !important;
+              text-decoration: none !important;
+            }
+            .ag-floating-ai-fab img {
+              width: 58px !important;
+              height: auto !important;
+              max-height: 92px !important;
+              object-fit: contain !important;
+              animation: none !important;
+              filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75))
+                      drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) !important;
+            }
+          `;
+          parentDoc.head.appendChild(styleEl);
+        }
+
+        // 5. Register Service Worker with fallback
         if ('serviceWorker' in window.parent.navigator) {
           const swUrl = '/sw.js';
           const fallbackSwUrl = '/app/static/sw.js';
@@ -114,7 +217,6 @@ def render_pwa_support() -> None:
               console.log('[PWA] ServiceWorker registered with scope:', reg.scope);
             })
             .catch(err => {
-              console.log('[PWA] Scope / registration deferred, trying fallback path...', err);
               window.parent.navigator.serviceWorker.register(fallbackSwUrl)
                 .then(reg => {
                   console.log('[PWA] Fallback ServiceWorker registered with scope:', reg.scope);
@@ -125,70 +227,392 @@ def render_pwa_support() -> None:
             });
         }
 
-        // 5. Offline & Online connectivity toast banner
-        let toast = parentDoc.getElementById('ag-pwa-connectivity-toast');
-        if (!toast) {
-          toast = parentDoc.createElement('div');
-          toast.id = 'ag-pwa-connectivity-toast';
-          toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);z-index:999999;padding:0.65rem 1.25rem;border-radius:12px;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.88rem;font-weight:700;display:flex;align-items:center;gap:0.6rem;box-shadow:0 12px 32px rgba(0,0,0,0.45);transition:transform 0.35s cubic-bezier(0.16,1,0.3,1),opacity 0.35s ease;opacity:0;pointer-events:none;';
-          parentDoc.body.appendChild(toast);
+        // 6. Top Progress Bar for Live Streamlit Calculations
+        let topProgress = parentDoc.getElementById('ag-top-progress');
+        if (!topProgress) {
+          topProgress = parentDoc.createElement('div');
+          topProgress.id = 'ag-top-progress';
+          topProgress.innerHTML = '<div class="ag-top-bar"></div>';
+          parentDoc.body.appendChild(topProgress);
         }
 
-        function showToast(isOnline) {
-          if (!isOnline) {
-            toast.style.background = '#d97706';
-            toast.style.border = '1px solid #fbbf24';
-            toast.style.color = '#021824';
-            toast.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg><span>Offline Mode Active - Local Agro Data Ready</span>';
-            toast.style.transform = 'translateX(-50%) translateY(0)';
-            toast.style.opacity = '1';
-          } else {
-            toast.style.background = '#06283b';
-            toast.style.border = '1px solid #00E599';
-            toast.style.color = '#00E599';
-            toast.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Back Online - Real-time Agro Stream Connected</span>';
-            toast.style.transform = 'translateX(-50%) translateY(0)';
-            toast.style.opacity = '1';
+        // 7. CUSTOMIZED BRANDED LOADING SCREEN
+        let pageLoader = parentDoc.getElementById('ag-page-loader');
+        if (!pageLoader) {
+          pageLoader = parentDoc.createElement('div');
+          pageLoader.id = 'ag-page-loader';
+          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at 50% 25%, #05303f 0%, #021824 100%);z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
+          pageLoader.innerHTML = `
+            <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
+              <div style="position:absolute;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(14,165,233,0.12) 50%, transparent 70%);animation:agBulbPulse 2s infinite ease-in-out;"></div>
+              <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;position:relative;z-index:2;animation:agBulbPulse 2.2s infinite ease-in-out;">
+            </div>
+            <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-0.03em;color:#f0fdf4;margin:0 0 0.35rem 0;">agrimenya</h1>
+            <p id="ag-loader-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:500;color:#94a3b8;margin:0 0 1.6rem 0;">Loading agro-climate intelligence...</p>
+            <div style="width:190px;height:4px;background:rgba(255,255,255,0.08);border-radius:9999px;overflow:hidden;position:relative;">
+              <div style="position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg, #0284c7 0%, #0369a1 100%);border-radius:9999px;animation:agIndeterminateBar 1.5s infinite ease-in-out;"></div>
+            </div>
+          `;
+          parentDoc.body.appendChild(pageLoader);
+        }
+
+        // Hide Page Loader once content is ready
+        function dismissPageLoader() {
+          if (pageLoader && pageLoader.style.opacity !== '0') {
+            pageLoader.style.opacity = '0';
+            pageLoader.style.pointerEvents = 'none';
             setTimeout(() => {
-              toast.style.transform = 'translateX(-50%) translateY(100px)';
-              toast.style.opacity = '0';
-            }, 3500);
+              if (pageLoader) pageLoader.style.visibility = 'hidden';
+            }, 350);
           }
         }
 
-        window.parent.addEventListener('offline', () => showToast(false));
-        window.parent.addEventListener('online', () => showToast(true));
-
-        if (!window.parent.navigator.onLine) {
-          showToast(false);
+        function showPageLoader(msg) {
+          if (pageLoader) {
+            if (msg) {
+              const msgEl = parentDoc.getElementById('ag-loader-msg');
+              if (msgEl) msgEl.textContent = msg;
+            }
+            pageLoader.style.visibility = 'visible';
+            pageLoader.style.opacity = '1';
+            pageLoader.style.pointerEvents = 'all';
+          }
+          if (topProgress) {
+            topProgress.style.opacity = '1';
+          }
         }
 
-        // 6. Handle beforeinstallprompt for native Install App action
+        // Intercept navigation clicks to smoothly display the branded loader during page loading
+        if (!parentDoc.__ag_nav_listener_attached) {
+          parentDoc.__ag_nav_listener_attached = true;
+          parentDoc.addEventListener('click', (e) => {
+            const link = e.target.closest('a[href], [data-testid="stPageLink"] a, [data-testid="stPageLink"]');
+            if (link) {
+              const href = link.getAttribute('href') || link.querySelector('a')?.getAttribute('href') || '';
+              if (href && !href.startsWith('#') && !link.target && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                const targetText = (link.textContent || 'page').trim();
+                showPageLoader('Opening ' + targetText + '...');
+              }
+            }
+          }, true);
+        }
+
+        // Intelligent Page Ready Detection:
+        function checkContentReady() {
+          const mainBlocks = parentDoc.querySelectorAll('[data-testid="stMainBlockContainer"] > div, .main .block-container > div');
+          const hasContent = mainBlocks && mainBlocks.length >= 2;
+          const statusWidget = parentDoc.querySelector('[data-testid="stStatusWidget"]');
+          const isBusy = statusWidget && statusWidget.textContent && (statusWidget.textContent.includes('RUNNING') || statusWidget.textContent.includes('Stop'));
+
+          if (hasContent && !isBusy) {
+            dismissPageLoader();
+            if (topProgress) topProgress.style.opacity = '0';
+          }
+        }
+
+        // Check readiness and auto-dismiss
+        setTimeout(checkContentReady, 250);
+        setTimeout(checkContentReady, 550);
+        setTimeout(checkContentReady, 950);
+        setTimeout(dismissPageLoader, 1600);
+
+        // 8. CUSTOMIZED DESIGNED NETWORK LOST (OFFLINE) SCREEN
+        let offlineScreen = parentDoc.getElementById('ag-network-lost-screen');
+        if (!offlineScreen) {
+          offlineScreen = parentDoc.createElement('div');
+          offlineScreen.id = 'ag-network-lost-screen';
+          offlineScreen.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2,24,36,0.92);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9999998;display:none;align-items:center;justify-content:center;padding:1.5rem;animation:agFadeInUp 0.35s ease;';
+          offlineScreen.innerHTML = `
+            <div style="max-width:540px;width:100%;background:#031d2b;border:1px solid rgba(245,158,11,0.45);border-radius:24px;padding:2.2rem;box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 32px rgba(245,158,11,0.15);text-align:center;display:flex;flex-direction:column;align-items:center;">
+              <div style="position:relative;margin-bottom:1.25rem;">
+                <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:76px;height:76px;filter:drop-shadow(0 0 20px rgba(245,158,11,0.55));">
+              </div>
+              <div id="ag-offline-beacon" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.35rem 0.95rem;border-radius:9999px;background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.45);color:#fbbf24;font-size:0.82rem;font-weight:700;margin-bottom:1rem;">
+                <span style="width:8px;height:8px;border-radius:50%;background:#fbbf24;box-shadow:0 0 8px #fbbf24;animation:agPulseDot 1.8s infinite;"></span>
+                <span id="ag-offline-beacon-text">Network Connection Interrupted</span>
+              </div>
+              <h2 id="ag-offline-title" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:800;color:#f0fdf4;letter-spacing:-0.02em;margin:0 0 0.6rem 0;">You Are Currently Offline</h2>
+              <p id="ag-offline-desc" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;color:#94a3b8;line-height:1.55;margin:0 0 1.8rem 0;">
+                Live connection to the agrimenya server was interrupted. Cached Rwanda district baselines, seasonal crop calendars, and emergency field tools remain ready.
+              </p>
+              <div style="display:flex;flex-direction:column;gap:0.75rem;width:100%;">
+                <a href="/app/static/offline.html" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;text-decoration:none;font-weight:700;font-size:0.92rem;box-shadow:0 4px 16px rgba(16,185,129,0.35);transition:all 0.2s;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                  <span>Open Offline Field Hub</span>
+                </a>
+                <button id="ag-btn-retry-offline" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:rgba(2,132,199,0.15);border:1.5px solid rgba(2,132,199,0.45);color:#38bdf8;font-weight:700;font-size:0.92rem;cursor:pointer;transition:all 0.2s;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                  <span id="ag-retry-offline-text">Retry Live Connection</span>
+                </button>
+                <button id="ag-btn-dismiss-offline" style="background:transparent;border:none;color:#64748b;font-size:0.84rem;font-weight:600;padding:0.4rem;cursor:pointer;text-decoration:underline;">
+                  Dismiss and keep viewing current screen
+                </button>
+              </div>
+            </div>
+          `;
+          parentDoc.body.appendChild(offlineScreen);
+
+          // Wire Retry Action
+          parentDoc.getElementById('ag-btn-retry-offline').addEventListener('click', () => {
+            const btnText = parentDoc.getElementById('ag-retry-offline-text');
+            btnText.textContent = 'Testing connection...';
+            fetch('/_stcore/health', { cache: 'no-store' })
+              .then(res => {
+                if (res.ok) {
+                  btnText.textContent = 'Reconnected! Reloading...';
+                  setTimeout(() => window.parent.location.reload(), 400);
+                } else {
+                  btnText.textContent = 'Server not reachable yet. Try again';
+                }
+              })
+              .catch(() => {
+                btnText.textContent = 'Still offline. Check network';
+                setTimeout(() => { btnText.textContent = 'Retry Live Connection'; }, 2200);
+              });
+          });
+
+          // Wire Dismiss Action
+          parentDoc.getElementById('ag-btn-dismiss-offline').addEventListener('click', () => {
+            offlineScreen.style.display = 'none';
+          });
+        }
+
+        function handleNetworkChange(isOnline) {
+          if (!offlineScreen) return;
+          if (!isOnline) {
+            offlineScreen.style.display = 'flex';
+            const beacon = parentDoc.getElementById('ag-offline-beacon');
+            const beaconText = parentDoc.getElementById('ag-offline-beacon-text');
+            const title = parentDoc.getElementById('ag-offline-title');
+            if (beacon) {
+              beacon.style.background = 'rgba(245,158,11,0.14)';
+              beacon.style.borderColor = 'rgba(245,158,11,0.45)';
+              beacon.style.color = '#fbbf24';
+            }
+            if (beaconText) beaconText.textContent = 'Network Connection Interrupted';
+            if (title) title.textContent = 'You Are Currently Offline';
+          } else {
+            const beacon = parentDoc.getElementById('ag-offline-beacon');
+            const beaconText = parentDoc.getElementById('ag-offline-beacon-text');
+            const title = parentDoc.getElementById('ag-offline-title');
+            if (beacon) {
+              beacon.style.background = 'rgba(16,185,129,0.18)';
+              beacon.style.borderColor = 'rgba(16,185,129,0.45)';
+              beacon.style.color = '#34d399';
+            }
+            if (beaconText) beaconText.textContent = 'Connection Restored';
+            if (title) title.textContent = 'Back Online!';
+            setTimeout(() => {
+              offlineScreen.style.display = 'none';
+            }, 1400);
+          }
+        }
+
+        window.parent.addEventListener('offline', () => handleNetworkChange(false));
+        window.parent.addEventListener('online', () => handleNetworkChange(true));
+        if (!window.parent.navigator.onLine) {
+          handleNetworkChange(false);
+        }
+
+        // 9. CUSTOMIZED UNUSUAL EVENT & RUNTIME ERROR RECOVERY SCREEN
+        let unusualScreen = parentDoc.getElementById('ag-unusual-error-screen');
+        if (!unusualScreen) {
+          unusualScreen = parentDoc.createElement('div');
+          unusualScreen.id = 'ag-unusual-error-screen';
+          unusualScreen.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2,24,36,0.92);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9999997;display:none;align-items:center;justify-content:center;padding:1.5rem;animation:agFadeInUp 0.35s ease;';
+          unusualScreen.innerHTML = `
+            <div style="max-width:520px;width:100%;background:#031d2b;border:1px solid rgba(56,189,248,0.4);border-radius:24px;padding:2.2rem;box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 32px rgba(56,189,248,0.15);text-align:center;display:flex;flex-direction:column;align-items:center;">
+              <div style="margin-bottom:1.2rem;">
+                <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;filter:drop-shadow(0 0 20px rgba(56,189,248,0.55));">
+              </div>
+              <div style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.35rem 0.95rem;border-radius:9999px;background:rgba(2,132,199,0.15);border:1px solid rgba(56,189,248,0.35);color:#38bdf8;font-size:0.82rem;font-weight:700;margin-bottom:1rem;">
+                <span style="width:8px;height:8px;border-radius:50%;background:#38bdf8;box-shadow:0 0 8px #38bdf8;"></span>
+                <span>System Stability Protection</span>
+              </div>
+              <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.55rem;font-weight:800;color:#f0fdf4;letter-spacing:-0.02em;margin:0 0 0.6rem 0;">agrimenya Interruption Detected</h2>
+              <p id="ag-unusual-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;color:#94a3b8;line-height:1.55;margin:0 0 1.8rem 0;">
+                An unexpected event was detected in the active session stream. Your cached records and local tools remain safe.
+              </p>
+              <div style="display:flex;flex-direction:column;gap:0.75rem;width:100%;">
+                <button id="ag-btn-reload-unusual" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%);color:#ffffff;border:none;font-weight:700;font-size:0.92rem;cursor:pointer;box-shadow:0 4px 16px rgba(2,132,199,0.35);transition:all 0.2s;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                  <span>Reload agrimenya</span>
+                </button>
+                <a href="/app/static/offline.html" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:rgba(16,185,129,0.12);border:1.5px solid rgba(16,185,129,0.35);color:#34d399;text-decoration:none;font-weight:700;font-size:0.92rem;transition:all 0.2s;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                  <span>Open Offline Field Hub</span>
+                </a>
+                <button id="ag-btn-dismiss-unusual" style="background:transparent;border:none;color:#64748b;font-size:0.84rem;font-weight:600;padding:0.4rem;cursor:pointer;text-decoration:underline;">
+                  Continue active session
+                </button>
+              </div>
+            </div>
+          `;
+          parentDoc.body.appendChild(unusualScreen);
+
+          parentDoc.getElementById('ag-btn-reload-unusual').addEventListener('click', () => {
+            window.parent.location.reload();
+          });
+          parentDoc.getElementById('ag-btn-dismiss-unusual').addEventListener('click', () => {
+            unusualScreen.style.display = 'none';
+          });
+        }
+
+        // Global Error Interceptor for Unusual Events
+        window.parent.addEventListener('error', (event) => {
+          if (event && event.message && (event.message.includes('WebSocket') || event.message.includes('disconnected') || event.message.includes('Failed to fetch'))) {
+            if (unusualScreen && offlineScreen.style.display !== 'flex') {
+              const msg = parentDoc.getElementById('ag-unusual-msg');
+              if (msg) msg.textContent = 'Network or server stream encountered an unexpected disconnection. Please reload to resume live tracking.';
+              unusualScreen.style.display = 'flex';
+            }
+          }
+        });
+
+        // 10. SYNCHRONIZE ACTIVE NAVBAR TAB HIGHLIGHT (#c8d7cc)
+        function syncActiveNavbarTab() {
+          try {
+            const path = window.parent.location.pathname || '';
+            const navLinks = parentDoc.querySelectorAll('.st-key-ag_navbar [data-testid="stPageLink"], .st-key-ag_navbar a');
+            if (!navLinks || navLinks.length === 0) return;
+
+            let isHome = path === '/' || path.endsWith('Home') || path === '' || path === '/Home';
+            let isDashboard = path.includes('Dashboard') || path.includes('Overview');
+            let isZones = path.includes('Zones');
+            let isDecisions = path.includes('Decision');
+
+            navLinks.forEach(link => {
+              const href = (link.getAttribute('href') || link.querySelector('a')?.getAttribute('href') || '').toLowerCase();
+              const text = (link.textContent || '').trim().toLowerCase();
+              let shouldBeActive = false;
+
+              if (isHome && (href === '/' || href === 'home' || href === 'home.py' || text === 'home' || text === 'ahabanza')) {
+                shouldBeActive = true;
+              } else if (isDashboard && (href.includes('dashboard') || text.includes('overview') || text.includes('incamake'))) {
+                shouldBeActive = true;
+              } else if (isZones && (href.includes('zones') || text.includes('zones') || text.includes('uduce'))) {
+                shouldBeActive = true;
+              } else if (isDecisions && (href.includes('decision') || text.includes('decision') || text.includes('ibyemezo'))) {
+                shouldBeActive = true;
+              }
+
+              if (shouldBeActive) {
+                link.classList.add('ag-nav-active');
+                link.setAttribute('aria-current', 'page');
+                const innerAnchor = link.tagName === 'A' ? link : link.querySelector('a');
+                if (innerAnchor) {
+                  innerAnchor.classList.add('ag-nav-active');
+                  innerAnchor.setAttribute('aria-current', 'page');
+                }
+              } else {
+                link.classList.remove('ag-nav-active');
+                if (link.getAttribute('aria-current') === 'page' && !shouldBeActive && (isDashboard || isZones || isDecisions || isHome)) {
+                  // Only remove if not the matched target
+                  link.removeAttribute('aria-current');
+                }
+                const innerAnchor = link.tagName === 'A' ? link : link.querySelector('a');
+                if (innerAnchor && !shouldBeActive) {
+                  innerAnchor.classList.remove('ag-nav-active');
+                }
+              }
+            });
+          } catch (syncErr) {
+            console.debug('Navbar tab sync note:', syncErr);
+          }
+        }
+
+        // Run tab sync on load and monitor mutations
+        setTimeout(syncActiveNavbarTab, 100);
+        setTimeout(syncActiveNavbarTab, 400);
+        setTimeout(syncActiveNavbarTab, 900);
+
+        // 11. Custom Install App button and modal themed to the agrimenya logo
         window.parent.addEventListener('beforeinstallprompt', (e) => {
           e.preventDefault();
           window.parent.__agrimenya_deferred_prompt = e;
+        });
 
-          // Display smooth install button badge in navbar if not already installed
-          let installBtn = parentDoc.getElementById('ag-pwa-install-badge');
-          if (!installBtn) {
-            installBtn = parentDoc.createElement('button');
-            installBtn.id = 'ag-pwa-install-badge';
-            installBtn.title = 'Install agrimenya as Progressive Web App';
-            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:99999;padding:0.45rem 0.95rem;border-radius:10px;background:#061a26;border:1px solid rgba(56,189,248,0.5);color:#38bdf8;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:0.45rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:all 0.2s;';
-            installBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Install App</span>';
-            installBtn.addEventListener('click', async () => {
-              if (window.parent.__agrimenya_deferred_prompt) {
-                window.parent.__agrimenya_deferred_prompt.prompt();
-                const { outcome } = await window.parent.__agrimenya_deferred_prompt.userChoice;
-                if (outcome === 'accepted') {
-                  installBtn.remove();
-                }
-                window.parent.__agrimenya_deferred_prompt = null;
+        // Global install trigger function
+        window.parent.__agrimenya_trigger_install = function() {
+          if (window.parent.__agrimenya_deferred_prompt) {
+            window.parent.__agrimenya_deferred_prompt.prompt();
+            window.parent.__agrimenya_deferred_prompt.userChoice.then((choice) => {
+              if (choice.outcome === 'accepted') {
+                const btn = parentDoc.getElementById('ag-pwa-install-badge');
+                if (btn) btn.style.display = 'none';
               }
+              window.parent.__agrimenya_deferred_prompt = null;
+            });
+            return;
+          }
+          // If native prompt is not active, display the themed instructions modal
+          let modal = parentDoc.getElementById('ag-install-modal');
+          if (!modal) {
+            modal = parentDoc.createElement('div');
+            modal.id = 'ag-install-modal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(3,29,42,0.85);backdrop-filter:blur(10px);z-index:99999999;display:flex;align-items:center;justify-content:center;padding:1.5rem;box-sizing:border-box;';
+            modal.innerHTML = `
+              <div style="background:#041f26;border:1.5px solid rgba(56,189,248,0.65);border-radius:20px;max-width:440px;width:100%;padding:2rem 1.8rem;box-shadow:0 24px 60px rgba(0,0,0,0.7), 0 0 30px rgba(56,189,248,0.35);color:#ffffff;font-family:\'Plus Jakarta Sans\',sans-serif;position:relative;text-align:center;">
+                <button id="ag-modal-close" style="position:absolute;top:14px;right:16px;background:transparent;border:none;color:#94a3b8;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px;transition:color 0.2s;">&times;</button>
+                <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
+                  <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya logo" style="width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(56,189,248,0.85));">
+                </div>
+                <h3 style="margin:0 0 0.35rem 0;font-size:1.45rem;font-weight:800;letter-spacing:-0.02em;color:#ffffff;text-shadow:0 2px 10px rgba(0,0,0,0.5);">Install agrimenya</h3>
+                <p style="color:#7dd3fc;font-size:0.86rem;margin:0 0 1.4rem 0;font-weight:600;">Fast offline field access &amp; instant satellite intelligence</p>
+                <div style="text-align:left;background:#082736;border:1px solid rgba(56,189,248,0.25);border-radius:12px;padding:1rem;margin-bottom:1.4rem;font-size:0.85rem;line-height:1.55;color:#e0f2fe;">
+                  <div style="margin-bottom:0.75rem;"><strong style="color:#38bdf8;display:block;margin-bottom:2px;">Desktop (Chrome, Edge):</strong> Click the install icon (&#8853;) in the address bar or browser menu &gt; <em>Install agrimenya</em>.</div>
+                  <div style="margin-bottom:0.75rem;"><strong style="color:#4ade80;display:block;margin-bottom:2px;">iPhone &amp; iPad (Safari):</strong> Tap the <strong>Share</strong> button (&#9083;), scroll down and choose <strong>Add to Home Screen</strong>.</div>
+                  <div><strong style="color:#f59e0b;display:block;margin-bottom:2px;">Android (Chrome):</strong> Tap the three-dot menu (&vellip;) and tap <strong>Install app</strong> or <strong>Add to Home screen</strong>.</div>
+                </div>
+                <button id="ag-modal-gotit" style="width:100%;padding:0.75rem;border-radius:10px;background:linear-gradient(135deg,#0284c7 0%,#0369a1 100%);border:1px solid rgba(56,189,248,0.8);color:#ffffff;font-size:0.92rem;font-weight:750;cursor:pointer;box-shadow:0 4px 16px rgba(14,165,233,0.4);transition:all 0.2s;">Got It</button>
+              </div>
+            `;
+            parentDoc.body.appendChild(modal);
+            const closeBtn = modal.querySelector('#ag-modal-close');
+            const gotItBtn = modal.querySelector('#ag-modal-gotit');
+            const closeModal = () => modal.remove();
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (gotItBtn) gotItBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (ev) => {
+              if (ev.target === modal) closeModal();
+            });
+          }
+        };
+
+        // Render the floating Install App button themed to the logo
+        if (!parentDoc.getElementById('ag-pwa-install-badge')) {
+          const isStandalone = window.parent.matchMedia('(display-mode: standalone)').matches || window.parent.navigator.standalone === true;
+          if (!isStandalone) {
+            const installBtn = parentDoc.createElement('button');
+            installBtn.id = 'ag-pwa-install-badge';
+            installBtn.title = 'Install agrimenya App';
+            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:999999;padding:0.4rem 1.1rem 0.4rem 0.65rem;border-radius:9999px;background:linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%);border:1.5px solid rgba(56,189,248,0.75);color:#ffffff;font-family:"Plus Jakarta Sans",sans-serif;display:flex;align-items:center;gap:0.55rem;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);';
+            installBtn.innerHTML = `
+              <img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(56,189,248,0.95));pointer-events:none;">
+              <div style="display:flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:1.15;pointer-events:none;">
+                <span style="font-size:0.84rem;font-weight:800;color:#ffffff;letter-spacing:-0.01em;">Install App</span>
+                <span style="font-size:0.68rem;font-weight:700;color:#38bdf8;letter-spacing:0.02em;">agrimenya</span>
+              </div>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;pointer-events:none;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            `;
+            installBtn.addEventListener('mouseenter', () => {
+              installBtn.style.transform = 'translateY(-3px) scale(1.03)';
+              installBtn.style.borderColor = '#38bdf8';
+              installBtn.style.boxShadow = '0 16px 36px rgba(0,0,0,0.6), 0 0 26px rgba(56,189,248,0.65), 0 0 16px rgba(74,222,128,0.45)';
+              installBtn.style.background = 'linear-gradient(135deg, #063143 0%, #0a465e 55%, #042533 100%)';
+            });
+            installBtn.addEventListener('mouseleave', () => {
+              installBtn.style.transform = 'translateY(0) scale(1)';
+              installBtn.style.borderColor = 'rgba(56,189,248,0.75)';
+              installBtn.style.boxShadow = '0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38),0 0 8px rgba(74,222,128,0.25)';
+              installBtn.style.background = 'linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%)';
+            });
+            installBtn.addEventListener('click', () => {
+              window.parent.__agrimenya_trigger_install();
             });
             parentDoc.body.appendChild(installBtn);
           }
-        });
+        }
 
       } catch (err) {
         console.error('PWA initialization error:', err);

@@ -4,6 +4,7 @@ Admin view: operations, governance, and system health.
 Implements Page 7 of the frontend handoff: zone/plan/alert management + health.
 """
 import logging
+from typing import Any
 
 import pandas as pd
 import requests
@@ -11,6 +12,7 @@ import streamlit as st
 from components.errors import render_error_page
 from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
+from utils.i18n import t
 
 logger = logging.getLogger(__name__)
 
@@ -18,15 +20,22 @@ logger = logging.getLogger(__name__)
 def render_admin() -> None:
     try:
         if not api_client.render_admin_login("admin_panel"):
-            st.info("Sign in with your administrator email and password to use these operations.")
             return
         render_icon_title(
             "assets/compass.svg",
-            "Admin Panel",
-            "System operations, zone management, and health monitoring",
+            t("admin.title", "Admin Panel"),
+            t("admin.subtitle", "System operations, zone management, and health monitoring"),
         )
 
-        admin_tabs = st.tabs(["System Health", "Zone Management", "Plan Management", "Alert Management", "NISR Data", "Access Management", "Community Moderation"])
+        admin_tabs = st.tabs([
+            t("admin.tab.health", "System Health"),
+            t("admin.tab.zones", "Zone Management"),
+            t("admin.tab.plans", "Plan Management"),
+            t("admin.tab.alerts", "Alert Management"),
+            t("admin.tab.nisr", "NISR Data"),
+            t("admin.tab.access", "Access Management"),
+            t("admin.tab.moderation", "Community Moderation"),
+        ])
 
         # ═════════════════════════════════════════════════════════════
         # TAB 1: System Health
@@ -101,7 +110,7 @@ def render_admin() -> None:
                             if not district.strip():
                                 st.error("A zone must have a district.")
                             else:
-                                payload = {
+                                payload: dict[str, Any] = {
                                     "district": district.strip(), "sector": sector.strip() or None,
                                     "cell": cell.strip() or None, "crop_type": crop.strip() or None,
                                     "season": season.strip() or None,

@@ -84,7 +84,7 @@ self.addEventListener('fetch', (event) => {
           if (offlinePage) return offlinePage;
 
           return new Response(
-            `<!DOCTYPE html><html><head><meta charset="utf-8"><title>agrimenya Offline</title></head><body style="background:#021824;color:#e0f2fe;font-family:sans-serif;padding:2rem;text-align:center;"><h2>agrimenya is offline</h2><p>Please check your connection.</p></body></html>`,
+            `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>agrimenya Offline</title><style>body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 25%, #05303f 0%, #021824 100%);color:#f0fdf4;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;padding:1.5rem;text-align:center;}.box{max-width:480px;background:#031d2b;border:1px solid rgba(245,158,11,0.45);border-radius:20px;padding:2rem;box-shadow:0 20px 50px rgba(0,0,0,0.6);}img{width:68px;height:68px;margin-bottom:1rem;filter:drop-shadow(0 0 16px rgba(245,158,11,0.5));}h2{margin:0 0 0.5rem 0;font-size:1.5rem;}p{color:#94a3b8;font-size:0.92rem;line-height:1.5;margin:0 0 1.5rem 0;}a{display:inline-block;padding:0.75rem 1.4rem;border-radius:10px;background:#10b981;color:#fff;text-decoration:none;font-weight:700;font-size:0.9rem;}</style></head><body><div class="box"><img src="/app/static/ai_assistant_bulb.png" alt="agrimenya"><h2>agrimenya Offline</h2><p>You are disconnected from the network. Live satellite indicators are paused.</p><a href="/app/static/offline.html">Open Offline Field Hub</a></div></body></html>`,
             { headers: { 'Content-Type': 'text/html' } }
           );
         })

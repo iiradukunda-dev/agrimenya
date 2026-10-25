@@ -185,7 +185,7 @@ Before pushing changes:
 
 **CRITICAL BRANCH POLICY:**
 * **Do not push to the `main` branch unless explicitly instructed by the user.**
-* **Push to the `develop` branch by default for all changes.**
+* **Push to the `dev` branch by default for all changes.**
 
 Do not force-push by default.
 

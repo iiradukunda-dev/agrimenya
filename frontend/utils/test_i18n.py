@@ -51,3 +51,63 @@ def test_navbar_and_home_translation_keys():
     for lang in ["en", "rw", "fr"]:
         for key in keys:
             assert key in FALLBACK_TRANSLATIONS[lang], f"Key '{key}' missing for lang '{lang}'"
+
+
+def test_all_pages_translation_keys_exist():
+    """Verify that all main application pages have corresponding translation keys."""
+    page_keys = [
+        "dashboard.title",
+        "dashboard.kpi.zones_alignment",
+        "dashboard.weather.live_title",
+        "zones.title",
+        "zones.register_expander",
+        "ai.title",
+        "ai.tab.advisor",
+        "ai.tab.disease",
+        "about.title",
+        "about.sections_title",
+        "contact.title",
+        "contact.submit",
+        "guide.title",
+        "admin.title",
+        "nav.install_app",
+    ]
+    for lang in ["en", "rw", "fr"]:
+        for key in page_keys:
+            assert key in FALLBACK_TRANSLATIONS[lang], f"Key '{key}' missing for lang '{lang}'"
+            assert len(FALLBACK_TRANSLATIONS[lang][key]) > 0
+
+
+def test_dynamic_language_switching_across_all_pages():
+    """Verify that switching language dynamically updates page text across all views."""
+    # Test English
+    set_language("en")
+    assert t("dashboard.title") == "Dashboard"
+    assert t("about.title") == "About agrimenya"
+    assert t("contact.title") == "Send feedback"
+    assert t("guide.title") == "Data guide"
+    assert t("zones.title") == "Agricultural Zones"
+    assert t("ai.title") == "AI Assistant"
+
+    # Test Kinyarwanda
+    set_language("rw")
+    assert t("dashboard.title") == "Incamake"
+    assert t("about.title") == "Ibyerekeye agrimenya"
+    assert t("contact.title") == "Tanga ibitekerezo"
+    assert t("guide.title") == "Igitabo cy'Amakuru"
+    assert t("zones.title") == "Uduce tw'Ubuhinzi"
+    assert t("ai.title") == "Ubufasha bwa AI"
+
+    # Test French
+    set_language("fr")
+    assert t("dashboard.title") == "Tableau de Bord"
+    assert t("about.title") == "À propos d'agrimenya"
+    assert t("contact.title") == "Envoyer un retour"
+    assert t("guide.title") == "Guide des données"
+    assert t("zones.title") == "Zones Agricoles"
+    assert t("ai.title") == "Assistant IA"
+
+    # Reset to English
+    set_language("en")
+
+

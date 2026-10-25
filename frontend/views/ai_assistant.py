@@ -27,14 +27,14 @@ def render_ai_assistant() -> None:
     try:
         render_icon_title(
             "assets/bot.svg",
-            "AI Assistant",
-            "Ask questions about zones, get recommendations, and detect crop diseases",
+            t("ai.title", "AI Assistant"),
+            t("ai.subtitle", "Ask questions about zones, get recommendations, and detect crop diseases"),
         )
 
         _init_chat_state()
 
         # ── Layout: Chat + Disease Detection ─────────────────────────
-        chat_tab, disease_tab = st.tabs(["AI Advisor", "Disease Detection"])
+        chat_tab, disease_tab = st.tabs([t("ai.tab.advisor", "AI Advisor"), t("ai.tab.disease", "Disease Detection")])
 
         # ═════════════════════════════════════════════════════════════
         # TAB 1: AI Chat
@@ -47,7 +47,7 @@ def render_ai_assistant() -> None:
                 for z in zones
             ]
             zone_by_label = dict(zip(zone_labels, zones))
-            selected_zone_label = st.selectbox("Zone context", zone_labels, key="ai_zone_ctx") if zone_labels else None
+            selected_zone_label = st.selectbox(t("ai.zone_ctx", "Zone context"), zone_labels, key="ai_zone_ctx") if zone_labels else None
             selected_zone = zone_by_label.get(selected_zone_label) if selected_zone_label else None
             selected_zone_id = selected_zone.get("id") if selected_zone else None
 
@@ -57,7 +57,7 @@ def render_ai_assistant() -> None:
                     st.markdown(msg["content"])
 
             # Chat input
-            prompt = st.chat_input("Ask about a zone, crop, or recommendation...") if selected_zone_id else None
+            prompt = st.chat_input(t("ai.placeholder", "Ask about a zone, crop, or recommendation...")) if selected_zone_id else None
             if not selected_zone_id:
                 st.info("Select or create an agricultural zone to start asking questions with grounded soil and yield data.")
             if prompt:
@@ -88,7 +88,7 @@ def render_ai_assistant() -> None:
 
             # Clear chat button
             if st.session_state.ai_messages:
-                if st.button("Clear conversation", icon=":material/delete:"):
+                if st.button(t("ai.clear_chat", "Clear conversation"), icon=":material/delete:"):
                     st.session_state.ai_messages = []
                     st.rerun()
 
@@ -96,8 +96,8 @@ def render_ai_assistant() -> None:
         # TAB 2: Disease Detection
         # ═════════════════════════════════════════════════════════════
         with disease_tab:
-            render_icon_subheader("assets/brain.svg", "Crop Disease Detection")
-            st.markdown("Describe symptoms and optionally upload a photo to identify potential crop diseases.")
+            render_icon_subheader("assets/brain.svg", t("ai.disease_title", "Crop Disease Detection"))
+            st.markdown(t("ai.disease_desc", "Describe symptoms and optionally upload a photo to identify potential crop diseases."))
 
             zones = api_client.get_zones()
             disease_zone_options = {
@@ -118,14 +118,14 @@ def render_ai_assistant() -> None:
                     crops = api_client.get_crops() or CROPS
                     crop = st.selectbox("Crop", crops, key="disease_crop")
                     symptoms = st.text_area(
-                        "Describe symptoms",
+                        t("ai.describe_symptoms", "Describe symptoms"),
                         placeholder="e.g. Yellowing leaves with brown spots, wilting stems...",
                         height=150,
                         key="disease_symptoms",
                     )
 
                 with form_cols[1]:
-                    st.markdown("**Upload a photo (optional)**")
+                    st.markdown(f"**{t('ai.upload_photo', 'Upload a photo (optional)')}**")
                     image_file = st.file_uploader(
                         "Upload crop image",
                         type=["jpg", "jpeg", "png"],
@@ -135,7 +135,7 @@ def render_ai_assistant() -> None:
                     if image_file:
                         st.image(image_file, caption="Uploaded image", width="stretch")
 
-                submitted = st.form_submit_button("Detect Disease", type="primary", width="stretch")
+                submitted = st.form_submit_button(t("ai.detect_btn", "Detect Disease"), type="primary", width="stretch")
 
             if submitted and symptoms:
                 with st.spinner("Analyzing symptoms..."):
@@ -146,7 +146,7 @@ def render_ai_assistant() -> None:
 
                 if result:
                     st.divider()
-                    render_icon_subheader("assets/brain.svg", "Detection Result")
+                    render_icon_subheader("assets/brain.svg", t("ai.detection_result", "Detection Result"))
                     if image_file and result.get("source") != "vision-cnn":
                         st.warning(
                             "The image model is not trained yet. This result is based on the symptoms you entered, not visual image analysis."
@@ -157,7 +157,7 @@ def render_ai_assistant() -> None:
                     result_cols = st.columns(2, gap="medium")
                     with result_cols[0]:
                         with st.container(border=True):
-                            st.markdown("**Probable Disease**")
+                            st.markdown(f"**{t('ai.probable_disease', 'Probable Disease')}**")
                             st.markdown(f"### {result.get('predicted_disease', 'Unknown')}")
                             confidence = result.get("confidence", 0)
                             conf_str = f"{confidence:.0%}" if isinstance(confidence, float) else f"{confidence}"
@@ -165,7 +165,7 @@ def render_ai_assistant() -> None:
 
                     with result_cols[1]:
                         with st.container(border=True):
-                            st.markdown("**Risk Assessment**")
+                            st.markdown(f"**{t('ai.risk_assess', 'Risk Assessment')}**")
                             risk = result.get("risk_level", "Unknown")
                             priority_badge(risk if risk in ("High", "Medium", "Low") else "Not assessed")
                             st.caption(f"Diagnostic Engine: {result.get('source', 'symptom-model')}")
@@ -173,12 +173,12 @@ def render_ai_assistant() -> None:
                     # Recommended actions
                     actions = result.get("recommended_actions", result.get("actions", []))
                     if actions:
-                        st.markdown("**Recommended Actions:**")
+                        st.markdown(f"**{t('ai.rec_actions', 'Recommended Actions:')}**")
                         for i, action in enumerate(actions, 1):
                             st.markdown(f"{i}. {action}")
 
                     # Option to create a disease plan
-                    if st.button("Create Disease Action Plan", type="primary", icon=":material/edit_calendar:"):
+                    if st.button(t("ai.create_disease_plan", "Create Disease Action Plan"), type="primary", icon=":material/edit_calendar:"):
                         plan_result = api_client.create_disease_plan({
                             "zone_id": disease_zone_id,
                             "crop": crop,
