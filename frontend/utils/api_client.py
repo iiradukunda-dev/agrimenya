@@ -62,57 +62,116 @@ def admin_session_authenticated() -> bool:
 
 def render_admin_login(key_prefix: str = "admin") -> bool:
     """Require a named administrator account before using admin APIs."""
+    from components.cards import login_card_header, security_trust_footer, authenticated_session_badge
+
     reset_token = st.query_params.get("reset_token")
     if reset_token:
-        st.subheader("Reset administrator password")
-        with st.form(f"{key_prefix}_reset_form"):
-            password = st.text_input("New password (12 characters minimum)", type="password", key=f"{key_prefix}_new_password")
-            confirmation = st.text_input("Confirm new password", type="password", key=f"{key_prefix}_confirm_password")
-            submit = st.form_submit_button("Set new password", type="primary")
-        if submit:
-            if len(password) < 12:
-                st.error("Use at least 12 characters for your password.")
-            elif password != confirmation:
-                st.error("The passwords do not match.")
-            else:
-                result = reset_admin_password(reset_token, password)
-                if result:
-                    st.success("Password updated. Sign in with your new password.")
-                    st.query_params.clear()
-                    st.rerun()
-                else:
-                    st.error(get_admin_api_error("/auth/admin/password/reset") or "This reset link is invalid or expired.")
+        col_l, col_center, col_r = st.columns([1, 1.8, 1])
+        with col_center:
+            with st.container(border=True):
+                login_card_header(
+                    title="Reset Password",
+                    subtitle="Set a new secure password for your administrator account.",
+                    badge_text="SECURITY RECOVERY",
+                    accent_color="#0284c7",
+                )
+                with st.form(f"{key_prefix}_reset_form"):
+                    password = st.text_input(
+                        "New password (12 characters minimum)",
+                        type="password",
+                        placeholder="Min. 12 characters",
+                        key=f"{key_prefix}_new_password",
+                    )
+                    confirmation = st.text_input(
+                        "Confirm new password",
+                        type="password",
+                        placeholder="Re-enter password",
+                        key=f"{key_prefix}_confirm_password",
+                    )
+                    submit = st.form_submit_button("Update Password →", type="primary", use_container_width=True)
+                if submit:
+                    if len(password) < 12:
+                        st.error("Use at least 12 characters for your password.")
+                    elif password != confirmation:
+                        st.error("The passwords do not match.")
+                    else:
+                        result = reset_admin_password(reset_token, password)
+                        if result:
+                            st.success("Password updated. Sign in with your new password.")
+                            st.query_params.clear()
+                            st.rerun()
+                        else:
+                            st.error(get_admin_api_error("/auth/admin/password/reset") or "This reset link is invalid or expired.")
+                security_trust_footer()
         return False
+
     if admin_session_authenticated():
         identity = st.session_state.get("admin_identity", {})
-        st.caption(f"Signed in as {identity.get('display_name') or identity.get('email') or 'administrator'} (session expires after 30 minutes).")
-        if st.button("Sign out of admin", key=f"{key_prefix}_signout"):
+        display_name = identity.get("display_name") or identity.get("email") or "Administrator"
+        email = identity.get("email") or ""
+        if authenticated_session_badge(display_name=display_name, email=email, role="System Administrator", key_prefix=key_prefix):
             st.session_state.pop("admin_session_expires_at", None)
             st.session_state.pop("admin_access_token", None)
             st.session_state.pop("admin_identity", None)
             st.rerun()
         return True
+
     widget_key = f"{key_prefix}_password"
-    with st.form(f"{key_prefix}_login_form"):
-        st.text_input("Administrator email", key=f"{key_prefix}_email")
-        st.text_input("Password", type="password", key=widget_key)
-        st.form_submit_button(
-            "Sign in",
-            on_click=_authenticate_admin_session,
-            args=(widget_key,),
-        )
-    login_error = st.session_state.pop("admin_login_error", None)
-    if login_error:
-        st.error(login_error)
-    with st.expander("Forgot your password?"):
-        with st.form(f"{key_prefix}_forgot_form"):
-            email = st.text_input("Administrator email", key=f"{key_prefix}_forgot_email")
-            forgot = st.form_submit_button("Send reset link")
-        if forgot:
-            if request_admin_password_reset(email):
-                st.success("If an active account matches that email, reset instructions will be sent.")
-            else:
-                st.error(get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
+    is_main_page = key_prefix == "admin_panel"
+
+    if is_main_page:
+        col_l, col_center, col_r = st.columns([1, 1.8, 1])
+        card_col = col_center
+    else:
+        card_col = st.container()
+
+    with card_col:
+        with st.container(border=True):
+            login_card_header(
+                title="Administrator Portal",
+                subtitle="Sign in with authorized credentials to access zone management, NISR data ingestion, and system controls.",
+                badge_text="SECURITY PROTOCOL",
+                accent_color="#0284c7",
+            )
+            login_error = st.session_state.pop("admin_login_error", None)
+            if login_error:
+                st.error(login_error)
+            with st.form(f"{key_prefix}_login_form"):
+                st.text_input(
+                    "Administrator email",
+                    placeholder="admin@agrimenya.rw",
+                    key=f"{key_prefix}_email",
+                )
+                st.text_input(
+                    "Password",
+                    type="password",
+                    placeholder="••••••••••••",
+                    key=widget_key,
+                )
+                st.form_submit_button(
+                    "Authenticate Session →",
+                    type="primary",
+                    use_container_width=True,
+                    on_click=_authenticate_admin_session,
+                    args=(widget_key,),
+                )
+            with st.expander("Forgot your administrator password?"):
+                with st.form(f"{key_prefix}_forgot_form"):
+                    email = st.text_input(
+                        "Administrator email",
+                        placeholder="admin@agrimenya.rw",
+                        key=f"{key_prefix}_forgot_email",
+                    )
+                    forgot = st.form_submit_button("Send reset link →", use_container_width=True)
+                if forgot:
+                    if request_admin_password_reset(email):
+                        st.success("If an active account matches that email, reset instructions will be sent.")
+                    else:
+                        st.error(get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
+            security_trust_footer(
+                message="256-bit TLS encrypted session",
+                session_info="30-minute auto-expiry timeout",
+            )
     return admin_session_authenticated()
 
 
@@ -235,7 +294,7 @@ def get_kpis() -> dict[str, Any]:
     data = _get_api("/health")
     return {
         "total_zones": len(zones),
-        "baseline_yield_kg_ha": data.get("baselines_overall_average") if data else None,
+        "baseline_yield_kg_ha": data.get("baselines_overall_average") if isinstance(data, dict) else None,
         "active_alerts": len(alerts),
     }
 
@@ -252,7 +311,7 @@ def get_alignment_dashboard() -> dict[str, Any]:
             "estimated_jobs": 12_500,
         }
     data = _get_api("/alignment/dashboard")
-    if data:
+    if isinstance(data, dict):
         return data
     return {}
 
@@ -283,7 +342,7 @@ def get_priority_data() -> pd.DataFrame:
             }, inplace=True)
             # Saved predictions are total kg for the selected zone area.
             if "Production_MT" in df.columns:
-                df["Production_MT"] = pd.to_numeric(df["Production_MT"], errors="coerce") / 1000
+                df["Production_MT"] = pd.Series(pd.to_numeric(df["Production_MT"], errors="coerce"), dtype=float) / 1000.0
             if "Crop" not in df.columns:
                 df["Crop"] = df["crop_type"] if "crop_type" in df.columns else "Unknown"
             if "Crop" in df.columns:
@@ -294,7 +353,7 @@ def get_priority_data() -> pd.DataFrame:
                 df["District"] = df["District"].fillna("Unknown").astype(str)
             return df
 
-    return pd.DataFrame()
+    return pd.DataFrame(data=[])
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -304,11 +363,19 @@ def get_zones() -> list[dict[str, Any]]:
         return mock_data.generate_mock_zones()
     data = _get_api("/segmentation/zones")
     if data and isinstance(data, list):
-        map_rows = _get_api("/segmentation/map-data") or []
-        map_by_id = {str(row.get("id")): row for row in map_rows if row.get("id")}
+        map_resp = _get_api("/segmentation/map-data")
+        map_rows = map_resp if isinstance(map_resp, list) else []
+        map_by_id = {
+            str(row.get("id")): row
+            for row in map_rows
+            if isinstance(row, dict) and row.get("id")
+        }
         normalized = []
         for zone in data:
-            row = {**zone, **map_by_id.get(str(zone.get("id")), {})}
+            if not isinstance(zone, dict):
+                continue
+            matching = map_by_id.get(str(zone.get("id")), {})
+            row = {**zone, **matching}
             row["name"] = " / ".join(filter(None, [row.get("district"), row.get("sector"), row.get("cell")])) or str(row.get("id", "Zone"))
             row["crop"] = row.get("crop_type") or row.get("crop") or ""
             row["priority"] = row.get("priority_level") or row.get("priority") or ""
@@ -323,8 +390,8 @@ def get_zones() -> list[dict[str, Any]]:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_zone_detail(zone_id: str) -> dict[str, Any] | None:
     """Returns detail for a single zone."""
-    data = _get_api(f"/segmentation/zones/{quote(str(zone_id), safe='')}")
-    return data
+    data = _get_api(f"/segmentation/zones/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 def create_zone(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -375,8 +442,8 @@ def get_recommendations() -> list[dict[str, Any]]:
             priority = r.get("priority_level", "Medium")
             district = (r.get("zones") or {}).get("district", "Unknown")
 
-            rec_data = _get_api(f"/decision/recommendations/{zone_id}")
-            texts = rec_data.get("recommendations", []) if rec_data else []
+            rec_data = _get_api(f"/decision/recommendations/{quote(str(zone_id), safe='')}")
+            texts = rec_data.get("recommendations", []) if isinstance(rec_data, dict) else []
             text = " ".join(texts) if texts else "No detailed recommendations."
 
             recs.append({
@@ -416,7 +483,8 @@ def predict_yield(payload: dict[str, Any]) -> dict[str, Any] | None:
 
 def get_zone_recommendations(zone_id: str) -> dict[str, Any] | None:
     """GET /decision/recommendations/{zone_id}."""
-    return _get_api(f"/decision/recommendations/{zone_id}")
+    data = _get_api(f"/decision/recommendations/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -426,13 +494,15 @@ def get_zone_recommendations(zone_id: str) -> dict[str, Any] | None:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_finance_readiness(zone_id: str) -> dict[str, Any] | None:
     """Finance readiness for a zone."""
-    return _get_api(f"/alignment/finance-readiness/{zone_id}")
+    data = _get_api(f"/alignment/finance-readiness/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_nutrition_risk(zone_id: str) -> dict[str, Any] | None:
     """Nutrition risk assessment for a zone."""
-    return _get_api(f"/alignment/nutrition-risk/{zone_id}")
+    data = _get_api(f"/alignment/nutrition-risk/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -494,13 +564,14 @@ def get_roadmap(zone_id: str | None = None) -> pd.DataFrame:
             if mapped:
                 return pd.DataFrame(mapped)
 
-    return pd.DataFrame(columns=["Task", "Timeframe", "Description"])
+    return pd.DataFrame(data={"Task": [], "Timeframe": [], "Description": []})
 
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_zone_resources(zone_id: str, **inputs: float | None) -> dict[str, Any] | None:
     """Resource estimates for a zone."""
-    return _get_api(f"/planification/resources/{quote(str(zone_id), safe='')}", params=inputs)
+    data = _get_api(f"/planification/resources/{quote(zone_id, safe='')}", params=inputs)
+    return data if isinstance(data, dict) else None
 
 
 def create_roadmap(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -568,7 +639,7 @@ def send_alert(message: str, zone_id: str, severity: str) -> dict[str, Any] | No
         return resp.json()
     except Exception as e:
         logger.error("Error sending alert to %s: %s", url, e)
-        return False
+        return None
 
 
 def send_contact_message(name: str, email: str, subject: str, message: str) -> bool:
@@ -588,7 +659,8 @@ def notify(payload: dict[str, Any]) -> dict[str, Any] | None:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_shared_plan(plan_id: str) -> dict[str, Any] | None:
     """GET /communication/share/{plan_id}."""
-    return _get_api(f"/communication/share/{plan_id}")
+    data = _get_api(f"/communication/share/{quote(plan_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 def get_whatsapp_contacts() -> list[dict[str, Any]]:
@@ -662,7 +734,8 @@ def get_whatsapp_delivery(alert_id: str) -> dict[str, Any] | None:
 @st.cache_data(ttl=120, show_spinner=False)
 def get_weather(district: str) -> dict[str, Any] | None:
     """Live weather data for a district."""
-    return _get_api(f"/live/weather/{quote(district, safe='')}")
+    data = _get_api(f"/live/weather/{quote(district, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 def submit_field_report(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -673,7 +746,7 @@ def submit_field_report(payload: dict[str, Any]) -> dict[str, Any] | None:
 @st.cache_data(ttl=120, show_spinner=False)
 def get_field_reports(zone_id: str) -> list[dict[str, Any]]:
     """GET /live/field-reports/{zone_id}."""
-    data = _get_api(f"/live/field-reports/{quote(str(zone_id), safe='')}")
+    data = _get_api(f"/live/field-reports/{quote(zone_id, safe='')}")
     if data and isinstance(data, list):
         return data
     return []
@@ -683,18 +756,20 @@ def get_field_reports(zone_id: str) -> list[dict[str, Any]]:
 def get_field_risk(zone_id: str, crop: str | None = None) -> dict[str, Any] | None:
     """Recent community observation summary for decision context."""
     suffix = f"?crop={quote(crop, safe='')}" if crop else ""
-    return _get_api(f"/live/field-risk/{quote(str(zone_id), safe='')}{suffix}")
+    data = _get_api(f"/live/field-risk/{quote(zone_id, safe='')}{suffix}")
+    return data if isinstance(data, dict) else None
 
 
 @st.cache_data(ttl=120, show_spinner=False)
 def get_zone_readiness(zone_id: str) -> dict[str, Any] | None:
     """GET /alignment/readiness/{zone_id}."""
-    return _get_api(f"/alignment/readiness/{quote(str(zone_id), safe='')}")
+    data = _get_api(f"/alignment/readiness/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 def update_zone_readiness(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
     """PUT /alignment/readiness/{zone_id}."""
-    result = _put_api(f"/alignment/readiness/{quote(str(zone_id), safe='')}", payload)
+    result = _put_api(f"/alignment/readiness/{quote(zone_id, safe='')}", payload)
     if result:
         get_zone_readiness.clear()
     return result
@@ -703,13 +778,13 @@ def update_zone_readiness(zone_id: str, payload: dict[str, Any]) -> dict[str, An
 @st.cache_data(ttl=120, show_spinner=False)
 def get_zone_work_records(zone_id: str) -> list[dict[str, Any]]:
     """GET /alignment/work-records/{zone_id}."""
-    data = _get_api(f"/alignment/work-records/{quote(str(zone_id), safe='')}")
+    data = _get_api(f"/alignment/work-records/{quote(zone_id, safe='')}")
     return data if isinstance(data, list) else []
 
 
 def create_zone_work_record(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
     """POST /alignment/work-records/{zone_id} and refresh affected dashboard totals."""
-    result = _post_api(f"/alignment/work-records/{quote(str(zone_id), safe='')}", payload)
+    result = _post_api(f"/alignment/work-records/{quote(zone_id, safe='')}", payload)
     if result:
         get_zone_work_records.clear()
         get_alignment_dashboard.clear()
@@ -784,7 +859,7 @@ def get_community_moderation_field_reports() -> list[dict[str, Any]]:
 
 
 def delete_community_field_report(report_id: str) -> dict[str, Any] | None:
-    return _request_admin("DELETE", f"/community/moderation/field-reports/{quote(str(report_id), safe='')}")
+    return _request_admin("DELETE", f"/community/moderation/field-reports/{quote(report_id, safe='')}")
 
 
 def moderate_community_content(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -797,7 +872,7 @@ def get_community_accounts() -> list[dict[str, Any]]:
 
 
 def set_community_account_active(account_id: str, is_active: bool) -> dict[str, Any] | None:
-    return _request_admin("PATCH", f"/community/moderation/accounts/{quote(str(account_id), safe='')}/status",
+    return _request_admin("PATCH", f"/community/moderation/accounts/{quote(account_id, safe='')}/status",
                           {"is_active": is_active})
 
 
@@ -807,12 +882,12 @@ def invite_admin_account(email: str, display_name: str) -> dict[str, Any] | None
 
 def set_admin_account_active(account_id: str, is_active: bool) -> dict[str, Any] | None:
     return _request_admin(
-        "PATCH", f"/auth/admin/accounts/{quote(str(account_id), safe='')}/status", {"is_active": is_active}
+        "PATCH", f"/auth/admin/accounts/{quote(account_id, safe='')}/status", {"is_active": is_active}
     )
 
 
 def update_admin_zone(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
-    result = _request_admin("PATCH", f"/admin/zones/{quote(str(zone_id), safe='')}", payload)
+    result = _request_admin("PATCH", f"/admin/zones/{quote(zone_id, safe='')}", payload)
     if result:
         get_zones.clear()
         get_priority_data.clear()
@@ -820,7 +895,7 @@ def update_admin_zone(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] |
 
 
 def update_admin_plan(plan_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
-    result = _request_admin("PATCH", f"/admin/plans/{quote(str(plan_id), safe='')}", payload)
+    result = _request_admin("PATCH", f"/admin/plans/{quote(plan_id, safe='')}", payload)
     if result:
         get_zone_plans.clear()
         get_roadmap.clear()
@@ -828,7 +903,7 @@ def update_admin_plan(plan_id: str, payload: dict[str, Any]) -> dict[str, Any] |
 
 
 def update_admin_alert(alert_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
-    result = _request_admin("PATCH", f"/admin/alerts/{quote(str(alert_id), safe='')}", payload)
+    result = _request_admin("PATCH", f"/admin/alerts/{quote(alert_id, safe='')}", payload)
     if result:
         get_alerts.clear()
     return result
@@ -876,7 +951,8 @@ def upload_nisr_release(filename: str, content: bytes, source_release: str, seas
 
 def get_health() -> dict[str, Any] | None:
     """GET /health: system health check."""
-    return _get_api("/health")
+    data = _get_api("/health")
+    return data if isinstance(data, dict) else None
 
 
 def _request_admin(method: str, path: str, payload: dict[str, Any] | None = None, timeout: int = 15) -> Any:
