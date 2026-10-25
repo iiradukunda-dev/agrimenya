@@ -1,4 +1,4 @@
-# agrimenya
+﻿# agrimenya
 
 agrimenya is a Rwanda-focused agricultural decision and planning support
 system. The Streamlit frontend calls a FastAPI backend, which reads and writes
@@ -129,7 +129,7 @@ operations. Restart the relevant service after changing environment values.
 ## Database setup
 
 Apply the SQL files in `backend/app/db/migrations/` to Supabase in numeric
-order, `0001` through `0011`, using the Supabase SQL editor or migration runner.
+order, `0001` through `0016`, using the Supabase SQL editor or migration runner.
 
 - `0001` to `0004`: Baseline zones, predictions, roadmaps, and alerts schema.
 - `0005` and `0006`: WhatsApp contacts, message tracking, consent, and alert approval.
@@ -137,7 +137,7 @@ order, `0001` through `0011`, using the Supabase SQL editor or migration runner.
 - `0008`: Named administrator accounts and secure password recovery tokens.
 - `0009`: Authenticated farmer discussions and moderation reports.
 - `0010`: Dated farmer field observations with optional private photos.
-- `0011`: Unique lowercase community usernames.
+- `0011`: Unique lowercase community usernames.`n- `0014`: Saved plan action status history.`n- `0015`: Community email verification and shared rate limits.`n- `0016`: Optional Google sign-in for Community accounts.
 
 Observations stay separate from official NISR yield records and are never
 used as NISR baselines. Check the migration comments and `backend/docs/`

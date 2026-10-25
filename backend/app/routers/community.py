@@ -1,5 +1,6 @@
 """Authenticated farmer discussion board and administrator moderation."""
 from collections import defaultdict, deque
+import base64
 import hashlib
 import logging
 import re
@@ -13,6 +14,7 @@ from io import BytesIO
 from urllib.parse import urlencode, urlparse
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile, status
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field, field_validator
 
 from app.core.auth import create_token, require_admin, require_community, verify_token
@@ -133,6 +135,214 @@ class CommunityResendVerification(BaseModel):
         if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", value):
             raise ValueError("Enter a valid email address")
         return value
+
+
+class CommunityGoogleCode(BaseModel):
+    code: str = Field(min_length=32, max_length=256)
+
+
+def _google_oauth_enabled() -> bool:
+    return bool(settings.GOOGLE_OAUTH_CLIENT_ID and settings.GOOGLE_OAUTH_CLIENT_SECRET)
+
+
+def _community_session(account: dict) -> dict:
+    token = create_token("community", 3600, {
+        "sub": str(account["id"]),
+        "ver": int(account.get("session_version", 1)),
+    })
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "expires_in": 3600,
+        "account": {
+            "id": str(account["id"]),
+            "display_name": account["display_name"],
+            "role": account["role"],
+        },
+    }
+
+
+def _google_username(email: str) -> str:
+    local_part = email.partition("@")[0].lower()
+    base = re.sub(r"[^a-z0-9_]+", "_", local_part).strip("_")[:30]
+    return base if len(base) >= 3 else "farmer"
+
+
+def _google_frontend_redirect(*, code: str | None = None, error: str | None = None) -> RedirectResponse:
+    parameters = {}
+    if code:
+        parameters["community_google_code"] = code
+    if error:
+        parameters["community_google_error"] = error
+    target = settings.COMMUNITY_GOOGLE_CALLBACK_URL
+    separator = "&" if "?" in target else "?"
+    response = RedirectResponse(f"{target}{separator}{urlencode(parameters)}", status_code=303)
+    secure = settings.APP_ENV == "production"
+    for cookie_name in ("community_google_state", "community_google_verifier", "community_google_nonce"):
+        response.delete_cookie(cookie_name, path="/community/auth/google/callback", secure=secure,
+                               httponly=True, samesite="lax")
+    return response
+
+
+@router.get("/auth/google/status")
+def community_google_status():
+    return {"enabled": _google_oauth_enabled()}
+
+
+@router.get("/auth/google")
+def community_google_start():
+    _ensure_secure_sessions()
+    if not _google_oauth_enabled():
+        raise HTTPException(status_code=404, detail="Google sign-in is not enabled")
+    if settings.APP_ENV == "production":
+        redirect = urlparse(settings.GOOGLE_OAUTH_REDIRECT_URI)
+        frontend = urlparse(settings.COMMUNITY_GOOGLE_CALLBACK_URL)
+        if redirect.scheme != "https" or frontend.scheme != "https":
+            raise HTTPException(status_code=503, detail="Google sign-in requires HTTPS URLs in production")
+
+    state = secrets.token_urlsafe(32)
+    nonce = secrets.token_urlsafe(32)
+    verifier = secrets.token_urlsafe(48)
+    challenge = base64.urlsafe_b64encode(
+        hashlib.sha256(verifier.encode("ascii")).digest()
+    ).decode("ascii").rstrip("=")
+    authorization_url = "https://accounts.google.com/o/oauth2/v2/auth?" + urlencode({
+        "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
+        "redirect_uri": settings.GOOGLE_OAUTH_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "state": state,
+        "nonce": nonce,
+        "code_challenge": challenge,
+        "code_challenge_method": "S256",
+        "prompt": "select_account",
+    })
+    response = RedirectResponse(authorization_url, status_code=302)
+    secure = settings.APP_ENV == "production"
+    for name, value in (("community_google_state", state),
+                        ("community_google_verifier", verifier),
+                        ("community_google_nonce", nonce)):
+        response.set_cookie(name, value, max_age=600, httponly=True, secure=secure,
+                            samesite="lax", path="/community/auth/google/callback")
+    return response
+
+
+@router.get("/auth/google/callback")
+def community_google_callback(request: Request, code: str | None = None,
+                              state: str | None = None, error: str | None = None):
+    _ensure_secure_sessions()
+    if error:
+        return _google_frontend_redirect(error="cancelled")
+    expected_state = request.cookies.get("community_google_state", "")
+    verifier = request.cookies.get("community_google_verifier", "")
+    expected_nonce = request.cookies.get("community_google_nonce", "")
+    if not code or not state or not expected_state or not secrets.compare_digest(state, expected_state):
+        return _google_frontend_redirect(error="invalid_state")
+    if not verifier or not expected_nonce:
+        return _google_frontend_redirect(error="expired")
+
+    try:
+        import google.auth.transport.requests
+        from google.oauth2 import id_token
+        import httpx
+
+        token_response = httpx.post("https://oauth2.googleapis.com/token", data={
+            "code": code,
+            "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
+            "client_secret": settings.GOOGLE_OAUTH_CLIENT_SECRET,
+            "redirect_uri": settings.GOOGLE_OAUTH_REDIRECT_URI,
+            "grant_type": "authorization_code",
+            "code_verifier": verifier,
+        }, timeout=10.0)
+        token_response.raise_for_status()
+        google_tokens = token_response.json()
+        google_claims = id_token.verify_oauth2_token(
+            google_tokens.get("id_token", ""),
+            google.auth.transport.requests.Request(),
+            audience=settings.GOOGLE_OAUTH_CLIENT_ID,
+        )
+        if not secrets.compare_digest(str(google_claims.get("nonce", "")), expected_nonce):
+            return _google_frontend_redirect(error="invalid_identity")
+        email = str(google_claims.get("email", "")).strip().lower()
+        subject = str(google_claims.get("sub", "")).strip()
+        hosted_domain = str(google_claims.get("hd", "")).strip().lower()
+        verified = google_claims.get("email_verified") is True or google_claims.get("email_verified") == "true"
+        if not verified or not subject or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
+            return _google_frontend_redirect(error="unverified_email")
+        email_domain = email.rsplit("@", 1)[1]
+        google_controls_email = email_domain == "gmail.com" or hosted_domain == email_domain
+
+        account = crud.get_community_account_by_google_subject(subject)
+        if account is None:
+            account = crud.get_community_account_by_email(email)
+            if account:
+                if not account.get("is_active"):
+                    return _google_frontend_redirect(error="account_unavailable")
+                linked_subject = account.get("google_subject")
+                if linked_subject and linked_subject != subject:
+                    return _google_frontend_redirect(error="account_conflict")
+                if not linked_subject:
+                    if not google_controls_email:
+                        return _google_frontend_redirect(error="account_link_required")
+                    account = crud.link_community_google_identity(str(account["id"]), subject)
+                    if not account:
+                        return _google_frontend_redirect(error="account_conflict")
+            else:
+                base_username = _google_username(email)
+                account = None
+                for attempt in range(5):
+                    username = base_username if attempt == 0 else f"{base_username[:22]}_{secrets.token_hex(3)}"
+                    try:
+                        account = crud.create_google_community_account(email, username, subject)
+                        break
+                    except Exception:
+                        account = crud.get_community_account_by_google_subject(subject)
+                        if account:
+                            break
+                        account = crud.get_community_account_by_email(email)
+                        if account:
+                            if not account.get("is_active"):
+                                return _google_frontend_redirect(error="account_unavailable")
+                            if not google_controls_email:
+                                return _google_frontend_redirect(error="account_link_required")
+                            account = crud.link_community_google_identity(str(account["id"]), subject)
+                            break
+                        if attempt == 4:
+                            raise
+                        if not crud.get_community_account_by_username(username):
+                            raise
+                if not account:
+                    return _google_frontend_redirect(error="account_unavailable")
+
+        if not account.get("is_active"):
+            return _google_frontend_redirect(error="account_unavailable")
+        oauth_code = secrets.token_urlsafe(32)
+        code_hash = hashlib.sha256(oauth_code.encode("ascii")).hexdigest()
+        expires_at = (datetime.now(timezone.utc) + timedelta(minutes=2)).isoformat()
+        crud.create_community_oauth_login_code(str(account["id"]), code_hash, expires_at)
+        return _google_frontend_redirect(code=oauth_code)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Google Community sign-in failed")
+        return _google_frontend_redirect(error="unavailable")
+
+
+@router.post("/auth/google/exchange")
+def community_google_exchange(payload: CommunityGoogleCode, request: Request):
+    _ensure_secure_sessions()
+    ip = request.client.host if request.client else "unknown"
+    _rate_limit(_login_attempts, f"google-exchange:{ip}", 10)
+    code_hash = hashlib.sha256(payload.code.encode("utf-8")).hexdigest()
+    try:
+        account_id = crud.consume_community_oauth_login_code(code_hash)
+        account = crud.get_community_account_by_id(account_id) if account_id else None
+    except Exception as exc:
+        logger.exception("Google Community sign-in code exchange failed")
+        raise HTTPException(status_code=503, detail="Google sign-in is temporarily unavailable") from exc
+    if not account or not account.get("is_active"):
+        raise HTTPException(status_code=400, detail="Google sign-in link is invalid, expired, or already used")
+    return _community_session(account)
 
 
 def _send_verification(account: dict) -> dict:

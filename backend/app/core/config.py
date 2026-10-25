@@ -42,6 +42,14 @@ class Settings:
     COMMUNITY_PASSWORD_RESET_URL: str = os.getenv(
         "COMMUNITY_PASSWORD_RESET_URL", "http://localhost:8501/Community"
     ).strip()
+    GOOGLE_OAUTH_CLIENT_ID: str = os.getenv("GOOGLE_OAUTH_CLIENT_ID", "").strip()
+    GOOGLE_OAUTH_CLIENT_SECRET: str = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", "").strip()
+    GOOGLE_OAUTH_REDIRECT_URI: str = os.getenv(
+        "GOOGLE_OAUTH_REDIRECT_URI", "http://127.0.0.1:8002/community/auth/google/callback"
+    ).strip()
+    COMMUNITY_GOOGLE_CALLBACK_URL: str = os.getenv(
+        "COMMUNITY_GOOGLE_CALLBACK_URL", "http://localhost:8501/Community"
+    ).strip()
     USER_API_KEY: str = os.getenv("USER_API_KEY", "")
     MAX_UPLOAD_SIZE_MB: int = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10"))
     COMMUNITY_PHOTO_BUCKET: str = os.getenv("COMMUNITY_PHOTO_BUCKET", "community-field-reports").strip()
@@ -94,6 +102,24 @@ class Settings:
             raise RuntimeError("WHATSAPP_MODE must be either 'mock' or 'live'")
         if self.WHATSAPP_DAILY_CAP < 1:
             raise RuntimeError("WHATSAPP_DAILY_CAP must be at least 1")
+        google_oauth_values = (self.GOOGLE_OAUTH_CLIENT_ID, self.GOOGLE_OAUTH_CLIENT_SECRET)
+        if any(google_oauth_values) and not all(google_oauth_values):
+            raise RuntimeError("Google Community sign-in requires both GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET")
+        if self.GOOGLE_OAUTH_CLIENT_ID:
+            google_redirect = urlparse(self.GOOGLE_OAUTH_REDIRECT_URI)
+            google_frontend = urlparse(self.COMMUNITY_GOOGLE_CALLBACK_URL)
+            local_hosts = {"localhost", "127.0.0.1"}
+            if not google_redirect.netloc or not google_frontend.netloc:
+                raise RuntimeError("Google Community sign-in requires valid backend and frontend callback URLs")
+            if self.APP_ENV not in {"development", "test"} and (
+                google_redirect.scheme != "https" or google_frontend.scheme != "https"
+            ):
+                raise RuntimeError("Google Community sign-in callback URLs must use HTTPS outside development")
+            if self.APP_ENV in {"development", "test"} and (
+                google_redirect.scheme != "https" and google_redirect.hostname not in local_hosts
+                or google_frontend.scheme != "https" and google_frontend.hostname not in local_hosts
+            ):
+                raise RuntimeError("Google Community sign-in may use HTTP only on localhost during development")
 
     def validate_whatsapp(self) -> None:
         if self.WHATSAPP_MODE not in {"mock", "live"}:
@@ -132,6 +158,13 @@ class Settings:
         community_reset_url = urlparse(self.COMMUNITY_PASSWORD_RESET_URL)
         if community_reset_url.scheme != "https" or not community_reset_url.netloc:
             missing.append("HTTPS COMMUNITY_PASSWORD_RESET_URL (farmer account recovery)")
+        if self.GOOGLE_OAUTH_CLIENT_ID:
+            google_redirect = urlparse(self.GOOGLE_OAUTH_REDIRECT_URI)
+            google_frontend = urlparse(self.COMMUNITY_GOOGLE_CALLBACK_URL)
+            if google_redirect.scheme != "https" or not google_redirect.netloc:
+                missing.append("HTTPS GOOGLE_OAUTH_REDIRECT_URI (Google sign-in callback)")
+            if google_frontend.scheme != "https" or not google_frontend.netloc:
+                missing.append("HTTPS COMMUNITY_GOOGLE_CALLBACK_URL (Community sign-in completion page)")
         if missing:
             raise RuntimeError("Production configuration is incomplete: " + "; ".join(missing))
 
