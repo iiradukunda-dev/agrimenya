@@ -11,7 +11,7 @@ def render_communicate():
     try:
         render_icon_title("assets/message.svg", t("comm.header"), t("comm.subtitle"))
 
-        st.info("agrimenya alerts are sent by administrators. This feed is available to community members for reading.")
+        st.info(t("comm.info_notice", "agrimenya alerts are sent by administrators. This feed is available to community members for reading."))
         st.subheader(t("comm.feed_title"))
         alerts = api_client.get_alerts()
         if not alerts:
@@ -20,7 +20,7 @@ def render_communicate():
             for alert in alerts:
                 render_alert(alert)
 
-        with st.expander("WhatsApp administration", expanded=False):
+        with st.expander(t("comm.wa_admin", "WhatsApp administration"), expanded=False):
             st.caption("Manage contact consent and review alert delivery. Admin API access is required.")
             if not api_client.render_admin_login("wa_admin"):
                 st.info("Administrator sign-in is required to manage WhatsApp contacts, consent, and alert dispatch.")

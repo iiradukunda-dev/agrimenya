@@ -34,11 +34,11 @@ def _metric_number(value, suffix: str = "", grouped: bool = False) -> str:
 def render_dashboard() -> None:
     try:
         st.markdown(
-            '<h1 style="font-family: \'Plus Jakarta Sans\', sans-serif; '
+            f'<h1 style="font-family: \'Plus Jakarta Sans\', sans-serif; '
             'background: linear-gradient(135deg, #2D6A4F, #52B788); '
             '-webkit-background-clip: text; -webkit-text-fill-color: transparent; '
-            'margin-bottom: 0.25rem;">Dashboard</h1>'
-            '<p style="color: #6B7280; margin-top: 0;">Operational overview of agricultural zones across Rwanda</p>',
+            f'margin-bottom: 0.25rem;">{t("dashboard.title", "Dashboard")}</h1>'
+            f'<p style="color: #6B7280; margin-top: 0;">{t("dashboard.subtitle", "Operational overview of agricultural zones across Rwanda")}</p>',
             unsafe_allow_html=True,
         )
 
@@ -47,11 +47,11 @@ def render_dashboard() -> None:
         kpi_cols = st.columns(5)
 
         kpi_items = [
-            ("Zones with alignment data", dashboard_data.get("total_zones", 0), None),
-            ("High Nutrition Risk", dashboard_data.get("zones_high_nutrition_risk") if dashboard_data.get("zones_high_nutrition_risk") is not None else "N/A", None),
-            ("Credit Readiness", _metric_number(dashboard_data.get("avg_credit_insurance_score"), "%"), None),
-            ("Export Ready", dashboard_data.get("zones_export_ready") if dashboard_data.get("zones_export_ready") is not None else "N/A", None),
-            ("Observed Worker-days", _metric_number(dashboard_data.get("observed_worker_days", 0), grouped=True), None),
+            (t("dashboard.kpi.zones_alignment", "Zones with alignment data"), dashboard_data.get("total_zones", 0), None),
+            (t("dashboard.kpi.high_nutrition_risk", "High Nutrition Risk"), dashboard_data.get("zones_high_nutrition_risk") if dashboard_data.get("zones_high_nutrition_risk") is not None else "N/A", None),
+            (t("dashboard.kpi.credit_readiness", "Credit Readiness"), _metric_number(dashboard_data.get("avg_credit_insurance_score"), "%"), None),
+            (t("dashboard.kpi.export_ready", "Export Ready"), dashboard_data.get("zones_export_ready") if dashboard_data.get("zones_export_ready") is not None else "N/A", None),
+            (t("dashboard.kpi.observed_worker_days", "Observed Worker-days"), _metric_number(dashboard_data.get("observed_worker_days", 0), grouped=True), None),
         ]
 
         for col, (label, value, delta) in zip(kpi_cols, kpi_items):
@@ -64,7 +64,7 @@ def render_dashboard() -> None:
         st.divider()
 
         # ── Map + Priority Breakdown ─────────────────────────────────
-        render_icon_subheader("assets/compass.svg", "Live Weather")
+        render_icon_subheader("assets/compass.svg", t("dashboard.weather.live_title", "Live Weather"))
         weather_zones = api_client.get_zones()
         districts = sorted({
             str(zone.get("district", "")).strip()
@@ -75,14 +75,14 @@ def render_dashboard() -> None:
         weather_controls = st.columns([3, 1])
         with weather_controls[0]:
             district = st.selectbox(
-                "District weather",
+                t("dashboard.weather.district_select", "District weather"),
                 districts or ["Kigali City"],
                 index=(districts.index(default_district) if districts else 0),
                 key="dashboard_weather_district",
             )
         with weather_controls[1]:
             st.write("")
-            if st.button("Refresh weather", width="stretch"):
+            if st.button(t("dashboard.weather.refresh_btn", "Refresh weather"), width="stretch"):
                 api_client.get_weather.clear()
                 st.rerun()
 
@@ -94,10 +94,10 @@ def render_dashboard() -> None:
             humidity = weather.get("humidity_pct")
             rainfall = weather.get("rainfall_mm")
             wind = weather.get("wind_kph")
-            values[0].metric("Temperature", f"{temperature} C" if temperature is not None else "N/A")
-            values[1].metric("Humidity", f"{humidity}%" if humidity is not None else "N/A")
-            values[2].metric("Current precipitation", f"{rainfall} mm" if rainfall is not None else "N/A")
-            values[3].metric("Wind speed", f"{wind} km/h" if wind is not None else "N/A")
+            values[0].metric(t("dashboard.weather.temperature", "Temperature"), f"{temperature} C" if temperature is not None else "N/A")
+            values[1].metric(t("dashboard.weather.humidity", "Humidity"), f"{humidity}%" if humidity is not None else "N/A")
+            values[2].metric(t("dashboard.weather.precipitation", "Current precipitation"), f"{rainfall} mm" if rainfall is not None else "N/A")
+            values[3].metric(t("dashboard.weather.wind_speed", "Wind speed"), f"{wind} km/h" if wind is not None else "N/A")
 
             if weather.get("source") == "open-meteo":
                 st.caption(f"Live provider: Open-Meteo | Local observation time: {weather.get('updated_at') or 'not supplied'}")
@@ -125,7 +125,7 @@ def render_dashboard() -> None:
         df = api_client.get_priority_data()
 
         with map_col:
-            render_icon_subheader("assets/map.svg", "Zone Priority Map")
+            render_icon_subheader("assets/map.svg", t("dashboard.section.priority_map", "Zone Priority Map"))
             clicked_zone_id = render_priority_map(df, key="dashboard_priority_map")
             if clicked_zone_id:
                 st.session_state["selected_zone_id"] = clicked_zone_id
@@ -147,7 +147,7 @@ def render_dashboard() -> None:
                         st.switch_page("pages/5_Segmentation.py")
 
         with chart_col:
-            render_icon_subheader("assets/brain.svg", "Yield by District")
+            render_icon_subheader("assets/brain.svg", t("dashboard.section.yield_chart", "Yield by District"))
             render_yield_chart(df)
 
         st.divider()
@@ -156,7 +156,7 @@ def render_dashboard() -> None:
         alerts_col, actions_col = st.columns([3, 2])
 
         with alerts_col:
-            render_icon_subheader("assets/bell.svg", "Recent Alerts")
+            render_icon_subheader("assets/bell.svg", t("dashboard.section.recent_alerts", "Recent Alerts"))
             alerts = api_client.get_alerts()
             if not alerts:
                 st.info("No active alerts.")
@@ -165,16 +165,16 @@ def render_dashboard() -> None:
                     render_alert(alert)
 
         with actions_col:
-            render_icon_subheader("assets/compass.svg", "Quick Actions")
+            render_icon_subheader("assets/compass.svg", t("dashboard.section.quick_actions", "Quick Actions"))
             st.markdown('<div style="display: flex; flex-direction: column; gap: 8px;">', unsafe_allow_html=True)
 
-            if st.button("Predict Zone Yield", icon=":material/query_stats:", width="stretch"):
+            if st.button(t("dashboard.action.predict_yield", "Predict Zone Yield"), icon=":material/query_stats:", width="stretch"):
                 st.switch_page("pages/4_Zones.py")
-            if st.button("Create New Plan", icon=":material/edit_calendar:", width="stretch"):
+            if st.button(t("dashboard.action.create_plan", "Create New Plan"), icon=":material/edit_calendar:", width="stretch"):
                 st.switch_page("pages/8_Planning.py")
-            if st.button("Detect Crop Disease", icon=":material/biotech:", width="stretch"):
+            if st.button(t("dashboard.action.detect_disease", "Detect Crop Disease"), icon=":material/biotech:", width="stretch"):
                 st.switch_page("pages/7_AI_Assistant.py")
-            if st.button("Send Alert", icon=":material/campaign:", width="stretch"):
+            if st.button(t("dashboard.action.send_alert", "Send Alert"), icon=":material/campaign:", width="stretch"):
                 st.switch_page("pages/9_Communication.py")
 
             st.markdown("</div>", unsafe_allow_html=True)
@@ -182,7 +182,7 @@ def render_dashboard() -> None:
         st.divider()
 
         # ── Priority Ranking Table ───────────────────────────────────
-        render_icon_subheader("assets/brain.svg", "Top Priority Zones")
+        render_icon_subheader("assets/brain.svg", t("dashboard.section.top_priority", "Top Priority Zones"))
         recs = api_client.get_recommendations()
         if recs:
             for rec in recs[:5]:

@@ -6,7 +6,7 @@ from io import BytesIO
 from PIL import Image
 
 from utils.config import API_BASE_URL
-from utils.i18n import set_language
+from utils.i18n import get_current_language
 
 COPY = {
     "en": {
@@ -58,6 +58,31 @@ COPY = {
         "discussion_tab": "Ibiganiro", "field_tab": "Amakuru yo mu murima", "reply_count": "Ibisubizo",
         "delete_observation": "Siba amakuru yanjye", "observation_deleted": "Amakuru yo mu murima yasibwe.",
         "observation_delete_confirm": "Urifuza gusiba aya makuru n'ifoto yayo? Ntibisubirwaho.",
+    },
+    "fr": {
+        "title": "Communauté des agriculteurs", "intro": "Partagez votre expérience pratique, posez des questions et apprenez d'autres producteurs.",
+        "language": "Langue / Ururimi", "warning": "Les observations des agriculteurs sont des rapports communautaires, et non des statistiques officielles du NISR ou des avis agronomiques vérifiés.",
+        "reports": "Observations de terrain", "report_help": "Une brève note de terrain peut aider les autres à comprendre ce qui se passe localement.",
+        "district": "District", "crop": "Culture", "date": "Date d'observation", "symptoms": "Qu'avez-vous remarqué ? (optionnel)",
+        "notes": "Détails supplémentaires (optionnel)", "photo": "Photo (optionnel, compressée avant l'envoi)", "save_report": "Partager l'observation de terrain",
+        "saved": "Observation partagée.", "no_reports": "Aucune observation de terrain pour le moment.", "unknown_author": "Membre de la communauté",
+        "signin": "Connexion", "create": "Créer un compte", "email": "Adresse e-mail", "password": "Mot de passe",
+        "name": "Nom d'utilisateur (3-30 lettres, chiffres ou _)", "create_farmer": "Créer un compte agriculteur", "signout": "Déconnexion",
+        "new_post": "Partager une actualité ou une question", "topic": "Sujet", "post_body": "Votre expérience ou question",
+        "publish": "Publier dans la communauté", "posted": "Votre publication a été partagée.", "replies": "Lire les réponses et participer à la discussion",
+        "reply": "Ajouter une réponse", "send_reply": "Répondre", "report": "Signaler le contenu", "reason": "Motif (obligatoire)",
+        "send_report": "Envoyer aux administrateurs", "report_sent": "Signalement envoyé pour examen administratif.",
+        "privacy": "Les comptes pilotes ne sont pas vérifiés par e-mail. Évitez de partager des informations financières, familiales ou de contact privées.",
+        "account_name": "Publié par", "farmer": "Compte agriculteur", "empty": "Aucune discussion pour l'instant. Lancez la première en partageant une observation ou une question.",
+        "unavailable": "Choix de districts indisponibles. Vérifiez votre connexion et réessayez.", "crop_required": "Entrez le nom de la culture.",
+        "valid_photo": "Choisissez une photo valide.", "photo_too_large": "La photo est trop volumineuse. Choisissez une image plus petite.",
+        "farmer_observation": "Observation d'agriculteur", "photo_caption": "Photo soumise par un agriculteur",
+        "posting_as": "Publié en tant que", "reply_author": "Membre de la communauté", "role_farmer": "agriculteur",
+        "delete_post": "Supprimer ma publication", "delete_confirm": "Supprimer cette publication ? Cette action est irréversible.",
+        "post_deleted": "Votre publication a été supprimée.",
+        "discussion_tab": "Discussions", "field_tab": "Observations de terrain", "reply_count": "Réponses",
+        "delete_observation": "Supprimer mon observation", "observation_deleted": "Observation de terrain supprimée.",
+        "observation_delete_confirm": "Supprimer cette observation de terrain et sa photo ? Cette action est irréversible.",
     },
 }
 
@@ -197,8 +222,9 @@ def _error_message(exc: requests.RequestException, language: str = "en") -> str:
 
 def render_community() -> None:
     st.markdown('''<style>@media(max-width:700px){.block-container{padding:1rem .8rem 3rem!important}[data-testid="stButton"] button,[data-testid="stFormSubmitButton"] button{min-height:3rem;width:100%}[data-testid="stTextInput"] input,[data-testid="stTextArea"] textarea{font-size:16px}}</style>''', unsafe_allow_html=True)
-    language = st.radio("Language / Ururimi", ["en", "rw"], format_func=lambda v: "English" if v == "en" else "Ikinyarwanda", horizontal=True, key="community_language")
-    set_language(language)
+    language = get_current_language()
+    if language not in COPY:
+        language = "en"
     c = COPY[language]
     st.title(c["title"])
     st.write(c["intro"])
@@ -243,7 +269,7 @@ def render_community() -> None:
     with top_left:
         st.text(f"{c['posting_as']} {account.get('display_name', c['reply_author'])} · {c['farmer']}")
     with top_right:
-        if st.button("Sign out", key="community_sign_out"):
+        if st.button(c["signout"], key="community_sign_out"):
             st.session_state.pop("community_access_token", None)
             st.session_state.pop("community_account", None)
             st.rerun()
