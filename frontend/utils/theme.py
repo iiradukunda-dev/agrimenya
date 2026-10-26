@@ -488,50 +488,75 @@ def load_theme() -> None:
       transform: translateY(-2px) scale(1.015) !important;
     }
 
-    /* 6. Scoped Navbar Pill Buttons & Popovers */
+    /* 6. Scoped Navbar Pill Buttons & Popovers - Clean Light Floating Pill Aesthetics (NO BLACK BACKGROUND) */
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] button,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
-      background: #081a26 !important;
-      border-radius: 10px !important;
-      min-height: 2.55rem !important;
-      padding: 0.35rem 0.85rem !important;
-      border: 1px solid rgba(56, 189, 248, 0.25) !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
+    .st-key-ag_navbar button {
+      background: transparent !important;
+      background-color: transparent !important;
+      border: none !important;
+      border-radius: 9999px !important;
+      min-height: 2.35rem !important;
+      height: 2.35rem !important;
+      padding: 0.45rem 1.15rem !important;
+      box-shadow: none !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-size: 0.88rem !important;
-      font-weight: 700 !important;
-      color: #ffffff !important;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
-      transition: all 0.25s ease !important;
+      font-weight: 600 !important;
+      color: #0a1f26 !important;
+      text-shadow: none !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] button p,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button p,
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p {
-      color: #ffffff !important;
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button span,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button span,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span {
+      color: #0a1f26 !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
-      font-weight: 700 !important;
-    }
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button span[data-testid="stIconMaterial"],
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button span[data-testid="stIconMaterial"],
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span[data-testid="stIconMaterial"] {
-      color: #ffffff !important;
-      font-family: "Material Symbols Rounded", "Material Symbols Outlined" !important;
+      font-weight: 600 !important;
+      text-shadow: none !important;
     }
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
-      background: #0c2434 !important;
-      border-color: rgba(56, 189, 248, 0.65) !important;
-      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
-      transform: translateY(-1px) !important;
+      background: rgba(2, 132, 199, 0.08) !important;
+      background-color: rgba(2, 132, 199, 0.08) !important;
+      border: none !important;
+      box-shadow: none !important;
+      transform: none !important;
     }
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover p,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover p,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover span[data-testid="stIconMaterial"],
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover span[data-testid="stIconMaterial"] {
-      color: #38bdf8 !important;
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover span,
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover span {
+      color: #0284c7 !important;
+    }
+
+    /* Language cycle button inside navbar pill: round circular button with light background */
+    .st-key-ag_navbar .st-key-lang_cycle_btn button,
+    .st-key-lang_cycle_btn button {
+      background: rgba(2, 132, 199, 0.08) !important;
+      background-color: rgba(2, 132, 199, 0.08) !important;
+      border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
+      border-radius: 50% !important;
+      width: 2.25rem !important;
+      height: 2.25rem !important;
+      min-height: 2.25rem !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+    }
+    .st-key-ag_navbar .st-key-lang_cycle_btn button:hover,
+    .st-key-lang_cycle_btn button:hover {
+      background: #0284c7 !important;
+      background-color: #0284c7 !important;
+      border-color: #0284c7 !important;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+      transform: translateY(-1px) scale(1.05) !important;
     }
 
     /* Transparent Landing Page Headings & Subtitles */

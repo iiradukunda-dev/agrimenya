@@ -187,6 +187,30 @@ def render_pwa_support() -> None:
               z-index: 999990 !important;
               margin: 0 auto 0.45rem auto !important;
             }
+            /* Ensure NO black background on navbar buttons or popovers */
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] button,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
+              background: transparent !important;
+              background-color: transparent !important;
+              border: none !important;
+              color: #0a1f26 !important;
+              box-shadow: none !important;
+            }
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] button p,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button p,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p {
+              color: #0a1f26 !important;
+              text-shadow: none !important;
+            }
+            .st-key-ag_navbar .st-key-lang_cycle_btn button,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] .st-key-lang_cycle_btn button {
+              background: rgba(2, 132, 199, 0.08) !important;
+              background-color: rgba(2, 132, 199, 0.08) !important;
+              border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
+              border-radius: 50% !important;
+              box-shadow: none !important;
+            }
             [data-testid="stSidebar"],
             [data-testid="collapsedControl"],
             section[data-testid="stSidebar"],

@@ -202,7 +202,8 @@ def render_navbar() -> None:
 
       /* More Popover Button inside the Pill: Pure transparent, pixel-aligned */
       .st-key-ag_navbar div[data-testid="stPopover"],
-      .st-key-ag_navbar .stPopover {
+      .st-key-ag_navbar .stPopover,
+      .st-key-ag_navbar [data-testid="stPopover"] {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -210,10 +211,14 @@ def render_navbar() -> None:
         padding: 0 !important;
         height: 100% !important;
       }
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover button,
       .st-key-ag_navbar div[data-testid="stPopover"] button,
       .st-key-ag_navbar div[data-testid="stPopover"] button:hover,
       .st-key-ag_navbar .stPopover > button,
-      .st-key-ag_navbar .stPopover > button:hover {
+      .st-key-ag_navbar .stPopover > button:hover,
+      .st-key-ag_navbar div[data-testid="stPopover"] [data-testid="stBaseButton-secondary"],
+      .st-key-ag_navbar div[data-testid="stPopover"] [data-testid="baseButton-secondary"] {
         background: transparent !important;
         background-color: transparent !important;
         border: none !important;
@@ -230,10 +235,15 @@ def render_navbar() -> None:
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
       }
       .st-key-ag_navbar div[data-testid="stPopover"] button::before,
-      .st-key-ag_navbar div[data-testid="stPopover"] button::after {
+      .st-key-ag_navbar div[data-testid="stPopover"] button::after,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button::before,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button::after {
         display: none !important;
         content: none !important;
       }
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button *,
       .st-key-ag_navbar div[data-testid="stPopover"] button p,
       .st-key-ag_navbar div[data-testid="stPopover"] button span,
       .st-key-ag_navbar div[data-testid="stPopover"] button * {
@@ -247,12 +257,19 @@ def render_navbar() -> None:
         visibility: visible !important;
         opacity: 1 !important;
         display: inline-block !important;
+        text-shadow: none !important;
         transition: color 0.2s ease !important;
       }
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover,
       .st-key-ag_navbar div[data-testid="stPopover"] button:hover {
         background: rgba(2, 132, 199, 0.08) !important;
         background-color: rgba(2, 132, 199, 0.08) !important;
+        box-shadow: none !important;
+        transform: none !important;
       }
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover span,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover *,
       .st-key-ag_navbar div[data-testid="stPopover"] button:hover p,
       .st-key-ag_navbar div[data-testid="stPopover"] button:hover span,
       .st-key-ag_navbar div[data-testid="stPopover"] button:hover * {
@@ -380,7 +397,10 @@ def render_navbar() -> None:
       .st-key-lang_cycle_btn button,
       .st-key-lang_cycle_btn button:hover,
       .st-key-ag_navbar .st-key-lang_cycle_btn button,
-      .st-key-ag_navbar .st-key-lang_cycle_btn button:hover {
+      .st-key-ag_navbar .st-key-lang_cycle_btn button:hover,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] .st-key-lang_cycle_btn button,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="column"]:last-child button,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:last-child button {
         background: rgba(2, 132, 199, 0.08) !important;
         background-color: rgba(2, 132, 199, 0.08) !important;
         border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
