@@ -11,7 +11,7 @@ import streamlit as st
 from components.alerts import render_alert
 from components.badges import priority_badge
 from components.charts import render_yield_chart
-from components.errors import render_error_page
+from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader
 from components.maps import render_priority_map
 from utils import api_client
@@ -31,6 +31,7 @@ def _metric_number(value, suffix: str = "", grouped: bool = False) -> str:
     return f"{formatted}{suffix}"
 
 
+@error_boundary("Dashboard")
 def render_dashboard() -> None:
     try:
         st.markdown(

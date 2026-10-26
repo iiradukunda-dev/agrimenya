@@ -2,13 +2,14 @@ import pandas as pd
 import requests
 import streamlit as st
 from components.charts import render_yield_chart
-from components.errors import render_error_page
+from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_title
 from components.maps import render_priority_map
 from utils import api_client
 from utils.i18n import t
 
 
+@error_boundary("Segmentation")
 def render_segment():
     try:
         render_icon_title("assets/map.svg", t("seg.header"), t("seg.subtitle"))

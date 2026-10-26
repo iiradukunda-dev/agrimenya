@@ -2,7 +2,7 @@ import logging
 
 import requests
 import streamlit as st
-from components.errors import render_error_page
+from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_title
 from utils import api_client
 from utils.i18n import t
@@ -10,6 +10,7 @@ from utils.i18n import t
 logger = logging.getLogger(__name__)
 
 
+@error_boundary("Planning")
 def render_plan() -> None:
     try:
         render_icon_title("assets/calendar.svg", t("plan.header", "Planification"), t("plan.subtitle", "Roadmaps and execution timelines for agricultural interventions."))

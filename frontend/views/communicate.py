@@ -1,12 +1,13 @@
 import requests
 import streamlit as st
 from components.alerts import render_alert
-from components.errors import render_error_page
+from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_title
 from utils import api_client
 from utils.i18n import t
 
 
+@error_boundary("Communication")
 def render_communicate():
     try:
         render_icon_title("assets/message.svg", t("comm.header"), t("comm.subtitle"))

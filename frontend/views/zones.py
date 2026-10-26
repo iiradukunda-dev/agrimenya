@@ -9,7 +9,7 @@ import pandas as pd
 import requests
 import streamlit as st
 from components.badges import priority_badge
-from components.errors import render_error_page
+from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
 from utils.i18n import t
@@ -182,6 +182,7 @@ def _render_work_records(zone: dict, crops: list[str]) -> None:
             st.error("The worker-day record could not be saved.")
 
 
+@error_boundary("Agricultural Zones")
 def render_zones() -> None:
     try:
         render_icon_title("assets/map.svg", t("zones.title", "Agricultural Zones"), t("zones.subtitle", "Registered district and sector zone profiles, yield predictions, and field readiness"))

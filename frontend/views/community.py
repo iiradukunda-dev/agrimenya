@@ -1,11 +1,11 @@
-"""Farmer discussion feed backed by individually authenticated accounts."""
-import requests
-import streamlit as st
 import time
 from datetime import date
 from io import BytesIO
 from PIL import Image
 
+import requests
+import streamlit as st
+from components.errors import error_boundary
 from utils.config import API_BASE_URL
 from utils.i18n import get_current_language
 
@@ -333,6 +333,7 @@ def _error_message(exc: requests.RequestException, language: str = "en") -> str:
     return "The community service could not complete that request. Check the backend connection."
 
 
+@error_boundary("Farmer Community")
 def render_community() -> None:
     st.markdown('''<style>@media(max-width:700px){.block-container{padding:1rem .8rem 3rem!important}[data-testid="stButton"] button,[data-testid="stFormSubmitButton"] button{min-height:3rem;width:100%}[data-testid="stTextInput"] input,[data-testid="stTextArea"] textarea{font-size:16px}}</style>''', unsafe_allow_html=True)
     language = get_current_language()

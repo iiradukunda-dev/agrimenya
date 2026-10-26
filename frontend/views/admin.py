@@ -9,7 +9,7 @@ from typing import Any
 import pandas as pd
 import requests
 import streamlit as st
-from components.errors import render_error_page
+from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
 from utils.i18n import t
@@ -17,6 +17,7 @@ from utils.i18n import t
 logger = logging.getLogger(__name__)
 
 
+@error_boundary("Admin Panel")
 def render_admin() -> None:
     try:
         if not api_client.render_admin_login("admin_panel"):

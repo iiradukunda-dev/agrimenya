@@ -1,12 +1,13 @@
 import requests
 import streamlit as st
 from components.badges import priority_badge
-from components.errors import render_error_page
+from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
 from utils.i18n import t
 
 
+@error_boundary("Decisions")
 def render_decide():
     try:
         render_icon_title("assets/brain.svg", t("decisions.header"), t("decisions.subtitle"))
