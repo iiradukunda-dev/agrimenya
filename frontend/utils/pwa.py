@@ -579,39 +579,33 @@ def render_pwa_support() -> None:
           }
         };
 
-        // Render the floating Install App button themed to the logo
-        if (!parentDoc.getElementById('ag-pwa-install-badge')) {
-          const isStandalone = window.parent.matchMedia('(display-mode: standalone)').matches || window.parent.navigator.standalone === true;
-          if (!isStandalone) {
-            const installBtn = parentDoc.createElement('button');
+        // Render the floating App install button
+        const isStandalone = window.parent.matchMedia('(display-mode: standalone)').matches || window.parent.navigator.standalone === true;
+        if (!isStandalone) {
+          let installBtn = parentDoc.getElementById('ag-pwa-install-badge');
+          if (!installBtn) {
+            installBtn = parentDoc.createElement('button');
             installBtn.id = 'ag-pwa-install-badge';
-            installBtn.title = 'Install agrimenya App';
-            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:999999;padding:0.4rem 1.1rem 0.4rem 0.65rem;border-radius:9999px;background:linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%);border:1.5px solid rgba(56,189,248,0.75);color:#ffffff;font-family:"Plus Jakarta Sans",sans-serif;display:flex;align-items:center;gap:0.55rem;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);';
-            installBtn.innerHTML = `
-              <img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(56,189,248,0.95));pointer-events:none;">
-              <div style="display:flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:1.15;pointer-events:none;">
-                <span style="font-size:0.84rem;font-weight:800;color:#ffffff;letter-spacing:-0.01em;">Install App</span>
-                <span style="font-size:0.68rem;font-weight:700;color:#38bdf8;letter-spacing:0.02em;">agrimenya</span>
-              </div>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;pointer-events:none;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            `;
+            installBtn.addEventListener('click', () => {
+              window.parent.__agrimenya_trigger_install();
+            });
             installBtn.addEventListener('mouseenter', () => {
-              installBtn.style.transform = 'translateY(-3px) scale(1.03)';
+              installBtn.style.transform = 'translateY(-2px) scale(1.04)';
               installBtn.style.borderColor = '#38bdf8';
-              installBtn.style.boxShadow = '0 16px 36px rgba(0,0,0,0.6), 0 0 26px rgba(56,189,248,0.65), 0 0 16px rgba(74,222,128,0.45)';
+              installBtn.style.boxShadow = '0 14px 32px rgba(0,0,0,0.6), 0 0 24px rgba(56,189,248,0.65)';
               installBtn.style.background = 'linear-gradient(135deg, #063143 0%, #0a465e 55%, #042533 100%)';
             });
             installBtn.addEventListener('mouseleave', () => {
               installBtn.style.transform = 'translateY(0) scale(1)';
               installBtn.style.borderColor = 'rgba(56,189,248,0.75)';
-              installBtn.style.boxShadow = '0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38),0 0 8px rgba(74,222,128,0.25)';
+              installBtn.style.boxShadow = '0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38)';
               installBtn.style.background = 'linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%)';
-            });
-            installBtn.addEventListener('click', () => {
-              window.parent.__agrimenya_trigger_install();
             });
             parentDoc.body.appendChild(installBtn);
           }
+          installBtn.title = 'Install agrimenya App';
+          installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:999999;padding:0.42rem 1.15rem;border-radius:9999px;background:linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%);border:1.5px solid rgba(56,189,248,0.75);color:#ffffff;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.86rem;font-weight:750;letter-spacing:0.02em;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);';
+          installBtn.innerHTML = 'App';
         }
 
       } catch (err) {
