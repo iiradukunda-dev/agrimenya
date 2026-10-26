@@ -469,19 +469,24 @@ def render_admin() -> None:
                     st.info("No plans found. Plans are initialized through the Planning module.")
 
         # ═════════════════════════════════════════════════════════════
-        # TAB 4: Alert Management & WhatsApp Broadcast
+        # ═════════════════════════════════════════════════════════════
+        # TAB 4: WhatsApp Operations & Advisory Dispatch
         # ═════════════════════════════════════════════════════════════
         with admin_tabs[3]:
-            render_icon_subheader("assets/bell.svg", "Alert Broadcast & WhatsApp Management")
+            render_icon_subheader("assets/message.svg", "WhatsApp Operations & Advisory Dispatch")
 
-            alert_subtabs = st.tabs([
-                "📢 Compose & Dispatch Alert",
-                "📋 Alert Queue & WhatsApp Broadcast",
-                "📱 WhatsApp Directory & Templates",
+            tab4_subtabs = st.tabs([
+                "💬 WhatsApp Command Center",
+                "📢 Compose System Alert & Email Handoff",
             ])
 
-            # Subtab 1: Compose Alert
-            with alert_subtabs[0]:
+            # Subtab 1: Full WhatsApp Operational Suite
+            with tab4_subtabs[0]:
+                from components.whatsapp_admin import render_whatsapp_admin_panel
+                render_whatsapp_admin_panel(key_prefix="admin_wa_tab", embedded_mode=True)
+
+            # Subtab 2: Compose Alert & Broadcast Handoff
+            with tab4_subtabs[1]:
                 zones = api_client.get_admin_zones()
                 zone_options = {
                     f"{z.get('district', 'Unknown district')} / {z.get('sector') or z.get('cell') or str(z.get('id', ''))[-8:]}": z.get("id")
@@ -491,7 +496,7 @@ def render_admin() -> None:
                 st.markdown(
                     """
                     <div style="padding:10px 16px; border-radius:10px; background:rgba(2, 132, 199, 0.15); border:1px solid rgba(56, 189, 248, 0.35); font-size:0.86rem; color:#bae6fd; margin-bottom:1rem;">
-                        <strong>Dispatch Architecture:</strong> A sent alert is immediately emailed to all active Farmer Community accounts. Broadcast to registered WhatsApp contacts requires explicit administrator review and approval.
+                        <strong>Dispatch Architecture:</strong> Alerts composed here are published to the public dashboard feed and emailed to active Farmer Community accounts. Outbound WhatsApp delivery requires review and certification in the <strong>WhatsApp Command Center</strong> tab.
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -508,7 +513,7 @@ def render_admin() -> None:
                             alert_action = st.text_input("Recommended Agronomic Action (Optional)", placeholder="e.g. Apply mulch, delay sowing")
 
                         alert_body = st.text_area("Alert Message / Announcement", max_chars=2000, height=120, placeholder="Describe the weather anomaly, pest outbreak, or field guidance...")
-                        dispatch_btn = st.form_submit_button("Broadcast Alert (Email Handoff)", type="primary")
+                        dispatch_btn = st.form_submit_button("Broadcast Alert (Feed & Email Handoff)", type="primary")
 
                     if dispatch_btn:
                         if not alert_body.strip():
@@ -537,114 +542,6 @@ def render_admin() -> None:
                                 st.error(api_client.get_admin_api_error("/communication/alerts") or "Failed to create alert.")
                 else:
                     st.error("Please register at least one agricultural zone before creating alerts.")
-
-            # Subtab 2: Alerts Queue & WhatsApp Approval Flow
-            with alert_subtabs[1]:
-                admin_alerts = api_client.get_admin_alerts()
-                if admin_alerts:
-                    alert_labels = {
-                        f"{a.get('severity') or 'Info'} | {str(a.get('message') or '')[:65]}... | {str(a.get('id'))[-8:]}": a
-                        for a in admin_alerts if a.get("id")
-                    }
-
-                    selected_alert_label = st.selectbox("Select Alert for Review & WhatsApp Broadcast", list(alert_labels), key="admin_alert_select")
-                    alert = alert_labels[selected_alert_label]
-                    alert_id = str(alert["id"])
-
-                    status = str(alert.get("status", "draft")).lower()
-                    approved_at = alert.get("approved_at")
-                    approved_by = alert.get("approved_by")
-
-                    # Status Box
-                    with st.container(border=True):
-                        st.markdown(f"**Alert Message:** {alert.get('message', '')}")
-                        meta_cols = st.columns(3)
-                        with meta_cols[0]:
-                            st.caption("Severity")
-                            st.write(alert.get("severity", "Info"))
-                        with meta_cols[1]:
-                            st.caption("Crop Context")
-                            st.write(alert.get("crop") or "General")
-                        with meta_cols[2]:
-                            st.caption("Broadcast Status")
-                            status_badge = "🟢 APPROVED" if status == "approved" else "🟡 DRAFT (REQUIRES APPROVAL)"
-                            st.markdown(f"**{status_badge}**")
-
-                        st.write("---")
-                        st.markdown("**WhatsApp Broadcast Actions**")
-                        if status == "approved":
-                            st.success(f"✓ Approved by {approved_by or 'administrator'} on {str(approved_at)[:19] if approved_at else 'recently'}")
-                            if st.button("🚀 Broadcast to WhatsApp Subscribers Now", type="primary", key=f"dispatch_wa_{alert_id}", use_container_width=True):
-                                summary = api_client.dispatch_admin_alert_whatsapp(alert_id)
-                                if summary:
-                                    dispatched = summary.get("dispatched_count", 0)
-                                    recipients = summary.get("recipient_count", 0)
-                                    st.success(f"WhatsApp broadcast dispatched to {dispatched} contacts across {recipients} registered lines.")
-                                    st.rerun()
-                                else:
-                                    st.error(api_client.get_admin_api_error(f"/communication/alerts/{alert_id}/dispatch/whatsapp") or "WhatsApp broadcast dispatch failed.")
-                        else:
-                            st.info("Status: DRAFT — Review the message above and approve it before broadcasting to WhatsApp.")
-                            if st.button("✓ Approve Alert for WhatsApp Broadcast", key=f"approve_wa_{alert_id}", use_container_width=True, type="primary"):
-                                approved = api_client.approve_admin_alert(alert_id)
-                                if approved:
-                                    st.success("Alert approved! Ready for WhatsApp dispatch.")
-                                    st.rerun()
-                                else:
-                                    st.error("Approval failed. Check administrative permissions.")
-
-                        # Delivery Telemetry
-                        delivery_data = api_client.get_admin_alert_delivery(alert_id)
-                        if delivery_data and "counts" in delivery_data:
-                            st.write("---")
-                            st.markdown("**WhatsApp Real-Time Delivery Metrics**")
-                            counts = delivery_data.get("counts", {})
-                            d_cols = st.columns(5)
-                            with d_cols[0]:
-                                st.metric("Queued", counts.get("queued", 0))
-                            with d_cols[1]:
-                                st.metric("Sent", counts.get("sent", 0))
-                            with d_cols[2]:
-                                st.metric("Delivered", counts.get("delivered", 0))
-                            with d_cols[3]:
-                                st.metric("Read", counts.get("read", 0))
-                            with d_cols[4]:
-                                st.metric("Failed", counts.get("failed", 0))
-
-                    # Edit Alert Box
-                    with st.expander("Edit Alert Content & Severity", expanded=False):
-                        with st.form(f"edit_alert_form_{alert_id}"):
-                            edit_msg = st.text_area("Message", value=str(alert.get("message") or ""), max_chars=2000)
-                            edit_sev = st.selectbox("Severity", ["Info", "Warning", "Critical"], index=["Info", "Warning", "Critical"].index(alert.get("severity", "Info")) if alert.get("severity", "Info") in ["Info", "Warning", "Critical"] else 0)
-                            save_alert_btn = st.form_submit_button("Save Changes (Resets Approval to Draft)", type="secondary")
-                        if save_alert_btn:
-                            if not edit_msg.strip():
-                                st.error("Enter an alert message.")
-                            elif api_client.update_admin_alert(alert_id, {"message": edit_msg.strip(), "severity": edit_sev}):
-                                st.success("Alert updated. Returned to draft status for safety.")
-                                st.rerun()
-                            else:
-                                st.error("Failed to update alert.")
-                else:
-                    st.info("No alerts found in queue. Compose one in the 'Compose & Dispatch Alert' tab.")
-
-            # Subtab 3: WhatsApp Directory & Templates
-            with alert_subtabs[2]:
-                st.markdown("**Subscribed WhatsApp Farmer Contacts**")
-                contacts = api_client.get_whatsapp_contacts()
-                if contacts:
-                    st.dataframe(pd.DataFrame(contacts), width="stretch", hide_index=True)
-                    st.caption(f"{len(contacts)} contacts actively registered.")
-                else:
-                    st.caption("No contacts registered via WhatsApp bot yet.")
-
-                st.write("---")
-                st.markdown("**Pre-Approved Meta WhatsApp Templates**")
-                templates = api_client.get_whatsapp_templates()
-                if templates:
-                    st.dataframe(pd.DataFrame(templates), width="stretch", hide_index=True)
-                else:
-                    st.caption("No registered templates retrieved from backend.")
 
         # ═════════════════════════════════════════════════════════════
         # TAB 5: NISR Data Releases
