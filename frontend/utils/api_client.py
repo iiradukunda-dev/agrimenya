@@ -60,6 +60,15 @@ def admin_session_authenticated() -> bool:
     return True
 
 
+def admin_sign_out() -> None:
+    """Sign out the current administrator session."""
+    st.session_state.pop("admin_session_expires_at", None)
+    st.session_state.pop("admin_access_token", None)
+    st.session_state.pop("admin_identity", None)
+    st.session_state.pop("admin_login_error", None)
+    st.session_state.pop("admin_api_errors", None)
+
+
 def render_admin_login(key_prefix: str = "admin") -> bool:
     """Require a named administrator account before using admin APIs."""
     from components.cards import render_centralized_login_card
