@@ -51,7 +51,7 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
         folium.TileLayer(
             tiles=RSA_ORTHOMOSAIC_TILES,
             attr=("Imagery: <a href='https://portal.space.gov.rw/server/rest/services/Hosted/"
-                  "Ortho_Orthomosaic/MapServer' target='_blank'>Rwanda Space Agency</a>"),
+                  "Ortho_Orthomosaic/MapServer' target='_self'>Rwanda Space Agency</a>"),
             name="RSA orthomosaic",
             overlay=True,
             control=True,

@@ -353,7 +353,7 @@ def render_pwa_support() -> None:
                 Live connection to the agrimenya server was interrupted. Cached Rwanda district baselines, seasonal crop calendars, and emergency field tools remain ready.
               </p>
               <div style="display:flex;flex-direction:column;gap:0.75rem;width:100%;">
-                <a href="/app/static/offline.html" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;text-decoration:none;font-weight:700;font-size:0.92rem;box-shadow:0 4px 16px rgba(16,185,129,0.35);transition:all 0.2s;">
+                <a href="/app/static/offline.html" target="_self" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;text-decoration:none;font-weight:700;font-size:0.92rem;box-shadow:0 4px 16px rgba(16,185,129,0.35);transition:all 0.2s;">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
                   <span>Open Offline Field Hub</span>
                 </a>
@@ -455,7 +455,7 @@ def render_pwa_support() -> None:
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                   <span>Reload agrimenya</span>
                 </button>
-                <a href="/app/static/offline.html" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:rgba(16,185,129,0.12);border:1.5px solid rgba(16,185,129,0.35);color:#34d399;text-decoration:none;font-weight:700;font-size:0.92rem;transition:all 0.2s;">
+                <a href="/app/static/offline.html" target="_self" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:rgba(16,185,129,0.12);border:1.5px solid rgba(16,185,129,0.35);color:#34d399;text-decoration:none;font-weight:700;font-size:0.92rem;transition:all 0.2s;">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
                   <span>Open Offline Field Hub</span>
                 </a>
@@ -624,6 +624,72 @@ def render_pwa_support() -> None:
           installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:999999;padding:0.42rem 1.15rem;border-radius:9999px;background:linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%);border:1.5px solid rgba(56,189,248,0.75);color:#ffffff;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.86rem;font-weight:750;letter-spacing:0.02em;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);';
           installBtn.innerHTML = 'App';
         }
+
+        // 12. STRICT SAME-TAB NAVIGATION ENFORCEMENT
+        // Ensure no links, buttons, or window.open calls ever open in a new tab
+        (function enforceStrictSameTabNavigation() {
+          try {
+            function sanitizeLinks(root) {
+              if (!root || !root.querySelectorAll) return;
+              const blankLinks = root.querySelectorAll('a[target="_blank"], a[target="_BLANK"]');
+              for (let i = 0; i < blankLinks.length; i++) {
+                blankLinks[i].target = '_self';
+              }
+            }
+            sanitizeLinks(parentDoc);
+            sanitizeLinks(document);
+
+            // Intercept all link clicks in capture phase on parent and iframe documents
+            function interceptClicks(doc) {
+              if (!doc || doc.__ag_same_tab_enforced) return;
+              doc.__ag_same_tab_enforced = true;
+              doc.addEventListener('click', function(e) {
+                const anchor = e.target.closest('a');
+                if (anchor) {
+                  if (anchor.target === '_blank' || anchor.getAttribute('target') === '_blank') {
+                    anchor.target = '_self';
+                    anchor.removeAttribute('target');
+                  }
+                }
+              }, true);
+            }
+            interceptClicks(parentDoc);
+            interceptClicks(document);
+
+            // MutationObserver to sanitize dynamically injected links (e.g. st.link_button)
+            if (!parentDoc.__ag_same_tab_observer && parentDoc.body) {
+              const obs = new MutationObserver(function(mutations) {
+                for (let m = 0; m < mutations.length; m++) {
+                  const nodes = mutations[m].addedNodes;
+                  for (let n = 0; n < nodes.length; n++) {
+                    const node = nodes[n];
+                    if (node.nodeType === 1) {
+                      if (node.tagName === 'A' && (node.target === '_blank' || node.getAttribute('target') === '_blank')) {
+                        node.target = '_self';
+                        node.removeAttribute('target');
+                      }
+                      sanitizeLinks(node);
+                    }
+                  }
+                }
+              });
+              obs.observe(parentDoc.body, { childList: true, subtree: true });
+              parentDoc.__ag_same_tab_observer = obs;
+            }
+
+            // Override window.open across both contexts
+            const sameTabOpen = function(url) {
+              if (url) {
+                window.parent.location.href = url;
+              }
+              return window.parent;
+            };
+            try { window.open = sameTabOpen; } catch(_) {}
+            try { if (window.parent) window.parent.open = sameTabOpen; } catch(_) {}
+          } catch(sameTabErr) {
+            console.debug('Same-tab navigation note:', sameTabErr);
+          }
+        })();
 
       } catch (err) {
         console.error('PWA initialization error:', err);

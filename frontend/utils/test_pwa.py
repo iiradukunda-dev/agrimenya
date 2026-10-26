@@ -90,3 +90,47 @@ def test_ensure_pwa_assets_permission_error_graceful_handling():
         # Must execute cleanly without unhandled exception
         ensure_pwa_assets()
 
+
+def test_same_tab_enforcement_in_pwa_script():
+    from unittest.mock import patch
+    from utils.pwa import render_pwa_support
+
+    rendered_html = []
+    with patch("streamlit.components.v1.html", side_effect=lambda html, **kwargs: rendered_html.append(html)):
+        render_pwa_support()
+
+    assert len(rendered_html) == 1, "render_pwa_support must invoke components.html once"
+    script = rendered_html[0]
+
+    # Verify no <a ... target="_blank"> remains in injected HTML/templates
+    import re
+    assert not re.search(r'<a\s+[^>]*target=["\']_blank["\']', script), "pwa_script must not have any <a target='_blank'> links"
+    assert 'target="_self"' in script, "pwa_script must specify target='_self'"
+
+    # Verify strict same-tab enforcer functions exist
+    assert "enforceStrictSameTabNavigation" in script
+    assert "sameTabOpen" in script
+    assert "target = '_self'" in script
+
+
+def test_ai_widget_rendering_and_positioning():
+    from unittest.mock import patch
+    from components.ai_widget import render_floating_ai_widget
+
+    rendered_markdown = []
+    with patch("streamlit.markdown", side_effect=lambda md, **kwargs: rendered_markdown.append(md)):
+        render_floating_ai_widget()
+
+    assert len(rendered_markdown) == 1, "render_floating_ai_widget must output markdown"
+    md = rendered_markdown[0]
+
+    # Verify bottom right corner placement
+    assert "bottom: 24px !important;" in md
+    assert "right: 24px !important;" in md
+
+    # Verify target=_self and AI Assistant link
+    assert "fab.target = '_self'" in md
+    assert "/AI_Assistant" in md
+    assert "wireFabClick" in md
+
+
