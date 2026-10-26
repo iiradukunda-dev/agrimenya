@@ -145,9 +145,9 @@ def render_home_hero() -> None:
       }
 
       /* Structured Card Buttons - High specificity override */
-      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
-      [data-testid="stVerticalBlockBorderWrapper"] button,
-      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"] {
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]),
+      [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]),
+      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) {
         background: #0f2738 !important;
         border: 1px solid rgba(56, 189, 248, 0.28) !important;
         border-radius: 10px !important;
@@ -158,14 +158,14 @@ def render_home_hero() -> None:
         transition: all 0.25s ease !important;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
       }
-      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
-      [data-testid="stVerticalBlockBorderWrapper"] button * {
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]) *,
+      [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) * {
         color: #ffffff !important;
         font-weight: 700 !important;
       }
-      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
-      [data-testid="stVerticalBlockBorderWrapper"] button:hover,
-      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:hover {
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):hover,
+      [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover,
+      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover {
         background: #0284c7 !important;
         border-color: rgba(56, 189, 248, 0.8) !important;
         color: #ffffff !important;

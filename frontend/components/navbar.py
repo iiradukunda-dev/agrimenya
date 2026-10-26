@@ -213,12 +213,18 @@ def render_navbar() -> None:
       }
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover button,
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
       .st-key-ag_navbar div[data-testid="stPopover"] button,
       .st-key-ag_navbar div[data-testid="stPopover"] button:hover,
       .st-key-ag_navbar .stPopover > button,
       .st-key-ag_navbar .stPopover > button:hover,
       .st-key-ag_navbar div[data-testid="stPopover"] [data-testid="stBaseButton-secondary"],
-      .st-key-ag_navbar div[data-testid="stPopover"] [data-testid="baseButton-secondary"] {
+      .st-key-ag_navbar div[data-testid="stPopover"] [data-testid="baseButton-secondary"],
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button,
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover button,
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button,
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:not(.ag-nav-active):not(#ag-nav-install-btn):not([aria-current="page"]),
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stBaseButton-secondary"]:not(#ag-nav-install-btn) {
         background: transparent !important;
         background-color: transparent !important;
         border: none !important;
@@ -457,6 +463,82 @@ def render_navbar() -> None:
         height: 1px;
         background: transparent;
         margin: 0.1rem 0 0.5rem;
+      }
+
+      /* Clean Light Styling for Streamlit Tabs across all views */
+      [data-testid="stTabs"], .stTabs { background: transparent !important; }
+      [data-testid="stTabs"] [data-baseweb="tab-list"],
+      .stTabs [data-baseweb="tab-list"],
+      [data-testid="stTabs"] div[role="tablist"],
+      .stTabs div[role="tablist"] {
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border-radius: 14px !important;
+        padding: 4px 8px !important;
+        border: 1px solid rgba(2, 132, 199, 0.20) !important;
+        box-shadow: 0 4px 14px rgba(4, 31, 38, 0.05) !important;
+        gap: 6px !important;
+      }
+      [data-testid="stTabs"] button[role="tab"],
+      [data-testid="stTabs"] [data-baseweb="tab"],
+      [data-testid="stTabs"] button,
+      .stTabs button[role="tab"],
+      .stTabs [data-baseweb="tab"],
+      .stTabs button,
+      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] button,
+      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] [role="tab"],
+      [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab"] {
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 8px 18px !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.90rem !important;
+        font-weight: 600 !important;
+        color: #334155 !important;
+        box-shadow: none !important;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      }
+      [data-testid="stTabs"] button[role="tab"] p,
+      [data-testid="stTabs"] [data-baseweb="tab"] p,
+      [data-testid="stTabs"] button p,
+      .stTabs button[role="tab"] p,
+      .stTabs [data-baseweb="tab"] p {
+        color: #334155 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 600 !important;
+      }
+      [data-testid="stTabs"] button[role="tab"]:hover,
+      [data-testid="stTabs"] [data-baseweb="tab"]:hover,
+      [data-testid="stTabs"] button:hover,
+      .stTabs button[role="tab"]:hover,
+      .stTabs [data-baseweb="tab"]:hover {
+        background: rgba(2, 132, 199, 0.08) !important;
+        background-color: rgba(2, 132, 199, 0.08) !important;
+        color: #0284c7 !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+      [data-testid="stTabs"] button[role="tab"][aria-selected="true"],
+      [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"],
+      [data-testid="stTabs"] button[aria-selected="true"],
+      .stTabs button[role="tab"][aria-selected="true"],
+      .stTabs [data-baseweb="tab"][aria-selected="true"],
+      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] button[aria-selected="true"] {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #0284c7 !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.15), 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+        border-bottom: 2.5px solid #0284c7 !important;
+      }
+      [data-testid="stTabs"] button[role="tab"][aria-selected="true"] p,
+      [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"] p {
+        color: #0284c7 !important;
+        font-weight: 700 !important;
       }
 
       @media(max-width:950px) {

@@ -187,10 +187,15 @@ def render_pwa_support() -> None:
               z-index: 999990 !important;
               margin: 0 auto 0.45rem auto !important;
             }
-            /* Ensure NO black background on navbar buttons or popovers */
+            /* Ensure NO black background on navbar buttons, popovers, or tabs */
+            .st-key-ag_navbar button,
             .st-key-ag_navbar [data-testid="stHorizontalBlock"] button,
             .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
-            .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stBaseButton-secondary"] {
               background: transparent !important;
               background-color: transparent !important;
               border: none !important;
@@ -199,17 +204,44 @@ def render_pwa_support() -> None:
             }
             .st-key-ag_navbar [data-testid="stHorizontalBlock"] button p,
             .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button p,
-            .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p {
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button p,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button p {
               color: #0a1f26 !important;
               text-shadow: none !important;
             }
             .st-key-ag_navbar .st-key-lang_cycle_btn button,
-            .st-key-ag_navbar [data-testid="stHorizontalBlock"] .st-key-lang_cycle_btn button {
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] .st-key-lang_cycle_btn button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .st-key-lang_cycle_btn button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="column"]:last-child button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stColumn"]:last-child button {
               background: rgba(2, 132, 199, 0.08) !important;
               background-color: rgba(2, 132, 199, 0.08) !important;
               border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
               border-radius: 50% !important;
               box-shadow: none !important;
+            }
+            /* Universal light styling for Streamlit tabs (st.tabs) */
+            [data-testid="stTabs"] button[role="tab"],
+            [data-testid="stTabs"] [data-baseweb="tab"],
+            [data-testid="stTabs"] button,
+            .stTabs button[role="tab"],
+            .stTabs [data-baseweb="tab"],
+            .stTabs button,
+            [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] button {
+              background: transparent !important;
+              background-color: transparent !important;
+              border: none !important;
+              color: #334155 !important;
+              box-shadow: none !important;
+            }
+            [data-testid="stTabs"] button[role="tab"][aria-selected="true"],
+            [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"],
+            .stTabs button[role="tab"][aria-selected="true"] {
+              background: #ffffff !important;
+              background-color: #ffffff !important;
+              color: #0284c7 !important;
+              border-bottom: 2.5px solid #0284c7 !important;
             }
             [data-testid="stSidebar"],
             [data-testid="collapsedControl"],

@@ -257,8 +257,8 @@ def load_theme() -> None:
       color: #e0f2fe !important;
       text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7) !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
-    [data-testid="stVerticalBlockBorderWrapper"] button {
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]),
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) {
       background: #0f2738 !important;
       border: 1px solid rgba(56, 189, 248, 0.28) !important;
       border-radius: 10px !important;
@@ -267,27 +267,27 @@ def load_theme() -> None:
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
-    [data-testid="stVerticalBlockBorderWrapper"] button * {
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]) *,
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) * {
       color: #ffffff !important;
       font-weight: 700 !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"]:hover .stButton > button,
-    [data-testid="stVerticalBlockBorderWrapper"]:hover button {
+    [data-testid="stVerticalBlockBorderWrapper"]:hover .stButton > button:not([role="tab"]):not([data-baseweb="tab"]),
+    [data-testid="stVerticalBlockBorderWrapper"]:hover button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) {
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
       border-color: rgba(56, 189, 248, 0.85) !important;
       box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4) !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
-    [data-testid="stVerticalBlockBorderWrapper"] button:hover {
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):hover,
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover {
       background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
       border-color: #38bdf8 !important;
       color: #ffffff !important;
       box-shadow: 0 8px 24px rgba(56, 189, 248, 0.55) !important;
       transform: translateY(-2px) scale(1.02) !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:active,
-    [data-testid="stVerticalBlockBorderWrapper"] button:active {
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):active,
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):active {
       transform: translateY(0) scale(0.98) !important;
     }
 
@@ -464,8 +464,8 @@ def load_theme() -> None:
     }
 
     /* 5. Buttons inside Dark Cards & Bordered Containers */
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]),
-    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]) {
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]):not([role="tab"]):not([data-baseweb="tab"]),
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]):not([data-testid="stBaseButton-primary"]):not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) {
       background: linear-gradient(135deg, #0e3044 0%, #082130 100%) !important;
       border: 1.5px solid rgba(56, 189, 248, 0.55) !important;
       border-radius: 12px !important;
@@ -474,13 +474,13 @@ def load_theme() -> None:
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
       transition: all 0.28s ease !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]) *,
-    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]) * {
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]):not([role="tab"]):not([data-baseweb="tab"]) *,
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]):not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) * {
       color: #ffffff !important;
       font-weight: 700 !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]):hover,
-    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]):hover {
+    [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([kind="primary"]):not([role="tab"]):not([data-baseweb="tab"]):hover,
+    [data-testid="stVerticalBlockBorderWrapper"] button:not([kind="primary"]):hover:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) {
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
       border-color: #38bdf8 !important;
       color: #ffffff !important;
@@ -492,7 +492,11 @@ def load_theme() -> None:
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] button,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
-    .st-key-ag_navbar button {
+    .st-key-ag_navbar button,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stBaseButton-secondary"] {
       background: transparent !important;
       background-color: transparent !important;
       border: none !important;
@@ -513,7 +517,13 @@ def load_theme() -> None:
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] button span,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button span,
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button p,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button p,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button p,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button span,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button span,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button span {
       color: #0a1f26 !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-weight: 600 !important;
@@ -521,7 +531,10 @@ def load_theme() -> None:
     }
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover,
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:hover,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button:hover,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button:hover {
       background: rgba(2, 132, 199, 0.08) !important;
       background-color: rgba(2, 132, 199, 0.08) !important;
       border: none !important;
@@ -532,13 +545,21 @@ def load_theme() -> None:
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover p,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
     .st-key-ag_navbar [data-testid="stHorizontalBlock"] button:hover span,
-    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover span {
+    .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button:hover span,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:hover p,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button:hover p,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button:hover p,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:hover span,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button:hover span {
       color: #0284c7 !important;
     }
 
     /* Language cycle button inside navbar pill: round circular button with light background */
     .st-key-ag_navbar .st-key-lang_cycle_btn button,
-    .st-key-lang_cycle_btn button {
+    .st-key-lang_cycle_btn button,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .st-key-lang_cycle_btn button,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="column"]:last-child button,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stColumn"]:last-child button {
       background: rgba(2, 132, 199, 0.08) !important;
       background-color: rgba(2, 132, 199, 0.08) !important;
       border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
@@ -551,12 +572,117 @@ def load_theme() -> None:
       box-shadow: none !important;
     }
     .st-key-ag_navbar .st-key-lang_cycle_btn button:hover,
-    .st-key-lang_cycle_btn button:hover {
+    .st-key-lang_cycle_btn button:hover,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .st-key-lang_cycle_btn button:hover,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="column"]:last-child button:hover,
+    [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stColumn"]:last-child button:hover {
       background: #0284c7 !important;
       background-color: #0284c7 !important;
       border-color: #0284c7 !important;
       box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
       transform: translateY(-1px) scale(1.05) !important;
+    }
+
+    /* 7. Streamlit st.tabs System - Light, High-Contrast, Zero Black Background */
+    [data-testid="stTabs"],
+    .stTabs {
+      background: transparent !important;
+    }
+    [data-testid="stTabs"] [data-baseweb="tab-list"],
+    .stTabs [data-baseweb="tab-list"],
+    [data-testid="stTabs"] div[role="tablist"],
+    .stTabs div[role="tablist"] {
+      background: rgba(255, 255, 255, 0.85) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border-radius: 14px !important;
+      padding: 4px 8px !important;
+      border: 1px solid rgba(2, 132, 199, 0.20) !important;
+      box-shadow: 0 4px 14px rgba(4, 31, 38, 0.05) !important;
+      gap: 6px !important;
+    }
+    [data-testid="stTabs"] button[role="tab"],
+    [data-testid="stTabs"] [data-baseweb="tab"],
+    [data-testid="stTabs"] button,
+    .stTabs button[role="tab"],
+    .stTabs [data-baseweb="tab"],
+    .stTabs button,
+    div[role="tablist"] button[role="tab"],
+    div[role="tablist"] [data-baseweb="tab"],
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] button,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] [role="tab"],
+    [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab"] {
+      background: transparent !important;
+      background-color: transparent !important;
+      border: none !important;
+      border-radius: 10px !important;
+      padding: 8px 18px !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 0.90rem !important;
+      font-weight: 600 !important;
+      color: #334155 !important;
+      box-shadow: none !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    [data-testid="stTabs"] button[role="tab"] p,
+    [data-testid="stTabs"] [data-baseweb="tab"] p,
+    [data-testid="stTabs"] button p,
+    .stTabs button[role="tab"] p,
+    .stTabs [data-baseweb="tab"] p,
+    [data-testid="stTabs"] button[role="tab"] div,
+    [data-testid="stTabs"] [data-baseweb="tab"] div {
+      color: #334155 !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-weight: 600 !important;
+      font-size: 0.90rem !important;
+    }
+    [data-testid="stTabs"] button[role="tab"]:hover,
+    [data-testid="stTabs"] [data-baseweb="tab"]:hover,
+    [data-testid="stTabs"] button:hover,
+    .stTabs button[role="tab"]:hover,
+    .stTabs [data-baseweb="tab"]:hover,
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] button:hover {
+      background: rgba(2, 132, 199, 0.08) !important;
+      background-color: rgba(2, 132, 199, 0.08) !important;
+      color: #0284c7 !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    [data-testid="stTabs"] button[role="tab"]:hover p,
+    [data-testid="stTabs"] [data-baseweb="tab"]:hover p,
+    .stTabs button[role="tab"]:hover p {
+      color: #0284c7 !important;
+    }
+    [data-testid="stTabs"] button[role="tab"][aria-selected="true"],
+    [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"],
+    [data-testid="stTabs"] button[aria-selected="true"],
+    .stTabs button[role="tab"][aria-selected="true"],
+    .stTabs [data-baseweb="tab"][aria-selected="true"],
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] button[aria-selected="true"],
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] [role="tab"][aria-selected="true"] {
+      background: #ffffff !important;
+      background-color: #ffffff !important;
+      color: #0284c7 !important;
+      font-weight: 700 !important;
+      border-radius: 10px !important;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.15), 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+      border-bottom: 2.5px solid #0284c7 !important;
+    }
+    [data-testid="stTabs"] button[role="tab"][aria-selected="true"] p,
+    [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"] p,
+    .stTabs button[role="tab"][aria-selected="true"] p {
+      color: #0284c7 !important;
+      font-weight: 700 !important;
+    }
+    [data-testid="stTabs"] [data-baseweb="tab-highlight"],
+    .stTabs [data-baseweb="tab-highlight"] {
+      background-color: #0284c7 !important;
+      height: 3px !important;
+      border-radius: 3px !important;
+    }
+    [data-testid="stTabs"] [data-baseweb="tab-border"],
+    .stTabs [data-baseweb="tab-border"] {
+      background-color: rgba(2, 132, 199, 0.15) !important;
     }
 
     /* Transparent Landing Page Headings & Subtitles */
