@@ -71,6 +71,22 @@ def render_admin() -> None:
 
                 with st.expander("Detailed Health Info"):
                     st.json(health)
+
+                st.write("")
+                render_icon_subheader("assets/phone.svg", "WhatsApp Channel Health & Telemetry")
+                wa_health = api_client.get_whatsapp_health()
+                if wa_health:
+                    w_cols = st.columns(4)
+                    with w_cols[0]:
+                        st.metric("WhatsApp Mode", str(wa_health.get("mode", "sandbox")).upper())
+                    with w_cols[1]:
+                        st.metric("Active Contacts", wa_health.get("active_contacts", 0))
+                    with w_cols[2]:
+                        st.metric("24h Outbound", wa_health.get("outbound_24h", 0))
+                    with w_cols[3]:
+                        st.metric("24h Failures", wa_health.get("failed_24h", 0))
+                else:
+                    st.caption("WhatsApp integration telemetry is offline or unconfigured.")
             else:
                 st.error("Backend is unreachable. Check that the API is running on the expected port.")
 
@@ -165,6 +181,14 @@ def render_admin() -> None:
                                 st.rerun()
                             else:
                                 st.error("Plan update failed. Check admin access.")
+
+                        plan_history = api_client.get_plan_action_history(plan_id)
+                        if plan_history:
+                            st.write("---")
+                            st.markdown("**Action Modification History & Audit Trail**")
+                            st.dataframe(pd.DataFrame(plan_history), width="stretch", hide_index=True)
+                        else:
+                            st.caption("No action modifications logged for this plan.")
             else:
                 error = api_client.get_admin_api_error("/admin/plans")
                 if error:
@@ -247,6 +271,65 @@ def render_admin() -> None:
                                 st.rerun()
                             else:
                                 st.error("Alert update failed. Check admin access and message validation.")
+
+                        status = str(alert.get("status", "draft")).lower()
+                        approved_at = alert.get("approved_at")
+                        approved_by = alert.get("approved_by")
+
+                        st.write("---")
+                        st.markdown("**WhatsApp Dispatch Workflow**")
+                        if status == "approved":
+                            st.success(f"✓ Approved by {approved_by or 'admin'} on {str(approved_at)[:19] if approved_at else 'recently'}")
+                            if st.button("🚀 Broadcast to WhatsApp Subscribers", type="primary", key=f"dispatch_wa_{alert_id}", use_container_width=True):
+                                summary = api_client.dispatch_admin_alert_whatsapp(alert_id)
+                                if summary:
+                                    count = summary.get("dispatched_count", 0)
+                                    recipients = summary.get("recipient_count", 0)
+                                    st.success(f"WhatsApp dispatch underway! {count} messages dispatched to {recipients} contacts.")
+                                    st.rerun()
+                                else:
+                                    st.error(api_client.get_admin_api_error(f"/communication/alerts/{alert_id}/dispatch/whatsapp") or "WhatsApp dispatch failed.")
+                        else:
+                            st.info("Status: DRAFT — This alert must be approved by an administrator before it can be broadcast to WhatsApp.")
+                            if st.button("✓ Approve Alert for WhatsApp Broadcast", key=f"approve_wa_{alert_id}", use_container_width=True):
+                                approved = api_client.approve_admin_alert(alert_id)
+                                if approved:
+                                    st.success("Alert approved! You can now broadcast it to registered WhatsApp contacts.")
+                                    st.rerun()
+                                else:
+                                    st.error("Approval failed. Check administrator session credentials.")
+
+                        delivery_data = api_client.get_admin_alert_delivery(alert_id)
+                        if delivery_data and "counts" in delivery_data:
+                            st.write("---")
+                            st.markdown("**WhatsApp Delivery Metrics**")
+                            counts = delivery_data.get("counts", {})
+                            d_cols = st.columns(5)
+                            with d_cols[0]:
+                                st.metric("Queued", counts.get("queued", 0))
+                            with d_cols[1]:
+                                st.metric("Sent", counts.get("sent", 0))
+                            with d_cols[2]:
+                                st.metric("Delivered", counts.get("delivered", 0))
+                            with d_cols[3]:
+                                st.metric("Read", counts.get("read", 0))
+                            with d_cols[4]:
+                                st.metric("Failed", counts.get("failed", 0))
+
+                with st.expander("WhatsApp Notification Templates"):
+                    templates = api_client.get_whatsapp_templates()
+                    if templates:
+                        st.dataframe(pd.DataFrame(templates), width="stretch", hide_index=True)
+                    else:
+                        st.caption("No registered templates retrieved from backend.")
+
+                with st.expander("WhatsApp Subscribed Contacts Directory"):
+                    contacts = api_client.get_whatsapp_contacts()
+                    if contacts:
+                        st.dataframe(pd.DataFrame(contacts), width="stretch", hide_index=True)
+                        st.caption(f"{len(contacts)} contacts registered.")
+                    else:
+                        st.caption("No WhatsApp contacts currently registered.")
             else:
                 error = api_client.get_admin_api_error("/admin/alerts")
                 if error:

@@ -484,6 +484,19 @@ def render_centralized_login_card(
                 icon=sprout_icon,
                 accent_color="#10b981",
             )
+            try:
+                g_status = requests.get(f"{api_base_url}/community/auth/google/status", timeout=2)
+                if g_status.status_code == 200 and g_status.json().get("enabled"):
+                    st.link_button(
+                        "Sign in or register with Google",
+                        f"{api_base_url}/community/auth/google",
+                        use_container_width=True,
+                    )
+                    st.caption("New accounts through Google are verified automatically.")
+                    st.markdown('<div style="text-align:center;color:#64748b;font-size:0.75rem;margin:0.4rem 0 0.7rem;">— OR —</div>', unsafe_allow_html=True)
+            except Exception:
+                pass
+
             tab_signin, tab_create = st.tabs(["Sign In", "Create Account"])
             with tab_signin:
                 with st.form(f"{key_prefix}_comm_signin"):
@@ -564,6 +577,19 @@ def render_centralized_login_card(
                         else:
                             st.error(api_client.get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
             with tab_comm:
+                try:
+                    g_status = requests.get(f"{api_base_url}/community/auth/google/status", timeout=2)
+                    if g_status.status_code == 200 and g_status.json().get("enabled"):
+                        st.link_button(
+                            "Sign in or register with Google",
+                            f"{api_base_url}/community/auth/google",
+                            use_container_width=True,
+                        )
+                        st.caption("New accounts through Google are verified automatically.")
+                        st.markdown('<div style="text-align:center;color:#64748b;font-size:0.75rem;margin:0.4rem 0 0.7rem;">— OR —</div>', unsafe_allow_html=True)
+                except Exception:
+                    pass
+
                 tab_in, tab_reg = st.tabs(["Sign In", "Create Account"])
                 with tab_in:
                     with st.form(f"{key_prefix}_uni_comm_login"):

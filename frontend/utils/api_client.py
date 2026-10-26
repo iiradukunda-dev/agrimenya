@@ -801,6 +801,31 @@ def update_admin_alert(alert_id: str, payload: dict[str, Any]) -> dict[str, Any]
     return result
 
 
+def approve_admin_alert(alert_id: str) -> dict[str, Any] | None:
+    """Approve an alert for broadcast dispatch."""
+    result = _request_admin("POST", f"/communication/alerts/{quote(alert_id, safe='')}/approve")
+    if result:
+        get_alerts.clear()
+    return result
+
+
+def dispatch_admin_alert_whatsapp(alert_id: str) -> dict[str, Any] | None:
+    """Dispatch an approved alert via WhatsApp broadcast."""
+    return _request_admin("POST", f"/communication/alerts/{quote(alert_id, safe='')}/dispatch/whatsapp")
+
+
+def get_admin_alert_delivery(alert_id: str) -> dict[str, Any] | None:
+    """Fetch WhatsApp delivery status counts for an alert."""
+    return _request_admin("GET", f"/communication/alerts/{quote(alert_id, safe='')}/delivery")
+
+
+def get_plan_action_history(plan_id: str, step_number: int | None = None) -> list[dict[str, Any]]:
+    """Fetch plan action modification audit history."""
+    params = {"step_number": step_number} if step_number is not None else None
+    data = _get_api(f"/planification/plans/{quote(plan_id, safe='')}/history", params=params)
+    return data if isinstance(data, list) else []
+
+
 def get_nisr_imports() -> list[dict[str, Any]]:
     data = _request_admin("GET", "/admin/nisr/imports")
     return data if isinstance(data, list) else []

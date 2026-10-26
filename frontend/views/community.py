@@ -191,7 +191,7 @@ def _field_reports(token: str, language: str) -> None:
                 photo = st.file_uploader(c["photo"], type=["jpg", "jpeg", "png", "webp"], accept_multiple_files=False)
                 submit = st.form_submit_button(c["save_report"], type="primary", use_container_width=True)
             if submit:
-                zone = zones_by_district.get(str(district))
+                zone = zone_by_label.get(str(selected_zone_label))
                 if not zone or not zone.get("id"):
                     st.error(c.get("unavailable", "Zone information is unavailable."))
                 elif not crop.strip():
@@ -221,13 +221,13 @@ def _field_reports(token: str, language: str) -> None:
                             st.success(c["saved"])
                             st.rerun()
                         except requests.RequestException as exc:
-                            st.error(_error_message(exc))
+                            st.error(_error_message(exc, language))
     try:
         response = requests.get(f"{API_BASE_URL}/community/field-reports?limit=10", headers={"Authorization": f"Bearer {token}"}, timeout=10)
         response.raise_for_status()
         reports = response.json()
     except requests.RequestException as exc:
-        st.error(_error_message(exc))
+        st.error(_error_message(exc, language))
         return
     if not reports:
         st.caption(c["no_reports"])
@@ -340,70 +340,50 @@ def render_community() -> None:
         language = "en"
     c = COPY[language]
 
-    if not st.session_state.get("community_access_token"):
-        from components.cards import centralized_login_container, login_card_header, security_trust_footer
-        with centralized_login_container():
-            sprout_icon = """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M7 20h10"/>
-                <path d="M10 20c0-4 1-6 2-10"/>
-                <path d="M12 10a4 4 0 0 1 7-3 4 4 0 0 1-3 7 4 4 0 0 1-4-4z"/>
-                <path d="M12 14a4 4 0 0 0-7-3 4 4 0 0 0 3 7 4 4 0 0 0 4-4z"/>
-            </svg>"""
-            badge_title = "GROWER NETWORK" if language == "en" else "UMURYANGO W'ABAHINZI" if language == "rw" else "RÉSEAU AGRICOLE"
-            login_card_header(
-                title=c["title"],
-                subtitle=c["intro"],
-                badge_text=badge_title,
-                icon=sprout_icon,
-                accent_color="#10b981",
-            )
-            sign_in, create_account = st.tabs([c["signin"], c["create"]])
-            with sign_in:
-                with st.form("community_sign_in"):
-                    email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_login_email")
-                    password = st.text_input(c["password"], type="password", placeholder="••••••••••••", key="community_login_password")
-                    submit = st.form_submit_button(f"{c['signin']} →", type="primary", use_container_width=True)
-                if submit:
-                    try:
-                        response = _request("POST", "/community/login", payload={"email": email, "password": password})
-                        st.session_state["community_access_token"] = response["access_token"]
-                        st.session_state["community_account"] = response.get("account", {})
-                        st.rerun()
-                    except requests.RequestException as exc:
-                        st.error(_error_message(exc, language))
-            with create_account:
-                with st.form("community_register"):
-                    display_name = st.text_input(c["name"], placeholder="e.g. Jean_Gasabo", max_chars=80)
-                    email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_register_email")
-                    password = st.text_input(
-                        c["password"] + (" (at least 12 characters)" if language == "en" else " (inyuguti nibura 12)"),
-                        type="password",
-                        placeholder="Min. 12 characters",
-                        key="community_register_password",
-                    )
-                    submit = st.form_submit_button(f"{c['create_farmer']} →", type="primary", use_container_width=True)
-                if submit:
-                    try:
-                        response = _request("POST", "/community/register", payload={
-                            "display_name": display_name, "email": email, "password": password,
-                        })
-                        st.session_state["community_access_token"] = response["access_token"]
-                        st.session_state["community_account"] = response.get("account", {})
-                        st.rerun()
-                    except requests.RequestException as exc:
-                        st.error(_error_message(exc, language))
-            security_trust_footer(
-                message="Privacy Protected" if language == "en" else "Umutekano urarinzwe" if language == "rw" else "Confidentialité Protégée",
-                session_info="Verified Grower Network" if language == "en" else "Koperative z'Abahinzi" if language == "rw" else "Réseau Coopératif",
-            )
-        return
+    # 1. Process Google OAuth callback query parameters
+    google_code = st.query_params.get("community_google_code")
+    if google_code:
+        try:
+            response = _request("POST", "/community/auth/google/exchange", payload={"code": google_code})
+            _store_community_session(response)
+            st.query_params.pop("community_google_code", None)
+            st.rerun()
+        except requests.RequestException as exc:
+            st.query_params.pop("community_google_code", None)
+            st.error(_error_message(exc, language))
+
+    google_error = st.query_params.get("community_google_error")
+    if google_error:
+        error_key = f"google_error_{google_error}"
+        st.error(c.get(error_key, c["google_error_generic"]))
+        st.query_params.pop("community_google_error", None)
+
+    # 2. Process Email Verification query parameters
+    verify_token = st.query_params.get("verify_token")
+    if verify_token:
+        try:
+            _request("POST", "/community/verify", payload={"token": verify_token})
+            st.session_state["community_email_verified"] = True
+            st.query_params.pop("verify_token", None)
+            st.rerun()
+        except requests.RequestException as exc:
+            st.query_params.pop("verify_token", None)
+            st.error(_error_message(exc, language))
+
     if st.session_state.pop("community_email_verified", False):
         st.success(c["verify_success"])
+
+    # 3. Process Password Reset query parameters
+    reset_token = st.query_params.get("reset_token")
     if reset_token:
-        st.markdown("<style>.st-key-community_reset_panel{max-width:620px;margin:1.5rem auto}</style>", unsafe_allow_html=True)
-        with st.container(key="community_reset_panel", border=True):
-            st.subheader(c["reset_password"])
-            st.caption("Use at least 12 characters. The reset link can be used once and expires after 30 minutes." if language == "en" else "Koresha inyuguti nibura 12. Umurongo ukoreshwa rimwe kandi urangira nyuma y'iminota 30.")
+        from components.cards import centralized_login_container, login_card_header, security_trust_footer
+        with centralized_login_container():
+            login_card_header(
+                title=c["reset_password"],
+                subtitle="Use at least 12 characters. The reset link can be used once and expires after 30 minutes." if language == "en" else "Koresha inyuguti nibura 12. Umurongo ukoreshwa rimwe kandi urangira nyuma y'iminota 30.",
+                badge_text="SECURITY RECOVERY",
+                accent_color="#10b981",
+            )
             with st.form("community_password_reset_form"):
                 new_password = st.text_input(c["reset_password"], type="password", key="community_new_password")
                 confirmation = st.text_input(c["confirm_password"], type="password", key="community_confirm_password")
@@ -421,25 +401,37 @@ def render_community() -> None:
                         st.rerun()
                     except requests.RequestException as exc:
                         st.error(_error_message(exc, language))
+            security_trust_footer()
         return
 
     if st.session_state.pop("community_reset_success", False):
         st.success(c["password_updated"])
 
+    # 4. Session Expiry Check
     community_token = st.session_state.get("community_access_token")
     community_expiry = st.session_state.get("community_access_token_expires_at")
-    if community_token and (community_expiry is None or time.time() >= community_expiry):
+    if community_token and (community_expiry is not None and time.time() >= community_expiry):
         _clear_community_session(expired=True)
     if st.session_state.pop("community_session_expired", False):
         st.info("Your community session expired. Sign in again to continue." if language == "en" else "Igihe cya konti y'umuryango cyarangiye. Ongera winjire ukomeze.")
 
+    # 5. Unauthenticated State: Centralized Executive Login Card
     if not st.session_state.get("community_access_token"):
-        st.markdown("<style>.st-key-community_auth_panel { max-width: 760px; margin: 1rem auto 2rem; }</style>", unsafe_allow_html=True)
-        with st.container(key="community_auth_panel"):
-            st.warning(c["privacy"])
-            auth_mode = st.radio(
-                "Community account", [c["signin"], c["create"]],
-                horizontal=True, label_visibility="collapsed", key="community_auth_mode",
+        from components.cards import centralized_login_container, login_card_header, security_trust_footer
+        with centralized_login_container():
+            sprout_icon = """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 20h10"/>
+                <path d="M10 20c0-4 1-6 2-10"/>
+                <path d="M12 10a4 4 0 0 1 7-3 4 4 0 0 1-3 7 4 4 0 0 1-4-4z"/>
+                <path d="M12 14a4 4 0 0 0-7-3 4 4 0 0 0 3 7 4 4 0 0 0 4-4z"/>
+            </svg>"""
+            badge_title = "GROWER NETWORK" if language == "en" else "UMURYANGO W'ABAHINZI" if language == "rw" else "RÉSEAU AGRICOLE"
+            login_card_header(
+                title=c["title"],
+                subtitle=c["intro"],
+                badge_text=badge_title,
+                icon=sprout_icon,
+                accent_color="#10b981",
             )
             if _google_sign_in_enabled():
                 st.link_button(
@@ -448,11 +440,14 @@ def render_community() -> None:
                     use_container_width=True,
                 )
                 st.caption(c["google_new_account_note"])
-            if auth_mode == c["signin"]:
+                st.markdown('<div style="text-align:center;color:#64748b;font-size:0.75rem;margin:0.4rem 0 0.7rem;">— OR —</div>', unsafe_allow_html=True)
+
+            sign_in, create_account = st.tabs([c["signin"], c["create"]])
+            with sign_in:
                 with st.form("community_sign_in"):
-                    email = st.text_input(c["email"], key="community_login_email")
-                    password = st.text_input(c["password"], type="password", key="community_login_password")
-                    submit = st.form_submit_button(c["signin"], type="primary", use_container_width=True)
+                    email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_login_email")
+                    password = st.text_input(c["password"], type="password", placeholder="••••••••••••", key="community_login_password")
+                    submit = st.form_submit_button(f"{c['signin']} →", type="primary", use_container_width=True)
                 if submit:
                     try:
                         response = _request("POST", "/community/login", payload={"email": email, "password": password})
@@ -460,6 +455,7 @@ def render_community() -> None:
                         st.rerun()
                     except requests.RequestException as exc:
                         st.error(_error_message(exc, language))
+
                 with st.expander(c["forgot_password"]):
                     with st.form("community_password_forgot_form"):
                         reset_email = st.text_input(c["email"], key="community_reset_email")
@@ -475,6 +471,7 @@ def render_community() -> None:
                                 st.warning(c["reset_dev_error"])
                         except requests.RequestException as exc:
                             st.error(_error_message(exc, language))
+
                 with st.expander(c["verify_resend"]):
                     st.caption(c["verify_resend_help"])
                     with st.form("community_verification_resend"):
@@ -491,12 +488,18 @@ def render_community() -> None:
                                 st.warning(c["verify_dev_error"])
                         except requests.RequestException as exc:
                             st.error(_error_message(exc, language))
-            else:
+
+            with create_account:
                 with st.form("community_register"):
-                    display_name = st.text_input(c["name"], max_chars=30)
-                    email = st.text_input(c["email"], key="community_register_email")
-                    password = st.text_input(c["password"] + (" (at least 12 characters)" if language == "en" else " (inyuguti nibura 12)"), type="password", key="community_register_password")
-                    submit = st.form_submit_button(c["create_farmer"], type="primary", use_container_width=True)
+                    display_name = st.text_input(c["name"], placeholder="e.g. Jean_Gasabo", max_chars=80)
+                    email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_register_email")
+                    password = st.text_input(
+                        c["password"] + (" (at least 12 characters)" if language == "en" else " (inyuguti nibura 12)"),
+                        type="password",
+                        placeholder="Min. 12 characters",
+                        key="community_register_password",
+                    )
+                    submit = st.form_submit_button(f"{c['create_farmer']} →", type="primary", use_container_width=True)
                 if submit:
                     try:
                         response = _request("POST", "/community/register", payload={
@@ -506,10 +509,23 @@ def render_community() -> None:
                         if response.get("development_verification_url"):
                             _show_development_mail_status(response, language)
                             st.link_button(c["verify_dev_link"], response["development_verification_url"])
+                        if response.get("access_token"):
+                            _store_community_session(response)
+                            st.rerun()
                     except requests.RequestException as exc:
                         st.error(_error_message(exc, language))
-            return
 
+            st.markdown(
+                '<div style="text-align:center;margin-top:0.75rem;font-size:0.82rem;color:#94a3b8;">Administrator or agronomist? <a href="/Admin" style="color:#38bdf8;font-weight:700;text-decoration:none;">Go to Administrator Portal →</a></div>',
+                unsafe_allow_html=True,
+            )
+            security_trust_footer(
+                message="Privacy Protected" if language == "en" else "Umutekano urarinzwe" if language == "rw" else "Confidentialité Protégée",
+                session_info="Verified Grower Network" if language == "en" else "Koperative z'Abahinzi" if language == "rw" else "Réseau Coopératif",
+            )
+        return
+
+    # 6. Authenticated Community State
     st.title(c["title"])
     st.write(c["intro"])
     st.caption(c["warning"])
@@ -519,9 +535,24 @@ def render_community() -> None:
     display_name = account.get('display_name') or c['reply_author']
     email = account.get('email', '')
     if authenticated_session_badge(display_name=display_name, email=email, role=c['farmer'], key_prefix="community"):
-        st.session_state.pop("community_access_token", None)
-        st.session_state.pop("community_account", None)
+        _clear_community_session()
         st.rerun()
+
+    # WhatsApp Bot Access Banner
+    try:
+        whatsapp_info = requests.get(f"{API_BASE_URL}/communication/whatsapp-info", timeout=5)
+        if whatsapp_info.status_code == 200:
+            wa_data = whatsapp_info.json()
+            if wa_data.get("enabled"):
+                with st.container(border=True):
+                    st.markdown(f"**{c.get('wa_title', 'Use Agri-Menya on WhatsApp')}**")
+                    st.write(c.get("wa_intro", "Open a chat to access district crop evidence and alert tools without signing in to the website."))
+                    st.caption(c.get("wa_commands", ""))
+                    wa_url = wa_data.get("chat_url") or (f"https://wa.me/{wa_data.get('phone_e164', '').lstrip('+')}" if wa_data.get("phone_e164") else None)
+                    if wa_url:
+                        st.link_button(c.get("wa_open", "Open Agri-Menya WhatsApp chat"), wa_url)
+    except Exception:
+        pass
 
     selected_section = st.radio(
         "Community feed", [c["discussion_tab"], c["field_tab"]],
