@@ -67,3 +67,26 @@ def test_ensure_pwa_assets_execution():
     assert os.path.exists(os.path.join(root_static, "manifest.json"))
     assert os.path.exists(os.path.join(root_static, "sw.js"))
     assert os.path.exists(os.path.join(root_static, "offline.html"))
+
+
+def test_ensure_pwa_assets_container_root_safety():
+    from unittest.mock import patch
+
+    # Simulate container where frontend_dir is /app and root_dir is /
+    with patch("os.path.abspath", return_value="/app/utils/pwa.py"), \
+         patch("os.makedirs") as mock_makedirs:
+        ensure_pwa_assets()
+        # Verify /static was NEVER created at OS root
+        for call in mock_makedirs.call_args_list:
+            arg = call[0][0]
+            assert arg != "/static" and arg != "\\static", "Must never attempt to create /static at OS root"
+
+
+def test_ensure_pwa_assets_permission_error_graceful_handling():
+    from unittest.mock import patch
+
+    # Simulate environment where os.makedirs raises PermissionError
+    with patch("os.makedirs", side_effect=PermissionError(13, "Permission denied: '/static'")):
+        # Must execute cleanly without unhandled exception
+        ensure_pwa_assets()
+

@@ -13,35 +13,51 @@ def _ensure_landing_video() -> str:
     assets_dir = os.path.join(frontend_dir, "assets")
     src = os.path.join(assets_dir, "landing video.mp4")
 
-    # Static destinations: frontend/static and root/static
-    destinations = [
-        os.path.join(frontend_dir, "static", "landing_video.mp4"),
-        os.path.join(root_dir, "static", "landing_video.mp4"),
-    ]
+    is_sys_root = (
+        not root_dir
+        or root_dir in ("/", "\\")
+        or os.path.splitdrive(root_dir)[1] in ("", "/", "\\")
+        or os.path.abspath(root_dir) == os.path.abspath(os.sep)
+    )
+
+    # Static destinations: frontend/static and root/static (if not OS root)
+    destinations = [os.path.join(frontend_dir, "static", "landing_video.mp4")]
+    if not is_sys_root:
+        destinations.append(os.path.join(root_dir, "static", "landing_video.mp4"))
 
     if os.path.exists(src):
         for dst in destinations:
             if not os.path.exists(dst):
-                os.makedirs(os.path.dirname(dst), exist_ok=True)
                 try:
-                    os.link(src, dst)
-                except Exception:
+                    os.makedirs(os.path.dirname(dst), exist_ok=True)
                     try:
-                        shutil.copy2(src, dst)
+                        os.link(src, dst)
                     except Exception:
-                        pass
+                        try:
+                            shutil.copy2(src, dst)
+                        except Exception:
+                            pass
+                except (PermissionError, OSError):
+                    pass
 
-    # Ensure config.toml with enableStaticServing exists in both locations
+    # Ensure config.toml with enableStaticServing exists in appropriate locations
     config_content = "[server]\nenableStaticServing = true\n"
-    for cdir in [os.path.join(frontend_dir, ".streamlit"), os.path.join(root_dir, ".streamlit")]:
-        cpath = os.path.join(cdir, "config.toml")
-        if not os.path.exists(cpath):
-            os.makedirs(cdir, exist_ok=True)
-            try:
-                with open(cpath, "w", encoding="utf-8") as f:
-                    f.write(config_content)
-            except Exception:
-                pass
+    target_dirs = [os.path.join(frontend_dir, ".streamlit")]
+    if not is_sys_root:
+        target_dirs.append(os.path.join(root_dir, ".streamlit"))
+
+    for cdir in target_dirs:
+        try:
+            cpath = os.path.join(cdir, "config.toml")
+            if not os.path.exists(cpath):
+                os.makedirs(cdir, exist_ok=True)
+                try:
+                    with open(cpath, "w", encoding="utf-8") as f:
+                        f.write(config_content)
+                except Exception:
+                    pass
+        except (PermissionError, OSError):
+            pass
 
     return "/app/static/landing_video.mp4"
 

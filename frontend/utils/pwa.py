@@ -7,51 +7,68 @@ import streamlit.components.v1 as components
 
 def ensure_pwa_assets() -> None:
     """Synchronize PWA assets into static serving folders and Streamlit static root."""
-    frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    root_dir = os.path.dirname(frontend_dir)
-    src_static = os.path.join(frontend_dir, "static")
-    root_static = os.path.join(root_dir, "static")
-
-    os.makedirs(root_static, exist_ok=True)
-
-    files_to_sync = [
-        "manifest.json",
-        "sw.js",
-        "offline.html",
-        "icon-192.png",
-        "icon-512.png",
-        "icon-maskable-512.png",
-        "apple-touch-icon.png",
-        "favicon.png",
-        "wheat.svg",
-        "ai_assistant_bulb.png",
-    ]
-
-    for fname in files_to_sync:
-        s_file = os.path.join(src_static, fname)
-        if os.path.exists(s_file):
-            r_file = os.path.join(root_static, fname)
-            if not os.path.exists(r_file):
-                try:
-                    shutil.copy2(s_file, r_file)
-                except Exception:
-                    pass
-
-    # Attempt to sync into Streamlit's core static folder for root /sw.js and /manifest.json serving
     try:
-        from streamlit import file_util
-        pkg_static = file_util.get_static_dir()
-        if os.path.isdir(pkg_static):
-            for fname in files_to_sync:
-                s_file = os.path.join(src_static, fname)
-                if os.path.exists(s_file):
-                    pkg_file = os.path.join(pkg_static, fname)
-                    if not os.path.exists(pkg_file):
-                        try:
-                            shutil.copy2(s_file, pkg_file)
-                        except Exception:
-                            pass
+        frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        root_dir = os.path.dirname(frontend_dir)
+        src_static = os.path.join(frontend_dir, "static")
+
+        # In Docker or container setups, frontend_dir is /app and root_dir is /
+        # We must never write to /static at the OS root
+        is_sys_root = (
+            not root_dir
+            or root_dir in ("/", "\\")
+            or os.path.splitdrive(root_dir)[1] in ("", "/", "\\")
+            or os.path.abspath(root_dir) == os.path.abspath(os.sep)
+        )
+
+        files_to_sync = [
+            "manifest.json",
+            "sw.js",
+            "offline.html",
+            "icon-192.png",
+            "icon-512.png",
+            "icon-maskable-512.png",
+            "apple-touch-icon.png",
+            "favicon.png",
+            "wheat.svg",
+            "ai_assistant_bulb.png",
+        ]
+
+        if not is_sys_root:
+            root_static = os.path.join(root_dir, "static")
+            try:
+                os.makedirs(root_static, exist_ok=True)
+                if os.path.isdir(src_static):
+                    for fname in files_to_sync:
+                        s_file = os.path.join(src_static, fname)
+                        if os.path.exists(s_file):
+                            r_file = os.path.join(root_static, fname)
+                            if not os.path.exists(r_file):
+                                try:
+                                    shutil.copy2(s_file, r_file)
+                                except Exception:
+                                    pass
+            except (PermissionError, OSError):
+                pass
+
+        # Attempt to sync into Streamlit's core static folder for root /sw.js and /manifest.json serving
+        try:
+            from streamlit import file_util
+            pkg_static = file_util.get_static_dir()
+            if os.path.isdir(pkg_static) and os.path.isdir(src_static):
+                for fname in files_to_sync:
+                    s_file = os.path.join(src_static, fname)
+                    if os.path.exists(s_file):
+                        pkg_file = os.path.join(pkg_static, fname)
+                        if not os.path.exists(pkg_file):
+                            try:
+                                shutil.copy2(s_file, pkg_file)
+                            except Exception:
+                                pass
+        except Exception:
+            pass
     except Exception:
+        # Never crash navbar or app if asset synchronization encounters permission or filesystem limits
         pass
 
 
