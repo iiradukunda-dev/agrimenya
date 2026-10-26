@@ -163,7 +163,30 @@ def render_pwa_support() -> None:
               border-radius: 9999px;
               animation: agIndeterminateBar 1.4s infinite linear;
             }
-            /* Permanently suppress native sidebar and toolbar on client */
+            /* Permanently suppress native header, sidebar, and toolbar on client */
+            header[data-testid="stHeader"],
+            .stApp > header,
+            [data-testid="stHeader"] {
+              display: none !important;
+              height: 0 !important;
+              min-height: 0 !important;
+              padding: 0 !important;
+              margin: 0 !important;
+              visibility: hidden !important;
+            }
+            .block-container,
+            [data-testid="stMainBlockContainer"],
+            [data-testid="stAppViewBlockContainer"],
+            .main .block-container {
+              padding-top: 0.35rem !important;
+              margin-top: 0 !important;
+            }
+            .st-key-ag_navbar {
+              position: sticky !important;
+              top: 0.35rem !important;
+              z-index: 999990 !important;
+              margin: 0 auto 0.45rem auto !important;
+            }
             [data-testid="stSidebar"],
             [data-testid="collapsedControl"],
             section[data-testid="stSidebar"],

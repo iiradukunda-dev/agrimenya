@@ -75,13 +75,39 @@ def load_theme() -> None:
     ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: var(--ag-radius-pill); }
     ::-webkit-scrollbar-thumb:hover { background: #0284c7; }
 
-    [data-testid="stMainBlockContainer"] {
+    header[data-testid="stHeader"],
+    .stApp > header,
+    [data-testid="stHeader"],
+    #MainMenu,
+    footer {
+      display: none !important;
+      height: 0 !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      visibility: hidden !important;
+    }
+
+    .block-container,
+    [data-testid="stMainBlockContainer"],
+    [data-testid="stAppViewBlockContainer"],
+    .main .block-container {
       max-width: 1440px;
-      padding: 1.2rem 2.2rem 3rem;
+      padding-top: 0.35rem !important;
+      padding-left: 2.2rem !important;
+      padding-right: 2.2rem !important;
+      padding-bottom: 3rem !important;
+      margin-top: 0 !important;
       animation: ag-page-fade-in 0.5s ease-out;
     }
 
-    #MainMenu, footer, header[data-testid="stHeader"] { visibility: hidden; height: 0; }
+    .st-key-ag_navbar {
+      position: sticky !important;
+      top: 0.35rem !important;
+      z-index: 999990 !important;
+      margin: 0 auto 0.45rem auto !important;
+    }
+
     [data-testid="stSidebar"],
     [data-testid="collapsedControl"],
     section[data-testid="stSidebar"],

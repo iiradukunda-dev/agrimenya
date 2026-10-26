@@ -13,10 +13,43 @@ def render_navbar() -> None:
       [data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; }
 
       /* =========================================================
-         AGRIMENYA CENTERED FLOATING NAVBAR
+         AGRIMENYA TOP STICKY FLOATING NAVBAR
          ========================================================= */
-      /* Outer Container: Centered horizontally on the page */
-      .st-key-ag_navbar,
+      /* Suppress native Streamlit header and remove top padding */
+      header[data-testid="stHeader"],
+      .stApp > header,
+      [data-testid="stHeader"] {
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        visibility: hidden !important;
+      }
+
+      .block-container,
+      [data-testid="stMainBlockContainer"],
+      [data-testid="stAppViewBlockContainer"],
+      .main .block-container {
+        padding-top: 0.35rem !important;
+        margin-top: 0 !important;
+      }
+
+      /* Outer Container: Pinned to the top of the viewport */
+      .st-key-ag_navbar {
+        position: sticky !important;
+        top: 0.35rem !important;
+        z-index: 999990 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto 0.45rem auto !important;
+        padding: 0 !important;
+        background: transparent !important;
+      }
       .st-key-ag_navbar > div {
         display: flex !important;
         flex-direction: row !important;
@@ -24,7 +57,7 @@ def render_navbar() -> None:
         align-items: center !important;
         width: 100% !important;
         max-width: 100% !important;
-        margin: 0.25rem auto 0.75rem auto !important;
+        margin: 0 !important;
         padding: 0 !important;
       }
 
@@ -38,9 +71,11 @@ def render_navbar() -> None:
         justify-content: center !important;
         width: auto !important;
         max-width: fit-content !important;
-        margin: 0.2rem auto 0.6rem auto !important;
+        margin: 0 auto !important;
         padding: 6px 16px !important;
-        background: #ffffff !important;
+        background: rgba(255, 255, 255, 0.96) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
         border-radius: 9999px !important;
         border: 1px solid rgba(2, 132, 199, 0.22) !important;
         box-shadow: 0 8px 30px rgba(2, 132, 199, 0.14), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
@@ -401,7 +436,7 @@ def render_navbar() -> None:
         border: 0;
         height: 1px;
         background: transparent;
-        margin: 0.2rem 0 1rem;
+        margin: 0.1rem 0 0.5rem;
       }
 
       @media(max-width:950px) {
@@ -410,6 +445,19 @@ def render_navbar() -> None:
           flex-wrap: wrap !important;
           border-radius: 20px !important;
           gap: 0.5rem !important;
+        }
+      }
+      @media(max-width:768px) {
+        .block-container,
+        [data-testid="stMainBlockContainer"],
+        [data-testid="stAppViewBlockContainer"],
+        .main .block-container {
+          padding-top: 0.2rem !important;
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
+        }
+        .st-key-ag_navbar {
+          top: 0.2rem !important;
         }
       }
       </style>
