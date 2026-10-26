@@ -1,71 +1,17 @@
-"""Creative, animated agro-intelligence hero with full-page background video for agrimenya."""
+"""Creative, animated agro-intelligence hero for agrimenya."""
 import os
-import shutil
 import streamlit as st
 import streamlit.components.v1 as components
 from utils.i18n import t
 
 
 def _ensure_landing_video() -> str:
-    """Ensure landing video is linked in static directories for streaming."""
-    frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    root_dir = os.path.dirname(frontend_dir)
-    assets_dir = os.path.join(frontend_dir, "assets")
-    src = os.path.join(assets_dir, "landing video.mp4")
-
-    is_sys_root = (
-        not root_dir
-        or root_dir in ("/", "\\")
-        or os.path.splitdrive(root_dir)[1] in ("", "/", "\\")
-        or os.path.abspath(root_dir) == os.path.abspath(os.sep)
-    )
-
-    # Static destinations: frontend/static and root/static (if not OS root)
-    destinations = [os.path.join(frontend_dir, "static", "landing_video.mp4")]
-    if not is_sys_root:
-        destinations.append(os.path.join(root_dir, "static", "landing_video.mp4"))
-
-    if os.path.exists(src):
-        for dst in destinations:
-            if not os.path.exists(dst):
-                try:
-                    os.makedirs(os.path.dirname(dst), exist_ok=True)
-                    try:
-                        os.link(src, dst)
-                    except Exception:
-                        try:
-                            shutil.copy2(src, dst)
-                        except Exception:
-                            pass
-                except (PermissionError, OSError):
-                    pass
-
-    # Ensure config.toml with enableStaticServing exists in appropriate locations
-    config_content = "[server]\nenableStaticServing = true\n"
-    target_dirs = [os.path.join(frontend_dir, ".streamlit")]
-    if not is_sys_root:
-        target_dirs.append(os.path.join(root_dir, ".streamlit"))
-
-    for cdir in target_dirs:
-        try:
-            cpath = os.path.join(cdir, "config.toml")
-            if not os.path.exists(cpath):
-                os.makedirs(cdir, exist_ok=True)
-                try:
-                    with open(cpath, "w", encoding="utf-8") as f:
-                        f.write(config_content)
-                except Exception:
-                    pass
-        except (PermissionError, OSError):
-            pass
-
-    return "/app/static/landing_video.mp4"
+    """Legacy helper maintained for backward compatibility."""
+    return ""
 
 
 def render_home_hero() -> None:
-    """Render full-page background video and a floating hero command center."""
-    video_url = _ensure_landing_video()
-
+    """Render a floating hero command center with high-contrast intelligence cards."""
     badge_text = t("hero.badge", "Rwanda Agro-Climate Decision Engine")
     title_pre = t("hero.title_pre", "Make the next")
     title_glow = t("hero.title_glow", "field decision")
@@ -86,12 +32,8 @@ def render_home_hero() -> None:
     pill_window = t("hero.pill.window", "Optimal planting window actively tracked")
     pill_ai = t("hero.pill.ai", "AI Assistant available via corner bulb")
 
-    # Apply parent-page transparency so the full-page video shows across the entire viewport
     st.html("""
     <style>
-      html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
-        background: transparent !important;
-      }
       iframe[title="streamlit.components.v1.custom_component"] {
         border: none !important;
         background: transparent !important;
@@ -177,16 +119,16 @@ def render_home_hero() -> None:
         color: #ffffff !important;
       }
 
-      /* White Section Title & Subtitle overrides for fullpage video backdrop */
+      /* Clean section titles & subtitles */
       .ag-section-title, h2.ag-section-title {
-        color: #ffffff !important;
-        -webkit-text-fill-color: #ffffff !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+        color: #0a1f26 !important;
+        -webkit-text-fill-color: #0a1f26 !important;
+        text-shadow: none !important;
       }
       .ag-section-subtitle, p.ag-section-subtitle {
-        color: #e0f2fe !important;
-        -webkit-text-fill-color: #e0f2fe !important;
-        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8) !important;
+        color: #48656c !important;
+        -webkit-text-fill-color: #48656c !important;
+        text-shadow: none !important;
       }
     </style>
     """)
@@ -213,7 +155,7 @@ def render_home_hero() -> None:
           height: 100%;
         }}
 
-        /* Command center card (no video inside - video is full page background) */
+        /* Command center card */
         .ag-hero-wrapper {{
           position: relative;
           overflow: hidden;
@@ -552,81 +494,16 @@ def render_home_hero() -> None:
       </section>
 
       <script>
-        (function initFullPageBackgroundVideo() {{
+        (function cleanupVideoBackground() {{
           try {{
             const parentDoc = window.parent.document;
             if (!parentDoc) return;
-
-            // 1. Inject or update full-page background video with pristine native fidelity
-            const videoStyles = 'position:fixed;top:0;left:0;width:100vw;height:100vh;min-width:100%;min-height:100%;object-fit:cover;object-position:center center;z-index:-2;pointer-events:none;transform:translate3d(0,0,0);-webkit-transform:translate3d(0,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden;will-change:transform;image-rendering:high-quality;image-rendering:-webkit-optimize-contrast;filter:brightness(0.92);';
-
-            let video = parentDoc.getElementById('ag-landing-fullpage-video');
-            if (!video) {{
-              video = parentDoc.createElement('video');
-              video.id = 'ag-landing-fullpage-video';
-              video.autoplay = true;
-              video.muted = true;
-              video.loop = true;
-              video.playsInline = true;
-              video.preload = 'auto';
-              video.setAttribute('autoplay', '');
-              video.setAttribute('muted', '');
-              video.setAttribute('loop', '');
-              video.setAttribute('playsinline', '');
-              video.style.cssText = videoStyles;
-              
-              const source = parentDoc.createElement('source');
-              source.src = '{video_url}';
-              source.type = 'video/mp4';
-              video.appendChild(source);
-              
-              parentDoc.body.prepend(video);
-            }} else {{
-              video.style.cssText = videoStyles;
-              video.style.display = 'block';
-            }}
-
-            // Ensure autoplay and muted state
-            video.muted = true;
-            var promise = video.play();
-            if (promise !== undefined) {{
-              promise.catch(function(e) {{
-                console.log('Video autoplay deferred:', e);
-                parentDoc.addEventListener('click', function() {{ video.muted = true; video.play(); }}, {{ once: true }});
-              }});
-            }}
-
-            // 2. Inject or update cinematic full-page overlay
-            const overlayStyles = 'position:fixed;inset:0;background:radial-gradient(ellipse at 50% 25%, rgba(2,24,36,0.12) 0%, rgba(2,24,36,0.38) 100%);z-index:-1;pointer-events:none;';
-            let overlay = parentDoc.getElementById('ag-landing-fullpage-overlay');
-            if (!overlay) {{
-              overlay = parentDoc.createElement('div');
-              overlay.id = 'ag-landing-fullpage-overlay';
-              overlay.style.cssText = overlayStyles;
-              parentDoc.body.prepend(overlay);
-            }} else {{
-              overlay.style.cssText = overlayStyles;
-              overlay.style.display = 'block';
-            }}
-
-            // 3. Monitor page location: hide video when user navigates away from Home
-            const checkRoute = function() {{
-              try {{
-                const p = window.parent.location.pathname;
-                const isHome = p === '/' || p.endsWith('/Home') || p.endsWith('/Home/');
-                if (!isHome) {{
-                  if (video) video.style.display = 'none';
-                  if (overlay) overlay.style.display = 'none';
-                }} else {{
-                  if (video) video.style.display = 'block';
-                  if (overlay) overlay.style.display = 'block';
-                }}
-              }} catch (err) {{}}
-            }};
-            setInterval(checkRoute, 400);
-
+            const video = parentDoc.getElementById('ag-landing-fullpage-video');
+            if (video) video.remove();
+            const overlay = parentDoc.getElementById('ag-landing-fullpage-overlay');
+            if (overlay) overlay.remove();
           }} catch (err) {{
-            console.error('Full-page video background error:', err);
+            console.debug('Video cleanup note:', err);
           }}
         }})();
       </script>
@@ -635,3 +512,4 @@ def render_home_hero() -> None:
     """
 
     components.html(hero_html, height=420)
+

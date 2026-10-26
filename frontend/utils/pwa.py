@@ -83,6 +83,14 @@ def render_pwa_support() -> None:
         const parentDoc = window.parent.document;
         if (!parentDoc) return;
 
+        // Cleanup any stale background video elements
+        try {
+          const staleVideo = parentDoc.getElementById('ag-landing-fullpage-video');
+          if (staleVideo) staleVideo.remove();
+          const staleOverlay = parentDoc.getElementById('ag-landing-fullpage-overlay');
+          if (staleOverlay) staleOverlay.remove();
+        } catch (_) {}
+
         // 1. Inject or update Web App Manifest
         let manifest = parentDoc.querySelector('link[rel="manifest"]');
         if (!manifest) {

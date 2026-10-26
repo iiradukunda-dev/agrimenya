@@ -27,7 +27,7 @@ def main():
     workflows_sub = t("home.workflows_sub", "Navigate from spatial zone intelligence to verified field recommendations and team dispatches.")
 
     st.markdown(
-        f"""<div style="margin:2rem 0 1rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;"><div><h2 class="ag-section-title" style="color:#ffffff !important;-webkit-text-fill-color:#ffffff !important;text-shadow:0 2px 10px rgba(0,0,0,0.8);font-family:'Plus Jakarta Sans',sans-serif;font-size:1.65rem;font-weight:800;letter-spacing:-0.03em;margin:0;">{workflows_title}</h2><p class="ag-section-subtitle" style="color:#e0f2fe !important;-webkit-text-fill-color:#e0f2fe !important;text-shadow:0 1px 6px rgba(0,0,0,0.8);font-size:0.94rem;margin:0.25rem 0 0;">{workflows_sub}</p></div></div>""",
+        f"""<div style="margin:2rem 0 1rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;"><div><h2 class="ag-section-title" style="color:#0a1f26;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.65rem;font-weight:800;letter-spacing:-0.03em;margin:0;">{workflows_title}</h2><p class="ag-section-subtitle" style="color:#48656c;font-size:0.94rem;margin:0.25rem 0 0;">{workflows_sub}</p></div></div>""",
         unsafe_allow_html=True,
     )
 
@@ -129,8 +129,8 @@ def main():
                 <span class="ag-pipeline-beacon"></span>
                 {pipeline_badge}
             </div>
-            <h2 class="ag-section-title" style="color:#ffffff !important;-webkit-text-fill-color:#ffffff !important;text-shadow:0 2px 10px rgba(0,0,0,0.8);font-family:'Plus Jakarta Sans',sans-serif;font-size:1.65rem;font-weight:800;letter-spacing:-0.03em;margin-top:0.45rem !important;">{pipeline_title}</h2>
-            <p class="ag-section-subtitle" style="color:#e0f2fe !important;-webkit-text-fill-color:#e0f2fe !important;text-shadow:0 1px 6px rgba(0,0,0,0.8);font-size:0.94rem;margin:0.25rem 0 0;">{pipeline_sub}</p>
+            <h2 class="ag-section-title" style="color:#0a1f26;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.65rem;font-weight:800;letter-spacing:-0.03em;margin-top:0.45rem !important;">{pipeline_title}</h2>
+            <p class="ag-section-subtitle" style="color:#48656c;font-size:0.94rem;margin:0.25rem 0 0;">{pipeline_sub}</p>
         </div>
         """,
         unsafe_allow_html=True,
