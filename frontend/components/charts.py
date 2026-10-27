@@ -1,78 +1,179 @@
 """
-Chart components for the Segmentation pillar.
+Interactive chart components for agrimenya dashboards and segmentation.
 
-Uses Plotly Express with the agrimenya color palette.
+Built on Plotly Express with custom theme tokens, responsive layouts,
+and dark/light mode compatibility.
 """
 import plotly.express as px
+import plotly.graph_objects as go
 import streamlit as st
 from utils.i18n import t
+from utils.theme import get_current_theme
 
-# Shared Plotly layout settings matching the agrimenya design system
-AG_PLOTLY_LAYOUT = dict(
-    font=dict(family="Outfit, sans-serif", color="#374151"),
-    title_font=dict(family="Plus Jakarta Sans, sans-serif", size=16, color="#1B3A2D"),
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    legend=dict(
-        bgcolor="rgba(255,255,255,0.5)",
-        bordercolor="rgba(209,213,219,0.4)",
-        borderwidth=1,
-        font=dict(size=11),
-    ),
-    margin=dict(l=40, r=20, t=50, b=40),
-    hoverlabel=dict(
-        bgcolor="white",
-        font_size=12,
-        font_family="Outfit, sans-serif",
-    ),
-)
+# Semantic palette matching design system
+PRIORITY_COLORS = {
+    "High": "#ef4444",
+    "Medium": "#f59e0b",
+    "Low": "#10b981",
+    "Unassessed": "#94a3b8",
+}
+
+
+def get_plotly_layout() -> dict:
+    """Return layout dictionary dynamically configured for current theme mode."""
+    is_dark = get_current_theme() == "dark"
+    text_color = "#f8fafc" if is_dark else "#1e293b"
+    muted_color = "#94a3b8" if is_dark else "#64748b"
+    grid_color = "rgba(255, 255, 255, 0.08)" if is_dark else "rgba(15, 23, 42, 0.06)"
+    hover_bg = "#0f172a" if is_dark else "#ffffff"
+
+    return dict(
+        font=dict(family="Inter, sans-serif", color=text_color, size=12),
+        title_font=dict(family="Plus Jakarta Sans, sans-serif", size=15, color=text_color),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        legend=dict(
+            bgcolor="rgba(0,0,0,0)",
+            font=dict(size=11, color=muted_color),
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+        ),
+        margin=dict(l=30, r=20, t=45, b=35),
+        hoverlabel=dict(
+            bgcolor=hover_bg,
+            font_size=12,
+            font_family="Inter, sans-serif",
+            font_color=text_color,
+            bordercolor=grid_color,
+        ),
+    )
 
 
 def render_yield_chart(df) -> None:
     """
     Renders grouped estimated production by district and priority.
-    Uses the agrimenya semantic color palette for priority levels.
     """
     if df.empty:
-        st.info(t("seg.empty"))
+        st.info(t("seg.empty", default="No data available to plot."))
         return
 
-    priority_colors = {
-        "High":   "#DC2626",
-        "Medium": "#D97706",
-        "Low":    "#059669",
-    }
+    # Check required columns
+    group_cols = [c for c in ["District", "Priority"] if c in df.columns]
+    y_col = "Production_MT" if "Production_MT" in df.columns else ("Yield_MT_ha" if "Yield_MT_ha" in df.columns else None)
 
-    grouped = (
-        df.groupby(["District", "Priority"])["Production_MT"]
-        .mean()
-        .reset_index()
-    )
+    if not group_cols or not y_col:
+        st.info("Insufficient columns for yield chart.")
+        return
+
+    grouped = df.groupby(group_cols, as_index=False)[y_col].mean()
 
     fig = px.bar(
         grouped,
-        x="District",
-        y="Production_MT",
-        color="Priority",
-        color_discrete_map=priority_colors,
-        title=t("seg.chart_title"),
+        x="District" if "District" in grouped.columns else group_cols[0],
+        y=y_col,
+        color="Priority" if "Priority" in grouped.columns else None,
+        color_discrete_map=PRIORITY_COLORS,
+        title=t("seg.chart_title", default="Production by District & Priority"),
         barmode="group",
     )
 
-    fig.update_layout(**AG_PLOTLY_LAYOUT)
+    layout = get_plotly_layout()
+    fig.update_layout(**layout)
     fig.update_xaxes(
-        title=t("seg.axis_district"),
-        gridcolor="rgba(209,213,219,0.3)",
-        linecolor="rgba(209,213,219,0.5)",
+        gridcolor="rgba(150, 150, 150, 0.1)",
+        linecolor="rgba(150, 150, 150, 0.2)",
+        tickangle=-35,
     )
     fig.update_yaxes(
-        title=t("seg.axis_yield"),
-        gridcolor="rgba(209,213,219,0.3)",
-        linecolor="rgba(209,213,219,0.5)",
+        title="Production (MT)" if y_col == "Production_MT" else "Yield (MT/ha)",
+        gridcolor="rgba(150, 150, 150, 0.1)",
+        linecolor="rgba(150, 150, 150, 0.2)",
     )
     fig.update_traces(
-        marker_line_width=0,
-        marker_cornerradius=6,
+        marker_cornerradius=4,
+        hovertemplate="<b>%{x}</b><br>Production: %{y:.1f} MT<extra></extra>",
+    )
+
+    st.plotly_chart(fig, width="stretch")
+
+
+def render_priority_donut_chart(df) -> None:
+    """
+    Renders an interactive donut chart showing the percentage breakdown of priority risk levels.
+    """
+    if df.empty or "Priority" not in df.columns:
+        st.info("No priority distribution data.")
+        return
+
+    counts = df["Priority"].value_counts().reset_index()
+    counts.columns = ["Priority", "Count"]
+
+    fig = px.pie(
+        counts,
+        names="Priority",
+        values="Count",
+        color="Priority",
+        color_discrete_map=PRIORITY_COLORS,
+        hole=0.62,
+        title="Priority Distribution",
+    )
+
+    layout = get_plotly_layout()
+    fig.update_layout(**layout)
+    fig.update_traces(
+        textposition="inside",
+        textinfo="percent",
+        hovertemplate="<b>%{label} Priority</b><br>Zones: %{value} (%{percent})<extra></extra>",
+        marker=dict(line=dict(color="rgba(0,0,0,0)", width=2)),
+    )
+    # Center metric annotation
+    total = len(df)
+    is_dark = get_current_theme() == "dark"
+    fig.add_annotation(
+        text=f"<b>{total}</b><br><span style='font-size:10px;color:#94a3b8;'>ZONES</span>",
+        x=0.5,
+        y=0.5,
+        font=dict(size=18, family="Plus Jakarta Sans, sans-serif", color="#f8fafc" if is_dark else "#0f172a"),
+        showarrow=False,
+    )
+
+    st.plotly_chart(fig, width="stretch")
+
+
+def render_crop_comparison_bar(df) -> None:
+    """
+    Renders average production by crop across the selected zones.
+    """
+    if df.empty or "Crop" not in df.columns:
+        st.info("No crop comparison data.")
+        return
+
+    y_col = "Production_MT" if "Production_MT" in df.columns else ("Yield_MT_ha" if "Yield_MT_ha" in df.columns else None)
+    if not y_col:
+        return
+
+    crop_agg = df.groupby("Crop", as_index=False)[y_col].mean().sort_values(y_col, ascending=False).head(10)
+
+    fig = px.bar(
+        crop_agg,
+        x="Crop",
+        y=y_col,
+        title="Top Crops by Average Production",
+        color=y_col,
+        color_continuous_scale=["#38bdf8", "#0284c7", "#0369a1"],
+    )
+
+    layout = get_plotly_layout()
+    fig.update_layout(**layout)
+    fig.update_coloraxes(showscale=False)
+    fig.update_xaxes(gridcolor="rgba(150, 150, 150, 0.1)")
+    fig.update_yaxes(gridcolor="rgba(150, 150, 150, 0.1)")
+    fig.update_traces(
+        marker_cornerradius=4,
+        hovertemplate="<b>%{x}</b><br>Avg Production: %{y:.1f} MT<extra></extra>",
     )
 
     st.plotly_chart(fig, width="stretch")

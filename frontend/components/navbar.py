@@ -3,6 +3,7 @@ import streamlit as st
 from components.ai_widget import render_floating_ai_widget
 from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
+from utils.theme import get_current_theme, toggle_theme
 
 
 def render_navbar() -> None:
@@ -580,6 +581,15 @@ def render_navbar() -> None:
             st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
         with c_more:
             with st.popover(t("nav.more", "More"), width="stretch"):
+                # Theme Mode Switcher
+                current_mode = get_current_theme()
+                theme_icon = "☀️" if current_mode == "dark" else "🌙"
+                theme_label = "Switch to Light Mode" if current_mode == "dark" else "Switch to Dark Mode"
+                if st.button(f"{theme_icon} {theme_label}", key="ag_navbar_theme_toggle_btn", use_container_width=True):
+                    toggle_theme()
+                    st.rerun()
+
+                st.divider()
                 st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
                 st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))
                 st.page_link("pages/9_Communication.py", label=t("nav.comms", "Field alerts & comms"))
@@ -610,6 +620,39 @@ def render_navbar() -> None:
         with c_lang:
             render_language_selector(sidebar=False)
 
+
     st.markdown('<hr class="ag-nav-rule">', unsafe_allow_html=True)
     render_floating_ai_widget()
     render_pwa_support()
+
+
+def render_page_header(
+    title: str,
+    subtitle: str = "",
+    badge: str | None = None,
+    breadcrumbs: list[tuple[str, str | None]] | None = None,
+) -> None:
+    """Render a consistent, modern executive page header with breadcrumbs and badge."""
+    breadcrumb_html = ""
+    if breadcrumbs:
+        crumbs = []
+        for name, link in breadcrumbs:
+            if link:
+                crumbs.append(f'<a href="{link}" style="color:var(--ag-text-muted);text-decoration:none;">{name}</a>')
+            else:
+                crumbs.append(f'<span style="color:var(--ag-primary);font-weight:600;">{name}</span>')
+        breadcrumb_html = f'<div style="font-size:0.78rem;margin-bottom:0.35rem;display:flex;align-items:center;gap:6px;">{" › ".join(crumbs)}</div>'
+
+    badge_html = f'<span style="font-size:0.72rem;font-weight:750;letter-spacing:0.06em;text-transform:uppercase;color:var(--ag-primary);background:var(--ag-primary-soft);padding:3px 10px;border-radius:9999px;border:1px solid rgba(2,132,199,0.25);margin-bottom:0.4rem;display:inline-block;">{badge}</span>' if badge else ""
+    sub_html = f'<p style="color:var(--ag-text-muted);font-size:0.95rem;margin:0.25rem 0 0.75rem;">{subtitle}</p>' if subtitle else ""
+
+    html = f"""
+    <div style="margin: 0.5rem 0 1.25rem;">
+        {breadcrumb_html}
+        {badge_html}
+        <h1 style="margin:0;padding:0;font-family:var(--ag-font-display);font-size:1.85rem;font-weight:800;letter-spacing:-0.03em;color:var(--ag-text-main);">{title}</h1>
+        {sub_html}
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
