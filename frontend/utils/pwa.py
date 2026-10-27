@@ -683,33 +683,10 @@ def render_pwa_support() -> None:
           }
         };
 
-        // Render the floating App install button
-        const isStandalone = window.parent.matchMedia('(display-mode: standalone)').matches || window.parent.navigator.standalone === true;
-        if (!isStandalone) {
-          let installBtn = parentDoc.getElementById('ag-pwa-install-badge');
-          if (!installBtn) {
-            installBtn = parentDoc.createElement('button');
-            installBtn.id = 'ag-pwa-install-badge';
-            installBtn.addEventListener('click', () => {
-              window.parent.__agrimenya_trigger_install();
-            });
-            installBtn.addEventListener('mouseenter', () => {
-              installBtn.style.transform = 'translateY(-2px) scale(1.04)';
-              installBtn.style.borderColor = '#38bdf8';
-              installBtn.style.boxShadow = '0 14px 32px rgba(0,0,0,0.6), 0 0 24px rgba(56,189,248,0.65)';
-              installBtn.style.background = 'linear-gradient(135deg, #063143 0%, #0a465e 55%, #042533 100%)';
-            });
-            installBtn.addEventListener('mouseleave', () => {
-              installBtn.style.transform = 'translateY(0) scale(1)';
-              installBtn.style.borderColor = 'rgba(56,189,248,0.75)';
-              installBtn.style.boxShadow = '0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38)';
-              installBtn.style.background = 'linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%)';
-            });
-            parentDoc.body.appendChild(installBtn);
-          }
-          installBtn.title = 'Install agrimenya App';
-          installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:999999;padding:0.42rem 1.15rem;border-radius:9999px;background:linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%);border:1.5px solid rgba(56,189,248,0.75);color:#ffffff;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.86rem;font-weight:750;letter-spacing:0.02em;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);';
-          installBtn.innerHTML = 'App';
+        // Ensure floating App install badge is removed from the bottom left
+        const existingInstallBtn = parentDoc.getElementById('ag-pwa-install-badge');
+        if (existingInstallBtn) {
+          existingInstallBtn.remove();
         }
 
         // 12. STRICT SAME-TAB NAVIGATION ENFORCEMENT
