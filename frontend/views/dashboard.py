@@ -71,7 +71,7 @@ def render_dashboard() -> None:
             st.markdown(
                 '<div style="display:flex;align-items:center;gap:8px;margin-bottom:0.4rem;">'
                 '<span style="font-size:0.80rem;font-weight:750;letter-spacing:0.04em;text-transform:uppercase;color:var(--ag-primary);">GLOBAL FILTERS</span>'
-                '<span style="font-size:0.75rem;color:var(--ag-text-muted);">Synchronously updates all KPIs, charts, map pins, and data tables</span>'
+                ''
                 '</div>',
                 unsafe_allow_html=True,
             )
@@ -209,7 +209,7 @@ def render_dashboard() -> None:
         with map_col:
             with st.container(border=True):
                 render_icon_subheader("assets/map.svg", t("dashboard.section.priority_map", "Interactive Priority Map"))
-                st.caption("Click any district marker to inspect details, baseline yields, and launch action plans.")
+                
                 clicked_zone_id = render_priority_map(filtered_df, key="dashboard_priority_map")
 
                 if clicked_zone_id:
@@ -346,7 +346,7 @@ def render_dashboard() -> None:
                 '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:0.5rem;">'
                 '<div>'
                 '<h3 style="margin:0;font-size:1.15rem;font-weight:750;">Monitored District Zones & Performance</h3>'
-                '<p style="margin:0;font-size:0.85rem;color:var(--ag-text-muted);">Tabular inspection with real-time column sorting and CSV download</p>'
+                ''
                 '</div>'
                 '</div>',
                 unsafe_allow_html=True,

@@ -683,11 +683,17 @@ def render_pwa_support() -> None:
           }
         };
 
-        // Ensure floating App install badge is removed from the bottom left
-        const existingInstallBtn = parentDoc.getElementById('ag-pwa-install-badge');
-        if (existingInstallBtn) {
-          existingInstallBtn.remove();
+        // Unconditionally remove any floating App icon / install badge on the bottom left
+        function purgeBottomLeftBadges() {
+          try {
+            const el = parentDoc.getElementById('ag-pwa-install-badge');
+            if (el) el.remove();
+            const bad = parentDoc.querySelectorAll('#ag-pwa-install-badge, [id*="pwa-install"], [class*="viewerBadge"], [data-testid="manage-app-button"]');
+            bad.forEach(b => b.remove());
+          } catch (_) {}
         }
+        purgeBottomLeftBadges();
+        setInterval(purgeBottomLeftBadges, 400);
 
         // 12. STRICT SAME-TAB NAVIGATION ENFORCEMENT
         // Ensure no links, buttons, or window.open calls ever open in a new tab

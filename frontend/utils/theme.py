@@ -102,7 +102,15 @@ def load_theme() -> None:
     .stApp > header,
     [data-testid="stHeader"],
     #MainMenu,
-    footer {{
+    footer,
+    #ag-pwa-install-badge,
+    [id="ag-pwa-install-badge"],
+    [id*="pwa-install"],
+    .viewerBadge_container,
+    [class*="viewerBadge"],
+    [data-testid="manage-app-button"],
+    [data-testid="stDecoration"],
+    [data-testid="stToolbar"] {{
       display: none !important;
       height: 0 !important;
       visibility: hidden !important;

@@ -94,6 +94,7 @@ class TestViews(unittest.TestCase):
         mock_api.get_crops.return_value = ["Maize", "Beans"]
 
         mock_st.session_state = {}
+        mock_st.button.return_value = False
         mock_st.tabs.return_value = [MagicMock() for _ in range(3)]
         mock_st.columns.side_effect = lambda n, **kwargs: [MagicMock() for _ in range(n if isinstance(n, int) else len(n))]
         mock_st.expander.return_value.__enter__.return_value = MagicMock()
@@ -101,7 +102,8 @@ class TestViews(unittest.TestCase):
         mock_st.form.return_value.__enter__.return_value = MagicMock()
 
         render_plan()
-        self.assertTrue(mock_st.tabs.called)
+        self.assertTrue(mock_api.get_zones.called)
+        self.assertTrue(mock_api.get_zone_plans.called)
 
     @patch("views.communicate.st")
     @patch("views.communicate.api_client")
@@ -118,6 +120,7 @@ class TestViews(unittest.TestCase):
         mock_api.render_admin_login.return_value = False
 
         mock_st.session_state = {}
+        mock_st.button.return_value = False
         mock_st.tabs.return_value = [MagicMock() for _ in range(3)]
         mock_st.columns.side_effect = lambda n, **kwargs: [MagicMock() for _ in range(n if isinstance(n, int) else len(n))]
         mock_st.form.return_value.__enter__.return_value = MagicMock()

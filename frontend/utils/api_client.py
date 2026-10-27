@@ -558,6 +558,18 @@ def update_plan_action_status(plan_id: str, step_number: int, status: str, chang
 
 
 
+def get_seasonal_plan_draft(zone_id: str, crop: str) -> dict[str, Any] | None:
+    """GET /planification/draft returns an agro-ecological seasonal draft with planting windows and phases."""
+    params = {"zone_id": zone_id, "crop": crop.strip()}
+    data = _get_api("/planification/draft", params=params)
+    return data if isinstance(data, dict) else None
+
+
+def estimate_resources_advanced(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
+    """POST /planification/resources/{zone_id}/estimate for dynamic fertilizer, seed, and input pricing."""
+    return _post_api(f"/planification/resources/{quote(zone_id, safe='')}/estimate", payload)
+
+
 def create_disease_plan(payload: dict[str, Any]) -> dict[str, Any] | None:
     """POST /planification/disease-plan."""
     params = {key: payload.get(key) for key in ("zone_id", "crop", "symptoms", "image_description")}
