@@ -177,3 +177,49 @@ def render_crop_comparison_bar(df) -> None:
     )
 
     st.plotly_chart(fig, width="stretch")
+
+
+
+def render_district_ranking_chart(rankings: list[dict], crop: str, national_ref: float | None = None) -> None:
+    """Renders a comparative bar chart of district yields against the national reference benchmark."""
+    if not rankings:
+        st.info("No district ranking data available.")
+        return
+
+    import pandas as pd
+    df = pd.DataFrame(rankings)
+    if "district" not in df.columns or "yield_per_ha" not in df.columns:
+        return
+
+    df = df.sort_values(by="yield_per_ha", ascending=False)
+
+    fig = px.bar(
+        df,
+        x="district",
+        y="yield_per_ha",
+        title=f"District Yield Ranking — {crop} (kg/ha)",
+        color="yield_per_ha",
+        color_continuous_scale="Viridis",
+    )
+
+    layout = get_plotly_layout()
+    fig.update_layout(**layout)
+    fig.update_coloraxes(showscale=False)
+    fig.update_xaxes(tickangle=-40, title="District", gridcolor="rgba(150, 150, 150, 0.1)")
+    fig.update_yaxes(title="Yield (kg/ha)", gridcolor="rgba(150, 150, 150, 0.1)")
+
+    if national_ref:
+        fig.add_hline(
+            y=national_ref,
+            line_dash="dash",
+            line_color="#ef4444",
+            annotation_text=f"National Ref: {national_ref:,.0f} kg/ha",
+            annotation_position="top right",
+        )
+
+    fig.update_traces(
+        marker_cornerradius=4,
+        hovertemplate="<b>%{x}</b><br>Yield: %{y:,.1f} kg/ha<extra></extra>",
+    )
+
+    st.plotly_chart(fig, width="stretch")

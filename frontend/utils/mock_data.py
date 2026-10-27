@@ -163,3 +163,46 @@ def generate_mock_weather(district: str) -> dict:
         "forecast_summary": f"Moderate rainfall expected in {district} over the next 7 days.",
     }
 
+
+
+def generate_mock_model_info() -> dict:
+    """Generate mock diagnostic and provenance metadata for the yield model."""
+    return {
+        "active_basis": "baseline",
+        "model_version": "nisr-database-plus-official-sas-baseline",
+        "winner": "BASELINE (XGBoost R2=0.83, MAE=214 kg/ha)",
+        "metrics": {
+            "validation": {"r2": 0.83, "mae": 214.2, "rmse": 298.5},
+            "test": {"r2": 0.81, "mae": 228.0, "rmse": 312.1},
+        },
+        "training_data_span": "2018-2025 Seasonal Agricultural Survey (SAS)",
+        "features": ["district", "crop", "season", "historical_yield_trend", "soil_zone", "rainfall_tier"],
+        "known_limitations": [
+            "Baseline predictions are observational aggregates and do not account for unmeasured micro-climate shifts.",
+            "Exact district/crop/season/year coverage varies; missing seasons use clearly labeled pooled historical evidence.",
+            "Bundled official tables cover overall district estimates; SITE subgroup estimates are excluded.",
+        ],
+        "official_evidence_years": ["2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"],
+    }
+
+
+def generate_mock_district_ranking(crop: str = "Maize", season: str | None = None) -> list[dict]:
+    """Generate mock evidence ranking comparing districts for a crop."""
+    rankings = []
+    base_yield = 2800.0
+    for idx, d in enumerate(DISTRICTS, start=1):
+        yield_val = round(base_yield + (len(DISTRICTS) - idx) * 120 - random.uniform(10, 50), 1)
+        national_ref = 3200.0
+        gap = round(max(0.0, national_ref - yield_val), 1)
+        rankings.append({
+            "district": d["district"],
+            "yield_per_ha": yield_val,
+            "benchmark_yield_per_ha": national_ref,
+            "yield_gap_kg_ha": gap,
+            "yield_index": round(yield_val / national_ref, 3),
+            "observation_count": random.randint(12, 45),
+            "seasons": [season] if season else ["Season A", "Season B"],
+            "sources": ["NISR SAS"],
+            "rank": idx,
+        })
+    return rankings

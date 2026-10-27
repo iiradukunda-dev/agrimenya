@@ -163,6 +163,19 @@ def _put_api(path: str, payload: dict[str, Any], timeout: int = 15) -> dict[str,
         return None
 
 
+def _patch_api(path: str, payload: dict[str, Any] | None = None, timeout: int = 15) -> dict[str, Any] | None:
+    """PATCH request to the FastAPI backend, returns parsed JSON or None."""
+    url = f"{API_BASE_URL}{path}"
+    try:
+        resp = requests.patch(url, json=payload or {}, headers=_user_headers(), timeout=timeout)
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        logger.error("API PATCH %s failed: %s", url, e)
+        return None
+
+
+
 def _post_api_file(path: str, files: dict, data: dict | None = None, timeout: int = 30) -> dict[str, Any] | None:
     """POST multipart/form-data to the FastAPI backend."""
     url = f"{API_BASE_URL}{path}"
@@ -329,6 +342,53 @@ def get_crop_comparison(district: str, season: str | None = None) -> list[dict[s
 # ═══════════════════════════════════════════════════════════════════
 
 @st.cache_data(ttl=300, show_spinner=False)
+def get_model_info() -> dict[str, Any] | None:
+    """GET /decision/model-info: yield prediction baseline model metadata and provenance."""
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_model_info()
+    data = _get_api("/decision/model-info")
+    if isinstance(data, dict):
+        return data
+    return mock_data.generate_mock_model_info()
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_district_ranking(crop: str, season: str | None = None) -> list[dict[str, Any]]:
+    """GET /decision/district-ranking: district yield benchmarking against national reference."""
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_district_ranking(crop=crop, season=season)
+    params = {"crop": crop}
+    if season:
+        params["season"] = season
+    data = _get_api("/decision/district-ranking", params=params)
+    if isinstance(data, list):
+        return data
+    return mock_data.generate_mock_district_ranking(crop=crop, season=season)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_evidence_ranking(crop: str, season: str | None = None) -> dict[str, Any] | None:
+    """GET /decision/evidence-ranking: national reference, observations, and ranked districts."""
+    params = {"crop": crop}
+    if season:
+        params["season"] = season
+    data = _get_api("/decision/evidence-ranking", params=params)
+    return data if isinstance(data, dict) else None
+
+
+def get_disease_risk(zone_id: str, crop: str, symptoms: str, image_description: str | None = None) -> dict[str, Any] | None:
+    """POST /decision/disease-risk: evaluate agronomic risk and recommended actions."""
+    params = {
+        "zone_id": zone_id,
+        "crop": crop,
+        "symptoms": symptoms,
+    }
+    if image_description:
+        params["image_description"] = image_description
+    return _post_api("/decision/disease-risk", params=params)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
 def get_recommendations() -> list[dict[str, Any]]:
     """Fetches decision-making recommendations based on priority rankings."""
     if USE_MOCK_DATA:
@@ -489,6 +549,13 @@ def get_zone_plans(zone_id: str) -> list[dict[str, Any]]:
     return []
 
 
+def update_plan_action_status(plan_id: str, step_number: int, status: str, change_note: str = "") -> dict[str, Any] | None:
+    """PATCH /planification/plans/{plan_id}/actions/{step_number}."""
+    payload = {"status": status, "change_note": change_note.strip()}
+    return _patch_api(f"/planification/plans/{quote(plan_id, safe='')}/actions/{step_number}", payload)
+
+
+
 def create_disease_plan(payload: dict[str, Any]) -> dict[str, Any] | None:
     """POST /planification/disease-plan."""
     params = {key: payload.get(key) for key in ("zone_id", "crop", "symptoms", "image_description")}
@@ -521,8 +588,8 @@ def get_alerts() -> list[dict[str, str]]:
     return []
 
 
-def send_alert(message: str, zone_id: str, severity: str) -> dict[str, Any] | None:
-    """Sends a new communication alert."""
+def send_alert(message: str, zone_id: str, severity: str, crop: str | None = None, action: str | None = None) -> dict[str, Any] | None:
+    """Sends a new communication alert with automatic email broadcast."""
     if USE_MOCK_DATA:
         return None
 
@@ -531,10 +598,16 @@ def send_alert(message: str, zone_id: str, severity: str) -> dict[str, Any] | No
         "zone_id": zone_id,
         "message": message,
         "severity": severity,
-        "created_by": "System",
+        "created_by": "Agrimenya Portal",
     }
+    if crop:
+        payload["crop"] = crop
+    if action:
+        payload["action"] = action
+
     try:
-        resp = requests.post(url, json=payload, headers=_user_headers(), timeout=10)
+        headers = _admin_headers() if admin_session_authenticated() else _user_headers()
+        resp = requests.post(url, json=payload, headers=headers, timeout=15)
         resp.raise_for_status()
         get_alerts.clear()
         return resp.json()
@@ -562,6 +635,26 @@ def get_shared_plan(plan_id: str) -> dict[str, Any] | None:
     """GET /communication/share/{plan_id}."""
     data = _get_api(f"/communication/share/{quote(plan_id, safe='')}")
     return data if isinstance(data, dict) else None
+
+
+def send_shared_plan(plan_id: str, email: str) -> dict[str, Any] | None:
+    """POST /communication/share/{plan_id}/send: email formatted plan to farmer or officer."""
+    return _post_api(f"/communication/share/{quote(plan_id, safe='')}/send", {"email": email})
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def get_email_status() -> dict[str, Any] | None:
+    """GET /communication/email-status: check if SMTP email delivery is operational."""
+    data = _get_api("/communication/email-status")
+    return data if isinstance(data, dict) else None
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def get_whatsapp_status_info() -> dict[str, Any] | None:
+    """GET /communication/whatsapp-status: check WhatsApp provider readiness."""
+    data = _get_api("/communication/whatsapp-status")
+    return data if isinstance(data, dict) else None
+
 
 
 def get_whatsapp_contacts() -> list[dict[str, Any]]:
