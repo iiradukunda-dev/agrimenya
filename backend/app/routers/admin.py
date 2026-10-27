@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 _SEASON_PATTERN = re.compile(r"^20\d{2}\s+Season\s+[ABC]$", re.IGNORECASE)
 
 _PATCH_FIELDS = {
-    "zones": {"district", "sector", "cell", "latitude", "longitude", "crop_type", "season"},
+    "zones": {"district", "sector", "cell", "site_name", "latitude", "longitude", "crop_type", "season"},
     "plans": {"title", "roadmap_json", "resources_json", "created_by"},
     "alerts": {"message", "severity", "created_by", "zone_id", "crop", "action", "allow_links"},
 }
