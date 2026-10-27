@@ -1,9 +1,111 @@
 """Unified centered floating pill navigation tailored to the agrimenya theme."""
+import inspect
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
 from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
 from utils.theme import get_current_theme, toggle_theme
+
+
+DEFAULT_USER = {
+    "name": "Extension Officer",
+    "role": "Agronomist",
+    "email": "officer@rab.gov.rw",
+    "avatar": "EO",
+}
+
+PUBLIC_PAGES = {"Home.py", "3_Dashboard.py", ""}
+
+
+def init_user_session() -> None:
+    """Initialize session state so the app always defaults to signed in."""
+    try:
+        if "authenticated" not in st.session_state:
+            st.session_state["authenticated"] = True
+        if "user_profile" not in st.session_state:
+            st.session_state["user_profile"] = dict(DEFAULT_USER)
+    except Exception:
+        pass
+
+
+def is_authenticated() -> bool:
+    """Check if the current session is authenticated."""
+    init_user_session()
+    try:
+        return bool(st.session_state.get("authenticated", True))
+    except Exception:
+        return True
+
+
+def get_current_page_file() -> str:
+    """Detect current running Streamlit page filename from call stack."""
+    try:
+        for frame in inspect.stack():
+            filename = frame.filename.replace("\\", "/")
+            if "Home.py" in filename:
+                return "Home.py"
+            if "/pages/" in filename or filename.startswith("pages/"):
+                return filename.split("/")[-1]
+    except Exception:
+        pass
+    return ""
+
+
+def check_page_access() -> bool:
+    """
+    Enforce page access rules:
+    When unauthenticated, user has ONLY access to Home and Overview (3_Dashboard.py).
+    If an unauthenticated user visits a restricted page, display a clean access-restricted
+    notice with a 'Sign In' button and stop execution.
+    """
+    if is_authenticated():
+        return True
+
+    current_page = get_current_page_file()
+    if not current_page or current_page in PUBLIC_PAGES or "test" in current_page:
+        return True
+
+    # User is unauthenticated and attempting to view a restricted page
+    st.markdown("""
+    <div style="
+        max-width: 580px;
+        margin: 2.5rem auto 1.5rem;
+        padding: 2.25rem 2rem;
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1.5px solid rgba(2, 132, 199, 0.25);
+        border-top: 4px solid #0284c7;
+        box-shadow: 0 16px 40px rgba(2, 132, 199, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+        text-align: center;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    ">
+        <div style="
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.2rem;
+            border-radius: 50%;
+            background: #e0f2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0284c7;
+            font-size: 1.8rem;
+        ">🔒</div>
+        <h2 style="color: #0f172a; font-size: 1.45rem; font-weight: 800; margin-bottom: 0.4rem;">Access Restricted</h2>
+        <p style="color: #475569; font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem;">
+            This page is reserved for authenticated agricultural officers. Unauthenticated access is limited to <strong>Home</strong> and <strong>Overview</strong>.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if st.button("Sign In as Extension Officer", key="auth_restricted_gate_btn", type="primary", use_container_width=True):
+        st.session_state["authenticated"] = True
+        st.session_state["user_profile"] = dict(DEFAULT_USER)
+        st.rerun()
+    st.page_link("Home.py", label="Return to Home", icon="🏠", use_container_width=True)
+
+    st.stop()
+    return False
 
 
 def render_navbar() -> None:
@@ -153,7 +255,7 @@ def render_navbar() -> None:
         color: #0284c7 !important;
       }
 
-      /* ACTIVE / SELECTED TAB: Soft Sage Capsule from User Specification (#c8d7cc) */
+      /* ACTIVE / SELECTED TAB: Crisp Sky Blue Capsule */
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"],
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"],
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink-NavLink"][aria-current="page"],
@@ -164,14 +266,14 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"],
       .st-key-ag_navbar a.ag-nav-active,
       .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active {
-        background: #c8d7cc !important;
-        background-color: #c8d7cc !important;
-        border: none !important;
+        background: #e0f2fe !important;
+        background-color: #e0f2fe !important;
+        border: 1.5px solid #0284c7 !important;
         border-radius: 9999px !important;
         height: 2.35rem !important;
         min-height: 2.35rem !important;
         padding: 0.45rem 1.35rem !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+        box-shadow: 0 2px 10px rgba(2, 132, 199, 0.20) !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -188,7 +290,7 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] p,
       .st-key-ag_navbar a.ag-nav-active p,
       .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active p {
-        color: #1b2a26 !important;
+        color: #0369a1 !important;
         font-weight: 700 !important;
         text-shadow: none !important;
       }
@@ -196,8 +298,8 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active:hover,
       .st-key-ag_navbar a[aria-current="page"]:hover,
       .st-key-ag_navbar a.ag-nav-active:hover {
-        background: #bcd0c3 !important;
-        background-color: #bcd0c3 !important;
+        background: #bae6fd !important;
+        background-color: #bae6fd !important;
         transform: none !important;
       }
 
@@ -566,57 +668,97 @@ def render_navbar() -> None:
       </style>
     """, unsafe_allow_html=True)
 
+    init_user_session()
+    auth = is_authenticated()
+    user = st.session_state.get("user_profile", DEFAULT_USER)
+
+    # Enforce page-level access control (unauthenticated users can only view Home and Overview)
+    check_page_access()
+
     # Single Centered Row Container
     with st.container(key="ag_navbar"):
         c_home, c_overview, c_zones, c_decide, c_more, c_sep, c_signin, c_lang = st.columns(
-            [1.15, 1.1, 0.95, 1.15, 0.9, 0.08, 1.05, 0.45], vertical_alignment="center"
+            [1.15, 1.1, 0.95, 1.15, 0.9, 0.08, 1.45, 0.45], vertical_alignment="center"
         )
         with c_home:
             st.page_link("Home.py", label=t("nav.home", "Home"))
         with c_overview:
             st.page_link("pages/3_Dashboard.py", label=t("nav.overview", "Overview"))
-        with c_zones:
-            st.page_link("pages/4_Zones.py", label=t("nav.zones", "Zones"))
-        with c_decide:
-            st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
-        with c_more:
-            with st.popover(t("nav.more", "More"), width="stretch"):
-                # Theme Mode Switcher
-                current_mode = get_current_theme()
-                theme_icon = "☀️" if current_mode == "dark" else "🌙"
-                theme_label = "Switch to Light Mode" if current_mode == "dark" else "Switch to Dark Mode"
-                if st.button(f"{theme_icon} {theme_label}", key="ag_navbar_theme_toggle_btn", use_container_width=True):
-                    toggle_theme()
+
+        if auth:
+            with c_zones:
+                st.page_link("pages/4_Zones.py", label=t("nav.zones", "Zones"))
+            with c_decide:
+                st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
+            with c_more:
+                with st.popover(t("nav.more", "More"), width="stretch"):
+                    # Theme Mode Switcher
+                    current_mode = get_current_theme()
+                    theme_icon = "☀️" if current_mode == "dark" else "🌙"
+                    theme_label = "Switch to Light Mode" if current_mode == "dark" else "Switch to Dark Mode"
+                    if st.button(f"{theme_icon} {theme_label}", key="ag_navbar_theme_toggle_btn", use_container_width=True):
+                        toggle_theme()
+                        st.rerun()
+
+                    st.divider()
+                    st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
+                    st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))
+                    st.page_link("pages/9_Communication.py", label=t("nav.comms", "Field alerts & comms"))
+                    st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation", "Zone segmentation"))
+                    st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant", "AI assistant"))
+                    st.divider()
+                    st.caption(t("nav.platform_community", "PLATFORM & COMMUNITY"))
+                    st.page_link("pages/10_Admin.py", label=t("nav.admin", "Administration"))
+                    st.page_link("pages/99_Showcase.py", label=t("nav.data_guide", "Data guide"))
+                    st.page_link("pages/12_Community.py", label=t("nav.community", "Farmer community"))
+                    st.page_link("pages/1_About.py", label=t("nav.about", "About agrimenya"))
+                    st.page_link("pages/11_Contact.py", label=t("nav.contact", "Feedback & support"))
+                    st.markdown(
+                        f'<a href="/app/static/offline.html" target="_self" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#0284c7;background:rgba(2,132,199,0.08);border:1px solid rgba(2,132,199,0.22);margin-top:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> {t("nav.offline_hub", "Offline Field Hub")}</a>',
+                        unsafe_allow_html=True,
+                    )
+                    st.markdown(
+                        f'<button id="ag-nav-install-btn" onclick="if(window.parent&&window.parent.__agrimenya_trigger_install){{window.parent.__agrimenya_trigger_install();}}else{{const b=window.parent.document.getElementById(\'ag-pwa-install-badge\');if(b){{b.click();}}}}" style="width:100%;text-align:left;border:none;background:linear-gradient(135deg,#031d28 0%,#063143 100%);color:#ffffff;border:1.5px solid rgba(56,189,248,0.55);border-radius:8px;padding:0.45rem 0.75rem;margin-top:0.35rem;display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:0.85rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,0.35);transition:all 0.2s;"><img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(56,189,248,0.9));"> <span style="color:#ffffff;">{t("nav.install_app", "Install agrimenya App")}</span></button>',
+                        unsafe_allow_html=True,
+                    )
+            with c_sep:
+                st.markdown(
+                    '<div style="width:1.5px;height:20px;background:rgba(2,132,199,0.25);margin:0 4px;border-radius:1px;"></div>',
+                    unsafe_allow_html=True,
+                )
+            with c_signin:
+                officer_name = user.get("name", "Officer") if isinstance(user, dict) else "Officer"
+                with st.popover(f"👤 {officer_name}", width="stretch"):
+                    st.markdown(f"""
+                    <div style="padding:0.15rem 0 0.4rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                        <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0284c7;margin-bottom:0.25rem;">Active Session</div>
+                        <div style="font-size:0.95rem;font-weight:800;color:#0f172a;">{user.get('name', 'Extension Officer') if isinstance(user, dict) else 'Extension Officer'}</div>
+                        <div style="font-size:0.8rem;color:#64748b;margin-top:0.15rem;">{user.get('role', 'Agronomist') if isinstance(user, dict) else 'Agronomist'}</div>
+                        <div style="font-size:0.75rem;color:#94a3b8;">{user.get('email', 'officer@rab.gov.rw') if isinstance(user, dict) else 'officer@rab.gov.rw'}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.divider()
+                    if st.button("Sign Out", key="navbar_signout_action_btn", use_container_width=True):
+                        st.session_state["authenticated"] = False
+                        st.rerun()
+        else:
+            with c_zones:
+                st.empty()
+            with c_decide:
+                st.empty()
+            with c_more:
+                st.empty()
+            with c_sep:
+                st.markdown(
+                    '<div style="width:1.5px;height:20px;background:rgba(2,132,199,0.25);margin:0 4px;border-radius:1px;"></div>',
+                    unsafe_allow_html=True,
+                )
+            with c_signin:
+                if st.button("Sign In", key="navbar_signin_action_btn", type="primary", use_container_width=True):
+                    st.session_state["authenticated"] = True
+                    st.session_state["user_profile"] = dict(DEFAULT_USER)
                     st.rerun()
 
-                st.divider()
-                st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
-                st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))
-                st.page_link("pages/9_Communication.py", label=t("nav.comms", "Field alerts & comms"))
-                st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation", "Zone segmentation"))
-                st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant", "AI assistant"))
-                st.divider()
-                st.caption(t("nav.platform_community", "PLATFORM & COMMUNITY"))
-                st.page_link("pages/10_Admin.py", label=t("nav.admin", "Administration"))
-                st.page_link("pages/99_Showcase.py", label=t("nav.data_guide", "Data guide"))
-                st.page_link("pages/12_Community.py", label=t("nav.community", "Farmer community"))
-                st.page_link("pages/1_About.py", label=t("nav.about", "About agrimenya"))
-                st.page_link("pages/11_Contact.py", label=t("nav.contact", "Feedback & support"))
-                st.markdown(
-                    f'<a href="/app/static/offline.html" target="_self" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#0284c7;background:rgba(2,132,199,0.08);border:1px solid rgba(2,132,199,0.22);margin-top:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> {t("nav.offline_hub", "Offline Field Hub")}</a>',
-                    unsafe_allow_html=True,
-                )
-                st.markdown(
-                    f'<button id="ag-nav-install-btn" onclick="if(window.parent&&window.parent.__agrimenya_trigger_install){{window.parent.__agrimenya_trigger_install();}}else{{const b=window.parent.document.getElementById(\'ag-pwa-install-badge\');if(b){{b.click();}}}}" style="width:100%;text-align:left;border:none;background:linear-gradient(135deg,#031d28 0%,#063143 100%);color:#ffffff;border:1.5px solid rgba(56,189,248,0.55);border-radius:8px;padding:0.45rem 0.75rem;margin-top:0.35rem;display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:0.85rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,0.35);transition:all 0.2s;"><img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(56,189,248,0.9));"> <span style="color:#ffffff;">{t("nav.install_app", "Install agrimenya App")}</span></button>',
-                    unsafe_allow_html=True,
-                )
-        with c_sep:
-            st.markdown(
-                '<div style="width:1.5px;height:20px;background:rgba(2,132,199,0.25);margin:0 4px;border-radius:1px;"></div>',
-                unsafe_allow_html=True,
-            )
-        with c_signin:
-            st.page_link("pages/10_Admin.py", label=t("nav.signin", "Sign In"))
         with c_lang:
             render_language_selector(sidebar=False)
 

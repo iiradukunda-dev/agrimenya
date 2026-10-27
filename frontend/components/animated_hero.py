@@ -87,7 +87,7 @@ def render_react_hero() -> None:
             .hero-icon-container {
                 width: 72px;
                 height: 72px;
-                background: rgba(240, 253, 244, 0.9);
+                background: #f0f9ff;
                 border-radius: 20px;
                 display: flex;
                 align-items: center;
@@ -95,7 +95,7 @@ def render_react_hero() -> None:
                 margin-bottom: 24px;
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
                 transform: translateZ(40px);
-                border: 1px solid #bbf7d0;
+                border: 1.5px solid #bae6fd;
             }
 
             .hero-title {
@@ -104,7 +104,7 @@ def render_react_hero() -> None:
                 font-weight: 800;
                 line-height: 1.15;
                 margin-bottom: 12px;
-                background: linear-gradient(135deg, #1B3A2D 30%, #2D6A4F 100%);
+                background: linear-gradient(135deg, #0369a1 20%, #0284c7 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 transform: translateZ(50px);
@@ -114,7 +114,7 @@ def render_react_hero() -> None:
                 font-family: 'Plus Jakarta Sans', sans-serif;
                 font-size: 1.4rem;
                 font-weight: 600;
-                color: #2D6A4F;
+                color: #0284c7;
                 line-height: 1.4;
                 margin-bottom: 24px;
                 transform: translateZ(35px);
@@ -141,7 +141,7 @@ def render_react_hero() -> None:
                 font-weight: 600;
                 letter-spacing: 0.1em;
                 text-transform: uppercase;
-                color: #1B3A2D;
+                color: #0369a1;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
                 z-index: 3;
             }

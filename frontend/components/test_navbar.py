@@ -49,3 +49,55 @@ def test_theme_excludes_tabs_from_card_button_styles():
         assert ':not([role="tab"])' in combined_css
         # Verify st.tabs has dedicated light styling
         assert '[data-testid="stTabs"]' in combined_css
+
+
+def test_navbar_active_tab_is_sky_blue():
+    """Verify active navbar tab uses sky blue styling."""
+    from components.navbar import render_navbar
+
+    mock_st = MagicMock()
+    mock_st.columns.return_value = [MagicMock() for _ in range(8)]
+    with patch("components.navbar.st", mock_st), \
+         patch("components.navbar.render_floating_ai_widget"), \
+         patch("components.navbar.render_pwa_support"), \
+         patch("components.navbar.render_language_selector"):
+        
+        render_navbar()
+
+        css_found = "".join([str(call[0][0]) for call in mock_st.markdown.call_args_list if "<style>" in str(call[0][0])])
+        assert "#e0f2fe" in css_found
+        assert "#0284c7" in css_found
+        assert "#0369a1" in css_found
+
+
+def test_user_session_and_page_access_control():
+    """Verify user session defaults to signed-in and unauthenticated access is gated."""
+    from components.navbar import init_user_session, is_authenticated, check_page_access
+
+    session = {}
+    mock_st = MagicMock()
+    mock_st.session_state = session
+
+    with patch("components.navbar.st", mock_st):
+        # 1. Default session should be authenticated
+        init_user_session()
+        assert session["authenticated"] is True
+        assert session["user_profile"]["name"] == "Extension Officer"
+        assert is_authenticated() is True
+
+        # 2. Public pages (Home.py, 3_Dashboard.py) allowed when unauthenticated
+        session["authenticated"] = False
+        with patch("components.navbar.get_current_page_file", return_value="Home.py"):
+            assert check_page_access() is True
+
+        with patch("components.navbar.get_current_page_file", return_value="3_Dashboard.py"):
+            assert check_page_access() is True
+
+        # 3. Restricted page (e.g. 4_Zones.py) stopped when unauthenticated
+        mock_st.stop.side_effect = RuntimeError("st_stopped")
+        with patch("components.navbar.get_current_page_file", return_value="4_Zones.py"):
+            try:
+                check_page_access()
+            except RuntimeError as e:
+                assert "st_stopped" in str(e)
+            assert mock_st.stop.called

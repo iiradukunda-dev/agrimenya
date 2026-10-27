@@ -20,20 +20,20 @@ def load_theme() -> None:
 
     # Dynamic CSS variable values based on active theme mode
     bg_base = "#09111c" if is_dark else "#f8fafc"
-    bg_subtle = "#0f1c2e" if is_dark else "#f1f5f9"
+    bg_subtle = "#0f1c2e" if is_dark else "#f0f9ff"
     surface = "#111c2e" if is_dark else "#ffffff"
-    surface_hover = "#16243b" if is_dark else "#f8fafc"
+    surface_hover = "#16243b" if is_dark else "#f0f9ff"
     card_bg = "#111c2e" if is_dark else "#ffffff"
-    card_border = "rgba(56, 189, 248, 0.22)" if is_dark else "#e2e8f0"
-    card_shadow = "0 10px 25px -5px rgba(0,0,0,0.45)" if is_dark else "0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04)"
-    card_shadow_hover = "0 16px 32px -4px rgba(0,0,0,0.6), 0 0 20px rgba(56,189,248,0.25)" if is_dark else "0 10px 25px -5px rgba(15,23,42,0.08), 0 8px 10px -6px rgba(15,23,42,0.04)"
+    card_border = "rgba(56, 189, 248, 0.22)" if is_dark else "rgba(2, 132, 199, 0.16)"
+    card_shadow = "0 10px 25px -5px rgba(0,0,0,0.45)" if is_dark else "0 2px 12px -2px rgba(2, 132, 199, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)"
+    card_shadow_hover = "0 16px 32px -4px rgba(0,0,0,0.6), 0 0 20px rgba(56,189,248,0.25)" if is_dark else "0 8px 24px -4px rgba(2, 132, 199, 0.18), 0 2px 6px -1px rgba(0, 0, 0, 0.04)"
     
     text_main = "#f8fafc" if is_dark else "#0f172a"
-    text_muted = "#94a3b8" if is_dark else "#64748b"
+    text_muted = "#94a3b8" if is_dark else "#475569"
     text_subtle = "#64748b" if is_dark else "#94a3b8"
-    border_color = "rgba(56, 189, 248, 0.18)" if is_dark else "#e2e8f0"
+    border_color = "rgba(56, 189, 248, 0.18)" if is_dark else "rgba(2, 132, 199, 0.16)"
     input_bg = "#0a1524" if is_dark else "#ffffff"
-    input_border = "rgba(56, 189, 248, 0.3)" if is_dark else "#cbd5e1"
+    input_border = "rgba(56, 189, 248, 0.3)" if is_dark else "rgba(2, 132, 199, 0.25)"
     metric_bg = "#111c2e" if is_dark else "#ffffff"
 
     st.html(f"""

@@ -48,10 +48,10 @@ def render_home_hero() -> None:
       [data-testid="stVerticalBlockBorderWrapper"] {
         position: relative !important;
         overflow: hidden !important;
-        background: #081a26 !important;
-        border: 1px solid rgba(56, 189, 248, 0.22) !important;
-        border-top: 1.5px solid rgba(56, 189, 248, 0.40) !important;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.40) !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(2, 132, 199, 0.20) !important;
+        border-top: 3px solid #0284c7 !important;
+        box-shadow: 0 4px 18px rgba(2, 132, 199, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
         border-radius: 18px !important;
         transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
                     box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
@@ -60,15 +60,15 @@ def render_home_hero() -> None:
         will-change: transform, box-shadow;
       }
       [data-testid="stVerticalBlockBorderWrapper"]:hover {
-        background: #0c2435 !important;
-        border-color: rgba(56, 189, 248, 0.65) !important;
-        border-top-color: #38bdf8 !important;
-        box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.65), 0 0 26px rgba(56, 189, 248, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-        transform: translateY(-6px) scale(1.012) !important;
+        background: #f0f9ff !important;
+        border-color: #0284c7 !important;
+        border-top-color: #0369a1 !important;
+        box-shadow: 0 12px 32px rgba(2, 132, 199, 0.16), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+        transform: translateY(-4px) scale(1.008) !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"]:active {
-        transform: translateY(-2px) scale(0.995) !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), 0 0 14px rgba(56, 189, 248, 0.2) !important;
+        transform: translateY(-1px) scale(0.998) !important;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.12) !important;
         transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.12s ease !important;
       }
 
@@ -77,41 +77,41 @@ def render_home_hero() -> None:
       [data-testid="stVerticalBlockBorderWrapper"] h2,
       [data-testid="stVerticalBlockBorderWrapper"] h3,
       [data-testid="stVerticalBlockBorderWrapper"] h4 {
-        color: #ffffff !important;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+        color: #0f172a !important;
+        text-shadow: none !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] p,
       [data-testid="stVerticalBlockBorderWrapper"] span:not([style*="color"]) {
-        color: #e0f2fe !important;
-        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7) !important;
+        color: #475569 !important;
+        text-shadow: none !important;
       }
 
       /* Structured Card Buttons - High specificity override */
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]),
       [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]),
       [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) {
-        background: #0f2738 !important;
-        border: 1px solid rgba(56, 189, 248, 0.28) !important;
+        background: #f0f9ff !important;
+        border: 1.5px solid rgba(2, 132, 199, 0.35) !important;
         border-radius: 10px !important;
-        color: #ffffff !important;
+        color: #0284c7 !important;
         font-weight: 700 !important;
         letter-spacing: -0.01em !important;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
+        text-shadow: none !important;
         transition: all 0.25s ease !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08) !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]) *,
       [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) * {
-        color: #ffffff !important;
+        color: #0284c7 !important;
         font-weight: 700 !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):hover,
       [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover,
       [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover {
         background: #0284c7 !important;
-        border-color: rgba(56, 189, 248, 0.8) !important;
+        border-color: #0284c7 !important;
         color: #ffffff !important;
-        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.30) !important;
         transform: translateY(-2px) !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover *,
@@ -161,17 +161,17 @@ def render_home_hero() -> None:
           overflow: hidden;
           width: 100%;
           min-height: 380px;
-          color: #ffffff;
+          color: #0f172a;
           background: linear-gradient(
             135deg,
-            #071926 0%,
-            #0a2538 50%,
-            #071f28 100%
+            #ffffff 0%,
+            #f0f9ff 50%,
+            #e0f2fe 100%
           );
           border-radius: 22px;
-          border: 1px solid rgba(56, 189, 248, 0.25);
-          border-top: 1.5px solid rgba(56, 189, 248, 0.45);
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.40), 0 0 40px rgba(56, 189, 248, 0.12);
+          border: 1px solid rgba(2, 132, 199, 0.22);
+          border-top: 2.5px solid #0284c7;
+          box-shadow: 0 16px 40px rgba(2, 132, 199, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
           animation: ag-hero-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }}
 
@@ -249,17 +249,17 @@ def render_home_hero() -> None:
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: #082130;
-          border: 1px solid rgba(125, 211, 252, 0.5);
+          background: #ffffff;
+          border: 1px solid rgba(2, 132, 199, 0.35);
           padding: 5px 14px;
           border-radius: 9999px;
           font-size: 0.76rem;
           font-weight: 750;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: #e0f2fe;
+          color: #0284c7;
           margin-bottom: 0.85rem;
-          box-shadow: 0 4px 14px rgba(14, 165, 233, 0.25);
+          box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
           transition: transform 0.25s ease;
         }}
         .ag-hero-badge:hover {{
@@ -268,45 +268,44 @@ def render_home_hero() -> None:
         .ag-hero-beacon {{
           width: 8px;
           height: 8px;
-          background-color: #38bdf8;
+          background-color: #0284c7;
           border-radius: 50%;
           display: inline-block;
-          box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8);
+          box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.8);
           animation: ag-beacon-radar 2s infinite;
         }}
         @keyframes ag-beacon-radar {{
-          0% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8); }}
-          50% {{ box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.35); }}
-          100% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }}
+          0% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.8); }}
+          50% {{ box-shadow: 0 0 0 6px rgba(2, 132, 199, 0.35); }}
+          100% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }}
         }}
 
-        /* Headline with High Contrast Glow */
+        /* Headline with High Contrast */
         .ag-hero-title {{
           margin: 0 0 0.8rem !important;
-          color: #ffffff !important;
+          color: #0f172a !important;
           font-size: clamp(2rem, 3.5vw, 3.1rem) !important;
           line-height: 1.1 !important;
           font-weight: 800 !important;
           letter-spacing: -0.04em !important;
-          text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7) !important;
+          text-shadow: none !important;
         }}
         .ag-hero-glow-text {{
-          background: linear-gradient(135deg, #ffffff 0%, #bae6fd 45%, #38bdf8 100%) !important;
+          background: linear-gradient(135deg, #0369a1 0%, #0284c7 60%, #0ea5e9 100%) !important;
           -webkit-background-clip: text !important;
           -webkit-text-fill-color: transparent !important;
           display: inline-block !important;
-          filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.5)) !important;
-          animation: ag-text-shimmer 4s ease-in-out infinite alternate !important;
+          filter: drop-shadow(0 2px 8px rgba(2, 132, 199, 0.25)) !important;
         }}
 
         .ag-hero-copy {{
           max-width: 640px;
           margin: 0 0 1.5rem;
-          color: #f0fdfa;
+          color: #334155;
           font-size: 0.98rem;
           line-height: 1.6;
           font-weight: 500;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+          text-shadow: none;
         }}
 
         /* Stats Ticker Strip with Hover Lift */
@@ -316,7 +315,7 @@ def render_home_hero() -> None:
           gap: 1.4rem;
           align-items: center;
           padding-top: 1rem;
-          border-top: 1px solid rgba(56, 189, 248, 0.3);
+          border-top: 1px solid rgba(2, 132, 199, 0.20);
         }}
         .ag-hero-stat-item {{
           display: flex;
@@ -330,40 +329,39 @@ def render_home_hero() -> None:
         .ag-hero-stat-val {{
           font-size: 1.15rem;
           font-weight: 800;
-          color: #ffffff;
+          color: #0f172a;
           letter-spacing: -0.02em;
-          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 12px rgba(56, 189, 248, 0.4);
-          transition: color 0.2s ease, text-shadow 0.2s ease;
+          text-shadow: none;
+          transition: color 0.2s ease;
         }}
         .ag-hero-stat-item:hover .ag-hero-stat-val {{
-          color: #38bdf8;
-          text-shadow: 0 0 18px rgba(56, 189, 248, 0.85);
+          color: #0284c7;
         }}
         .ag-hero-stat-lbl {{
           font-size: 0.72rem;
           font-weight: 650;
-          color: #7dd3fc;
+          color: #0284c7;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+          text-shadow: none;
         }}
 
         /* Right Column: Structured Horizon Card with Subtle Float */
         .ag-hero-horizon-card {{
           position: relative;
-          background: #09202f;
-          border: 1px solid rgba(56, 189, 248, 0.28);
-          border-top: 1.5px solid rgba(56, 189, 248, 0.50);
+          background: #ffffff;
+          border: 1px solid rgba(2, 132, 199, 0.22);
+          border-top: 2.5px solid #0284c7;
           border-radius: 18px;
           padding: 1.5rem 1.6rem;
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.40);
+          box-shadow: 0 12px 32px rgba(2, 132, 199, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
           animation: ag-hero-card-float 6s ease-in-out infinite alternate;
           transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }}
         .ag-hero-horizon-card:hover {{
           transform: translateY(-4px);
-          box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(56, 189, 248, 0.30);
-          border-color: rgba(56, 189, 248, 0.6);
+          box-shadow: 0 16px 40px rgba(2, 132, 199, 0.18);
+          border-color: #0284c7;
         }}
         .ag-hero-card-header {{
           display: flex;
@@ -374,26 +372,26 @@ def render_home_hero() -> None:
         .ag-hero-card-title {{
           font-size: 0.92rem;
           font-weight: 750;
-          color: #ffffff;
+          color: #0f172a;
           letter-spacing: -0.01em;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+          text-shadow: none;
         }}
         .ag-hero-card-tag {{
           font-size: 0.72rem;
           font-weight: 700;
-          background: rgba(56, 189, 248, 0.25);
-          color: #bae6fd;
-          border: 1px solid rgba(56, 189, 248, 0.5);
+          background: #e0f2fe;
+          color: #0284c7;
+          border: 1px solid rgba(2, 132, 199, 0.35);
           padding: 2px 8px;
           border-radius: 9999px;
           text-transform: uppercase;
         }}
         .ag-hero-card-desc {{
-          color: #e0f2fe;
+          color: #475569;
           font-size: 0.85rem;
           line-height: 1.5;
           margin-bottom: 0.9rem;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+          text-shadow: none;
         }}
         .ag-hero-card-row {{
           display: flex;
@@ -404,19 +402,19 @@ def render_home_hero() -> None:
           display: flex;
           align-items: center;
           gap: 8px;
-          background: rgba(2, 24, 36, 0.6);
-          border: 1px solid rgba(56, 189, 248, 0.25);
+          background: #f0f9ff;
+          border: 1px solid rgba(2, 132, 199, 0.20);
           padding: 6px 10px;
           border-radius: 8px;
           font-size: 0.78rem;
-          color: #f0fdfa;
+          color: #0369a1;
           transition: all 0.25s ease;
         }}
         .ag-hero-pill-info:hover {{
-          background: rgba(2, 38, 56, 0.85);
-          border-color: rgba(56, 189, 248, 0.55);
+          background: #e0f2fe;
+          border-color: rgba(2, 132, 199, 0.45);
           transform: translateX(4px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
         }}
 
         @media (max-width: 900px) {{
