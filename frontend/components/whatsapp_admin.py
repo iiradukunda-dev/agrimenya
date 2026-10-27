@@ -51,12 +51,12 @@ def render_whatsapp_admin_panel(key_prefix: str = "wa_mgmt", embedded_mode: bool
     # Explanatory Architecture Banner
     st.markdown(
         """
-        <div style="padding:14px 18px; border-radius:12px; background:linear-gradient(135deg, rgba(7, 94, 84, 0.25), rgba(8, 26, 38, 0.85)); border:1px solid rgba(37, 211, 102, 0.35); margin-bottom:1.2rem;">
+        <div style="padding:14px 18px; border-radius:12px; background:linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border:1.5px solid rgba(16, 185, 129, 0.35); border-top:3px solid #10b981; box-shadow:0 4px 14px rgba(16, 185, 129, 0.08); margin-bottom:1.2rem;">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
-                <span style="font-size:1.15rem;">💬</span>
-                <strong style="color:#25D366; font-size:1.05rem;">Agrimenya WhatsApp Operations & Advisory Dispatch Engine</strong>
+
+                <strong style="color:#065f46; font-size:1.05rem;">Agrimenya WhatsApp Operations & Advisory Dispatch Engine</strong>
             </div>
-            <p style="margin:0; font-size:0.9rem; color:#cbd5e1; line-height:1.45;">
+            <p style="margin:0; font-size:0.9rem; color:#334155; line-height:1.45;">
                 Manage verified farmer contacts, record mandatory Meta opt-in consent, simulate template messages, and broadcast localized agricultural alerts with live delivery tracking.
             </p>
         </div>
@@ -66,11 +66,11 @@ def render_whatsapp_admin_panel(key_prefix: str = "wa_mgmt", embedded_mode: bool
 
     # 5 Structured Operational Subtabs
     wa_subtabs = st.tabs([
-        "📡 Gateway Health & Telemetry",
-        "👥 Subscriber Directory & Onboarding",
-        "📋 Consent & Alert Preferences",
-        "📱 Meta Templates & Live Simulator",
-        "🚀 Broadcast Dispatch & Delivery Tracker",
+        "Gateway Health & Telemetry",
+        "Subscriber Directory & Onboarding",
+        "Consent & Alert Preferences",
+        "Meta Templates & Live Simulator",
+        "Broadcast Dispatch & Delivery Tracker",
     ])
 
     # ═════════════════════════════════════════════════════════════
@@ -112,7 +112,7 @@ def _render_gateway_health(prefix: str):
     stats = api_client.get_whatsapp_stats()
 
     if not health:
-        st.warning("⚠️ WhatsApp Gateway status is currently unavailable from the backend API. Please ensure the backend is running.")
+        st.warning("WhatsApp Gateway status is currently unavailable from the backend API. Please ensure the backend is running.")
         return
 
     mode = str(health.get("mode", "mock")).lower()
@@ -139,7 +139,7 @@ def _render_gateway_health(prefix: str):
                 </span>
                 <span style="font-size:0.8rem; color:#94a3b8;">Central Africa Time (CAT UTC+2)</span>
             </div>
-            <p style="margin:4px 0 0 0; font-size:0.85rem; color:#cbd5e1;">{mode_desc}</p>
+            <p style="margin:4px 0 0 0; font-size:0.85rem; color:#334155;">{mode_desc}</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -206,7 +206,7 @@ def _render_gateway_health(prefix: str):
                     ]
                     st.dataframe(pd.DataFrame(err_rows) if pd is not None else err_rows, width="stretch", hide_index=True)
                 else:
-                    st.success("✓ Zero delivery error codes recorded in the last 7 days.")
+                    st.success("Zero delivery error codes recorded in the last 7 days.")
     else:
         st.caption("No telemetry logs accumulated in the 7-day observation window.")
 
@@ -232,82 +232,85 @@ def _render_subscribers_directory(prefix: str):
     contacts = api_client.get_whatsapp_contacts()
     active_contacts = [c for c in contacts if not c.get("deleted_at")] if contacts else []
 
-    # Onboarding Expander
-    with st.expander("➕ Onboard / Register New WhatsApp Subscriber", expanded=False):
-        st.markdown(
-            """
-            <div style="padding:10px 14px; border-radius:8px; background:rgba(37, 211, 102, 0.1); border:1px solid rgba(37, 211, 102, 0.25); margin-bottom:1rem; font-size:0.88rem;">
-                <strong>💡 Onboarding Requirement:</strong> Registering creates the subscriber profile. To receive automated broadcasts, the contact must provide explicit opt-in consent (recordable in the 'Consent & Alert Preferences' tab).
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+    c_sub_hdr, c_sub_act = st.columns([3, 1.4])
+    with c_sub_hdr:
+        st.markdown("#### Subscriber Directory")
+    with c_sub_act:
+        with st.popover("Onboard New Subscriber", use_container_width=True):
+            st.markdown(
+                """
+                <div style="padding:10px 14px; border-radius:8px; background:rgba(2, 132, 199, 0.08); border:1px solid rgba(2, 132, 199, 0.25); margin-bottom:1rem; font-size:0.88rem; color:#0f172a;">
+                    <strong>Onboarding Requirement:</strong> Registering creates the subscriber profile. To receive automated broadcasts, the contact must provide explicit opt-in consent (recordable in the 'Consent & Alert Preferences' tab).
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-        with st.form(f"{prefix}_create_subscriber_form", clear_on_submit=True):
-            c_name, c_phone = st.columns(2)
-            with c_name:
-                display_name = st.text_input("Full Name / Cooperative Name", placeholder="e.g. Habimana Jean Pierre")
-            with c_phone:
-                phone = st.text_input("Phone Number", placeholder="0788123456 or +250788123456")
+            with st.form(f"{prefix}_create_subscriber_popover_form", clear_on_submit=True):
+                c_name, c_phone = st.columns(2)
+                with c_name:
+                    display_name = st.text_input("Full Name / Cooperative Name", placeholder="e.g. Habimana Jean Pierre")
+                with c_phone:
+                    phone = st.text_input("Phone Number", placeholder="0788123456 or +250788123456")
 
-            c_bsuid, c_role = st.columns(2)
-            with c_bsuid:
-                bsuid = st.text_input("WhatsApp BSUID (Optional for bot users)", placeholder="Optional Bot Specific User ID")
-            with c_role:
-                role = st.selectbox(
-                    "Role in Agriculture Value Chain",
-                    ["farmer", "extension_officer", "cooperative_leader", "planner", "other"],
-                    format_func=lambda r: r.replace("_", " ").title(),
-                )
+                c_bsuid, c_role = st.columns(2)
+                with c_bsuid:
+                    bsuid = st.text_input("WhatsApp BSUID (Optional for bot users)", placeholder="Optional Bot Specific User ID")
+                with c_role:
+                    role = st.selectbox(
+                        "Role in Agriculture Value Chain",
+                        ["farmer", "extension_officer", "cooperative_leader", "planner", "other"],
+                        format_func=lambda r: r.replace("_", " ").title(),
+                    )
 
-            c_lang, c_crops = st.columns(2)
-            with c_lang:
-                language = st.selectbox("Preferred Communication Language", ["en", "rw"], format_func=lambda l: "Kinyarwanda (RW)" if l == "rw" else "English (EN)")
-            with c_crops:
-                crops = st.text_input("Target Crops (Comma-separated)", placeholder="e.g. Maize, Beans, Irish Potatoes")
+                c_lang, c_crops = st.columns(2)
+                with c_lang:
+                    language = st.selectbox("Preferred Communication Language", ["en", "rw"], format_func=lambda l: "Kinyarwanda (RW)" if l == "rw" else "English (EN)")
+                with c_crops:
+                    crops = st.text_input("Target Crops (Comma-separated)", placeholder="e.g. Maize, Beans, Irish Potatoes")
 
-            # Zone Selection
-            zones = api_client.get_zones() or []
-            zone_options = {"National / Unassigned": None}
-            for z in zones:
-                z_id = z.get("id")
-                if not z_id:
-                    continue
-                label = f"{z.get('district', 'Unknown')} · {z.get('sector') or z.get('cell') or 'General'} ({z.get('crop') or 'All'})"
-                zone_options[label] = str(z_id)
+                # Zone Selection
+                zones = api_client.get_zones() or []
+                zone_options = {"National / Unassigned": None}
+                for z in zones:
+                    z_id = z.get("id")
+                    if not z_id:
+                        continue
+                    label = f"{z.get('district', 'Unknown')} · {z.get('sector') or z.get('cell') or 'General'} ({z.get('crop') or 'All'})"
+                    zone_options[label] = str(z_id)
 
-            chosen_zone_label = st.selectbox("Agricultural Zone Assignment", list(zone_options.keys()))
-            chosen_zone_id = zone_options.get(chosen_zone_label)
+                chosen_zone_label = st.selectbox("Agricultural Zone Assignment", list(zone_options.keys()))
+                chosen_zone_id = zone_options.get(chosen_zone_label)
 
-            submit_contact = st.form_submit_button("✓ Register WhatsApp Subscriber", type="primary")
+                submit_contact = st.form_submit_button("Register WhatsApp Subscriber", type="primary")
 
-            if submit_contact:
-                if not phone.strip() and not bsuid.strip():
-                    st.error("Please provide at least a Phone Number or WhatsApp BSUID.")
-                else:
-                    crop_list = [c.strip() for c in crops.split(",") if c.strip()]
-                    payload = {
-                        "display_name": display_name.strip() or None,
-                        "phone": phone.strip() or None,
-                        "bsuid": bsuid.strip() or None,
-                        "role": role,
-                        "language": language,
-                        "zone_id": chosen_zone_id,
-                        "crops": crop_list,
-                    }
-                    result = api_client.create_whatsapp_contact(payload)
-                    if result:
-                        st.success(f"Successfully registered subscriber '{display_name or phone}'!")
-                        st.rerun()
+                if submit_contact:
+                    if not phone.strip() and not bsuid.strip():
+                        st.error("Please provide at least a Phone Number or WhatsApp BSUID.")
                     else:
-                        st.error("Failed to register contact. Ensure phone number is valid and not already registered.")
+                        crop_list = [c.strip() for c in crops.split(",") if c.strip()]
+                        payload = {
+                            "display_name": display_name.strip() or None,
+                            "phone": phone.strip() or None,
+                            "bsuid": bsuid.strip() or None,
+                            "role": role,
+                            "language": language,
+                            "zone_id": chosen_zone_id,
+                            "crops": crop_list,
+                        }
+                        result = api_client.create_whatsapp_contact(payload)
+                        if result:
+                            st.success(f"Successfully registered subscriber '{display_name or phone}'!")
+                            st.rerun()
+                        else:
+                            st.error("Failed to register contact. Ensure phone number is valid and not already registered.")
 
     st.write("")
 
     # Search & Filter Controls
     f_col1, f_col2, f_col3 = st.columns([2, 1, 1])
     with f_col1:
-        search_query = st.text_input("🔍 Search subscribers by Name, Phone, or Crops", key=f"{prefix}_search_input", placeholder="Filter contacts...")
+        search_query = st.text_input("Search subscribers by Name, Phone, or Crops", key=f"{prefix}_search_input", placeholder="Filter contacts...")
     with f_col2:
         consent_filter = st.selectbox("Consent Filter", ["All Contacts", "Opted In (Active)", "Consent Pending"], key=f"{prefix}_consent_filter")
     with f_col3:
@@ -347,7 +350,7 @@ def _render_subscribers_directory(prefix: str):
                 "Phone": c.get("phone_masked") or (f"BSUID: {c.get('bsuid')}" if c.get('bsuid') else "No phone"),
                 "Language": "Kinyarwanda" if c.get("language") == "rw" else "English",
                 "Crops": ", ".join(c.get("crops") or []) or "All",
-                "Consent Status": "🟢 OPTED IN" if opt_in else "🟡 PENDING",
+                "Consent Status": "OPTED IN" if opt_in else "PENDING",
                 "Opt-In Date": _format_cat_timestamp(c.get("opt_in_at")) if opt_in else "Not Recorded",
             })
         st.dataframe(pd.DataFrame(rows) if pd is not None else rows, width="stretch", hide_index=True)
@@ -363,8 +366,8 @@ def _render_consent_and_preferences(prefix: str):
 
     st.markdown(
         """
-        <div style="padding:12px 18px; border-radius:12px; background:rgba(8, 26, 38, 0.8); border:1px solid rgba(56, 189, 248, 0.3); margin-bottom:1.2rem;">
-            <strong>📋 Meta Business Messaging Rule:</strong>
+        <div style="padding:12px 18px; border-radius:12px; background:linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border:1px solid rgba(2, 132, 199, 0.25); margin-bottom:1.2rem; color:#0f172a;">
+            <strong>Meta Business Messaging Rule:</strong>
             To protect users from unsolicited messages, automated WhatsApp broadcasts can ONLY be dispatched to contacts with documented, verifiable opt-in consent.
             Subscribers can also specify which agricultural zones and crop severity levels they want to be notified about.
         </div>
@@ -381,7 +384,7 @@ def _render_consent_and_preferences(prefix: str):
 
     # Select Subscriber
     contact_labels = {
-        f"{c.get('display_name') or 'Unnamed'} | {c.get('phone_masked') or 'BSUID'} | {'✓ Opted In' if c.get('whatsapp_opt_in') else '⚠️ Pending Consent'} | ID: {str(c.get('id'))[-6:]}": c
+        f"{c.get('display_name') or 'Unnamed'} | {c.get('phone_masked') or 'BSUID'} | {'Opted In' if c.get('whatsapp_opt_in') else 'Pending Consent'} | ID: {str(c.get('id'))[-6:]}": c
         for c in active_contacts
     }
 
@@ -400,12 +403,12 @@ def _render_consent_and_preferences(prefix: str):
             if has_opt_in:
                 st.markdown(
                     f"""
-                    <div style="padding:12px 16px; border-radius:8px; background:rgba(37, 211, 102, 0.15); border:1px solid #25D366; margin-bottom:1rem;">
+                    <div style="padding:12px 16px; border-radius:8px; background:#f0fdf4; border:1px solid #16a34a; margin-bottom:1rem;">
                         <div style="display:flex; align-items:center; gap:8px;">
-                            <span style="font-size:1.2rem;">✅</span>
-                            <strong style="color:#25D366;">Active Opt-In Consent on File</strong>
+                            <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#16a34a;"></span>
+                            <strong style="color:#166534;">Active Opt-In Consent on File</strong>
                         </div>
-                        <p style="margin:6px 0 0 0; font-size:0.85rem; color:#e2e8f0;">
+                        <p style="margin:6px 0 0 0; font-size:0.85rem; color:#1e293b;">
                             Source: <strong>{chosen_contact.get('opt_in_source') or 'Verified In-Person'}</strong><br/>
                             Version: <code>{chosen_contact.get('opt_in_text_version') or 'v1.0'}</code><br/>
                             Recorded: {_format_cat_timestamp(chosen_contact.get('opt_in_at'))}
@@ -418,12 +421,12 @@ def _render_consent_and_preferences(prefix: str):
             else:
                 st.markdown(
                     """
-                    <div style="padding:12px 16px; border-radius:8px; background:rgba(234, 179, 8, 0.15); border:1px solid #eab308; margin-bottom:1rem;">
+                    <div style="padding:12px 16px; border-radius:8px; background:#fffbeb; border:1px solid #d97706; margin-bottom:1rem;">
                         <div style="display:flex; align-items:center; gap:8px;">
-                            <span style="font-size:1.2rem;">⚠️</span>
-                            <strong style="color:#eab308;">Consent Pending (Broadcasts Blocked)</strong>
+                            <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#d97706;"></span>
+                            <strong style="color:#92400e;">Consent Pending (Broadcasts Blocked)</strong>
                         </div>
-                        <p style="margin:6px 0 0 0; font-size:0.85rem; color:#e2e8f0;">
+                        <p style="margin:6px 0 0 0; font-size:0.85rem; color:#1e293b;">
                             This contact has not yet confirmed formal opt-in consent. Meta policies prohibit dispatching automated notifications until consent is certified.
                         </p>
                     </div>
@@ -444,7 +447,7 @@ def _render_consent_and_preferences(prefix: str):
                         ]
                     )
                     consent_version = st.text_input("Consent Policy Version", value="agrimenya-opt-in-v1.0")
-                    submit_optin = st.form_submit_button("✓ Record Legal Consent & Activate", type="primary")
+                    submit_optin = st.form_submit_button("Record Legal Consent & Activate", type="primary")
 
                 if submit_optin:
                     res = api_client.opt_in_whatsapp_contact(contact_id, consent_source.strip(), consent_version.strip())
@@ -490,7 +493,7 @@ def _render_consent_and_preferences(prefix: str):
 
     # Danger Zone: Remove Contact
     st.write("")
-    with st.expander("🗑️ Danger Zone: Remove Subscriber", expanded=False):
+    with st.popover("Remove Subscriber"):
         st.warning(f"Deactivating '{chosen_contact.get('display_name') or 'this subscriber'}' will permanently stop all future WhatsApp advisories.")
         if st.button("Permanently Deactivate Subscriber", key=f"{prefix}_del_btn_{contact_id}", type="secondary"):
             if api_client.remove_whatsapp_contact(contact_id):
@@ -521,7 +524,7 @@ def _render_templates_simulator(prefix: str):
             "Language": "Kinyarwanda (RW)" if t.get("language") == "rw" else "English (EN)",
             "Category": str(t.get("category", "UTILITY")).upper(),
             "Required Parameters": t.get("param_count", 0),
-            "Status": "🟢 APPROVED" if t.get("status") == "APPROVED" or not t.get("status") else str(t.get("status")).upper(),
+            "Status": "APPROVED" if t.get("status") == "APPROVED" or not t.get("status") else str(t.get("status")).upper(),
         }
         for t in templates
     ]
@@ -530,7 +533,7 @@ def _render_templates_simulator(prefix: str):
     st.write("---")
 
     # Live Simulator Section
-    st.markdown("#### 📱 Interactive WhatsApp Smartphone Simulator")
+    st.markdown("#### Interactive WhatsApp Smartphone Simulator")
     st.caption("Test how dynamic alert parameters render inside real WhatsApp chat bubbles before initiating a national broadcast.")
 
     template_options = {
@@ -575,7 +578,7 @@ def _render_templates_simulator(prefix: str):
                 val = st.text_input(lbl, value=d_val, key=f"{prefix}_param_{t_name}_{t_lang}_{i}")
                 param_values.append(val.strip())
 
-            preview_clicked = st.button("🚀 Render WhatsApp Mobile Preview", type="primary", key=f"{prefix}_render_btn")
+            preview_clicked = st.button("Render WhatsApp Mobile Preview", type="primary", key=f"{prefix}_render_btn")
 
     with sim_col_phone:
         # WhatsApp Phone Mockup Container
@@ -585,12 +588,12 @@ def _render_templates_simulator(prefix: str):
                 <!-- WhatsApp Top Bar -->
                 <div style="background:#1F2C34; padding:12px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.08);">
                     <div style="width:38px; height:38px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#fff; font-weight:700;">
-                        🌱
+                        AM
                     </div>
                     <div>
                         <div style="color:#E9EDEF; font-weight:600; font-size:0.95rem; display:flex; align-items:center; gap:4px;">
                             Agri-Menya Verified
-                            <span style="color:#25D366; font-size:0.8rem;">✓</span>
+                            
                         </div>
                         <div style="color:#8696A0; font-size:0.75rem;">Official Ministry Alert System</div>
                     </div>
@@ -621,7 +624,7 @@ def _render_templates_simulator(prefix: str):
                         <div>{bubble_html}</div>
                         <div style="display:flex; justify-content:flex-end; align-items:center; gap:4px; margin-top:6px; font-size:0.7rem; color:#8696A0;">
                             <span>{current_time_str}</span>
-                            <span style="color:#53BDEB;">✓✓</span>
+                            
                         </div>
                     </div>
                 </div>
@@ -669,7 +672,7 @@ def _render_broadcast_tracker(prefix: str):
             st.write(alert.get("crop") or "National (All Crops)")
         with m_c3:
             st.caption("WhatsApp Approval Status")
-            st.markdown("**🟢 APPROVED**" if is_approved else "**🟡 DRAFT (REQUIRES APPROVAL)**")
+            st.markdown("**APPROVED**" if is_approved else "**DRAFT (REQUIRES APPROVAL)**")
         with m_c4:
             st.caption("Certified By")
             st.write(alert.get("approved_by") or "Pending Review")
@@ -679,8 +682,8 @@ def _render_broadcast_tracker(prefix: str):
         # Two-Step Operational Workflow
         st.markdown("#### 1. Dispatch Operations")
         if not is_approved:
-            st.info("ℹ️ Step 1: Review the alert text above. When verified, click 'Certify & Approve Alert for WhatsApp' to unlock delivery.")
-            if st.button("✓ Certify & Approve Alert for WhatsApp Broadcast", key=f"{prefix}_approve_btn_{alert_id}", type="primary", use_container_width=True):
+            st.info("Step 1: Review the alert text above. When verified, click 'Certify & Approve Alert for WhatsApp' to unlock delivery.")
+            if st.button("Certify & Approve Alert for WhatsApp Broadcast", key=f"{prefix}_approve_btn_{alert_id}", type="primary", use_container_width=True):
                 res = api_client.approve_whatsapp_alert(alert_id)
                 if res:
                     st.success("Alert certified and approved for WhatsApp dispatch!")
@@ -688,20 +691,20 @@ def _render_broadcast_tracker(prefix: str):
                 else:
                     st.error(api_client.get_admin_api_error(f"/communication/alerts/{alert_id}/approve") or "Approval failed.")
         else:
-            st.success(f"✓ Approved for WhatsApp broadcast on {_format_cat_timestamp(alert.get('approved_at'))}")
+            st.success(f"Approved for WhatsApp broadcast on {_format_cat_timestamp(alert.get('approved_at'))}")
 
             b_c1, b_c2 = st.columns([2, 1])
             with b_c1:
                 st.markdown(
                     """
-                    <div style="font-size:0.88rem; color:#cbd5e1; margin-bottom:8px;">
+                    <div style="font-size:0.88rem; color:#334155; margin-bottom:8px;">
                         Clicking broadcast will match all registered subscribers with active opt-in consent whose zone, crop, and severity settings align with this alert.
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
             with b_c2:
-                dispatch_clicked = st.button("🚀 Dispatch WhatsApp Broadcast", key=f"{prefix}_dispatch_btn_{alert_id}", type="primary", use_container_width=True)
+                dispatch_clicked = st.button("Dispatch WhatsApp Broadcast", key=f"{prefix}_dispatch_btn_{alert_id}", type="primary", use_container_width=True)
 
             if dispatch_clicked:
                 summary = api_client.dispatch_whatsapp_alert(alert_id)
@@ -713,13 +716,13 @@ def _render_broadcast_tracker(prefix: str):
                     no_tmpl = summary.get("skipped_no_template", 0)
 
                     if queued > 0:
-                        st.success(f"🚀 Broadcast Dispatched! {queued} message(s) successfully queued for transmission.")
+                        st.success(f"Broadcast Dispatched! {queued} message(s) successfully queued for transmission.")
                     if no_consent > 0 or daily_cap > 0:
                         st.info(f"Broadcast filters applied: {no_consent} contact(s) skipped without consent, {daily_cap} contact(s) reached daily rate cap.")
                     if no_tmpl > 0:
-                        st.warning(f"⚠️ {no_tmpl} contact(s) skipped because no approved Meta template matched the recipient language.")
+                        st.warning(f"{no_tmpl} contact(s) skipped because no approved Meta template matched the recipient language.")
                     if failed > 0:
-                        st.error(f"⚠️ {failed} message(s) encountered provider transmission errors.")
+                        st.error(f"{failed} message(s) encountered provider transmission errors.")
                     st.rerun()
                 else:
                     st.error(api_client.get_admin_api_error(f"/communication/alerts/{alert_id}/dispatch/whatsapp") or "Dispatch request failed.")

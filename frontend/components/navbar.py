@@ -89,8 +89,9 @@ def check_page_access() -> bool:
             align-items: center;
             justify-content: center;
             color: #0284c7;
-            font-size: 1.8rem;
-        ">🔒</div>
+        ">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
         <h2 style="color: #0f172a; font-size: 1.45rem; font-weight: 800; margin-bottom: 0.4rem;">Access Restricted</h2>
         <p style="color: #475569; font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem;">
             This page is reserved for authenticated agricultural officers. Unauthenticated access is limited to <strong>Home</strong> and <strong>Overview</strong>.
@@ -102,7 +103,7 @@ def check_page_access() -> bool:
         st.session_state["authenticated"] = True
         st.session_state["user_profile"] = dict(DEFAULT_USER)
         st.rerun()
-    st.page_link("Home.py", label="Return to Home", icon="🏠", use_container_width=True)
+    st.page_link("Home.py", label="Return to Home", use_container_width=True)
 
     st.stop()
     return False
@@ -694,9 +695,8 @@ def render_navbar() -> None:
                 with st.popover(t("nav.more", "More"), width="stretch"):
                     # Theme Mode Switcher
                     current_mode = get_current_theme()
-                    theme_icon = "☀️" if current_mode == "dark" else "🌙"
                     theme_label = "Switch to Light Mode" if current_mode == "dark" else "Switch to Dark Mode"
-                    if st.button(f"{theme_icon} {theme_label}", key="ag_navbar_theme_toggle_btn", use_container_width=True):
+                    if st.button(theme_label, key="ag_navbar_theme_toggle_btn", use_container_width=True):
                         toggle_theme()
                         st.rerun()
 
@@ -728,7 +728,7 @@ def render_navbar() -> None:
                 )
             with c_signin:
                 officer_name = user.get("name", "Officer") if isinstance(user, dict) else "Officer"
-                with st.popover(f"👤 {officer_name}", width="stretch"):
+                with st.popover(officer_name, width="stretch"):
                     st.markdown(f"""
                     <div style="padding:0.15rem 0 0.4rem;font-family:'Plus Jakarta Sans',sans-serif;">
                         <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0284c7;margin-bottom:0.25rem;">Active Session</div>

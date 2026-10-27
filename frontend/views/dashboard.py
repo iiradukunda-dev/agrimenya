@@ -224,7 +224,7 @@ def render_dashboard() -> None:
                     )
                     if selected_row:
                         st.info(
-                            f"📍 **Selected Zone:** {selected_row.get('District', 'Unknown')} | "
+                            f"**Selected Zone:** {selected_row.get('District', 'Unknown')} | "
                             f"Crop: **{selected_row.get('Crop', 'Unspecified')}** | "
                             f"Priority: **{selected_row.get('Priority', 'Unassessed')}**"
                         )
@@ -269,7 +269,7 @@ def render_dashboard() -> None:
                 )
             with w_c2:
                 st.write("")
-                if st.button("🔄 " + t("dashboard.weather.refresh_btn", "Refresh Weather"), use_container_width=True):
+                if st.button(t("dashboard.weather.refresh_btn", "Refresh Weather"), use_container_width=True):
                     api_client.get_weather.clear()
                     st.rerun()
 
@@ -330,14 +330,14 @@ def render_dashboard() -> None:
                 render_icon_subheader("assets/compass.svg", t("dashboard.section.quick_actions", "Action Hub"))
                 qa1, qa2 = st.columns(2)
                 with qa1:
-                    if st.button("🎯 Predict Yield", use_container_width=True):
+                    if st.button("Predict Yield", use_container_width=True):
                         st.switch_page("pages/4_Zones.py")
-                    if st.button("🔬 Detect Disease", use_container_width=True):
+                    if st.button("Detect Disease", use_container_width=True):
                         st.switch_page("pages/7_AI_Assistant.py")
                 with qa2:
-                    if st.button("📅 Create Plan", use_container_width=True):
+                    if st.button("Create Plan", use_container_width=True):
                         st.switch_page("pages/8_Planning.py")
-                    if st.button("📢 Broadcast Alert", use_container_width=True):
+                    if st.button("Broadcast Alert", use_container_width=True):
                         st.switch_page("pages/9_Communication.py")
 
         # ── 9. Interactive Data Table & CSV Export ────────────────────
@@ -369,7 +369,7 @@ def render_dashboard() -> None:
                 csv_buffer = io.StringIO()
                 clean_df.to_csv(csv_buffer, index=False)
                 st.download_button(
-                    label="📥 Export Current Filtered Table (CSV)",
+                    label="Export Filtered Table (CSV)",
                     data=csv_buffer.getvalue(),
                     file_name="agrimenya_dashboard_zones.csv",
                     mime="text/csv",

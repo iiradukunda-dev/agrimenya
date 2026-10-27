@@ -29,8 +29,8 @@ def load_theme() -> None:
     card_shadow_hover = "0 16px 32px -4px rgba(0,0,0,0.6), 0 0 20px rgba(56,189,248,0.25)" if is_dark else "0 8px 24px -4px rgba(2, 132, 199, 0.18), 0 2px 6px -1px rgba(0, 0, 0, 0.04)"
     
     text_main = "#f8fafc" if is_dark else "#0f172a"
-    text_muted = "#94a3b8" if is_dark else "#475569"
-    text_subtle = "#64748b" if is_dark else "#94a3b8"
+    text_muted = "#94a3b8" if is_dark else "#334155"
+    text_subtle = "#64748b" if is_dark else "#64748b"
     border_color = "rgba(56, 189, 248, 0.18)" if is_dark else "rgba(2, 132, 199, 0.16)"
     input_bg = "#0a1524" if is_dark else "#ffffff"
     input_border = "rgba(56, 189, 248, 0.3)" if is_dark else "rgba(2, 132, 199, 0.25)"
@@ -278,6 +278,53 @@ def load_theme() -> None:
       background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
       box-shadow: 0 6px 16px rgba(2, 132, 199, 0.45) !important;
       color: #ffffff !important;
+    }}
+
+    /* Popover Trigger Buttons and Containers */
+    button[data-testid="stPopoverButton"],
+    [data-testid="stPopover"] > button {{
+      border-radius: var(--ag-radius-sm) !important;
+      font-family: var(--ag-font-display) !important;
+      font-weight: 650 !important;
+      font-size: 0.90rem !important;
+      padding: 0.45rem 1.1rem !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      border: 1px solid var(--ag-card-border) !important;
+      background: var(--ag-surface) !important;
+      color: var(--ag-text-main) !important;
+      box-shadow: var(--ag-card-shadow) !important;
+    }}
+    button[data-testid="stPopoverButton"]:hover,
+    [data-testid="stPopover"] > button:hover {{
+      border-color: var(--ag-primary) !important;
+      color: var(--ag-primary) !important;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15) !important;
+    }}
+    [data-testid="stPopoverBody"] {{
+      background: var(--ag-surface) !important;
+      border: 1px solid var(--ag-card-border) !important;
+      border-radius: var(--ag-radius-md) !important;
+      box-shadow: var(--ag-card-shadow-hover) !important;
+      color: var(--ag-text-main) !important;
+      padding: 1rem !important;
+    }}
+    [data-testid="stPopoverBody"] p,
+    [data-testid="stPopoverBody"] label,
+    [data-testid="stPopoverBody"] span {{
+      color: var(--ag-text-main) !important;
+    }}
+
+    /* Modal Dialog High Contrast */
+    [data-testid="stDialog"] {{
+      border-radius: var(--ag-radius-lg) !important;
+      border: 1px solid var(--ag-card-border) !important;
+      box-shadow: 0 20px 45px rgba(2, 132, 199, 0.2) !important;
+      background: var(--ag-surface) !important;
+    }}
+    [data-testid="stDialog"] [data-testid="stMarkdownContainer"] p,
+    [data-testid="stDialog"] label {{
+      color: var(--ag-text-main) !important;
+      font-weight: 500;
     }}
 
     /* Modern Tabs */

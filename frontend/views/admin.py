@@ -18,6 +18,48 @@ from utils.i18n import t
 logger = logging.getLogger(__name__)
 
 
+@st.dialog("System Diagnostics & Raw Telemetry", width="large")
+def show_diagnostics_dialog(health: dict) -> None:
+    """Popup modal dialog for deep diagnostics without page scrolling."""
+    st.markdown("#### Subsystem Telemetry Snapshot")
+    st.json(health)
+    if st.button("Refresh Telemetry Now", key="btn_refresh_health_dlg", type="primary"):
+        st.rerun()
+
+
+@st.dialog("Plan Inspector & Action Audit Trail", width="large")
+def show_plan_inspector_dialog(plan_labels: dict) -> None:
+    """Popup modal dialog for plan renaming and audit inspection without vertical scrolling."""
+    if not plan_labels:
+        st.info("No plans available for inspection.")
+        return
+
+    selected_plan_label = st.selectbox("Select Plan to Inspect", list(plan_labels), key="dlg_admin_plan_select")
+    plan = plan_labels[selected_plan_label]
+    plan_id = str(plan["id"])
+
+    with st.form(f"dlg_admin_plan_rename_form_{plan_id}"):
+        plan_title_input = st.text_input("Plan Title", value=str(plan.get("title") or ""))
+        update_plan_btn = st.form_submit_button("Update Plan Title", type="primary")
+
+    if update_plan_btn:
+        if not plan_title_input.strip():
+            st.error("Enter a valid plan title.")
+        elif api_client.update_admin_plan(plan_id, {"title": plan_title_input.strip()}):
+            st.success("Plan title updated.")
+            st.rerun()
+        else:
+            st.error("Plan update failed. Check admin session permissions.")
+
+    st.write("---")
+    st.markdown("#### Action Modification History & Audit Trail")
+    plan_history = api_client.get_plan_action_history(plan_id)
+    if plan_history:
+        st.dataframe(pd.DataFrame(plan_history), width="stretch", hide_index=True)
+    else:
+        st.caption("No action modifications logged for this plan.")
+
+
 def _render_admin_session_header() -> None:
     """Renders the executive identity and session status header for logged-in administrators."""
     identity = st.session_state.get("admin_identity", {})
@@ -38,10 +80,11 @@ def _render_admin_session_header() -> None:
                 align-items: center;
                 gap: 14px;
                 padding: 12px 18px;
-                background: linear-gradient(135deg, rgba(8, 26, 38, 0.9) 0%, rgba(5, 18, 27, 0.95) 100%);
-                border: 1px solid rgba(56, 189, 248, 0.28);
+                background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+                border: 1px solid rgba(2, 132, 199, 0.22);
+                border-top: 2.5px solid #0284c7;
                 border-radius: 14px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+                box-shadow: 0 4px 18px rgba(2, 132, 199, 0.08);
                 margin-bottom: 1.2rem;
             ">
                 <div style="
@@ -49,7 +92,7 @@ def _render_admin_session_header() -> None:
                     height: 44px;
                     border-radius: 12px;
                     background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-                    border: 1.5px solid rgba(56, 189, 248, 0.6);
+                    border: 1.5px solid rgba(2, 132, 199, 0.4);
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -57,13 +100,13 @@ def _render_admin_session_header() -> None:
                     font-family: 'Plus Jakarta Sans', sans-serif;
                     font-weight: 800;
                     font-size: 1.15rem;
-                    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+                    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
                 ">
                     {escape(initials)}
                 </div>
                 <div style="flex: 1;">
                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.02rem; color: #ffffff;">
+                        <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.02rem; color: #0f172a;">
                             {escape(display_name)}
                         </span>
                         <span style="
@@ -73,15 +116,15 @@ def _render_admin_session_header() -> None:
                             text-transform: uppercase;
                             padding: 2px 9px;
                             border-radius: 9999px;
-                            background: rgba(56, 189, 248, 0.18);
-                            border: 1px solid rgba(56, 189, 248, 0.45);
-                            color: #7dd3fc;
+                            background: #e0f2fe;
+                            border: 1px solid rgba(2, 132, 199, 0.35);
+                            color: #0284c7;
                         ">
                             {escape(role.upper())}
                         </span>
                     </div>
-                    <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 2px;">
-                        {escape(email)} &bull; <span style="color: #34d399; font-weight: 600;">● Active Administrative Session</span>
+                    <div style="font-size: 0.82rem; color: #475569; margin-top: 2px;">
+                        {escape(email)} &bull; <span style="color: #059669; font-weight: 700;">Active Administrative Session</span>
                     </div>
                 </div>
             </div>
@@ -140,13 +183,13 @@ def render_admin() -> None:
                         border-radius: 12px;
                         background: {'rgba(16, 185, 129, 0.12)' if is_ok else 'rgba(245, 158, 11, 0.12)'};
                         border: 1px solid {'rgba(16, 185, 129, 0.35)' if is_ok else 'rgba(245, 158, 11, 0.35)'};
-                        color: {'#6ee7b7' if is_ok else '#fcd34d'};
+                        color: {'#065f46' if is_ok else '#92400e'};
                         font-size: 0.92rem;
                         font-weight: 600;
                         margin-bottom: 1.2rem;
                     ">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 1.15rem;">{'🟢' if is_ok else '🟡'}</span>
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background: {'#10b981' if is_ok else '#f59e0b'}; display: inline-block;"></span>
                             <div>
                                 <strong>Core Status: {status.upper()}</strong> &mdash; 
                                 {'All primary services, database probes, and yield baselines are responding normally.' if is_ok else 'One or more subsystem indicators report degraded performance or missing baselines.'}
@@ -226,10 +269,8 @@ def render_admin() -> None:
                 else:
                     st.info("WhatsApp telemetry endpoint not returning data. Check backend WHATSAPP_PHONE_NUMBER_ID.")
 
-                with st.expander("Detailed System Diagnostics & Raw Telemetry", expanded=False):
-                    st.json(health)
-                    if st.button("Refresh Telemetry Now", key="btn_refresh_health"):
-                        st.rerun()
+                if st.button("View System Diagnostics & Telemetry", key="btn_open_diagnostics_modal", use_container_width=True):
+                    show_diagnostics_dialog(health)
             else:
                 st.error("Backend is unreachable. Check that the API is running on the expected port.")
 
@@ -432,35 +473,8 @@ def render_admin() -> None:
                     f"{p.get('title') or 'Untitled plan'} | {str(p.get('id'))[-8:]}": p
                     for p in admin_plans if p.get("id")
                 }
-                with st.expander("Plan Inspector & Action Audit Trail", expanded=False):
-                    if plan_labels:
-                        selected_plan_label = st.selectbox("Select Plan to Inspect", list(plan_labels), key="admin_plan_edit_select")
-                        plan = plan_labels[selected_plan_label]
-                        plan_id = str(plan["id"])
-
-                        with st.form(f"admin_plan_rename_form_{plan_id}"):
-                            plan_title_input = st.text_input("Plan Title", value=str(plan.get("title") or ""))
-                            update_plan_btn = st.form_submit_button("Update Plan Title", type="primary")
-
-                        if update_plan_btn:
-                            if not plan_title_input.strip():
-                                st.error("Enter a valid plan title.")
-                            elif api_client.update_admin_plan(plan_id, {"title": plan_title_input.strip()}):
-                                st.success("Plan title updated.")
-                                st.rerun()
-                            else:
-                                st.error("Plan update failed. Check admin session permissions.")
-
-                        # Action Audit Trail
-                        st.write("---")
-                        st.markdown("**Action Modification History & Audit Trail**")
-                        plan_history = api_client.get_plan_action_history(plan_id)
-                        if plan_history:
-                            st.dataframe(pd.DataFrame(plan_history), width="stretch", hide_index=True)
-                        else:
-                            st.caption("No action modifications logged for this plan.")
-                    else:
-                        st.info("No plans available for inspection.")
+                if st.button("Inspect Action Audit Trail & Plans", key="btn_open_plan_inspector_modal", use_container_width=True):
+                    show_plan_inspector_dialog(plan_labels)
             else:
                 error = api_client.get_admin_api_error("/admin/plans")
                 if error:
@@ -476,8 +490,8 @@ def render_admin() -> None:
             render_icon_subheader("assets/message.svg", "WhatsApp Operations & Advisory Dispatch")
 
             tab4_subtabs = st.tabs([
-                "💬 WhatsApp Command Center",
-                "📢 Compose System Alert & Email Handoff",
+                "WhatsApp Command Center",
+                "Compose System Alert & Email Handoff",
             ])
 
             # Subtab 1: Full WhatsApp Operational Suite
@@ -566,7 +580,7 @@ def render_admin() -> None:
                 "Musanze,Irish Potatoes,2026 Season C,4500,9.0,2.0\n"
             )
             st.download_button(
-                "📥 Download CSV Format Specification Sample",
+                "Download CSV Format Specification Sample",
                 data=example_csv,
                 file_name="nisr_yield_import_example.csv",
                 mime="text/csv",
@@ -724,16 +738,16 @@ def render_admin() -> None:
                     st.markdown(f"<h3 style='margin:0;color:#10b981;'>{len(comm_accounts)}</h3>", unsafe_allow_html=True)
 
             mod_tabs = st.tabs([
-                f"🚩 Open Reports ({len(reports)})",
-                f"🌾 Field Observations ({len(field_reports)})",
-                f"💬 Discussions ({len(all_posts)})",
-                f"👥 Farmer Accounts ({len(comm_accounts)})",
+                f"Open Reports ({len(reports)})",
+                f"Field Observations ({len(field_reports)})",
+                f"Discussions ({len(all_posts)})",
+                f"Farmer Accounts ({len(comm_accounts)})",
             ])
 
             # Subtab 1: Open Reports
             with mod_tabs[0]:
                 if not reports:
-                    st.info("✓ Zero open community reports. All content is clear.")
+                    st.info("Zero open community reports. All content is clear.")
                 for report in reports:
                     target_kind = "comment" if report.get("comment_id") else "post"
                     target = report.get(target_kind) or {}
@@ -769,7 +783,7 @@ def render_admin() -> None:
                 for freport in field_reports:
                     reporter = freport.get("reporter") or {}
                     with st.container(border=True):
-                        st.caption(f"📍 {freport.get('district', 'Unknown')} &bull; Crop: {freport.get('crop', 'Unknown')} &bull; Observed: {freport.get('observed_on', '')} &bull; Reporter: {reporter.get('display_name', 'Unknown')}")
+                        st.caption(f"{freport.get('district', 'Unknown')} &bull; Crop: {freport.get('crop', 'Unknown')} &bull; Observed: {freport.get('observed_on', '')} &bull; Reporter: {reporter.get('display_name', 'Unknown')}")
                         st.write(freport.get("symptoms") or freport.get("notes") or "No symptoms/notes reported")
                         if freport.get("photo_url"):
                             st.image(freport["photo_url"], width=280)

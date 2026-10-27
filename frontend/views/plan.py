@@ -40,7 +40,7 @@ def show_seasonal_draft_dialog(zone: dict[str, Any]) -> None:
         st.markdown("---")
         st.markdown(f"##### {draft_data.get('title', 'Seasonal Plan Draft')}")
         if draft_data.get("sowing_window"):
-            st.caption(f"📅 Optimal Sowing Window: {draft_data['sowing_window']}")
+            st.caption(f"Optimal Sowing Window: {draft_data['sowing_window']}")
 
         phases = draft_data.get("phases") or draft_data.get("roadmap") or []
         for i, phase in enumerate(phases, start=1):
@@ -195,7 +195,7 @@ def show_plan_details_dialog(plan: dict[str, Any]) -> None:
     st.caption(f"ID: {plan_id[:8]} • {len(steps)} Milestones")
 
     # Share via email in popover
-    with st.popover("✉️ Share Plan via Email"):
+    with st.popover("Share Plan via Email"):
         recip = st.text_input("Recipient Email", placeholder="officer@rab.gov.rw", key=f"share_rec_{plan_id}")
         subj = st.text_input("Subject", value=f"Agricultural Plan: {title}", key=f"share_sub_{plan_id}")
         if st.button("Send Email", type="primary", key=f"send_sh_{plan_id}"):
@@ -282,20 +282,20 @@ def render_plan() -> None:
         selected_zone_id = str(selected_zone["id"])
 
         with c_draft:
-            if st.button("🌱 Seasonal Draft", type="primary", use_container_width=True):
+            if st.button("Seasonal Draft", type="primary", use_container_width=True):
                 show_seasonal_draft_dialog(selected_zone)
         with c_custom:
-            if st.button("➕ Custom Plan", use_container_width=True):
+            if st.button("Custom Plan", use_container_width=True):
                 show_create_plan_dialog(selected_zone)
         with c_cost:
-            if st.button("💰 Cost Estimator", use_container_width=True):
+            if st.button("Cost Estimator", use_container_width=True):
                 show_resource_estimator_dialog(selected_zone)
 
         # Active plans table
         st.markdown("---")
         plans = api_client.get_zone_plans(selected_zone_id)
         if not plans:
-            st.info("No execution plans for this zone yet. Click '🌱 Seasonal Draft' above to generate one.")
+            st.info("No execution plans for this zone yet. Click 'Seasonal Draft' above to generate one.")
         else:
             for plan in plans:
                 p_id = str(plan.get("id"))

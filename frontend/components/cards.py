@@ -447,7 +447,7 @@ def render_centralized_login_card(
                     on_click=api_client._authenticate_admin_session,
                     args=(widget_key,),
                 )
-            with st.expander("Forgot your administrator password?"):
+            with st.popover("Forgot password?", use_container_width=True):
                 with st.form(f"{key_prefix}_forgot_form"):
                     forgot_email = st.text_input(
                         "Administrator email",
@@ -551,7 +551,7 @@ def render_centralized_login_card(
                 badge_text="SECURE ACCESS",
                 accent_color="#0284c7",
             )
-            tab_admin, tab_comm = st.tabs(["🛡️ Administrator & Officer", "🌾 Farmer Community"])
+            tab_admin, tab_comm = st.tabs(["Administrator & Officer", "Farmer Community"])
             with tab_admin:
                 admin_error = st.session_state.pop("admin_login_error", None)
                 if admin_error:
@@ -567,7 +567,7 @@ def render_centralized_login_card(
                         on_click=api_client._authenticate_admin_session,
                         args=(widget_key,),
                     )
-                with st.expander("Forgot your administrator password?"):
+                with st.popover("Forgot password?", use_container_width=True):
                     with st.form(f"{key_prefix}_uni_forgot_form"):
                         forgot_email = st.text_input("Administrator email", placeholder="admin@agrimenya.rw", key=f"{key_prefix}_uni_forgot_email")
                         forgot = st.form_submit_button("Send reset link →", use_container_width=True)
@@ -731,7 +731,7 @@ def render_weather_forecast_grid(forecast_list: list[dict]) -> None:
         <div class="ag-weather-card">
             <div class="ag-weather-date">{date}</div>
             <div class="ag-weather-temp">{hi}° / {lo}°</div>
-            <div class="ag-weather-rain">🌧️ {rain}% ({rain_sum}mm)</div>
+            <div class="ag-weather-rain">Rain: {rain}% ({rain_sum}mm)</div>
         </div>
         """)
     grid_html = f'<div class="ag-weather-row">{"".join(cards_html)}</div>'

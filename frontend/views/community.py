@@ -180,7 +180,7 @@ def _field_reports(token: str, language: str) -> None:
             location = " / ".join(str(part) for part in parts if part)
             label = f"{location or 'Location not recorded'} · {str(item['id'])[-8:]}"
             zone_by_label[label] = item
-        with st.expander(c["report_help"], expanded=False):
+        with st.popover(c["report_help"], use_container_width=True):
             st.caption("Add a location, crop, date, and a brief note. A photo is optional; reports remain community observations, not verified diagnoses.")
             with st.form("community_field_observation", clear_on_submit=True):
                 selected_zone_label = st.selectbox(c["district"], list(zone_by_label))
@@ -457,7 +457,7 @@ def render_community() -> None:
                     except requests.RequestException as exc:
                         st.error(_error_message(exc, language))
 
-                with st.expander(c["forgot_password"]):
+                with st.popover(c["forgot_password"], use_container_width=True):
                     with st.form("community_password_forgot_form"):
                         reset_email = st.text_input(c["email"], key="community_reset_email")
                         send_reset = st.form_submit_button(c["send_reset"])
@@ -473,7 +473,7 @@ def render_community() -> None:
                         except requests.RequestException as exc:
                             st.error(_error_message(exc, language))
 
-                with st.expander(c["verify_resend"]):
+                with st.popover(c["verify_resend"], use_container_width=True):
                     st.caption(c["verify_resend_help"])
                     with st.form("community_verification_resend"):
                         verify_email = st.text_input(c["email"], key="community_verify_email_input")

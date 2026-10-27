@@ -110,7 +110,7 @@ def render_decide():
             with c_head:
                 st.markdown(f"### {t('decisions.actionable_recommendations', default='Priority Recommendations')}")
             with c_btn:
-                if st.button("🔬 Disease Triage", type="primary", use_container_width=True):
+                if st.button("Disease Triage", type="primary", use_container_width=True):
                     show_disease_eval_dialog(zones)
 
             recs = api_client.get_recommendations()

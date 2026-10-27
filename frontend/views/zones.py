@@ -289,7 +289,7 @@ def render_zones() -> None:
         with c_prio:
             prio_filter = st.selectbox("Priority", ["All", "High", "Medium", "Low"], label_visibility="collapsed")
         with c_add:
-            if st.button("➕ Register Field", type="primary", use_container_width=True):
+            if st.button("Register Field", type="primary", use_container_width=True):
                 show_register_zone_dialog()
 
         # Filter zones
@@ -345,16 +345,16 @@ def render_zones() -> None:
         crops_ref = api_client.get_crops() or CROPS
 
         with c_p1:
-            if st.button("🎯 Predict Yield", use_container_width=True):
+            if st.button("Predict Yield", use_container_width=True):
                 show_yield_prediction_dialog(selected_zone, crops_ref)
         with c_p2:
-            if st.button("📋 Field Note", use_container_width=True):
+            if st.button("Field Note", use_container_width=True):
                 show_field_observation_dialog(selected_zone, crops_ref)
         with c_p3:
-            if st.button("✅ Readiness", use_container_width=True):
+            if st.button("Readiness", use_container_width=True):
                 show_readiness_dialog(zone_id)
         with c_p4:
-            if st.button("👷 Worker-Days", use_container_width=True):
+            if st.button("Worker-Days", use_container_width=True):
                 show_work_records_dialog(selected_zone, crops_ref)
 
         # Zone KPI Metrics

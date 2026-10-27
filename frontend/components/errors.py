@@ -263,10 +263,10 @@ def render_error_page(
     with col:
         st.markdown(card_html, unsafe_allow_html=True)
 
-        # Sanitized technical details expander
+        # Sanitized technical details popover
         sanitized = _sanitize_details(details) if details else ""
         if sanitized:
-            with st.expander("Technical Diagnostic Information", expanded=False):
+            with st.popover("Technical Diagnostic Information", use_container_width=True):
                 st.code(sanitized, language="text")
 
         # Contextual Action Buttons
