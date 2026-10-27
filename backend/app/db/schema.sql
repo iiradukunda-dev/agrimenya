@@ -16,8 +16,10 @@ create table if not exists zones (
     district        text not null,
     sector          text,
     cell            text,
+    site_name       text,
     latitude        double precision not null,
     longitude       double precision not null,
+    field_boundary_geojson jsonb,
     crop_type       text,
     season          text,               -- e.g. 'Season A 2026', 'Season B 2025', 'Annual 2025'
     identity_key    text,
