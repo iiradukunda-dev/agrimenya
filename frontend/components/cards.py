@@ -659,17 +659,25 @@ def generate_svg_sparkline(data: list[float], color: str = "#10b981", width: int
 
 
 def render_kpi_card(
-    col,
-    title: str,
-    value: str | int | float,
+    col=None,
+    title: str = "",
+    value: str | int | float = "",
     unit: str = "",
     delta: float | str | None = None,
     delta_period: str = "vs baseline",
     sparkline_data: list[float] | None = None,
     icon: str = "",
     badge_color: str = "#0284c7",
+    subtitle: str = "",
+    delta_pct: float | str | None = None,
 ) -> None:
     """Render an executive KPI card with live value, delta badge, and inline SVG sparkline."""
+    if isinstance(col, str) and not title:
+        title = col
+        col = None
+    if delta_pct is not None and delta is None:
+        delta = delta_pct
+
     sparkline_svg = generate_svg_sparkline(sparkline_data, color=badge_color) if sparkline_data else ""
 
     delta_markup = ""
@@ -679,9 +687,11 @@ def render_kpi_card(
             is_pos = delta_val >= 0
             cls = "ag-kpi-delta-up" if is_pos else "ag-kpi-delta-down"
             arrow = "↑" if is_pos else "↓"
-            delta_markup = f'<div class="ag-kpi-footer"><span class="ag-kpi-delta {cls}">{arrow} {abs(delta_val):.1f}%</span> <span>{delta_period}</span></div>'
+            delta_markup = f'<div class="ag-kpi-footer"><span class="ag-kpi-delta {cls}">{arrow} {abs(delta_val):.1f}%</span> <span>{subtitle or delta_period}</span></div>'
         except ValueError:
-            delta_markup = f'<div class="ag-kpi-footer"><span class="ag-kpi-delta">{delta}</span> <span>{delta_period}</span></div>'
+            delta_markup = f'<div class="ag-kpi-footer"><span class="ag-kpi-delta">{delta}</span> <span>{subtitle or delta_period}</span></div>'
+    elif subtitle:
+        delta_markup = f'<div class="ag-kpi-footer"><span>{subtitle}</span></div>'
 
     icon_html = f'<div class="ag-kpi-icon">{icon}</div>' if icon else ""
 
@@ -698,7 +708,10 @@ def render_kpi_card(
         {delta_markup}
     </div>
     """
-    with col:
+    if col is not None:
+        with col:
+            st.markdown(html, unsafe_allow_html=True)
+    else:
         st.markdown(html, unsafe_allow_html=True)
 
 

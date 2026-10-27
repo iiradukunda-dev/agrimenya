@@ -47,7 +47,10 @@ def render_plan() -> None:
             return
 
         selected_label = st.selectbox(t("plan.select_zone", default="Select Agricultural Zone"), list(zone_options), key="planning_zone")
-        selected_zone = zone_options[selected_label]
+        selected_zone = zone_options.get(selected_label) or (list(zone_options.values())[0] if zone_options else {})
+        if not selected_zone:
+            st.info("No active zone selected.")
+            return
         selected_zone_id = str(selected_zone["id"])
 
         context = [

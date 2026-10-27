@@ -1,4 +1,7 @@
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 import requests
 import streamlit as st
 from components.charts import render_yield_chart

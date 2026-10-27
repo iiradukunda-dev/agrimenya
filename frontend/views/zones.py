@@ -5,7 +5,10 @@ Implements Page 2 of the frontend handoff: Zones list + zone detail.
 """
 import logging
 
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 import requests
 import streamlit as st
 from components.badges import priority_badge

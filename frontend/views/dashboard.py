@@ -8,7 +8,10 @@ weather forecasts, actionable recommendations, and data exports.
 import io
 import logging
 
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 import requests
 import streamlit as st
 

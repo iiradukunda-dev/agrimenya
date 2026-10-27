@@ -1,6 +1,6 @@
 import random
 
-import pandas as pd
+# pandas imported lazily in dataframe generation functions
 
 # Realistic mock data for Rwandan districts/sectors
 DISTRICTS = [
@@ -20,6 +20,7 @@ CROPS = ["Maize", "Beans", "Cassava", "Irish Potatoes", "Rice"]
 SEASONS = ["Season A", "Season B", "Season C"]
 
 def generate_mock_priority_data():
+    import pandas as pd
     data = []
     for d in DISTRICTS:
         for crop in CROPS:
@@ -64,6 +65,7 @@ def generate_mock_recommendations():
     ]
 
 def generate_mock_roadmap():
+    import pandas as pd
     lang = _get_lang()
     if lang == "rw":
         return pd.DataFrame([

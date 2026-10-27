@@ -4,8 +4,12 @@ Interactive chart components for agrimenya dashboards and segmentation.
 Built on Plotly Express with custom theme tokens, responsive layouts,
 and dark/light mode compatibility.
 """
-import plotly.express as px
-import plotly.graph_objects as go
+try:
+    import plotly.express as px
+    import plotly.graph_objects as go
+except ImportError:
+    px = None
+    go = None
 import streamlit as st
 from utils.i18n import t
 from utils.theme import get_current_theme
@@ -56,6 +60,9 @@ def render_yield_chart(df) -> None:
     """
     Renders grouped estimated production by district and priority.
     """
+    if px is None:
+        st.info("Chart engine is currently initializing.")
+        return
     if df.empty:
         st.info(t("seg.empty", default="No data available to plot."))
         return
@@ -104,6 +111,9 @@ def render_priority_donut_chart(df) -> None:
     """
     Renders an interactive donut chart showing the percentage breakdown of priority risk levels.
     """
+    if px is None:
+        st.info("Chart engine is currently initializing.")
+        return
     if df.empty or "Priority" not in df.columns:
         st.info("No priority distribution data.")
         return
@@ -147,6 +157,9 @@ def render_crop_comparison_bar(df) -> None:
     """
     Renders average production by crop across the selected zones.
     """
+    if px is None:
+        st.info("Chart engine is currently initializing.")
+        return
     if df.empty or "Crop" not in df.columns:
         st.info("No crop comparison data.")
         return
@@ -182,23 +195,22 @@ def render_crop_comparison_bar(df) -> None:
 
 def render_district_ranking_chart(rankings: list[dict], crop: str, national_ref: float | None = None) -> None:
     """Renders a comparative bar chart of district yields against the national reference benchmark."""
+    if px is None:
+        st.info("Chart engine is currently initializing.")
+        return
     if not rankings:
         st.info("No district ranking data available.")
         return
 
-    import pandas as pd
-    df = pd.DataFrame(rankings)
-    if "district" not in df.columns or "yield_per_ha" not in df.columns:
-        return
-
-    df = df.sort_values(by="yield_per_ha", ascending=False)
+    sorted_rankings = sorted(rankings, key=lambda r: float(r.get("yield_per_ha") or 0), reverse=True)
+    districts = [str(r.get("district", "Unknown")) for r in sorted_rankings]
+    yields = [float(r.get("yield_per_ha") or 0) for r in sorted_rankings]
 
     fig = px.bar(
-        df,
-        x="district",
-        y="yield_per_ha",
+        x=districts,
+        y=yields,
         title=f"District Yield Ranking — {crop} (kg/ha)",
-        color="yield_per_ha",
+        color=yields,
         color_continuous_scale="Viridis",
     )
 

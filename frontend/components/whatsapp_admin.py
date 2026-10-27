@@ -10,7 +10,10 @@ Provides full lifecycle management for WhatsApp operations:
 """
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 import streamlit as st
 
 from components.icons import render_icon_subheader
@@ -185,11 +188,11 @@ def _render_gateway_health(prefix: str):
             with st.container(border=True):
                 st.markdown("**Messages by Operational Category**")
                 if by_kind:
-                    kind_df = pd.DataFrame([
+                    kind_rows = [
                         {"Category": k.replace("_", " ").title(), "Count": v}
                         for k, v in by_kind.items()
-                    ])
-                    st.dataframe(kind_df, width="stretch", hide_index=True)
+                    ]
+                    st.dataframe(pd.DataFrame(kind_rows) if pd is not None else kind_rows, width="stretch", hide_index=True)
                 else:
                     st.caption("No categorised messages in the last 7 days.")
 
@@ -197,11 +200,11 @@ def _render_gateway_health(prefix: str):
             with st.container(border=True):
                 st.markdown("**Top Provider Error Codes**")
                 if top_errors:
-                    err_df = pd.DataFrame([
+                    err_rows = [
                         {"Error Code": str(k), "Occurrences": v, "Description": _explain_wa_error(str(k))}
                         for k, v in top_errors.items()
-                    ])
-                    st.dataframe(err_df, width="stretch", hide_index=True)
+                    ]
+                    st.dataframe(pd.DataFrame(err_rows) if pd is not None else err_rows, width="stretch", hide_index=True)
                 else:
                     st.success("✓ Zero delivery error codes recorded in the last 7 days.")
     else:
@@ -347,7 +350,7 @@ def _render_subscribers_directory(prefix: str):
                 "Consent Status": "🟢 OPTED IN" if opt_in else "🟡 PENDING",
                 "Opt-In Date": _format_cat_timestamp(c.get("opt_in_at")) if opt_in else "Not Recorded",
             })
-        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+        st.dataframe(pd.DataFrame(rows) if pd is not None else rows, width="stretch", hide_index=True)
     else:
         st.info("No subscribers match your search filter criteria.")
 
@@ -512,7 +515,7 @@ def _render_templates_simulator(prefix: str):
 
     # Templates Catalog
     st.markdown("**Official Approved Message Templates**")
-    t_df = pd.DataFrame([
+    tmpl_rows = [
         {
             "Template Name": t.get("name"),
             "Language": "Kinyarwanda (RW)" if t.get("language") == "rw" else "English (EN)",
@@ -521,8 +524,8 @@ def _render_templates_simulator(prefix: str):
             "Status": "🟢 APPROVED" if t.get("status") == "APPROVED" or not t.get("status") else str(t.get("status")).upper(),
         }
         for t in templates
-    ])
-    st.dataframe(t_df, width="stretch", hide_index=True)
+    ]
+    st.dataframe(pd.DataFrame(tmpl_rows) if pd is not None else tmpl_rows, width="stretch", hide_index=True)
 
     st.write("---")
 

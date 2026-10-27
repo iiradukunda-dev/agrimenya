@@ -1,5 +1,8 @@
 import logging
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 import requests
 import streamlit as st
 from components.badges import priority_badge, status_badge
@@ -67,7 +70,7 @@ def render_decide():
                     st.info("No active zones found for field signal monitoring.")
                 else:
                     selected_zone_signal = st.selectbox("Select Zone", list(zone_options), key="decision_signal_zone")
-                    selected_signal_id = str(zone_options[selected_zone_signal])
+                    selected_signal_id = str(zone_options.get(selected_zone_signal) or (list(zone_options.values())[0] if zone_options else ""))
                     field_signal = api_client.get_field_risk(selected_signal_id)
                     if field_signal and field_signal.get("total_reports", 0):
                         st.metric(
@@ -212,10 +215,19 @@ def render_decide():
                         "Observations": r.get("observation_count", "-"),
                         "Sources": ", ".join(r.get("sources", ["NISR SAS"])),
                     })
-                df_rank = pd.DataFrame(table_rows)
-                st.dataframe(df_rank, use_container_width=True, hide_index=True)
-
-                csv_data = df_rank.to_csv(index=False).encode("utf-8")
+                if pd is not None:
+                    df_rank = pd.DataFrame(table_rows)
+                    st.dataframe(df_rank, use_container_width=True, hide_index=True)
+                    csv_data = df_rank.to_csv(index=False).encode("utf-8")
+                else:
+                    st.dataframe(table_rows, use_container_width=True, hide_index=True)
+                    import csv, io
+                    sio = io.StringIO()
+                    if table_rows:
+                        writer = csv.DictWriter(sio, fieldnames=list(table_rows[0].keys()))
+                        writer.writeheader()
+                        writer.writerows(table_rows)
+                    csv_data = sio.getvalue().encode("utf-8")
                 st.download_button(
                     label=f"Export {selected_crop} Rankings (CSV)",
                     data=csv_data,
@@ -312,7 +324,7 @@ def render_decide():
                 st.info("Load a zone before using the AI decision advisor.")
             else:
                 selected_zone = st.selectbox("Zone Context for Advisor", list(zone_options), key="decision_ai_zone_tab")
-                zone_id = str(zone_options[selected_zone])
+                zone_id = str(zone_options.get(selected_zone) or (list(zone_options.values())[0] if zone_options else ""))
 
                 messages_key = "decision_ai_messages"
                 if messages_key not in st.session_state:

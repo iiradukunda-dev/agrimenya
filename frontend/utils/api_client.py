@@ -234,12 +234,13 @@ def get_alignment_dashboard() -> dict[str, Any]:
 # SEGMENTATION
 # ═══════════════════════════════════════════════════════════════════
 
-import pandas as pd
+# pandas imported lazily in dataframe methods
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_priority_data() -> pd.DataFrame:
+def get_priority_data() -> Any:
     """Segmentation map data for prioritizing agricultural zones."""
+    import pandas as pd
     if USE_MOCK_DATA:
         return mock_data.generate_mock_priority_data()
 
@@ -505,8 +506,9 @@ def disease_detect_upload(crop: str, symptoms: str, zone_id: str, image_file, im
 # ═══════════════════════════════════════════════════════════════════
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_roadmap(zone_id: str | None = None) -> pd.DataFrame:
+def get_roadmap(zone_id: str | None = None) -> Any:
     """Fetch the latest saved roadmap for the selected zone."""
+    import pandas as pd
     if USE_MOCK_DATA:
         return mock_data.generate_mock_roadmap()
 
