@@ -61,12 +61,19 @@ def test_offline_hub_page():
 
 def test_ensure_pwa_assets_execution():
     ensure_pwa_assets()
-    root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    root_static = os.path.join(root_dir, "static")
+    frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    root_dir = os.path.dirname(frontend_dir)
+    is_sys_root = (
+        not root_dir
+        or root_dir in ("/", "\\")
+        or os.path.splitdrive(root_dir)[1] in ("", "/", "\\")
+        or os.path.abspath(root_dir) == os.path.abspath(os.sep)
+    )
+    target_static = os.path.join(frontend_dir if is_sys_root else root_dir, "static")
 
-    assert os.path.exists(os.path.join(root_static, "manifest.json"))
-    assert os.path.exists(os.path.join(root_static, "sw.js"))
-    assert os.path.exists(os.path.join(root_static, "offline.html"))
+    assert os.path.exists(os.path.join(target_static, "manifest.json"))
+    assert os.path.exists(os.path.join(target_static, "sw.js"))
+    assert os.path.exists(os.path.join(target_static, "offline.html"))
 
 
 def test_ensure_pwa_assets_container_root_safety():

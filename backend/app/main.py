@@ -171,7 +171,7 @@ def readiness_check():
     state = health_check()
     if state["database_status"] != "ok" or not state["baselines_present"]:
         raise HTTPException(status_code=503, detail={"status": "not_ready", **state})
-    return {"status": "ready", **state}
+    return {**state, "status": "ready"}
 
 
 @app.get("/")
