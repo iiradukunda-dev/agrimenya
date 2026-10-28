@@ -341,7 +341,7 @@ def render_pwa_support() -> None:
         if (!pageLoader) {
           pageLoader = parentDoc.createElement('div');
           pageLoader.id = 'ag-page-loader';
-          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at 50% 25%, #05303f 0%, #021824 100%);z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
+          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#021824;z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
           pageLoader.innerHTML = `
             <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
               <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;position:relative;z-index:2;">
@@ -353,6 +353,16 @@ def render_pwa_support() -> None:
             </div>
           `;
           parentDoc.body.appendChild(pageLoader);
+        } else {
+          // Update loaders left in the parent document by an older app version.
+          pageLoader.style.background = '#021824';
+          const oldLogoHalo = pageLoader.querySelector('div[style*="130px"]');
+          if (oldLogoHalo) oldLogoHalo.remove();
+          const loaderLogo = pageLoader.querySelector('img');
+          if (loaderLogo) {
+            loaderLogo.style.filter = 'none';
+            loaderLogo.style.animation = 'none';
+          }
         }
 
         // Hide Page Loader once content is ready
