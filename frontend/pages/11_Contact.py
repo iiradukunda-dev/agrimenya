@@ -2,6 +2,7 @@
 import os
 
 import streamlit as st
+from components.footer import render_footer
 from components.errors import error_boundary
 from components.navbar import render_navbar
 from utils import api_client
@@ -88,5 +89,7 @@ with error_boundary("Feedback & Support"):
                     st.success(t("contact.success", "Your feedback was submitted."))
                 else:
                     st.error(t("contact.err_send", "Feedback could not be submitted. Please try again when the service is available."))
+
+render_footer()
 
 

@@ -3,6 +3,7 @@ import os
 
 import streamlit as st
 from components.errors import error_boundary
+from components.footer import render_footer
 from components.navbar import render_navbar
 from utils.i18n import t
 from utils.theme import load_theme
@@ -35,5 +36,7 @@ with error_boundary("Data Guide"):
                     st.write(explanation)
 
     st.info(t("guide.disclaimer", "Model outputs and forecasts support review. Confirm decisions with current field observations and qualified local advice."))
+
+render_footer()
 
 
