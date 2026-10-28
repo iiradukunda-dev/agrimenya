@@ -23,9 +23,7 @@ from components.cards import (
     render_weather_forecast_grid,
 )
 from components.charts import (
-    render_crop_comparison_bar,
-    render_priority_donut_chart,
-    render_yield_chart,
+    render_dashboard_chart,
 )
 from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader
@@ -204,7 +202,7 @@ def render_dashboard() -> None:
         st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
 
         # ── 5. Spatial Priority Map + Analytics ───────────────────────
-        map_col, chart_col = st.columns([3, 2], gap="medium")
+        map_col = st.container()
 
         with map_col:
             with st.container(border=True):
@@ -236,16 +234,11 @@ def render_dashboard() -> None:
                             if st.button("Create Seasonal Plan →", use_container_width=True, key="dash_open_plan"):
                                 st.switch_page("pages/8_Planning.py")
 
-        with chart_col:
-            with st.container(border=True):
-                render_priority_donut_chart(filtered_df)
-            with st.container(border=True):
-                render_crop_comparison_bar(filtered_df)
-
-        # ── 6. Grouped Production & Yield Analytics ───────────────────
+        # One configurable chart replaces the separate dashboard graphs.
         with st.container(border=True):
-            render_icon_subheader("assets/brain.svg", t("dashboard.section.yield_chart", "District Production & Yield Performance"))
-            render_yield_chart(filtered_df)
+            render_icon_subheader("assets/brain.svg", t("dashboard.chart.title", "Make the chart your own"))
+            st.caption(t("dashboard.chart.subtitle", "Choose what to compare. The chart updates as you adjust the controls."))
+            render_dashboard_chart(filtered_df)
 
         # ── 7. Live Micro-Climate & Weather Station ────────────────────
         with st.container(border=True):

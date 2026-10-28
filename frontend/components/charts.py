@@ -10,6 +10,10 @@ try:
 except ImportError:
     px = None
     go = None
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 import streamlit as st
 from utils.i18n import t
 from utils.theme import get_current_theme
@@ -190,6 +194,122 @@ def render_crop_comparison_bar(df) -> None:
     )
 
     st.plotly_chart(fig, width="stretch")
+
+
+def render_dashboard_chart(df) -> None:
+    """Render one user-configurable chart for the dashboard's filtered data."""
+    if px is None or pd is None:
+        st.info(t("dashboard.chart.unavailable", "The chart is unavailable right now."))
+        return
+    if df is None or df.empty:
+        st.info(t("dashboard.chart.empty", "There is no data for these filters yet."))
+        return
+
+    dimensions = [
+        column for column in ("District", "Crop", "Priority", "season", "Province")
+        if column in df.columns and df[column].nunique(dropna=True) > 1
+    ]
+    if not dimensions:
+        st.info(t("dashboard.chart.no_dimensions", "There are not enough categories to build a chart."))
+        return
+
+    excluded_numeric = {"id", "zone_id", "lat", "lon", "latitude", "longitude"}
+    numeric_columns = [
+        column for column in df.select_dtypes(include="number").columns
+        if column.lower() not in excluded_numeric and df[column].notna().any()
+    ]
+    preferred_metrics = [column for column in ("Production_MT", "Yield_MT_ha") if column in numeric_columns]
+    metric_columns = preferred_metrics + [column for column in numeric_columns if column not in preferred_metrics]
+
+    dimension_labels = {
+        "District": t("common.district", "District"),
+        "Crop": t("common.crop", "Crop"),
+        "Priority": t("dashboard.chart.priority", "Priority"),
+        "season": t("common.season", "Season"),
+        "Province": t("common.province", "Province"),
+    }
+    metric_labels = {
+        "Production_MT": t("dashboard.chart.production", "Production (MT)"),
+        "Yield_MT_ha": t("dashboard.chart.yield", "Yield (MT/ha)"),
+    }
+    for column in metric_columns:
+        metric_labels.setdefault(column, column.replace("_", " "))
+
+    controls = st.columns([1.15, 1.35, 1.0, 1.0, 1.25], gap="small")
+    with controls[0]:
+        x_column = st.selectbox(
+            t("dashboard.chart.group_by", "Group by"),
+            dimensions,
+            format_func=lambda value: dimension_labels.get(value, value),
+            key="dashboard_chart_group_by",
+        )
+    with controls[1]:
+        measure_options = [t("dashboard.chart.record_count", "Number of zones")] + metric_columns
+        measure = st.selectbox(
+            t("dashboard.chart.measure", "Measure"),
+            measure_options,
+            format_func=lambda value: (
+                value if value == measure_options[0] else metric_labels.get(value, value)
+            ),
+            key="dashboard_chart_measure",
+        )
+    with controls[2]:
+        summary = st.selectbox(
+            t("dashboard.chart.summary", "Summary"),
+            [t("dashboard.chart.average", "Average"), t("dashboard.chart.total", "Total")],
+            key="dashboard_chart_summary",
+            disabled=measure == measure_options[0],
+        )
+    with controls[3]:
+        chart_type = st.selectbox(
+            t("dashboard.chart.style", "Chart style"),
+            ["Bar", "Line", "Scatter"],
+            format_func=lambda value: t(f"dashboard.chart.style.{value.lower()}", value),
+            key="dashboard_chart_style",
+        )
+    with controls[4]:
+        no_breakdown = t("dashboard.chart.none", "No breakdown")
+        series_options = [""] + [column for column in dimensions if column != x_column]
+        selected_series = st.selectbox(
+            t("dashboard.chart.breakdown", "Break down by"),
+            series_options,
+            format_func=lambda value: (
+                no_breakdown if not value else dimension_labels.get(value, value)
+            ),
+            key="dashboard_chart_breakdown",
+        )
+        series_column = selected_series or None
+
+    group_columns = [x_column] + ([series_column] if series_column else [])
+    if measure == measure_options[0]:
+        chart_data = df.groupby(group_columns, dropna=False).size().rename("value").reset_index()
+        metric_title = t("dashboard.chart.record_count", "Number of zones")
+    else:
+        numeric_values = df[group_columns + [measure]].copy()
+        numeric_values[measure] = pd.to_numeric(numeric_values[measure], errors="coerce")
+        numeric_values = numeric_values.dropna(subset=[measure])
+        if numeric_values.empty:
+            st.info(t("dashboard.chart.no_values", "There are no values for this measure in the current selection."))
+            return
+        reducer = "mean" if summary == t("dashboard.chart.average", "Average") else "sum"
+        chart_data = numeric_values.groupby(group_columns, dropna=False)[measure].agg(reducer).rename("value").reset_index()
+        metric_title = f"{summary} {metric_labels.get(measure, measure)}"
+
+    if chart_data.empty:
+        st.info(t("dashboard.chart.empty", "There is no data for these filters yet."))
+        return
+    if chart_type == "Bar":
+        fig = px.bar(chart_data, x=x_column, y="value", color=series_column, barmode="group")
+    elif chart_type == "Line":
+        fig = px.line(chart_data, x=x_column, y="value", color=series_column, markers=True)
+    else:
+        fig = px.scatter(chart_data, x=x_column, y="value", color=series_column)
+
+    fig.update_layout(**get_plotly_layout(), height=420, xaxis_title=dimension_labels.get(x_column, x_column), yaxis_title=metric_title)
+    fig.update_xaxes(gridcolor="rgba(150, 150, 150, 0.1)", linecolor="rgba(150, 150, 150, 0.2)")
+    fig.update_yaxes(gridcolor="rgba(150, 150, 150, 0.1)", linecolor="rgba(150, 150, 150, 0.2)", rangemode="tozero")
+    fig.update_traces(hovertemplate=f"<b>%{{x}}</b><br>{metric_title}: %{{y:,.2f}}<extra></extra>")
+    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="dashboard_explorer_chart")
 
 
 
