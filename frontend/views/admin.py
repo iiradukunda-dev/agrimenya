@@ -204,12 +204,12 @@ def render_admin() -> None:
                 with h_cols[0]:
                     with st.container(border=True):
                         st.caption("API Core Service")
-                        st.markdown(f"<h3 style='margin:0;color:#38bdf8;'>{status.upper()}</h3>", unsafe_allow_html=True)
+                        st.markdown(f"<h3 style='margin:0;color:#0284c7;'>{status.upper()}</h3>", unsafe_allow_html=True)
                         st.caption("FastAPI &bull; Port 8000")
                 with h_cols[1]:
                     with st.container(border=True):
                         db_status = str(health.get("database_status", "unknown")).upper()
-                        db_color = "#34d399" if db_status == "OK" else "#f87171"
+                        db_color = "#059669" if db_status == "OK" else "#dc2626"
                         st.caption("Database Connectivity")
                         st.markdown(f"<h3 style='margin:0;color:{db_color};'>{db_status}</h3>", unsafe_allow_html=True)
                         st.caption("Supabase / PostgreSQL")
@@ -217,7 +217,7 @@ def render_admin() -> None:
                     with st.container(border=True):
                         env_label = str(health.get("env", "N/A")).upper()
                         st.caption("Active Environment")
-                        st.markdown(f"<h3 style='margin:0;color:#ffffff;'>{env_label}</h3>", unsafe_allow_html=True)
+                        st.markdown(f"<h3 style='margin:0;color:#0f172a;'>{env_label}</h3>", unsafe_allow_html=True)
                         st.caption("Runtime Profile")
                 with h_cols[3]:
                     with st.container(border=True):
@@ -229,12 +229,12 @@ def render_admin() -> None:
                         else:
                             src_label = "Unavailable"
                         st.caption("Yield Evidence Engine")
-                        st.markdown(f"<h3 style='margin:0;color:#38bdf8;'>{src_label}</h3>", unsafe_allow_html=True)
+                        st.markdown(f"<h3 style='margin:0;color:#0284c7;'>{src_label}</h3>", unsafe_allow_html=True)
                         st.caption("Primary Baseline Basis")
                 with h_cols[4]:
                     with st.container(border=True):
                         baselines_present = health.get("baselines_present", False)
-                        base_color = "#34d399" if baselines_present else "#f59e0b"
+                        base_color = "#059669" if baselines_present else "#d97706"
                         st.caption("NISR Yield Baselines")
                         st.markdown(f"<h3 style='margin:0;color:{base_color};'>{'LOADED' if baselines_present else 'OFFLINE'}</h3>", unsafe_allow_html=True)
                         st.caption("30 Districts Active")
@@ -247,22 +247,22 @@ def render_admin() -> None:
                     with w_cols[0]:
                         with st.container(border=True):
                             st.caption("Operating Mode")
-                            st.markdown(f"<h3 style='margin:0;color:#38bdf8;'>{str(wa_health.get('mode', 'sandbox')).upper()}</h3>", unsafe_allow_html=True)
+                            st.markdown(f"<h3 style='margin:0;color:#0284c7;'>{str(wa_health.get('mode', 'sandbox')).upper()}</h3>", unsafe_allow_html=True)
                             st.caption("Cloud API Integration")
                     with w_cols[1]:
                         with st.container(border=True):
                             st.caption("Active Contacts")
-                            st.markdown(f"<h3 style='margin:0;color:#ffffff;'>{wa_health.get('active_contacts', 0)}</h3>", unsafe_allow_html=True)
+                            st.markdown(f"<h3 style='margin:0;color:#0f172a;'>{wa_health.get('active_contacts', 0)}</h3>", unsafe_allow_html=True)
                             st.caption("Opted-in Phone Numbers")
                     with w_cols[2]:
                         with st.container(border=True):
                             st.caption("24h Outbound Messages")
-                            st.markdown(f"<h3 style='margin:0;color:#34d399;'>{wa_health.get('outbound_24h', 0)}</h3>", unsafe_allow_html=True)
+                            st.markdown(f"<h3 style='margin:0;color:#059669;'>{wa_health.get('outbound_24h', 0)}</h3>", unsafe_allow_html=True)
                             st.caption("Broadcast Dispatches")
                     with w_cols[3]:
                         with st.container(border=True):
                             failures = wa_health.get("failed_24h", 0)
-                            fail_color = "#34d399" if failures == 0 else "#f87171"
+                            fail_color = "#059669" if failures == 0 else "#dc2626"
                             st.caption("24h Failures")
                             st.markdown(f"<h3 style='margin:0;color:{fail_color};'>{failures}</h3>", unsafe_allow_html=True)
                             st.caption("Delivery Errors")
@@ -290,11 +290,11 @@ def render_admin() -> None:
                 with stat_cols[0]:
                     with st.container(border=True):
                         st.caption("Total Zones Registered")
-                        st.markdown(f"<h3 style='margin:0;color:#ffffff;'>{len(admin_zones)}</h3>", unsafe_allow_html=True)
+                        st.markdown(f"<h3 style='margin:0;color:#0f172a;'>{len(admin_zones)}</h3>", unsafe_allow_html=True)
                 with stat_cols[1]:
                     with st.container(border=True):
                         st.caption("Districts Covered")
-                        st.markdown(f"<h3 style='margin:0;color:#38bdf8;'>{len(districts_set)} / 30</h3>", unsafe_allow_html=True)
+                        st.markdown(f"<h3 style='margin:0;color:#0284c7;'>{len(districts_set)} / 30</h3>", unsafe_allow_html=True)
                 with stat_cols[2]:
                     with st.container(border=True):
                         st.caption("Crops Mapped")
@@ -441,12 +441,12 @@ def render_admin() -> None:
                 with plan_stat1:
                     with st.container(border=True):
                         st.caption("Total Seasonal Plans")
-                        st.markdown(f"<h3 style='margin:0;color:#ffffff;'>{len(admin_plans)}</h3>", unsafe_allow_html=True)
+                        st.markdown(f"<h3 style='margin:0;color:#0f172a;'>{len(admin_plans)}</h3>", unsafe_allow_html=True)
                 with plan_stat2:
                     with st.container(border=True):
                         unique_zones = len({str(p.get("zone_id")) for p in admin_plans if p.get("zone_id")})
                         st.caption("Zones with Plans")
-                        st.markdown(f"<h3 style='margin:0;color:#38bdf8;'>{unique_zones}</h3>", unsafe_allow_html=True)
+                        st.markdown(f"<h3 style='margin:0;color:#0284c7;'>{unique_zones}</h3>", unsafe_allow_html=True)
 
                 search_plan = st.text_input("Filter plans by title or zone ID", key="admin_plan_search", placeholder="e.g. Maize Planting, Gasabo")
                 filtered_plans = admin_plans
@@ -509,7 +509,7 @@ def render_admin() -> None:
 
                 st.markdown(
                     """
-                    <div style="padding:10px 16px; border-radius:10px; background:rgba(2, 132, 199, 0.15); border:1px solid rgba(56, 189, 248, 0.35); font-size:0.86rem; color:#bae6fd; margin-bottom:1rem;">
+                    <div style="padding:10px 16px; border-radius:10px; background:linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border:1px solid rgba(2, 132, 199, 0.25); border-left:4px solid #0284c7; font-size:0.86rem; color:#1e293b; margin-bottom:1rem;">
                         <strong>Dispatch Architecture:</strong> Alerts composed here are published to the public dashboard feed and emailed to active Farmer Community accounts. Outbound WhatsApp delivery requires review and certification in the <strong>WhatsApp Command Center</strong> tab.
                     </div>
                     """,
@@ -565,7 +565,7 @@ def render_admin() -> None:
 
             st.markdown(
                 """
-                <div style="padding:12px 18px; border-radius:12px; background:rgba(8, 26, 38, 0.8); border:1px solid rgba(56, 189, 248, 0.28); margin-bottom:1.2rem;">
+                <div style="padding:12px 18px; border-radius:12px; background:linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border:1px solid rgba(2, 132, 199, 0.25); border-left:4px solid #0284c7; color:#0f172a; margin-bottom:1.2rem;">
                     <strong>Seasonal Agricultural Survey (SAS) Workflow:</strong> Upload official NISR district-by-crop yield tables.
                     Required columns: <code>district, crop, season, yield_kg_ha</code>.
                     Optional columns: <code>production_mt, cultivated_area_ha</code>.
@@ -721,21 +721,21 @@ def render_admin() -> None:
             mod_kpis = st.columns(4)
             with mod_kpis[0]:
                 with st.container(border=True):
-                    rep_color = "#f87171" if len(reports) > 0 else "#34d399"
+                    rep_color = "#dc2626" if len(reports) > 0 else "#059669"
                     st.caption("Open Reports")
                     st.markdown(f"<h3 style='margin:0;color:{rep_color};'>{len(reports)}</h3>", unsafe_allow_html=True)
             with mod_kpis[1]:
                 with st.container(border=True):
                     st.caption("Field Observations")
-                    st.markdown(f"<h3 style='margin:0;color:#ffffff;'>{len(field_reports)}</h3>", unsafe_allow_html=True)
+                    st.markdown(f"<h3 style='margin:0;color:#0f172a;'>{len(field_reports)}</h3>", unsafe_allow_html=True)
             with mod_kpis[2]:
                 with st.container(border=True):
                     st.caption("Community Posts")
-                    st.markdown(f"<h3 style='margin:0;color:#38bdf8;'>{len(all_posts)}</h3>", unsafe_allow_html=True)
+                    st.markdown(f"<h3 style='margin:0;color:#0284c7;'>{len(all_posts)}</h3>", unsafe_allow_html=True)
             with mod_kpis[3]:
                 with st.container(border=True):
                     st.caption("Farmer Accounts")
-                    st.markdown(f"<h3 style='margin:0;color:#10b981;'>{len(comm_accounts)}</h3>", unsafe_allow_html=True)
+                    st.markdown(f"<h3 style='margin:0;color:#059669;'>{len(comm_accounts)}</h3>", unsafe_allow_html=True)
 
             mod_tabs = st.tabs([
                 f"Open Reports ({len(reports)})",

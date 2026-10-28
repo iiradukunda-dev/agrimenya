@@ -21,6 +21,22 @@ from utils import api_client
 
 CAT_TZ = ZoneInfo("Africa/Kigali")
 
+def safe_dialog(title: str, width: str = "large"):
+    """Creates a Streamlit @st.dialog with graceful fallback in headless/test environments."""
+    def decorator(func):
+        try:
+            dlg = st.dialog(title, width=width)(func)
+            def wrapper(*args, **kwargs):
+                try:
+                    return dlg(*args, **kwargs)
+                except Exception:
+                    return func(*args, **kwargs)
+            return wrapper
+        except Exception:
+            return func
+    return decorator
+
+
 
 def _format_cat_timestamp(iso_str: str | None) -> str:
     """Format an ISO timestamp into Central Africa Time (CAT, UTC+2)."""
@@ -49,19 +65,17 @@ def render_whatsapp_admin_panel(key_prefix: str = "wa_mgmt", embedded_mode: bool
         render_icon_subheader("assets/message.svg", "WhatsApp Gateway & Broadcast Command Center")
 
     # Explanatory Architecture Banner
-    st.markdown(
+    st.html(
         """
         <div style="padding:14px 18px; border-radius:12px; background:linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border:1.5px solid rgba(16, 185, 129, 0.35); border-top:3px solid #10b981; box-shadow:0 4px 14px rgba(16, 185, 129, 0.08); margin-bottom:1.2rem;">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
-
                 <strong style="color:#065f46; font-size:1.05rem;">Agrimenya WhatsApp Operations & Advisory Dispatch Engine</strong>
             </div>
             <p style="margin:0; font-size:0.9rem; color:#334155; line-height:1.45;">
                 Manage verified farmer contacts, record mandatory Meta opt-in consent, simulate template messages, and broadcast localized agricultural alerts with live delivery tracking.
             </p>
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     # 5 Structured Operational Subtabs
@@ -225,6 +239,76 @@ def _explain_wa_error(code: str) -> str:
 # ─────────────────────────────────────────────────────────────
 # 2. Subscribers Directory & Onboarding
 # ─────────────────────────────────────────────────────────────
+@safe_dialog("Onboard WhatsApp Subscriber", width="large")
+def _show_onboard_dialog(prefix: str):
+    st.html(
+        """
+        <div style="padding:10px 14px; border-radius:8px; background:rgba(2, 132, 199, 0.08); border:1px solid rgba(2, 132, 199, 0.25); margin-bottom:1rem; font-size:0.88rem; color:#0f172a;">
+            <strong>Onboarding Requirement:</strong> Registering creates the subscriber profile. To receive automated broadcasts, the contact must provide explicit opt-in consent (recordable in the 'Consent & Alert Preferences' tab).
+        </div>
+        """
+    )
+
+    with st.form(f"{prefix}_create_subscriber_dlg_form", clear_on_submit=True):
+        c_name, c_phone = st.columns(2)
+        with c_name:
+            display_name = st.text_input("Full Name / Cooperative Name", placeholder="e.g. Habimana Jean Pierre")
+        with c_phone:
+            phone = st.text_input("Phone Number", placeholder="0788123456 or +250788123456")
+
+        c_bsuid, c_role = st.columns(2)
+        with c_bsuid:
+            bsuid = st.text_input("WhatsApp BSUID (Optional for bot users)", placeholder="Optional Bot Specific User ID")
+        with c_role:
+            role = st.selectbox(
+                "Role in Agriculture Value Chain",
+                ["farmer", "extension_officer", "cooperative_leader", "planner", "other"],
+                format_func=lambda r: r.replace("_", " ").title(),
+            )
+
+        c_lang, c_crops = st.columns(2)
+        with c_lang:
+            language = st.selectbox("Preferred Communication Language", ["en", "rw"], format_func=lambda l: "Kinyarwanda (RW)" if l == "rw" else "English (EN)")
+        with c_crops:
+            crops = st.text_input("Target Crops (Comma-separated)", placeholder="e.g. Maize, Beans, Irish Potatoes")
+
+        # Zone Selection
+        zones = api_client.get_zones() or []
+        zone_options = {"National / Unassigned": None}
+        for z in zones:
+            z_id = z.get("id")
+            if not z_id:
+                continue
+            label = f"{z.get('district', 'Unknown')} · {z.get('sector') or z.get('cell') or 'General'} ({z.get('crop') or 'All'})"
+            zone_options[label] = str(z_id)
+
+        chosen_zone_label = st.selectbox("Agricultural Zone Assignment", list(zone_options.keys()))
+        chosen_zone_id = zone_options.get(chosen_zone_label)
+
+        submit_contact = st.form_submit_button("Register WhatsApp Subscriber", type="primary")
+
+        if submit_contact:
+            if not phone.strip() and not bsuid.strip():
+                st.error("Please provide at least a Phone Number or WhatsApp BSUID.")
+            else:
+                crop_list = [c.strip() for c in crops.split(",") if c.strip()]
+                payload = {
+                    "display_name": display_name.strip() or None,
+                    "phone": phone.strip() or None,
+                    "bsuid": bsuid.strip() or None,
+                    "role": role,
+                    "language": language,
+                    "zone_id": chosen_zone_id,
+                    "crops": crop_list,
+                }
+                result = api_client.create_whatsapp_contact(payload)
+                if result:
+                    st.success(f"Successfully registered subscriber '{display_name or phone}'!")
+                    st.rerun()
+                else:
+                    st.error("Failed to register contact. Ensure phone number is valid and not already registered.")
+
+
 def _render_subscribers_directory(prefix: str):
     st.markdown("### WhatsApp Farmer & Extension Directory")
     st.caption("Centralised registry of verified farmers, cooperative leaders, and agronomists receiving Agri-Menya advisory messages.")
@@ -236,74 +320,8 @@ def _render_subscribers_directory(prefix: str):
     with c_sub_hdr:
         st.markdown("#### Subscriber Directory")
     with c_sub_act:
-        with st.popover("Onboard New Subscriber", use_container_width=True):
-            st.markdown(
-                """
-                <div style="padding:10px 14px; border-radius:8px; background:rgba(2, 132, 199, 0.08); border:1px solid rgba(2, 132, 199, 0.25); margin-bottom:1rem; font-size:0.88rem; color:#0f172a;">
-                    <strong>Onboarding Requirement:</strong> Registering creates the subscriber profile. To receive automated broadcasts, the contact must provide explicit opt-in consent (recordable in the 'Consent & Alert Preferences' tab).
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            with st.form(f"{prefix}_create_subscriber_popover_form", clear_on_submit=True):
-                c_name, c_phone = st.columns(2)
-                with c_name:
-                    display_name = st.text_input("Full Name / Cooperative Name", placeholder="e.g. Habimana Jean Pierre")
-                with c_phone:
-                    phone = st.text_input("Phone Number", placeholder="0788123456 or +250788123456")
-
-                c_bsuid, c_role = st.columns(2)
-                with c_bsuid:
-                    bsuid = st.text_input("WhatsApp BSUID (Optional for bot users)", placeholder="Optional Bot Specific User ID")
-                with c_role:
-                    role = st.selectbox(
-                        "Role in Agriculture Value Chain",
-                        ["farmer", "extension_officer", "cooperative_leader", "planner", "other"],
-                        format_func=lambda r: r.replace("_", " ").title(),
-                    )
-
-                c_lang, c_crops = st.columns(2)
-                with c_lang:
-                    language = st.selectbox("Preferred Communication Language", ["en", "rw"], format_func=lambda l: "Kinyarwanda (RW)" if l == "rw" else "English (EN)")
-                with c_crops:
-                    crops = st.text_input("Target Crops (Comma-separated)", placeholder="e.g. Maize, Beans, Irish Potatoes")
-
-                # Zone Selection
-                zones = api_client.get_zones() or []
-                zone_options = {"National / Unassigned": None}
-                for z in zones:
-                    z_id = z.get("id")
-                    if not z_id:
-                        continue
-                    label = f"{z.get('district', 'Unknown')} · {z.get('sector') or z.get('cell') or 'General'} ({z.get('crop') or 'All'})"
-                    zone_options[label] = str(z_id)
-
-                chosen_zone_label = st.selectbox("Agricultural Zone Assignment", list(zone_options.keys()))
-                chosen_zone_id = zone_options.get(chosen_zone_label)
-
-                submit_contact = st.form_submit_button("Register WhatsApp Subscriber", type="primary")
-
-                if submit_contact:
-                    if not phone.strip() and not bsuid.strip():
-                        st.error("Please provide at least a Phone Number or WhatsApp BSUID.")
-                    else:
-                        crop_list = [c.strip() for c in crops.split(",") if c.strip()]
-                        payload = {
-                            "display_name": display_name.strip() or None,
-                            "phone": phone.strip() or None,
-                            "bsuid": bsuid.strip() or None,
-                            "role": role,
-                            "language": language,
-                            "zone_id": chosen_zone_id,
-                            "crops": crop_list,
-                        }
-                        result = api_client.create_whatsapp_contact(payload)
-                        if result:
-                            st.success(f"Successfully registered subscriber '{display_name or phone}'!")
-                            st.rerun()
-                        else:
-                            st.error("Failed to register contact. Ensure phone number is valid and not already registered.")
+        if st.button("Onboard New Subscriber", key=f"{prefix}_open_onboard_btn", type="primary", use_container_width=True):
+            _show_onboard_dialog(prefix)
 
     st.write("")
 
@@ -581,27 +599,6 @@ def _render_templates_simulator(prefix: str):
             preview_clicked = st.button("Render WhatsApp Mobile Preview", type="primary", key=f"{prefix}_render_btn")
 
     with sim_col_phone:
-        # WhatsApp Phone Mockup Container
-        st.markdown(
-            """
-            <div style="max-width:380px; margin:0 auto; border-radius:28px; background:#0B141A; border:4px solid #1F2C34; box-shadow:0 12px 36px rgba(0,0,0,0.6); overflow:hidden; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-                <!-- WhatsApp Top Bar -->
-                <div style="background:#1F2C34; padding:12px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.08);">
-                    <div style="width:38px; height:38px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#fff; font-weight:700;">
-                        AM
-                    </div>
-                    <div>
-                        <div style="color:#E9EDEF; font-weight:600; font-size:0.95rem; display:flex; align-items:center; gap:4px;">
-                            Agri-Menya Verified
-                            
-                        </div>
-                        <div style="color:#8696A0; font-size:0.75rem;">Official Ministry Alert System</div>
-                    </div>
-                </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
         # Call live preview API
         rendered_text = None
         if preview_clicked or True:
@@ -616,21 +613,32 @@ def _render_templates_simulator(prefix: str):
         current_time_str = datetime.now(CAT_TZ).strftime("%H:%M")
         bubble_html = rendered_text.replace("\n", "<br/>")
 
-        st.markdown(
+        st.html(
             f"""
+            <div style="max-width:380px; margin:0 auto; border-radius:28px; background:#0B141A; border:4px solid #1F2C34; box-shadow:0 12px 36px rgba(0,0,0,0.4); overflow:hidden; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                <!-- WhatsApp Top Bar -->
+                <div style="background:#1F2C34; padding:12px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.08);">
+                    <div style="width:38px; height:38px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#fff; font-weight:700;">
+                        AM
+                    </div>
+                    <div>
+                        <div style="color:#E9EDEF; font-weight:600; font-size:0.95rem; display:flex; align-items:center; gap:4px;">
+                            Agri-Menya Verified
+                        </div>
+                        <div style="color:#8696A0; font-size:0.75rem;">Official Ministry Alert System</div>
+                    </div>
+                </div>
                 <!-- Chat Area -->
                 <div style="background:#0B141A; min-height:280px; padding:16px; background-image:radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size:16px 16px;">
                     <div style="background:#005C4B; color:#E9EDEF; padding:10px 14px; border-radius:8px 8px 8px 0; max-width:88%; font-size:0.88rem; line-height:1.4; box-shadow:0 2px 4px rgba(0,0,0,0.3); margin-top:10px;">
                         <div>{bubble_html}</div>
                         <div style="display:flex; justify-content:flex-end; align-items:center; gap:4px; margin-top:6px; font-size:0.7rem; color:#8696A0;">
                             <span>{current_time_str}</span>
-                            
                         </div>
                     </div>
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
 

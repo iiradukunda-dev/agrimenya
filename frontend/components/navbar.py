@@ -18,12 +18,13 @@ PUBLIC_PAGES = {"Home.py", "3_Dashboard.py", ""}
 
 
 def init_user_session() -> None:
-    """Initialize session state so the app always defaults to signed in."""
+    """Initialize session state so the app always defaults to signed in and White & Sky Blue theme."""
     try:
         if "authenticated" not in st.session_state:
             st.session_state["authenticated"] = True
         if "user_profile" not in st.session_state:
             st.session_state["user_profile"] = dict(DEFAULT_USER)
+        st.session_state["ag_theme_mode"] = "light"
     except Exception:
         pass
 
@@ -679,7 +680,7 @@ def render_navbar() -> None:
     # Single Centered Row Container
     with st.container(key="ag_navbar"):
         c_home, c_overview, c_zones, c_decide, c_more, c_sep, c_signin, c_lang = st.columns(
-            [1.15, 1.1, 0.95, 1.15, 0.9, 0.08, 1.45, 0.45], vertical_alignment="center"
+            [1.15, 1.1, 0.95, 1.15, 0.9, 0.02, 1.45, 0.45], vertical_alignment="center"
         )
         with c_home:
             st.page_link("Home.py", label=t("nav.home", "Home"))
@@ -721,11 +722,9 @@ def render_navbar() -> None:
                         f'<button id="ag-nav-install-btn" onclick="if(window.parent&&window.parent.__agrimenya_trigger_install){{window.parent.__agrimenya_trigger_install();}}else{{const b=window.parent.document.getElementById(\'ag-pwa-install-badge\');if(b){{b.click();}}}}" style="width:100%;text-align:left;border:none;background:linear-gradient(135deg,#031d28 0%,#063143 100%);color:#ffffff;border:1.5px solid rgba(56,189,248,0.55);border-radius:8px;padding:0.45rem 0.75rem;margin-top:0.35rem;display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:0.85rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,0.35);transition:all 0.2s;"><img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(56,189,248,0.9));"> <span style="color:#ffffff;">{t("nav.install_app", "Install agrimenya App")}</span></button>',
                         unsafe_allow_html=True,
                     )
+
             with c_sep:
-                st.markdown(
-                    '<div style="width:1.5px;height:20px;background:rgba(2,132,199,0.25);margin:0 4px;border-radius:1px;"></div>',
-                    unsafe_allow_html=True,
-                )
+                st.empty()
             with c_signin:
                 officer_name = user.get("name", "Officer") if isinstance(user, dict) else "Officer"
                 with st.popover(officer_name, width="stretch"):
@@ -748,11 +747,9 @@ def render_navbar() -> None:
                 st.empty()
             with c_more:
                 st.empty()
+
             with c_sep:
-                st.markdown(
-                    '<div style="width:1.5px;height:20px;background:rgba(2,132,199,0.25);margin:0 4px;border-radius:1px;"></div>',
-                    unsafe_allow_html=True,
-                )
+                st.empty()
             with c_signin:
                 if st.button("Sign In", key="navbar_signin_action_btn", type="primary", use_container_width=True):
                     st.session_state["authenticated"] = True
@@ -764,7 +761,6 @@ def render_navbar() -> None:
 
 
     st.markdown('<hr class="ag-nav-rule">', unsafe_allow_html=True)
-    render_floating_ai_widget()
     render_pwa_support()
 
 
