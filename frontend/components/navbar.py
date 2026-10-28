@@ -861,6 +861,7 @@ def render_navbar() -> None:
 
 
     st.markdown('<hr class="ag-nav-rule">', unsafe_allow_html=True)
+    render_floating_ai_widget()
     render_pwa_support()
 
 
