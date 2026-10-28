@@ -259,15 +259,9 @@ def render_navbar() -> None:
 
       /* ACTIVE / SELECTED TAB: transparent capsule with a blue outline */
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"],
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"],
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink-NavLink"][aria-current="page"],
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"].ag-nav-active,
       .st-key-ag_navbar a[aria-current="page"],
-      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"],
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"],
-      .st-key-ag_navbar a.ag-nav-active,
-      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active {
+      .st-key-ag_navbar a.ag-nav-active {
         background: transparent !important;
         background-color: transparent !important;
         box-sizing: border-box !important;
@@ -282,6 +276,14 @@ def render_navbar() -> None:
         justify-content: center !important;
         text-decoration: none !important;
         transition: all 0.2s ease !important;
+      }
+      /* Keep the Streamlit page-link wrapper plain so only the link is outlined. */
+      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active,
+      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"] {
+        border: none !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
       }
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"] p,
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"] p,
@@ -703,6 +705,15 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"].ag-nav-active,
       .st-key-ag_navbar a.ag-nav-active {
         box-sizing: border-box !important;
+        border: none !important;
+        border-radius: 9999px !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+      .st-key-ag_navbar a[aria-current="page"],
+      .st-key-ag_navbar a.ag-nav-active {
+        box-sizing: border-box !important;
         border: 2px solid #0875d1 !important;
         border-radius: 9999px !important;
         background: transparent !important;
@@ -714,6 +725,14 @@ def render_navbar() -> None:
       .st-key-ag_navbar a[aria-current="page"]:hover,
       .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active:hover,
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"].ag-nav-active:hover,
+      .st-key-ag_navbar a.ag-nav-active:hover {
+        border: none !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+      .st-key-ag_navbar a[aria-current="page"]:hover,
       .st-key-ag_navbar a.ag-nav-active:hover {
         border: 2px solid #0875d1 !important;
         background: transparent !important;
