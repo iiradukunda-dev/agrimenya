@@ -13,7 +13,7 @@ def toggle_theme() -> None:
     st.session_state["ag_theme_mode"] = "dark" if current == "light" else "light"
 
 
-def load_theme() -> None:
+def load_theme(show_sidebar: bool = False) -> None:
     """Apply a modern, high-contrast, professional visual system with dark/light mode support."""
     theme_mode = get_current_theme()
     is_dark = theme_mode == "dark"
@@ -35,6 +35,22 @@ def load_theme() -> None:
     input_bg = "#0a1524" if is_dark else "#ffffff"
     input_border = "rgba(56, 189, 248, 0.3)" if is_dark else "rgba(2, 132, 199, 0.25)"
     metric_bg = "#111c2e" if is_dark else "#ffffff"
+    sidebar_suppression = "" if show_sidebar else """
+    [data-testid="stSidebar"], [data-testid="collapsedControl"],
+    section[data-testid="stSidebar"], aside[data-testid="stSidebar"] {
+      display: none !important;
+      width: 0 !important;
+      visibility: hidden !important;
+    }
+    """
+    sidebar_navigation_css = """
+    [data-testid="stSidebar"], section[data-testid="stSidebar"], aside[data-testid="stSidebar"] {
+      display: flex !important; visibility: visible !important; pointer-events: auto !important;
+    }
+    [data-testid="collapsedControl"] { display: flex !important; visibility: visible !important; }
+    [data-testid="stSidebarNav"] { display: none !important; }
+    [data-testid="stSidebarContent"] { padding-top: 1rem !important; }
+    """ if show_sidebar else ""
 
     st.html(f"""
     <style>
@@ -130,15 +146,8 @@ def load_theme() -> None:
       animation: ag-fade-in 0.3s ease-out;
     }}
 
-    /* Sidebar suppression (custom executive top navigation is used) */
-    [data-testid="stSidebar"],
-    [data-testid="collapsedControl"],
-    section[data-testid="stSidebar"],
-    aside[data-testid="stSidebar"] {{
-      display: none !important;
-      width: 0 !important;
-      visibility: hidden !important;
-    }}
+    {sidebar_suppression}
+    {sidebar_navigation_css}
 
     /* Typography */
     h1, h2, h3, h4, h5, h6 {{

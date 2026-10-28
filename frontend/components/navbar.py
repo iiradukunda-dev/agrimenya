@@ -110,9 +110,9 @@ def check_page_access() -> bool:
     return False
 
 
-def render_navbar() -> None:
+def render_navbar(show_sidebar: bool = False) -> None:
     """Render the unified centered floating pill navigation styled with agrimenya theme tokens."""
-    st.markdown("""
+    style = """
       <style>
       @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
       [data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; }
@@ -776,7 +776,13 @@ def render_navbar() -> None:
         transform: translateY(-2px) !important;
       }
       </style>
-    """, unsafe_allow_html=True)
+    """
+    if show_sidebar:
+        style = style.replace(
+            '      [data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; }',
+            "",
+        )
+    st.markdown(style, unsafe_allow_html=True)
 
     init_user_session()
     auth = is_authenticated()

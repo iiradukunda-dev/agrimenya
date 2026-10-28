@@ -206,7 +206,7 @@ def render_dashboard_chart(df) -> None:
         return
 
     dimensions = [
-        column for column in ("District", "Crop", "Priority", "season", "Province")
+        column for column in ("District", "Crop", "Priority", "Season", "season", "Province")
         if column in df.columns and df[column].nunique(dropna=True) > 1
     ]
     if not dimensions:
@@ -218,7 +218,7 @@ def render_dashboard_chart(df) -> None:
         column for column in df.select_dtypes(include="number").columns
         if column.lower() not in excluded_numeric and df[column].notna().any()
     ]
-    preferred_metrics = [column for column in ("Production_MT", "Yield_MT_ha") if column in numeric_columns]
+    preferred_metrics = [column for column in ("Production (MT)", "Yield (kg/ha)", "Production_MT", "Yield_MT_ha") if column in numeric_columns]
     metric_columns = preferred_metrics + [column for column in numeric_columns if column not in preferred_metrics]
 
     dimension_labels = {
@@ -226,11 +226,14 @@ def render_dashboard_chart(df) -> None:
         "Crop": t("common.crop", "Crop"),
         "Priority": t("dashboard.chart.priority", "Priority"),
         "season": t("common.season", "Season"),
+        "Season": t("common.season", "Season"),
         "Province": t("common.province", "Province"),
     }
     metric_labels = {
         "Production_MT": t("dashboard.chart.production", "Production (MT)"),
         "Yield_MT_ha": t("dashboard.chart.yield", "Yield (MT/ha)"),
+        "Production (MT)": "Production (MT)",
+        "Yield (kg/ha)": "Yield (kg/ha)",
     }
     for column in metric_columns:
         metric_labels.setdefault(column, column.replace("_", " "))
@@ -244,7 +247,8 @@ def render_dashboard_chart(df) -> None:
             key="dashboard_chart_group_by",
         )
     with controls[1]:
-        measure_options = [t("dashboard.chart.record_count", "Number of zones")] + metric_columns
+        record_count_label = "Records"
+        measure_options = [record_count_label] + metric_columns
         measure = st.selectbox(
             t("dashboard.chart.measure", "Measure"),
             measure_options,
@@ -258,7 +262,7 @@ def render_dashboard_chart(df) -> None:
             t("dashboard.chart.summary", "Summary"),
             [t("dashboard.chart.average", "Average"), t("dashboard.chart.total", "Total")],
             key="dashboard_chart_summary",
-            disabled=measure == measure_options[0],
+            disabled=measure == record_count_label,
         )
     with controls[3]:
         chart_type = st.selectbox(
@@ -281,9 +285,9 @@ def render_dashboard_chart(df) -> None:
         series_column = selected_series or None
 
     group_columns = [x_column] + ([series_column] if series_column else [])
-    if measure == measure_options[0]:
+    if measure == record_count_label:
         chart_data = df.groupby(group_columns, dropna=False).size().rename("value").reset_index()
-        metric_title = t("dashboard.chart.record_count", "Number of zones")
+        metric_title = record_count_label
     else:
         numeric_values = df[group_columns + [measure]].copy()
         numeric_values[measure] = pd.to_numeric(numeric_values[measure], errors="coerce")

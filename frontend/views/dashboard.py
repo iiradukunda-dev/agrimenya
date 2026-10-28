@@ -31,6 +31,14 @@ from components.maps import render_priority_map
 from components.navbar import render_page_header
 from utils import api_client
 from utils.i18n import t
+from views.data_insights import (
+    build_insights,
+    crop_key,
+    filter_dashboard_metrics,
+    normalize_agri_metrics,
+    render_data_workspace,
+    seasons_match,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -49,10 +57,27 @@ def _metric_number(value, suffix: str = "", grouped: bool = False) -> str:
 @error_boundary("Dashboard")
 def render_dashboard() -> None:
     try:
+        priority_df = api_client.get_priority_data()
+        if not isinstance(priority_df, pd.DataFrame):
+            priority_df = pd.DataFrame()
+        metrics_df = normalize_agri_metrics(api_client.get_agri_metrics())
+        if not metrics_df.empty and not priority_df.empty and "id" in priority_df and "Priority" in priority_df:
+            priority_lookup = priority_df.dropna(subset=["id"]).drop_duplicates("id").set_index("id")["Priority"]
+            metrics_df["Priority"] = metrics_df["Zone ID"].map(priority_lookup)
+
+        section = st.sidebar.radio(
+            "Analytics workspace",
+            ["Dashboard", "Data Explorer", "Visualizations", "Reports", "Settings"],
+            key="analytics_workspace_section",
+        )
+        if section != "Dashboard":
+            render_data_workspace(section, metrics_df)
+            return
+
         # ── 1. Page Header with Breadcrumbs & Mission Badge ─────────────
         render_page_header(
-            title=t("dashboard.title", "Executive Dashboard"),
-            subtitle=t("dashboard.subtitle", "Operational overview of agricultural zones, crop production, and climate indicators across Rwanda"),
+            title="Your Data Insights Dashboard",
+            subtitle="Explore real agricultural records, compare yields, and see how results change across crops, districts, and seasons.",
             badge="NISR 2026 • OPERATIONAL COMMAND",
             breadcrumbs=[
                 ("Agri-Menya", "Home.py"),
@@ -61,8 +86,11 @@ def render_dashboard() -> None:
         )
 
         # ── 2. Data Fetching ──────────────────────────────────────────
-        df = api_client.get_priority_data()
-        dashboard_data = api_client.get_alignment_dashboard() or {}
+        df = priority_df
+        if not df.empty and "District" in df.columns:
+            valid_district = df["District"].astype(str).str.strip().str.casefold().ne("")
+            valid_district &= df["District"].astype(str).str.strip().str.casefold().ne("unknown")
+            df = df[df["District"].notna() & valid_district]
 
         # ── 3. Global Synchronized Filter Control Bar ──────────────────
         with st.container(border=True):
@@ -77,21 +105,23 @@ def render_dashboard() -> None:
             # Available filter options derived from live dataframe
             all_seasons_label = t("common.all_seasons", "All seasons")
             season_options = [all_seasons_label]
-            if not df.empty and "season" in df.columns:
+            if not metrics_df.empty and "Season" in metrics_df.columns:
+                season_options += sorted(str(s) for s in metrics_df["Season"].dropna().unique())
+            elif not df.empty and "season" in df.columns:
                 season_options += sorted(str(s) for s in df["season"].dropna().unique())
 
             crop_options = []
-            if not df.empty and "Crop" in df.columns:
-                crop_options = sorted(str(c) for c in df["Crop"].dropna().unique())
+            if not metrics_df.empty and "Crop" in metrics_df.columns:
+                crop_options = sorted(str(c) for c in metrics_df["Crop"].dropna().unique())
 
             priority_options = ["High", "Medium", "Low"]
 
             all_districts_label = t("common.all_districts", "All Districts")
             district_options = [all_districts_label]
-            if not df.empty and "District" in df.columns:
-                district_options += sorted(str(d) for d in df["District"].dropna().unique())
+            if not metrics_df.empty and "District" in metrics_df.columns:
+                district_options += sorted(str(d) for d in metrics_df["District"].dropna().unique())
 
-            f_col1, f_col2, f_col3, f_col4 = st.columns([1.2, 1.6, 1.2, 1.2])
+            f_col1, f_col2, f_col3, f_col4, f_col5 = st.columns([1.1, 1.3, 1.15, 1.15, 1.3])
 
             with f_col1:
                 selected_season = st.selectbox(
@@ -104,7 +134,7 @@ def render_dashboard() -> None:
                 selected_crops = st.multiselect(
                     t("seg.crops", "Crops"),
                     crop_options,
-                    default=crop_options[:5] if crop_options else [],
+                    default=[],
                     key="dash_filter_crops",
                 )
             with f_col3:
@@ -121,81 +151,85 @@ def render_dashboard() -> None:
                     index=0,
                     key="dash_filter_district",
                 )
+            with f_col5:
+                dashboard_search = st.text_input("Search records", key="dash_filter_search").strip().casefold()
 
         # Apply global cross-filtering to priority data
         filtered_df = df.copy()
         if not filtered_df.empty:
             if selected_season != all_seasons_label and "season" in filtered_df.columns:
-                filtered_df = filtered_df[filtered_df["season"] == selected_season]
+                filtered_df = filtered_df[filtered_df["season"].map(lambda value: seasons_match(value, selected_season))]
             if selected_crops and "Crop" in filtered_df.columns:
-                filtered_df = filtered_df[filtered_df["Crop"].isin(selected_crops)]
+                crop_keys = {crop_key(crop) for crop in selected_crops}
+                filtered_df = filtered_df[filtered_df["Crop"].map(crop_key).isin(crop_keys)]
             if selected_priorities and "Priority" in filtered_df.columns:
                 filtered_df = filtered_df[filtered_df["Priority"].isin(selected_priorities)]
             if selected_district != all_districts_label and "District" in filtered_df.columns:
                 filtered_df = filtered_df[filtered_df["District"] == selected_district]
 
+        filtered_metrics_df = filter_dashboard_metrics(
+            metrics_df,
+            season=selected_season,
+            all_seasons_label=all_seasons_label,
+            crops=selected_crops,
+            district=selected_district,
+            all_districts_label=all_districts_label,
+            priorities=selected_priorities,
+        )
+        if dashboard_search:
+            for filtered in (filtered_df, filtered_metrics_df):
+                if not filtered.empty:
+                    searchable = filtered.astype("string").fillna("").apply(lambda column: column.str.casefold())
+                    filtered.drop(filtered[~searchable.apply(lambda column: column.str.contains(dashboard_search, regex=False)).any(axis=1)].index, inplace=True)
+
         # ── 4. Executive KPI Grid with Sparklines ──────────────────────
         kpi_c1, kpi_c2, kpi_c3, kpi_c4, kpi_c5 = st.columns(5)
 
-        total_active_zones = len(filtered_df) if not filtered_df.empty else dashboard_data.get("total_zones", 30)
-        high_risk_count = (
-            len(filtered_df[filtered_df["Priority"] == "High"])
-            if not filtered_df.empty and "Priority" in filtered_df.columns
-            else dashboard_data.get("zones_high_nutrition_risk", 8)
-        )
-        avg_credit = dashboard_data.get("avg_credit_insurance_score", 62.4)
-        export_ready = dashboard_data.get("zones_export_ready", 5)
-        observed_days = dashboard_data.get("observed_worker_days", 14250)
+        total_records = len(filtered_metrics_df)
+        total_production = filtered_metrics_df["Production (MT)"].sum(min_count=1) if "Production (MT)" in filtered_metrics_df else None
+        average_yield = filtered_metrics_df["Yield (kg/ha)"].mean() if "Yield (kg/ha)" in filtered_metrics_df else None
+        crop_count = filtered_metrics_df["Crop"].nunique(dropna=True) if "Crop" in filtered_metrics_df else 0
+        district_count = filtered_metrics_df["District"].nunique(dropna=True) if "District" in filtered_metrics_df else 0
 
         icon_map = """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>"""
-        icon_warn = """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>"""
+        icon_records = """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>"""
+        icon_yield = """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V11M12 14c-4 0-7-2.5-7-6 4 0 7 2 7 6ZM12 11c0-4 3-7 7-7 0 4-3 7-7 7Z"/></svg>"""
+        icon_crop = """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22V12M12 16c-4 0-7-2-7-6 4 0 7 2 7 6ZM12 12c0-4 3-7 7-7 0 4-3 7-7 7ZM12 10C8 10 6 7 6 4c4 0 6 2 6 6Z"/></svg>"""
         icon_bank = """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>"""
-        icon_ship = """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>"""
-        icon_labor = """<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>"""
 
         render_kpi_card(
             kpi_c1,
-            title="Active Filtered Zones",
-            value=total_active_zones,
-            delta=4.8,
-            sparkline_data=[22, 24, 25, 27, 28, total_active_zones if isinstance(total_active_zones, (int, float)) else 30],
-            icon=icon_map,
+            title="Filtered Records",
+            value=f"{total_records:,}",
+            icon=icon_records,
             badge_color="#0284c7",
         )
         render_kpi_card(
             kpi_c2,
-            title="High Priority Risk",
-            value=high_risk_count,
-            delta=-3.2,
-            sparkline_data=[14, 12, 11, 9, 8, high_risk_count if isinstance(high_risk_count, (int, float)) else 8],
-            icon=icon_warn,
+            title="Recorded Production (MT)",
+            value=_metric_number(total_production, grouped=True) if pd.notna(total_production) else "N/A",
+            icon=icon_bank,
             badge_color="#ef4444",
         )
         render_kpi_card(
             kpi_c3,
-            title="Credit Readiness",
-            value=_metric_number(avg_credit, "%"),
-            delta=6.5,
-            sparkline_data=[50, 52, 56, 58, 60, float(avg_credit) if avg_credit is not None and str(avg_credit).replace('.','').isdigit() else 62],
-            icon=icon_bank,
+            title="Average Yield (kg/ha)",
+            value=_metric_number(average_yield, grouped=True) if pd.notna(average_yield) else "N/A",
+            icon=icon_yield,
             badge_color="#10b981",
         )
         render_kpi_card(
             kpi_c4,
-            title="Export-Ready Zones",
-            value=export_ready if export_ready is not None else 5,
-            delta=12.0,
-            sparkline_data=[3, 3, 4, 4, 5, export_ready if isinstance(export_ready, (int, float)) else 5],
-            icon=icon_ship,
+            title="Crop Types",
+            value=f"{crop_count:,}",
+            icon=icon_crop,
             badge_color="#0284c7",
         )
         render_kpi_card(
             kpi_c5,
-            title="Observed Field Days",
-            value=_metric_number(observed_days, grouped=True),
-            delta=8.4,
-            sparkline_data=[10500, 11200, 12000, 13100, 13800, float(observed_days) if isinstance(observed_days, (int, float)) else 14250],
-            icon=icon_labor,
+            title="Districts Represented",
+            value=f"{district_count:,}",
+            icon=icon_map,
             badge_color="#10b981",
         )
 
@@ -238,7 +272,21 @@ def render_dashboard() -> None:
         with st.container(border=True):
             render_icon_subheader("assets/brain.svg", t("dashboard.chart.title", "Make the chart your own"))
             st.caption(t("dashboard.chart.subtitle", "Choose what to compare. The chart updates as you adjust the controls."))
-            render_dashboard_chart(filtered_df)
+            render_dashboard_chart(filtered_metrics_df)
+
+        with st.container(border=True):
+            render_icon_subheader("assets/brain.svg", "Insights from selected records")
+            insights = build_insights(filtered_metrics_df)
+            if not insights:
+                st.info("There are not enough complete records in this selection to calculate insights.")
+            else:
+                for tone, title, text in insights:
+                    if tone == "attention":
+                        st.warning(f"**{title}.** {text}")
+                    elif tone == "positive":
+                        st.success(f"**{title}.** {text}")
+                    else:
+                        st.info(f"**{title}.** {text}")
 
         # ── 7. Live Micro-Climate & Weather Station ────────────────────
         with st.container(border=True):
@@ -338,38 +386,30 @@ def render_dashboard() -> None:
             st.markdown(
                 '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:0.5rem;">'
                 '<div>'
-                '<h3 style="margin:0;font-size:1.15rem;font-weight:750;">Monitored District Zones & Performance</h3>'
+                '<h3 style="margin:0;font-size:1.15rem;font-weight:750;">Agricultural Records & Performance</h3>'
                 ''
                 '</div>'
                 '</div>',
                 unsafe_allow_html=True,
             )
 
-            if not filtered_df.empty:
-                display_cols = [c for c in ["District", "Crop", "Priority", "Production_MT", "season"] if c in filtered_df.columns]
-                clean_df = filtered_df[display_cols].copy()
-                clean_df = clean_df.rename(columns={
-                    "District": "District",
-                    "Crop": "Crop",
-                    "Priority": "Priority Level",
-                    "Production_MT": "Production (MT)",
-                    "season": "Season",
-                })
-
-                st.dataframe(clean_df, use_container_width=True, hide_index=True)
+            if not filtered_metrics_df.empty:
+                clean_df = filtered_metrics_df.head(100).copy()
+                st.caption(f"Showing the first {len(clean_df):,} of {len(filtered_metrics_df):,} filtered records.")
+                st.dataframe(clean_df, width="stretch", hide_index=True)
 
                 # Export CSV button
                 csv_buffer = io.StringIO()
-                clean_df.to_csv(csv_buffer, index=False)
+                filtered_metrics_df.to_csv(csv_buffer, index=False)
                 st.download_button(
-                    label="Export Filtered Table (CSV)",
+                    label="Export Filtered Records (CSV)",
                     data=csv_buffer.getvalue(),
                     file_name="agrimenya_dashboard_zones.csv",
                     mime="text/csv",
                     use_container_width=False,
                 )
             else:
-                render_empty_state("No Matching Data", "No agricultural zones match the currently selected filter criteria.")
+                render_empty_state("No Matching Data", "No crop and yield records match the selected filters.")
 
     except requests.exceptions.RequestException as e:
         logger.error("Network error in dashboard: %s", e)

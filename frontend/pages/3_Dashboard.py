@@ -9,10 +9,10 @@ from views.dashboard import render_dashboard
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
 LOGO_PATH = os.path.join(ASSETS_DIR, "ai_assistant_bulb.png")
 
-st.set_page_config(page_title="agrimenya", page_icon=LOGO_PATH, layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="agrimenya", page_icon=LOGO_PATH, layout="wide", initial_sidebar_state="expanded")
 setup_system_timezone()
-load_theme()
-render_navbar()
+load_theme(show_sidebar=True)
+render_navbar(show_sidebar=True)
 
 if __name__ == "__main__":
     render_dashboard()
