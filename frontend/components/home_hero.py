@@ -1,81 +1,34 @@
-"""Creative, animated agro-intelligence hero with full-page background video for agrimenya."""
-import os
-import shutil
+"""Welcoming home page introduction for agrimenya."""
 import streamlit as st
 import streamlit.components.v1 as components
 from utils.i18n import t
 
 
 def _ensure_landing_video() -> str:
-    """Ensure landing video is linked in static directories for streaming."""
-    frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    root_dir = os.path.dirname(frontend_dir)
-    assets_dir = os.path.join(frontend_dir, "assets")
-    src = os.path.join(assets_dir, "landing video.mp4")
-
-    # Static destinations: frontend/static and root/static
-    destinations = [
-        os.path.join(frontend_dir, "static", "landing_video.mp4"),
-        os.path.join(root_dir, "static", "landing_video.mp4"),
-    ]
-
-    if os.path.exists(src):
-        for dst in destinations:
-            if not os.path.exists(dst):
-                os.makedirs(os.path.dirname(dst), exist_ok=True)
-                try:
-                    os.link(src, dst)
-                except Exception:
-                    try:
-                        shutil.copy2(src, dst)
-                    except Exception:
-                        pass
-
-    # Ensure config.toml with enableStaticServing exists in both locations
-    config_content = "[server]\nenableStaticServing = true\n"
-    for cdir in [os.path.join(frontend_dir, ".streamlit"), os.path.join(root_dir, ".streamlit")]:
-        cpath = os.path.join(cdir, "config.toml")
-        if not os.path.exists(cpath):
-            os.makedirs(cdir, exist_ok=True)
-            try:
-                with open(cpath, "w", encoding="utf-8") as f:
-                    f.write(config_content)
-            except Exception:
-                pass
-
-    return "/app/static/landing_video.mp4"
+    """Legacy helper maintained for backward compatibility."""
+    return ""
 
 
 def render_home_hero() -> None:
-    """Render full-page background video and a floating hero command center."""
-    video_url = _ensure_landing_video()
+    """Render a welcoming introduction to the tools available on the home page."""
+    badge_text = t("hero.badge", "Here for Rwanda’s farming seasons")
+    title_pre = t("hero.title_pre", "A clearer picture of")
+    title_glow = t("hero.title_glow", "your growing season")
+    title_post = t("hero.title_post", ".")
+    copy_text = t("hero.copy", "Start with your district. Explore the information available for your crops, then make a plan your team can put into action.")
+    stat_districts_val = t("hero.stat.districts_val", "30 districts")
+    stat_districts_lbl = t("hero.stat.districts_lbl", "Across Rwanda")
+    stat_crops_val = t("hero.stat.crops_val", "10+ crops")
+    stat_crops_lbl = t("hero.stat.crops_lbl", "Crop baselines")
+    card_title = t("hero.card.title", "A good place to begin")
+    card_tag = t("hero.card.tag", "Start here")
+    card_desc = t("hero.card.desc", "Choose an area to explore, check the information available, and agree on next steps with your team.")
+    pill_priority = t("hero.pill.priority", "Explore zones and local context")
+    pill_window = t("hero.pill.window", "Review crop and seasonal information")
+    pill_ai = t("hero.pill.ai", "Make a plan and share it with your team")
 
-    badge_text = t("hero.badge", "Rwanda Agro-Climate Decision Engine")
-    title_pre = t("hero.title_pre", "Make the next")
-    title_glow = t("hero.title_glow", "field decision")
-    title_post = t("hero.title_post", "clearer.")
-    copy_text = t("hero.copy", "Explore spatial zone intelligence, evaluate seasonal crop recommendations, and turn data-grounded insights into synchronized field plans.")
-    stat_districts_val = t("hero.stat.districts_val", "30 Districts")
-    stat_districts_lbl = t("hero.stat.districts_lbl", "Spatial Coverage")
-    stat_crops_val = t("hero.stat.crops_val", "10+ Key Crops")
-    stat_crops_lbl = t("hero.stat.crops_lbl", "SAS Baselines")
-    stat_weather_val = t("hero.stat.weather_val", "Real-time Weather")
-    stat_weather_lbl = t("hero.stat.weather_lbl", "Satellite Indicators")
-    stat_timezone_val = t("hero.stat.timezone_val", "CAT (UTC+2)")
-    stat_timezone_lbl = t("hero.stat.timezone_lbl", "System Timezone")
-    card_title = t("hero.card.title", "Seasonal Horizon")
-    card_tag = t("hero.card.tag", "2026 Season A")
-    card_desc = t("hero.card.desc", "Active 2026 Season A campaign. Tracking soil moisture and conformal yield bounds.")
-    pill_priority = t("hero.pill.priority", "Priority Zones: Gasabo, Bugesera, Musanze")
-    pill_window = t("hero.pill.window", "Optimal planting window actively tracked")
-    pill_ai = t("hero.pill.ai", "AI Assistant available via corner bulb")
-
-    # Apply parent-page transparency so the full-page video shows across the entire viewport
     st.html("""
     <style>
-      html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
-        background: transparent !important;
-      }
       iframe[title="streamlit.components.v1.custom_component"] {
         border: none !important;
         background: transparent !important;
@@ -86,14 +39,19 @@ def render_home_hero() -> None:
       div[data-testid="stCustomComponentV1"] {
         margin-bottom: 1.5rem !important;
       }
+      @media (max-width: 900px) {
+        iframe[title="streamlit.components.v1.custom_component"] {
+          height: 680px !important;
+        }
+      }
       /* Action workflow cards: structured modern cards with classic motion */
       [data-testid="stVerticalBlockBorderWrapper"] {
         position: relative !important;
         overflow: hidden !important;
-        background: #081a26 !important;
-        border: 1px solid rgba(56, 189, 248, 0.22) !important;
-        border-top: 1.5px solid rgba(56, 189, 248, 0.40) !important;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.40) !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(47, 94, 67, 0.14) !important;
+        border-top: 2px solid #729277 !important;
+        box-shadow: 0 4px 18px rgba(32, 60, 42, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03) !important;
         border-radius: 18px !important;
         transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
                     box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
@@ -102,15 +60,15 @@ def render_home_hero() -> None:
         will-change: transform, box-shadow;
       }
       [data-testid="stVerticalBlockBorderWrapper"]:hover {
-        background: #0c2435 !important;
-        border-color: rgba(56, 189, 248, 0.65) !important;
-        border-top-color: #38bdf8 !important;
-        box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.65), 0 0 26px rgba(56, 189, 248, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-        transform: translateY(-6px) scale(1.012) !important;
+        background: #fbfcfa !important;
+        border-color: rgba(47, 94, 67, 0.22) !important;
+        border-top-color: #527c5d !important;
+        box-shadow: 0 10px 25px rgba(32, 60, 42, 0.10), 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+        transform: translateY(-3px) !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"]:active {
-        transform: translateY(-2px) scale(0.995) !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), 0 0 14px rgba(56, 189, 248, 0.2) !important;
+        transform: translateY(-1px) scale(0.998) !important;
+        box-shadow: 0 4px 14px rgba(32, 60, 42, 0.08) !important;
         transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.12s ease !important;
       }
 
@@ -119,58 +77,58 @@ def render_home_hero() -> None:
       [data-testid="stVerticalBlockBorderWrapper"] h2,
       [data-testid="stVerticalBlockBorderWrapper"] h3,
       [data-testid="stVerticalBlockBorderWrapper"] h4 {
-        color: #ffffff !important;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+        color: #0f172a !important;
+        text-shadow: none !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] p,
       [data-testid="stVerticalBlockBorderWrapper"] span:not([style*="color"]) {
-        color: #e0f2fe !important;
-        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7) !important;
+        color: #475569 !important;
+        text-shadow: none !important;
       }
 
       /* Structured Card Buttons - High specificity override */
-      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button,
-      [data-testid="stVerticalBlockBorderWrapper"] button,
-      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"] {
-        background: #0f2738 !important;
-        border: 1px solid rgba(56, 189, 248, 0.28) !important;
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]),
+      [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]),
+      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) {
+        background: #f4f7f3 !important;
+        border: 1px solid rgba(47, 94, 67, 0.18) !important;
         border-radius: 10px !important;
-        color: #ffffff !important;
+        color: #426b4e !important;
         font-weight: 700 !important;
         letter-spacing: -0.01em !important;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
+        text-shadow: none !important;
         transition: all 0.25s ease !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+        box-shadow: none !important;
       }
-      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button *,
-      [data-testid="stVerticalBlockBorderWrapper"] button * {
-        color: #ffffff !important;
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]) *,
+      [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) * {
+        color: #426b4e !important;
         font-weight: 700 !important;
       }
-      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover,
-      [data-testid="stVerticalBlockBorderWrapper"] button:hover,
-      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:hover {
-        background: #0284c7 !important;
-        border-color: rgba(56, 189, 248, 0.8) !important;
+      [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):hover,
+      [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover,
+      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover {
+        background: #527c5d !important;
+        border-color: #527c5d !important;
         color: #ffffff !important;
-        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
-        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(32, 60, 42, 0.12) !important;
+        transform: translateY(-1px) !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover *,
       [data-testid="stVerticalBlockBorderWrapper"] button:hover * {
         color: #ffffff !important;
       }
 
-      /* White Section Title & Subtitle overrides for fullpage video backdrop */
+      /* Clean section titles & subtitles */
       .ag-section-title, h2.ag-section-title {
-        color: #ffffff !important;
-        -webkit-text-fill-color: #ffffff !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+        color: #0a1f26 !important;
+        -webkit-text-fill-color: #0a1f26 !important;
+        text-shadow: none !important;
       }
       .ag-section-subtitle, p.ag-section-subtitle {
-        color: #e0f2fe !important;
-        -webkit-text-fill-color: #e0f2fe !important;
-        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8) !important;
+        color: #48656c !important;
+        -webkit-text-fill-color: #48656c !important;
+        text-shadow: none !important;
       }
     </style>
     """)
@@ -197,23 +155,17 @@ def render_home_hero() -> None:
           height: 100%;
         }}
 
-        /* Command center card (no video inside - video is full page background) */
+        /* Command center card */
         .ag-hero-wrapper {{
           position: relative;
           overflow: hidden;
           width: 100%;
           min-height: 380px;
-          color: #ffffff;
-          background: linear-gradient(
-            135deg,
-            #071926 0%,
-            #0a2538 50%,
-            #071f28 100%
-          );
+          color: #0f172a;
+          background: linear-gradient(135deg, #ffffff 0%, #f7faf7 58%, #edf5ef 100%);
           border-radius: 22px;
-          border: 1px solid rgba(56, 189, 248, 0.25);
-          border-top: 1.5px solid rgba(56, 189, 248, 0.45);
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.40), 0 0 40px rgba(56, 189, 248, 0.12);
+          border: 1px solid rgba(47, 94, 67, 0.12);
+          box-shadow: 0 12px 30px rgba(32, 60, 42, 0.07);
           animation: ag-hero-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }}
 
@@ -240,12 +192,12 @@ def render_home_hero() -> None:
           right: 18%;
           width: 320px;
           height: 320px;
-          background: radial-gradient(circle, rgba(56, 189, 248, 0.24) 0%, rgba(14, 165, 233, 0) 70%);
+          background: radial-gradient(circle, rgba(122, 157, 108, 0.12) 0%, rgba(122, 157, 108, 0) 70%);
           border-radius: 50%;
           filter: blur(35px);
           pointer-events: none;
           z-index: 1;
-          animation: ag-hero-orb-float 7s ease-in-out infinite alternate;
+          animation: none;
         }}
         .ag-hero-glow-2 {{
           position: absolute;
@@ -253,12 +205,12 @@ def render_home_hero() -> None:
           left: 20%;
           width: 360px;
           height: 360px;
-          background: radial-gradient(circle, rgba(74, 222, 128, 0.20) 0%, rgba(34, 197, 94, 0) 70%);
+          background: radial-gradient(circle, rgba(213, 178, 111, 0.10) 0%, rgba(213, 178, 111, 0) 70%);
           border-radius: 50%;
           filter: blur(40px);
           pointer-events: none;
           z-index: 1;
-          animation: ag-hero-orb-float-2 9s ease-in-out infinite alternate;
+          animation: none;
         }}
 
         @keyframes ag-hero-orb-float {{
@@ -278,7 +230,7 @@ def render_home_hero() -> None:
           grid-template-columns: 1fr 1fr;
           gap: 2.5rem;
           align-items: center;
-          padding: 2.8rem 3rem;
+          padding: 2.6rem 3rem;
           min-height: 380px;
         }}
 
@@ -291,17 +243,17 @@ def render_home_hero() -> None:
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: #082130;
-          border: 1px solid rgba(125, 211, 252, 0.5);
+          background: #ffffff;
+          border: 1px solid rgba(47, 94, 67, 0.15);
           padding: 5px 14px;
           border-radius: 9999px;
           font-size: 0.76rem;
           font-weight: 750;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: #e0f2fe;
+          color: #386448;
           margin-bottom: 0.85rem;
-          box-shadow: 0 4px 14px rgba(14, 165, 233, 0.25);
+          box-shadow: none;
           transition: transform 0.25s ease;
         }}
         .ag-hero-badge:hover {{
@@ -310,45 +262,44 @@ def render_home_hero() -> None:
         .ag-hero-beacon {{
           width: 8px;
           height: 8px;
-          background-color: #38bdf8;
+          background-color: #527c5d;
           border-radius: 50%;
           display: inline-block;
-          box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8);
-          animation: ag-beacon-radar 2s infinite;
+          box-shadow: none;
+          animation: none;
         }}
         @keyframes ag-beacon-radar {{
-          0% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8); }}
-          50% {{ box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.35); }}
-          100% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }}
+          0% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.8); }}
+          50% {{ box-shadow: 0 0 0 6px rgba(2, 132, 199, 0.35); }}
+          100% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }}
         }}
 
-        /* Headline with High Contrast Glow */
+        /* Headline with High Contrast */
         .ag-hero-title {{
           margin: 0 0 0.8rem !important;
-          color: #ffffff !important;
+          color: #0f172a !important;
           font-size: clamp(2rem, 3.5vw, 3.1rem) !important;
           line-height: 1.1 !important;
           font-weight: 800 !important;
           letter-spacing: -0.04em !important;
-          text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7) !important;
+          text-shadow: none !important;
         }}
         .ag-hero-glow-text {{
-          background: linear-gradient(135deg, #ffffff 0%, #bae6fd 45%, #38bdf8 100%) !important;
+          background: linear-gradient(135deg, #426b4e 0%, #527c5d 100%) !important;
           -webkit-background-clip: text !important;
           -webkit-text-fill-color: transparent !important;
           display: inline-block !important;
-          filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.5)) !important;
-          animation: ag-text-shimmer 4s ease-in-out infinite alternate !important;
+          filter: none !important;
         }}
 
         .ag-hero-copy {{
           max-width: 640px;
           margin: 0 0 1.5rem;
-          color: #f0fdfa;
+          color: #334155;
           font-size: 0.98rem;
           line-height: 1.6;
           font-weight: 500;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+          text-shadow: none;
         }}
 
         /* Stats Ticker Strip with Hover Lift */
@@ -358,7 +309,7 @@ def render_home_hero() -> None:
           gap: 1.4rem;
           align-items: center;
           padding-top: 1rem;
-          border-top: 1px solid rgba(56, 189, 248, 0.3);
+          border-top: 1px solid rgba(47, 94, 67, 0.13);
         }}
         .ag-hero-stat-item {{
           display: flex;
@@ -372,40 +323,39 @@ def render_home_hero() -> None:
         .ag-hero-stat-val {{
           font-size: 1.15rem;
           font-weight: 800;
-          color: #ffffff;
+          color: #0f172a;
           letter-spacing: -0.02em;
-          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 12px rgba(56, 189, 248, 0.4);
-          transition: color 0.2s ease, text-shadow 0.2s ease;
+          text-shadow: none;
+          transition: color 0.2s ease;
         }}
         .ag-hero-stat-item:hover .ag-hero-stat-val {{
-          color: #38bdf8;
-          text-shadow: 0 0 18px rgba(56, 189, 248, 0.85);
+          color: #527c5d;
         }}
         .ag-hero-stat-lbl {{
           font-size: 0.72rem;
           font-weight: 650;
-          color: #7dd3fc;
+          color: #527c5d;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+          text-shadow: none;
         }}
 
         /* Right Column: Structured Horizon Card with Subtle Float */
         .ag-hero-horizon-card {{
           position: relative;
-          background: #09202f;
-          border: 1px solid rgba(56, 189, 248, 0.28);
-          border-top: 1.5px solid rgba(56, 189, 248, 0.50);
+          background: #ffffff;
+          border: 1px solid rgba(47, 94, 67, 0.15);
+          border-top: 2px solid #729277;
           border-radius: 18px;
           padding: 1.5rem 1.6rem;
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.40);
-          animation: ag-hero-card-float 6s ease-in-out infinite alternate;
+          box-shadow: 0 8px 22px rgba(32, 60, 42, 0.07);
+          animation: none;
           transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }}
         .ag-hero-horizon-card:hover {{
           transform: translateY(-4px);
-          box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(56, 189, 248, 0.30);
-          border-color: rgba(56, 189, 248, 0.6);
+          box-shadow: 0 12px 28px rgba(32, 60, 42, 0.11);
+          border-color: rgba(47, 94, 67, 0.3);
         }}
         .ag-hero-card-header {{
           display: flex;
@@ -416,26 +366,26 @@ def render_home_hero() -> None:
         .ag-hero-card-title {{
           font-size: 0.92rem;
           font-weight: 750;
-          color: #ffffff;
+          color: #0f172a;
           letter-spacing: -0.01em;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+          text-shadow: none;
         }}
         .ag-hero-card-tag {{
           font-size: 0.72rem;
           font-weight: 700;
-          background: rgba(56, 189, 248, 0.25);
-          color: #bae6fd;
-          border: 1px solid rgba(56, 189, 248, 0.5);
+          background: #e7efe5;
+          color: #426b4e;
+          border: 1px solid rgba(47, 94, 67, 0.14);
           padding: 2px 8px;
           border-radius: 9999px;
           text-transform: uppercase;
         }}
         .ag-hero-card-desc {{
-          color: #e0f2fe;
+          color: #475569;
           font-size: 0.85rem;
           line-height: 1.5;
           margin-bottom: 0.9rem;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+          text-shadow: none;
         }}
         .ag-hero-card-row {{
           display: flex;
@@ -446,19 +396,17 @@ def render_home_hero() -> None:
           display: flex;
           align-items: center;
           gap: 8px;
-          background: rgba(2, 24, 36, 0.6);
-          border: 1px solid rgba(56, 189, 248, 0.25);
+          background: #f7faf6;
+          border: 1px solid rgba(47, 94, 67, 0.10);
           padding: 6px 10px;
           border-radius: 8px;
           font-size: 0.78rem;
-          color: #f0fdfa;
-          transition: all 0.25s ease;
+          color: #3d5543;
+          transition: background 0.2s ease, transform 0.2s ease;
         }}
         .ag-hero-pill-info:hover {{
-          background: rgba(2, 38, 56, 0.85);
-          border-color: rgba(56, 189, 248, 0.55);
-          transform: translateX(4px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          background: #edf3eb;
+          transform: translateX(2px);
         }}
 
         @media (max-width: 900px) {{
@@ -466,6 +414,7 @@ def render_home_hero() -> None:
             grid-template-columns: 1fr;
             padding: 1.8rem 1.5rem;
             gap: 1.5rem;
+            min-height: auto;
           }}
         }}
       </style>
@@ -498,14 +447,6 @@ def render_home_hero() -> None:
                 <span class="ag-hero-stat-val">{stat_crops_val}</span>
                 <span class="ag-hero-stat-lbl">{stat_crops_lbl}</span>
               </div>
-              <div class="ag-hero-stat-item">
-                <span class="ag-hero-stat-val">{stat_weather_val}</span>
-                <span class="ag-hero-stat-lbl">{stat_weather_lbl}</span>
-              </div>
-              <div class="ag-hero-stat-item">
-                <span class="ag-hero-stat-val">{stat_timezone_val}</span>
-                <span class="ag-hero-stat-lbl">{stat_timezone_lbl}</span>
-              </div>
             </div>
           </div>
 
@@ -536,81 +477,16 @@ def render_home_hero() -> None:
       </section>
 
       <script>
-        (function initFullPageBackgroundVideo() {{
+        (function cleanupVideoBackground() {{
           try {{
             const parentDoc = window.parent.document;
             if (!parentDoc) return;
-
-            // 1. Inject or update full-page background video with pristine native fidelity
-            const videoStyles = 'position:fixed;top:0;left:0;width:100vw;height:100vh;min-width:100%;min-height:100%;object-fit:cover;object-position:center center;z-index:-2;pointer-events:none;transform:translate3d(0,0,0);-webkit-transform:translate3d(0,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden;will-change:transform;image-rendering:high-quality;image-rendering:-webkit-optimize-contrast;filter:brightness(0.92);';
-
-            let video = parentDoc.getElementById('ag-landing-fullpage-video');
-            if (!video) {{
-              video = parentDoc.createElement('video');
-              video.id = 'ag-landing-fullpage-video';
-              video.autoplay = true;
-              video.muted = true;
-              video.loop = true;
-              video.playsInline = true;
-              video.preload = 'auto';
-              video.setAttribute('autoplay', '');
-              video.setAttribute('muted', '');
-              video.setAttribute('loop', '');
-              video.setAttribute('playsinline', '');
-              video.style.cssText = videoStyles;
-              
-              const source = parentDoc.createElement('source');
-              source.src = '{video_url}';
-              source.type = 'video/mp4';
-              video.appendChild(source);
-              
-              parentDoc.body.prepend(video);
-            }} else {{
-              video.style.cssText = videoStyles;
-              video.style.display = 'block';
-            }}
-
-            // Ensure autoplay and muted state
-            video.muted = true;
-            var promise = video.play();
-            if (promise !== undefined) {{
-              promise.catch(function(e) {{
-                console.log('Video autoplay deferred:', e);
-                parentDoc.addEventListener('click', function() {{ video.muted = true; video.play(); }}, {{ once: true }});
-              }});
-            }}
-
-            // 2. Inject or update cinematic full-page overlay
-            const overlayStyles = 'position:fixed;inset:0;background:radial-gradient(ellipse at 50% 25%, rgba(2,24,36,0.12) 0%, rgba(2,24,36,0.38) 100%);z-index:-1;pointer-events:none;';
-            let overlay = parentDoc.getElementById('ag-landing-fullpage-overlay');
-            if (!overlay) {{
-              overlay = parentDoc.createElement('div');
-              overlay.id = 'ag-landing-fullpage-overlay';
-              overlay.style.cssText = overlayStyles;
-              parentDoc.body.prepend(overlay);
-            }} else {{
-              overlay.style.cssText = overlayStyles;
-              overlay.style.display = 'block';
-            }}
-
-            // 3. Monitor page location: hide video when user navigates away from Home
-            const checkRoute = function() {{
-              try {{
-                const p = window.parent.location.pathname;
-                const isHome = p === '/' || p.endsWith('/Home') || p.endsWith('/Home/');
-                if (!isHome) {{
-                  if (video) video.style.display = 'none';
-                  if (overlay) overlay.style.display = 'none';
-                }} else {{
-                  if (video) video.style.display = 'block';
-                  if (overlay) overlay.style.display = 'block';
-                }}
-              }} catch (err) {{}}
-            }};
-            setInterval(checkRoute, 400);
-
+            const video = parentDoc.getElementById('ag-landing-fullpage-video');
+            if (video) video.remove();
+            const overlay = parentDoc.getElementById('ag-landing-fullpage-overlay');
+            if (overlay) overlay.remove();
           }} catch (err) {{
-            console.error('Full-page video background error:', err);
+            console.debug('Video cleanup note:', err);
           }}
         }})();
       </script>
@@ -619,3 +495,4 @@ def render_home_hero() -> None:
     """
 
     components.html(hero_html, height=420)
+

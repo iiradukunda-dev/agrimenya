@@ -92,7 +92,7 @@ def test_data_context_has_fixed_keys_and_sanitized_alerts(monkeypatch):
     monkeypatch.setattr(assistant.crud, "list_district_agri_metrics", lambda _: [])
     monkeypatch.setattr("app.ml.predict._live_district_yield_evidence", lambda _: [])
     data = json.loads(assistant._build_context("z", {"district": "Gasabo"}))
-    assert set(data) == {"district", "crop", "season", "yield_per_ha", "benchmark", "gap", "priority", "reasons", "basis", "crop_yield_records", "crop_records_status", "weather", "alerts"}
+    assert set(data) == {"district", "crop", "season", "yield_per_ha", "benchmark", "gap", "priority", "reasons", "basis", "crop_yield_records", "crop_records_status", "weather", "alerts", "decision_comparison"}
     alert = data["alerts"][0]
     assert "\u0000" not in alert["untrusted_alert_text"]
     assert len(alert["untrusted_alert_text"]) <= assistant.MAX_ALERT_CHARS

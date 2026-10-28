@@ -7,9 +7,13 @@ priority zones with semantic color coding.
 import html
 import math
 
-import folium
 import streamlit as st
-from streamlit_folium import st_folium
+try:
+    import folium
+    from streamlit_folium import st_folium
+except ImportError:
+    folium = None
+    st_folium = None
 
 # Priority zone color palette - matches the design system semantic colors
 PRIORITY_COLORS = {
@@ -28,6 +32,9 @@ RSA_ORTHOMOSAIC_TILES = (
 def render_priority_map(df, *, key: str = "priority_map") -> str | None:
     """
     Renders a Folium map with priority zone markers.
+    if folium is None or st_folium is None:
+        st.info("Interactive map module is currently initializing.")
+        return None
 
     Each marker shows district, crop, and yield on hover.
     Uses the standard OpenStreetMap tile service so the map works
@@ -51,7 +58,7 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
         folium.TileLayer(
             tiles=RSA_ORTHOMOSAIC_TILES,
             attr=("Imagery: <a href='https://portal.space.gov.rw/server/rest/services/Hosted/"
-                  "Ortho_Orthomosaic/MapServer' target='_blank'>Rwanda Space Agency</a>"),
+                  "Ortho_Orthomosaic/MapServer' target='_self'>Rwanda Space Agency</a>"),
             name="RSA orthomosaic",
             overlay=True,
             control=True,

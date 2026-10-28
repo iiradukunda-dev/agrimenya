@@ -6,7 +6,7 @@ import json
 import logging
 import re
 
-import requests
+import httpx
 
 from app.core.config import settings
 from app.ml.vision_disease_model import predict_vision_disease, vision_model_status
@@ -73,22 +73,22 @@ def _groq_triage(crop: str, symptoms: str, *, image_bytes: bytes | None, languag
         content = user_text
 
     try:
-        response = requests.post(
-            GROQ_CHAT_URL,
-            headers={"Authorization": f"Bearer {settings.GROQ_API_KEY}"},
-            json={
-                "model": model,
-                "messages": [
-                    {"role": "system", "content": instructions},
-                    {"role": "user", "content": content},
-                ],
-                "temperature": 0.1,
-                "max_completion_tokens": 1200,
-                "response_format": {"type": "json_object"},
-            },
-            timeout=(5, 45),
-        )
-        response.raise_for_status()
+        with httpx.Client(timeout=45.0) as client:
+            response = client.post(
+                GROQ_CHAT_URL,
+                headers={"Authorization": f"Bearer {settings.GROQ_API_KEY}"},
+                json={
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": instructions},
+                        {"role": "user", "content": content},
+                    ],
+                    "temperature": 0.1,
+                    "max_completion_tokens": 1200,
+                    "response_format": {"type": "json_object"},
+                },
+            )
+            response.raise_for_status()
         raw = response.json()["choices"][0]["message"]["content"].strip()
         if raw.startswith("```"):
             raw = re.sub(r"^```(?:json)?\s*", "", raw)
@@ -127,7 +127,7 @@ def _groq_triage(crop: str, symptoms: str, *, image_bytes: bytes | None, languag
                 "AI-assisted preliminary triage, not a confirmed diagnosis. " + limitations
             ).strip(),
         }
-    except (requests.RequestException, ValueError, KeyError, TypeError, IndexError):
+    except (httpx.HTTPError, ValueError, KeyError, TypeError, IndexError):
         logger.exception("Groq crop triage failed")
         return None
 

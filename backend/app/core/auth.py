@@ -188,3 +188,17 @@ def require_community(request: Request) -> dict[str, Any]:
         "display_name": account["display_name"],
         "role": account["role"],
     }
+
+
+def require_community_or_admin(request: Request) -> dict[str, Any]:
+    """Allow signed-in farmers and administrators to create mapped farm sites."""
+    authorization = request.headers.get("Authorization", "")
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Sign in to the farmer community to save a farm location")
+    payload = verify_token(authorization.split(" ", 1)[1].strip())
+    role = str(payload.get("role") or "").lower()
+    if role == "community":
+        return require_community(request)
+    if role == "admin":
+        return require_admin(request)
+    raise HTTPException(status_code=403, detail="This action requires a farmer account or administrator access")

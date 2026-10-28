@@ -1,16 +1,41 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from math import isfinite
+from typing import Literal, Optional
 from uuid import UUID
+from pydantic import BaseModel, Field, model_validator
+
+
+class FieldBoundary(BaseModel):
+    """A farmer-drawn GeoJSON polygon; this is not a cadastral boundary."""
+    type: Literal["Polygon"]
+    coordinates: list[list[tuple[float, float]]]
+
+    @model_validator(mode="after")
+    def validate_single_rwanda_ring(self):
+        if len(self.coordinates) != 1:
+            raise ValueError("A field outline must contain one closed outer ring")
+        ring = self.coordinates[0]
+        if len(ring) < 4 or ring[0] != ring[-1]:
+            raise ValueError("A field outline must have at least three points and close back to its first point")
+        if len(ring) > 501:
+            raise ValueError("A field outline can contain at most 500 distinct points")
+        for longitude, latitude in ring:
+            if not isfinite(longitude) or not isfinite(latitude):
+                raise ValueError("Field outline coordinates must be finite numbers")
+            if not (28 <= longitude <= 32 and -5 <= latitude <= 1):
+                raise ValueError("Field outline coordinates must be within Rwanda")
+        return self
 
 
 class ZoneCreate(BaseModel):
-    district: str
-    sector: Optional[str] = None
-    cell: Optional[str] = None
-    latitude: float = Field(ge=-90, le=90)
-    longitude: float = Field(ge=-180, le=180)
-    crop_type: Optional[str] = None
-    season: Optional[str] = None
+    district: str = Field(min_length=1, max_length=100)
+    sector: Optional[str] = Field(default=None, max_length=100)
+    cell: Optional[str] = Field(default=None, max_length=100)
+    site_name: Optional[str] = Field(default=None, max_length=80)
+    latitude: float = Field(ge=-5, le=1)
+    longitude: float = Field(ge=28, le=32)
+    field_boundary_geojson: Optional[FieldBoundary] = None
+    crop_type: Optional[str] = Field(default=None, max_length=100)
+    season: Optional[str] = Field(default=None, max_length=100)
 
 
 class Zone(ZoneCreate):

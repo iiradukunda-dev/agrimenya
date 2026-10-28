@@ -851,9 +851,15 @@ def _delete_record(table_name: str, record_id: UUID | str) -> dict | None:
 # ---------- zones ----------
 
 def _zone_identity_key(zone: dict) -> str:
-    """Stable key for one district/subdistrict/crop/season registry entry."""
-    fields = ("district", "sector", "cell", "crop_type", "season")
+    """Stable key for one mapped site, crop, and season registry entry."""
+    fields = ("district", "sector", "cell", "crop_type", "season", "site_name")
     normalized = [" ".join(str(zone.get(field) or "").split()).casefold() for field in fields]
+    try:
+        latitude = f"{float(zone['latitude']):.6f}"
+        longitude = f"{float(zone['longitude']):.6f}"
+    except (KeyError, TypeError, ValueError):
+        latitude = longitude = ""
+    normalized.extend((latitude, longitude))
     return "|".join(normalized)
 
 

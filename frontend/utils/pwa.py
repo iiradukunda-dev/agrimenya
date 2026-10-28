@@ -7,51 +7,68 @@ import streamlit.components.v1 as components
 
 def ensure_pwa_assets() -> None:
     """Synchronize PWA assets into static serving folders and Streamlit static root."""
-    frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    root_dir = os.path.dirname(frontend_dir)
-    src_static = os.path.join(frontend_dir, "static")
-    root_static = os.path.join(root_dir, "static")
-
-    os.makedirs(root_static, exist_ok=True)
-
-    files_to_sync = [
-        "manifest.json",
-        "sw.js",
-        "offline.html",
-        "icon-192.png",
-        "icon-512.png",
-        "icon-maskable-512.png",
-        "apple-touch-icon.png",
-        "favicon.png",
-        "wheat.svg",
-        "ai_assistant_bulb.png",
-    ]
-
-    for fname in files_to_sync:
-        s_file = os.path.join(src_static, fname)
-        if os.path.exists(s_file):
-            r_file = os.path.join(root_static, fname)
-            if not os.path.exists(r_file):
-                try:
-                    shutil.copy2(s_file, r_file)
-                except Exception:
-                    pass
-
-    # Attempt to sync into Streamlit's core static folder for root /sw.js and /manifest.json serving
     try:
-        from streamlit import file_util
-        pkg_static = file_util.get_static_dir()
-        if os.path.isdir(pkg_static):
-            for fname in files_to_sync:
-                s_file = os.path.join(src_static, fname)
-                if os.path.exists(s_file):
-                    pkg_file = os.path.join(pkg_static, fname)
-                    if not os.path.exists(pkg_file):
-                        try:
-                            shutil.copy2(s_file, pkg_file)
-                        except Exception:
-                            pass
+        frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        root_dir = os.path.dirname(frontend_dir)
+        src_static = os.path.join(frontend_dir, "static")
+
+        # In Docker or container setups, frontend_dir is /app and root_dir is /
+        # We must never write to /static at the OS root
+        is_sys_root = (
+            not root_dir
+            or root_dir in ("/", "\\")
+            or os.path.splitdrive(root_dir)[1] in ("", "/", "\\")
+            or os.path.abspath(root_dir) == os.path.abspath(os.sep)
+        )
+
+        files_to_sync = [
+            "manifest.json",
+            "sw.js",
+            "offline.html",
+            "icon-192.png",
+            "icon-512.png",
+            "icon-maskable-512.png",
+            "apple-touch-icon.png",
+            "favicon.png",
+            "wheat.svg",
+            "ai_assistant_bulb.png",
+        ]
+
+        if not is_sys_root:
+            root_static = os.path.join(root_dir, "static")
+            try:
+                os.makedirs(root_static, exist_ok=True)
+                if os.path.isdir(src_static):
+                    for fname in files_to_sync:
+                        s_file = os.path.join(src_static, fname)
+                        if os.path.exists(s_file):
+                            r_file = os.path.join(root_static, fname)
+                            if not os.path.exists(r_file):
+                                try:
+                                    shutil.copy2(s_file, r_file)
+                                except Exception:
+                                    pass
+            except (PermissionError, OSError):
+                pass
+
+        # Attempt to sync into Streamlit's core static folder for root /sw.js and /manifest.json serving
+        try:
+            from streamlit import file_util
+            pkg_static = file_util.get_static_dir()
+            if os.path.isdir(pkg_static) and os.path.isdir(src_static):
+                for fname in files_to_sync:
+                    s_file = os.path.join(src_static, fname)
+                    if os.path.exists(s_file):
+                        pkg_file = os.path.join(pkg_static, fname)
+                        if not os.path.exists(pkg_file):
+                            try:
+                                shutil.copy2(s_file, pkg_file)
+                            except Exception:
+                                pass
+        except Exception:
+            pass
     except Exception:
+        # Never crash navbar or app if asset synchronization encounters permission or filesystem limits
         pass
 
 
@@ -65,6 +82,14 @@ def render_pwa_support() -> None:
       try {
         const parentDoc = window.parent.document;
         if (!parentDoc) return;
+
+        // Cleanup any stale background video elements
+        try {
+          const staleVideo = parentDoc.getElementById('ag-landing-fullpage-video');
+          if (staleVideo) staleVideo.remove();
+          const staleOverlay = parentDoc.getElementById('ag-landing-fullpage-overlay');
+          if (staleOverlay) staleOverlay.remove();
+        } catch (_) {}
 
         // 1. Inject or update Web App Manifest
         let manifest = parentDoc.querySelector('link[rel="manifest"]');
@@ -109,10 +134,6 @@ def render_pwa_support() -> None:
           const styleEl = parentDoc.createElement('style');
           styleEl.id = 'ag-dynamic-runtime-styles';
           styleEl.textContent = `
-            @keyframes agBulbPulse {
-              0%, 100% { transform: scale(1); filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.45)); }
-              50% { transform: scale(1.05); filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.75)); }
-            }
             @keyframes agIndeterminateBar {
               0% { left: -35%; width: 35%; }
               50% { left: 30%; width: 50%; }
@@ -146,7 +167,86 @@ def render_pwa_support() -> None:
               border-radius: 9999px;
               animation: agIndeterminateBar 1.4s infinite linear;
             }
-            /* Permanently suppress native sidebar and toolbar on client */
+            /* Permanently suppress native header, sidebar, and toolbar on client */
+            header[data-testid="stHeader"],
+            .stApp > header,
+            [data-testid="stHeader"] {
+              display: none !important;
+              height: 0 !important;
+              min-height: 0 !important;
+              padding: 0 !important;
+              margin: 0 !important;
+              visibility: hidden !important;
+            }
+            .block-container,
+            [data-testid="stMainBlockContainer"],
+            [data-testid="stAppViewBlockContainer"],
+            .main .block-container {
+              padding-top: 0.35rem !important;
+              margin-top: 0 !important;
+            }
+            .st-key-ag_navbar {
+              position: sticky !important;
+              top: 0.35rem !important;
+              z-index: 999990 !important;
+              margin: 0 auto 0.45rem auto !important;
+            }
+            /* Ensure NO black background on navbar buttons, popovers, or tabs */
+            .st-key-ag_navbar button,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] button,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stBaseButton-secondary"] {
+              background: transparent !important;
+              background-color: transparent !important;
+              border: none !important;
+              color: #0a1f26 !important;
+              box-shadow: none !important;
+            }
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] button p,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button p,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button p,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button p {
+              color: #0a1f26 !important;
+              text-shadow: none !important;
+            }
+            .st-key-ag_navbar .st-key-lang_cycle_btn button,
+            .st-key-ag_navbar [data-testid="stHorizontalBlock"] .st-key-lang_cycle_btn button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .st-key-lang_cycle_btn button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="column"]:last-child button,
+            [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stColumn"]:last-child button {
+              background: rgba(2, 132, 199, 0.08) !important;
+              background-color: rgba(2, 132, 199, 0.08) !important;
+              border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
+              border-radius: 50% !important;
+              box-shadow: none !important;
+            }
+            /* Universal light styling for Streamlit tabs (st.tabs) */
+            [data-testid="stTabs"] button[role="tab"],
+            [data-testid="stTabs"] [data-baseweb="tab"],
+            [data-testid="stTabs"] button,
+            .stTabs button[role="tab"],
+            .stTabs [data-baseweb="tab"],
+            .stTabs button,
+            [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] button {
+              background: transparent !important;
+              background-color: transparent !important;
+              border: none !important;
+              color: #334155 !important;
+              box-shadow: none !important;
+            }
+            [data-testid="stTabs"] button[role="tab"][aria-selected="true"],
+            [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"],
+            .stTabs button[role="tab"][aria-selected="true"] {
+              background: #ffffff !important;
+              background-color: #ffffff !important;
+              color: #0284c7 !important;
+              border-bottom: 2.5px solid #0284c7 !important;
+            }
             [data-testid="stSidebar"],
             [data-testid="collapsedControl"],
             section[data-testid="stSidebar"],
@@ -241,19 +341,32 @@ def render_pwa_support() -> None:
         if (!pageLoader) {
           pageLoader = parentDoc.createElement('div');
           pageLoader.id = 'ag-page-loader';
-          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at 50% 25%, #05303f 0%, #021824 100%);z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
+          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#10251c;z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
           pageLoader.innerHTML = `
             <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
-              <div style="position:absolute;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(14,165,233,0.12) 50%, transparent 70%);animation:agBulbPulse 2s infinite ease-in-out;"></div>
-              <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;position:relative;z-index:2;animation:agBulbPulse 2.2s infinite ease-in-out;">
+              <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;position:relative;z-index:2;">
             </div>
-            <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-0.03em;color:#f0fdf4;margin:0 0 0.35rem 0;">agrimenya</h1>
-            <p id="ag-loader-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:500;color:#94a3b8;margin:0 0 1.6rem 0;">Loading agro-climate intelligence...</p>
-            <div style="width:190px;height:4px;background:rgba(255,255,255,0.08);border-radius:9999px;overflow:hidden;position:relative;">
-              <div style="position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg, #0284c7 0%, #0369a1 100%);border-radius:9999px;animation:agIndeterminateBar 1.5s infinite ease-in-out;"></div>
+            <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-0.03em;color:#f4f6ed;margin:0 0 0.35rem 0;">agrimenya</h1>
+            <p id="ag-loader-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.96rem;font-weight:500;color:#b7c4b8;margin:0 0 1.6rem 0;">Getting your field workspace ready…</p>
+            <div style="width:190px;height:4px;background:rgba(255,255,255,0.10);border-radius:9999px;overflow:hidden;position:relative;">
+              <div style="position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg, #729777 0%, #527c5d 100%);border-radius:9999px;animation:agIndeterminateBar 1.5s infinite ease-in-out;"></div>
             </div>
           `;
           parentDoc.body.appendChild(pageLoader);
+        } else {
+          // Update loaders left in the parent document by an older app version.
+          pageLoader.style.background = '#10251c';
+          const oldLogoHalo = pageLoader.querySelector('div[style*="130px"]');
+          if (oldLogoHalo) oldLogoHalo.remove();
+          const loaderLogo = pageLoader.querySelector('img');
+          if (loaderLogo) {
+            loaderLogo.style.filter = 'none';
+            loaderLogo.style.animation = 'none';
+          }
+          const loaderMessage = pageLoader.querySelector('#ag-loader-msg');
+          if (loaderMessage && loaderMessage.textContent === 'Loading agro-climate intelligence...') {
+            loaderMessage.textContent = 'Getting your field workspace ready…';
+          }
         }
 
         // Hide Page Loader once content is ready
@@ -291,7 +404,7 @@ def render_pwa_support() -> None:
               const href = link.getAttribute('href') || link.querySelector('a')?.getAttribute('href') || '';
               if (href && !href.startsWith('#') && !link.target && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
                 const targetText = (link.textContent || 'page').trim();
-                showPageLoader('Opening ' + targetText + '...');
+                showPageLoader('Taking you to ' + targetText + '…');
               }
             }
           }, true);
@@ -336,7 +449,7 @@ def render_pwa_support() -> None:
                 Live connection to the agrimenya server was interrupted. Cached Rwanda district baselines, seasonal crop calendars, and emergency field tools remain ready.
               </p>
               <div style="display:flex;flex-direction:column;gap:0.75rem;width:100%;">
-                <a href="/app/static/offline.html" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;text-decoration:none;font-weight:700;font-size:0.92rem;box-shadow:0 4px 16px rgba(16,185,129,0.35);transition:all 0.2s;">
+                <a href="/app/static/offline.html" target="_self" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;text-decoration:none;font-weight:700;font-size:0.92rem;box-shadow:0 4px 16px rgba(16,185,129,0.35);transition:all 0.2s;">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
                   <span>Open Offline Field Hub</span>
                 </a>
@@ -438,7 +551,7 @@ def render_pwa_support() -> None:
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                   <span>Reload agrimenya</span>
                 </button>
-                <a href="/app/static/offline.html" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:rgba(16,185,129,0.12);border:1.5px solid rgba(16,185,129,0.35);color:#34d399;text-decoration:none;font-weight:700;font-size:0.92rem;transition:all 0.2s;">
+                <a href="/app/static/offline.html" target="_self" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:rgba(16,185,129,0.12);border:1.5px solid rgba(16,185,129,0.35);color:#34d399;text-decoration:none;font-weight:700;font-size:0.92rem;transition:all 0.2s;">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
                   <span>Open Offline Field Hub</span>
                 </a>
@@ -579,40 +692,83 @@ def render_pwa_support() -> None:
           }
         };
 
-        // Render the floating Install App button themed to the logo
-        if (!parentDoc.getElementById('ag-pwa-install-badge')) {
-          const isStandalone = window.parent.matchMedia('(display-mode: standalone)').matches || window.parent.navigator.standalone === true;
-          if (!isStandalone) {
-            const installBtn = parentDoc.createElement('button');
-            installBtn.id = 'ag-pwa-install-badge';
-            installBtn.title = 'Install agrimenya App';
-            installBtn.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:999999;padding:0.4rem 1.1rem 0.4rem 0.65rem;border-radius:9999px;background:linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%);border:1.5px solid rgba(56,189,248,0.75);color:#ffffff;font-family:"Plus Jakarta Sans",sans-serif;display:flex;align-items:center;gap:0.55rem;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);';
-            installBtn.innerHTML = `
-              <img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(56,189,248,0.95));pointer-events:none;">
-              <div style="display:flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:1.15;pointer-events:none;">
-                <span style="font-size:0.84rem;font-weight:800;color:#ffffff;letter-spacing:-0.01em;">Install App</span>
-                <span style="font-size:0.68rem;font-weight:700;color:#38bdf8;letter-spacing:0.02em;">agrimenya</span>
-              </div>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;pointer-events:none;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            `;
-            installBtn.addEventListener('mouseenter', () => {
-              installBtn.style.transform = 'translateY(-3px) scale(1.03)';
-              installBtn.style.borderColor = '#38bdf8';
-              installBtn.style.boxShadow = '0 16px 36px rgba(0,0,0,0.6), 0 0 26px rgba(56,189,248,0.65), 0 0 16px rgba(74,222,128,0.45)';
-              installBtn.style.background = 'linear-gradient(135deg, #063143 0%, #0a465e 55%, #042533 100%)';
-            });
-            installBtn.addEventListener('mouseleave', () => {
-              installBtn.style.transform = 'translateY(0) scale(1)';
-              installBtn.style.borderColor = 'rgba(56,189,248,0.75)';
-              installBtn.style.boxShadow = '0 10px 28px rgba(0,0,0,0.5),0 0 16px rgba(56,189,248,0.38),0 0 8px rgba(74,222,128,0.25)';
-              installBtn.style.background = 'linear-gradient(135deg, #031d28 0%, #063143 55%, #031d28 100%)';
-            });
-            installBtn.addEventListener('click', () => {
-              window.parent.__agrimenya_trigger_install();
-            });
-            parentDoc.body.appendChild(installBtn);
-          }
+        // Unconditionally remove any floating App icon / install badge on the bottom left
+        function purgeBottomLeftBadges() {
+          try {
+            const el = parentDoc.getElementById('ag-pwa-install-badge');
+            if (el) el.remove();
+            const bad = parentDoc.querySelectorAll('#ag-pwa-install-badge, [id*="pwa-install"], [class*="viewerBadge"], [data-testid="manage-app-button"]');
+            bad.forEach(b => b.remove());
+          } catch (_) {}
         }
+        purgeBottomLeftBadges();
+        setInterval(purgeBottomLeftBadges, 400);
+
+        // 12. STRICT SAME-TAB NAVIGATION ENFORCEMENT
+        // Ensure no links, buttons, or window.open calls ever open in a new tab
+        (function enforceStrictSameTabNavigation() {
+          try {
+            function sanitizeLinks(root) {
+              if (!root || !root.querySelectorAll) return;
+              const blankLinks = root.querySelectorAll('a[target="_blank"], a[target="_BLANK"]');
+              for (let i = 0; i < blankLinks.length; i++) {
+                blankLinks[i].target = '_self';
+              }
+            }
+            sanitizeLinks(parentDoc);
+            sanitizeLinks(document);
+
+            // Intercept all link clicks in capture phase on parent and iframe documents
+            function interceptClicks(doc) {
+              if (!doc || doc.__ag_same_tab_enforced) return;
+              doc.__ag_same_tab_enforced = true;
+              doc.addEventListener('click', function(e) {
+                const anchor = e.target.closest('a');
+                if (anchor) {
+                  if (anchor.target === '_blank' || anchor.getAttribute('target') === '_blank') {
+                    anchor.target = '_self';
+                    anchor.removeAttribute('target');
+                  }
+                }
+              }, true);
+            }
+            interceptClicks(parentDoc);
+            interceptClicks(document);
+
+            // MutationObserver to sanitize dynamically injected links (e.g. st.link_button)
+            if (!parentDoc.__ag_same_tab_observer && parentDoc.body) {
+              const obs = new MutationObserver(function(mutations) {
+                for (let m = 0; m < mutations.length; m++) {
+                  const nodes = mutations[m].addedNodes;
+                  for (let n = 0; n < nodes.length; n++) {
+                    const node = nodes[n];
+                    if (node.nodeType === 1) {
+                      if (node.tagName === 'A' && (node.target === '_blank' || node.getAttribute('target') === '_blank')) {
+                        node.target = '_self';
+                        node.removeAttribute('target');
+                      }
+                      sanitizeLinks(node);
+                    }
+                  }
+                }
+              });
+              obs.observe(parentDoc.body, { childList: true, subtree: true });
+              parentDoc.__ag_same_tab_observer = obs;
+            }
+
+            // Override window.open across both contexts
+            const sameTabOpen = function(url) {
+              if (url) {
+                window.parent.location.href = url;
+              }
+              return window.parent;
+            };
+            try { window.open = sameTabOpen; } catch(_) {}
+            try { if (window.parent) window.parent.open = sameTabOpen; } catch(_) {}
+          } catch(sameTabErr) {
+            console.debug('Same-tab navigation note:', sameTabErr);
+          }
+        })();
 
       } catch (err) {
         console.error('PWA initialization error:', err);

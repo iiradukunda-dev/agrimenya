@@ -1,4 +1,4 @@
-﻿# agrimenya
+# agrimenya
 
 agrimenya is a Rwanda-focused agricultural decision and planning support
 system. The Streamlit frontend calls a FastAPI backend, which reads and writes
@@ -239,3 +239,70 @@ Verify that both Docker images build cleanly:
 ```powershell
 docker compose build
 ```
+
+
+## Frontend UI Architecture & Dashboard Widgets
+
+The Agri-Menya frontend is structured around an executive, modular design system with responsive layouts and persistent theme support (Light & Dark modes).
+
+### Directory Structure
+```text
+frontend/
+├── Home.py                  # Entrypoint & operational pipeline overview
+├── pages/                   # Multi-page routes (Dashboard, Zones, Planning, etc.)
+├── views/                   # Core business views (views/dashboard.py, etc.)
+├── components/              # Design system library:
+│   ├── navbar.py            # Executive header, breadcrumbs, theme toggle, nav links
+│   ├── cards.py             # KPI cards with SVG sparklines, forecast cards, empty states
+│   ├── charts.py            # Responsive Plotly charts (bar, donut, area)
+│   ├── badges.py            # Priority & status indicators with pulsing dots
+│   ├── maps.py              # Interactive Folium map with Rwanda district centroids
+│   └── errors.py            # Error boundaries & sanitized failure screens
+└── utils/
+    ├── theme.py             # Dynamic CSS tokens, light/dark themes, card elevation
+    ├── i18n.py              # Multi-lingual translations (EN, RW, FR)
+    └── api_client.py        # Cached API client with offline mock fallbacks
+```
+
+### How to Add a New Dashboard Widget
+
+To add a new dashboard metric, chart, or card to `frontend/views/dashboard.py`:
+
+1. **Register the Data Fetcher (`frontend/utils/api_client.py`):**
+   ```python
+   @st.cache_data(ttl=300, show_spinner=False)
+   def get_my_metric() -> dict[str, Any]:
+       data = _get_api("/my-endpoint")
+       return data if isinstance(data, dict) else {"count": 0}
+   ```
+
+2. **Create the Visual Component (`frontend/components/cards.py` or `charts.py`):**
+   ```python
+   def render_custom_widget(col, title: str, count: int, sparkline: list[float]):
+       from components.cards import render_kpi_card
+       render_kpi_card(
+           col,
+           title=title,
+           value=count,
+           sparkline_data=sparkline,
+           delta=5.2,
+           icon="""<svg ...>...</svg>"""
+       )
+   ```
+
+3. **Mount in the Dashboard Grid (`frontend/views/dashboard.py`):**
+   ```python
+   # Inside render_dashboard():
+   with st.container(border=True):
+       render_custom_widget(col, "My Metric", data["count"], [10, 15, 20, 25])
+   ```
+
+4. **Add Localized Strings (`frontend/utils/i18n.py`):**
+   Add keys under `FALLBACK_TRANSLATIONS` for `en`, `rw`, and `fr`.
+
+### Full Backend-to-Frontend Feature Parity
+
+Every backend service and endpoint is exposed through an interactive UI workflow:
+- **Decision Engine (`/decision`):** Priority recommendations, field risk signal integration, agronomic disease risk evaluation, district yield gap benchmarking vs. national reference targets, Plotly comparison charts with CSV export, and ML model diagnostics & provenance display (XGBoost R²=0.83, MAE=214 kg/ha, split metrics, feature list, and known limitations).
+- **Planification & Milestones (`/planification`):** Custom execution roadmaps, milestone action status updates (`planned`, `in_progress`, `completed`, `blocked`), milestone audit history trail, attached resource costing, one-click plan email dispatch via SMTP (`/communication/share/{plan_id}/send`), and rapid emergency disease response plan generator.
+- **Communication Hub (`/communication`):** Real-time community alerts feed with severity filtering, broadcast field alert form with SMTP email distribution, multi-channel notification dispatch across SMS (Twilio), WhatsApp Cloud API, and Email, plus embedded WhatsApp contact registry and consent management.

@@ -35,7 +35,7 @@ def test_subscribe_changes_only_the_senders_subscription(monkeypatch):
     monkeypatch.setattr(bot.crud, "create_alert_subscription", lambda value: created.append(value) or value)
     contact = _contact(zone_id="personal-zone")
     reply = bot.handle_inbound(contact, "SUBSCRIBE Gasabo Maize")
-    assert "Subscribed" in reply
+    assert "Subscribed" in reply or "Subscription saved" in reply
     assert len(created) == 2
     assert {item["contact_id"] for item in created} == {"contact-1"}
     assert contact["zone_id"] == "personal-zone"

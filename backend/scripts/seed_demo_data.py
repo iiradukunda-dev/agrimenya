@@ -90,10 +90,16 @@ def demo_rows() -> dict[str, tuple[list[dict], str]]:
             zones.append({
                 "id": zone_id, "district": district, "sector": sector,
                 "cell": f"Demo Cell {i + 1}",
-                "latitude": centroid["latitude"] + (i - 1) * 0.018,
-                "longitude": centroid["longitude"] + (i - 1) * 0.018,
+                "site_name": None,
+                "latitude": round(centroid["latitude"] + (i - 1) * 0.018, 6),
+                "longitude": round(centroid["longitude"] + (i - 1) * 0.018, 6),
                 "crop_type": None, "season": None,
-                "identity_key": f"{district.casefold()}|{sector.casefold()}|demo cell {i + 1}||",
+                "field_boundary_geojson": None,
+                "identity_key": (
+                    f"{district.casefold()}|{sector.casefold()}|demo cell {i + 1}||||"
+                    f"{centroid['latitude'] + (i - 1) * 0.018:.6f}|"
+                    f"{centroid['longitude'] + (i - 1) * 0.018:.6f}"
+                ),
             })
 
     metrics: list[dict] = []

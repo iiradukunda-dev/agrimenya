@@ -447,7 +447,7 @@ def render_centralized_login_card(
                     on_click=api_client._authenticate_admin_session,
                     args=(widget_key,),
                 )
-            with st.expander("Forgot your administrator password?"):
+            with st.popover("Forgot password?", use_container_width=True):
                 with st.form(f"{key_prefix}_forgot_form"):
                     forgot_email = st.text_input(
                         "Administrator email",
@@ -484,6 +484,19 @@ def render_centralized_login_card(
                 icon=sprout_icon,
                 accent_color="#10b981",
             )
+            try:
+                g_status = requests.get(f"{api_base_url}/community/auth/google/status", timeout=2)
+                if g_status.status_code == 200 and g_status.json().get("enabled"):
+                    st.link_button(
+                        "Sign in or register with Google",
+                        f"{api_base_url}/community/auth/google",
+                        use_container_width=True,
+                    )
+                    st.caption("New accounts through Google are verified automatically.")
+                    st.markdown('<div style="text-align:center;color:#64748b;font-size:0.75rem;margin:0.4rem 0 0.7rem;">— OR —</div>', unsafe_allow_html=True)
+            except Exception:
+                pass
+
             tab_signin, tab_create = st.tabs(["Sign In", "Create Account"])
             with tab_signin:
                 with st.form(f"{key_prefix}_comm_signin"):
@@ -538,7 +551,7 @@ def render_centralized_login_card(
                 badge_text="SECURE ACCESS",
                 accent_color="#0284c7",
             )
-            tab_admin, tab_comm = st.tabs(["🛡️ Administrator & Officer", "🌾 Farmer Community"])
+            tab_admin, tab_comm = st.tabs(["Administrator & Officer", "Farmer Community"])
             with tab_admin:
                 admin_error = st.session_state.pop("admin_login_error", None)
                 if admin_error:
@@ -554,7 +567,7 @@ def render_centralized_login_card(
                         on_click=api_client._authenticate_admin_session,
                         args=(widget_key,),
                     )
-                with st.expander("Forgot your administrator password?"):
+                with st.popover("Forgot password?", use_container_width=True):
                     with st.form(f"{key_prefix}_uni_forgot_form"):
                         forgot_email = st.text_input("Administrator email", placeholder="admin@agrimenya.rw", key=f"{key_prefix}_uni_forgot_email")
                         forgot = st.form_submit_button("Send reset link →", use_container_width=True)
@@ -564,6 +577,19 @@ def render_centralized_login_card(
                         else:
                             st.error(api_client.get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
             with tab_comm:
+                try:
+                    g_status = requests.get(f"{api_base_url}/community/auth/google/status", timeout=2)
+                    if g_status.status_code == 200 and g_status.json().get("enabled"):
+                        st.link_button(
+                            "Sign in or register with Google",
+                            f"{api_base_url}/community/auth/google",
+                            use_container_width=True,
+                        )
+                        st.caption("New accounts through Google are verified automatically.")
+                        st.markdown('<div style="text-align:center;color:#64748b;font-size:0.75rem;margin:0.4rem 0 0.7rem;">— OR —</div>', unsafe_allow_html=True)
+                except Exception:
+                    pass
+
                 tab_in, tab_reg = st.tabs(["Sign In", "Create Account"])
                 with tab_in:
                     with st.form(f"{key_prefix}_uni_comm_login"):
@@ -607,3 +633,120 @@ def render_centralized_login_card(
             return api_client.admin_session_authenticated() or bool(st.session_state.get("community_access_token"))
 
 
+
+
+
+def generate_svg_sparkline(data: list[float], color: str = "#10b981", width: int = 80, height: int = 26) -> str:
+    """Generate a lightweight SVG sparkline from a series of numbers."""
+    if not data or len(data) < 2:
+        return ""
+    min_val, max_val = min(data), max(data)
+    val_range = max_val - min_val if max_val != min_val else 1.0
+    step = width / (len(data) - 1)
+    points = []
+    for i, val in enumerate(data):
+        x = i * step
+        y = height - ((val - min_val) / val_range) * (height - 8) - 4
+        points.append(f"{x:.1f},{y:.1f}")
+    poly_points = " ".join(points)
+    fill_polygon = f"0,{height} {poly_points} {width},{height}"
+
+    return f"""<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" fill="none" style="overflow:visible;">
+        <polygon points="{fill_polygon}" fill="{color}" fill-opacity="0.12"/>
+        <polyline points="{poly_points}" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="{points[-1].split(',')[0]}" cy="{points[-1].split(',')[1]}" r="3" fill="{color}"/>
+    </svg>"""
+
+
+def render_kpi_card(
+    col=None,
+    title: str = "",
+    value: str | int | float = "",
+    unit: str = "",
+    delta: float | str | None = None,
+    delta_period: str = "vs baseline",
+    sparkline_data: list[float] | None = None,
+    icon: str = "",
+    badge_color: str = "#0284c7",
+    subtitle: str = "",
+    delta_pct: float | str | None = None,
+) -> None:
+    """Render an executive KPI card with live value, delta badge, and inline SVG sparkline."""
+    if isinstance(col, str) and not title:
+        title = col
+        col = None
+    if delta_pct is not None and delta is None:
+        delta = delta_pct
+
+    sparkline_svg = generate_svg_sparkline(sparkline_data, color=badge_color) if sparkline_data else ""
+
+    delta_markup = ""
+    if delta is not None:
+        try:
+            delta_val = float(str(delta).replace("%", "").replace("+", "").strip())
+            is_pos = delta_val >= 0
+            cls = "ag-kpi-delta-up" if is_pos else "ag-kpi-delta-down"
+            arrow = "↑" if is_pos else "↓"
+            delta_markup = f'<div class="ag-kpi-footer"><span class="ag-kpi-delta {cls}">{arrow} {abs(delta_val):.1f}%</span> <span>{subtitle or delta_period}</span></div>'
+        except ValueError:
+            delta_markup = f'<div class="ag-kpi-footer"><span class="ag-kpi-delta">{delta}</span> <span>{subtitle or delta_period}</span></div>'
+    elif subtitle:
+        delta_markup = f'<div class="ag-kpi-footer"><span>{subtitle}</span></div>'
+
+    icon_html = f'<div class="ag-kpi-icon">{icon}</div>' if icon else ""
+
+    html = f"""
+    <div class="ag-kpi-card">
+        <div class="ag-kpi-header">
+            <span class="ag-kpi-title">{title}</span>
+            {icon_html}
+        </div>
+        <div class="ag-kpi-body">
+            <span class="ag-kpi-value">{value}{unit}</span>
+            <div class="ag-kpi-sparkline">{sparkline_svg}</div>
+        </div>
+        {delta_markup}
+    </div>
+    """
+    if col is not None:
+        with col:
+            st.markdown(html, unsafe_allow_html=True)
+    else:
+        st.markdown(html, unsafe_allow_html=True)
+
+
+def render_weather_forecast_grid(forecast_list: list[dict]) -> None:
+    """Render a modern horizontal grid of daily weather forecasts."""
+    if not forecast_list:
+        return
+    cards_html = []
+    for item in forecast_list[:6]:
+        date = str(item.get("date") or item.get("Date") or "")[-5:]
+        hi = item.get("temperature_max_c") or item.get("High (C)") or "N/A"
+        lo = item.get("temperature_min_c") or item.get("Low (C)") or "N/A"
+        rain = item.get("precipitation_probability_pct") or item.get("Rain chance (%)") or 0
+        rain_sum = item.get("precipitation_sum_mm") or item.get("Rain (mm)") or 0
+
+        cards_html.append(f"""
+        <div class="ag-weather-card">
+            <div class="ag-weather-date">{date}</div>
+            <div class="ag-weather-temp">{hi}° / {lo}°</div>
+            <div class="ag-weather-rain">Rain: {rain}% ({rain_sum}mm)</div>
+        </div>
+        """)
+    grid_html = f'<div class="ag-weather-row">{"".join(cards_html)}</div>'
+    st.markdown(grid_html, unsafe_allow_html=True)
+
+
+def render_empty_state(title: str, message: str, icon_svg: str = "") -> None:
+    """Render a clean, modern empty state container."""
+    default_icon = """<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>"""
+    icon = icon_svg if icon_svg else default_icon
+    html = f"""
+    <div class="ag-empty-state">
+        <div class="ag-empty-icon">{icon}</div>
+        <div class="ag-empty-title">{title}</div>
+        <div class="ag-empty-desc">{message}</div>
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)

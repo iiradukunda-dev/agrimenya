@@ -8,7 +8,7 @@ import logging
 import requests
 import streamlit as st
 from components.badges import priority_badge
-from components.errors import render_error_page
+from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
 from utils.i18n import t
@@ -23,6 +23,7 @@ def _init_chat_state() -> None:
         st.session_state.ai_messages = []
 
 
+@error_boundary("AI Assistant")
 def render_ai_assistant() -> None:
     try:
         render_icon_title(

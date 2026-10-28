@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from uuid import UUID
-from app.core.auth import require_user
+from app.core.auth import require_community_or_admin
 from app.models.zone import ZoneCreate
 from app.db import crud
 from app.db.rwanda_districts import RWANDA_DISTRICTS
@@ -53,7 +53,7 @@ def get_zones_page(
 
 
 @router.post("/zones")
-def add_zone(zone: ZoneCreate, _: dict = Depends(require_user)):
+def add_zone(zone: ZoneCreate, _: dict = Depends(require_community_or_admin)):
     canonical_district = next(
         (item["district"] for item in RWANDA_DISTRICTS
          if item["district"].casefold() == zone.district.strip().casefold()),
