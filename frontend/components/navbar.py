@@ -257,7 +257,7 @@ def render_navbar() -> None:
         color: #0284c7 !important;
       }
 
-      /* ACTIVE / SELECTED TAB: text emphasis without a filled capsule */
+      /* ACTIVE / SELECTED TAB: transparent capsule with a blue outline */
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"],
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"],
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink-NavLink"][aria-current="page"],
@@ -270,12 +270,13 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active {
         background: transparent !important;
         background-color: transparent !important;
-        border: none !important;
+        box-sizing: border-box !important;
+        border: 2px solid #0875d1 !important;
         border-radius: 9999px !important;
         height: 2.35rem !important;
         min-height: 2.35rem !important;
         padding: 0.45rem 1.35rem !important;
-        box-shadow: inset 0 -2px 0 #0284c7 !important;
+        box-shadow: none !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
