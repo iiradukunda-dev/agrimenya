@@ -697,11 +697,28 @@ def render_navbar() -> None:
       }
       .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"],
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"],
-      .st-key-ag_navbar a[aria-current="page"] {
-        border: none !important;
+      .st-key-ag_navbar a[aria-current="page"],
+      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"].ag-nav-active,
+      .st-key-ag_navbar a.ag-nav-active {
+        box-sizing: border-box !important;
+        border: 2px solid #0875d1 !important;
+        border-radius: 9999px !important;
         background: transparent !important;
         background-color: transparent !important;
-        box-shadow: inset 0 -2px 0 #0284c7 !important;
+        box-shadow: none !important;
+      }
+      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"]:hover,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"]:hover,
+      .st-key-ag_navbar a[aria-current="page"]:hover,
+      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active:hover,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"].ag-nav-active:hover,
+      .st-key-ag_navbar a.ag-nav-active:hover {
+        border: 2px solid #0875d1 !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        transform: none !important;
       }
       div[data-testid="stPopoverBody"],
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"],
