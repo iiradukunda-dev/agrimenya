@@ -717,7 +717,6 @@ def render_navbar() -> None:
                     st.page_link("pages/99_Showcase.py", label=t("nav.data_guide", "Data guide"))
                     st.page_link("pages/12_Community.py", label=t("nav.community", "Farmer community"))
                     st.page_link("pages/1_About.py", label=t("nav.about", "About agrimenya"))
-                    st.page_link("pages/11_Contact.py", label=t("nav.contact", "Feedback & support"))
                     st.markdown(
                         f'<a href="/app/static/offline.html" target="_self" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#0284c7;background:rgba(2,132,199,0.08);border:1px solid rgba(2,132,199,0.22);margin-top:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> {t("nav.offline_hub", "Offline Field Hub")}</a>',
                         unsafe_allow_html=True,

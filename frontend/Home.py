@@ -181,6 +181,18 @@ def main():
                 )
                 st.markdown(step_html, unsafe_allow_html=True)
 
+    st.markdown(
+        '<div style="margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--ag-border);text-align:center;">'
+        '<p style="margin:0 0 0.25rem;color:var(--ag-text-muted);font-size:0.9rem;">Help us improve agrimenya</p>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+    st.page_link(
+        "pages/11_Contact.py",
+        label=t("home.send_feedback", "Send feedback"),
+        icon=":material/feedback:",
+    )
+
 
 if __name__ == "__main__":
     with error_boundary("Home"):
