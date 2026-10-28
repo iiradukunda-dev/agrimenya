@@ -18,6 +18,36 @@ render_navbar()
 with error_boundary("Feedback & Support"):
     st.title(t("contact.title", "Send feedback"))
     st.markdown(t("contact.subtitle", "Report an issue or share feedback about the agricultural data and workflows in this workspace."))
+    st.markdown(
+        """
+        <style>
+          [data-testid="stForm"] [data-testid="stFormSubmitButton"] button {
+            min-height: 2.65rem !important;
+            padding: 0.55rem 1.15rem !important;
+            border: 1px solid #0875d1 !important;
+            border-radius: 999px !important;
+            background: #0875d1 !important;
+            color: #ffffff !important;
+            font-weight: 650 !important;
+            box-shadow: 0 2px 7px rgba(8, 117, 209, 0.16) !important;
+            transition: background-color 160ms ease, box-shadow 160ms ease,
+                        transform 160ms ease !important;
+          }
+          [data-testid="stForm"] [data-testid="stFormSubmitButton"] button:hover {
+            border-color: #0563ad !important;
+            background: #0563ad !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 11px rgba(8, 117, 209, 0.24) !important;
+            transform: translateY(-1px) !important;
+          }
+          [data-testid="stForm"] [data-testid="stFormSubmitButton"] button:focus-visible {
+            outline: 3px solid rgba(8, 117, 209, 0.28) !important;
+            outline-offset: 2px !important;
+          }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
     with st.container(border=True):
         with st.form("contact_form", clear_on_submit=True):
