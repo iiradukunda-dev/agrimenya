@@ -271,6 +271,97 @@
       color: #fff;
       margin: 0.4rem 0;
     }
+
+    /* A calm, practical field guide with a little warmth */
+    :root {
+      --bg: #f4f5ef;
+      --card-bg: #ffffff;
+      --card-border: #e5e9df;
+      --accent: #356747;
+      --sky: #477b69;
+      --text: #27372d;
+      --muted: #65746a;
+    }
+    body { background: var(--bg); color: var(--text); padding: 1.25rem 1rem 4rem; }
+    .container { max-width: 1040px; }
+    header {
+      padding: 0.5rem 0 1rem; background: transparent; border: 0;
+      border-bottom: 1px solid var(--card-border); border-radius: 0; margin-bottom: 1.5rem;
+    }
+    .brand { color: var(--text); }
+    .brand img { filter: none; }
+    .brand h1 { font-size: 1.15rem; letter-spacing: -0.03em; }
+    .status-badge, .status-badge.online {
+      background: #e8efe5; border: 0; color: #365b3f; font-size: 0.78rem;
+      font-weight: 650; padding: 0.45rem 0.8rem;
+    }
+    .pulse-dot { box-shadow: none; animation: none; }
+    .hero-banner {
+      background: linear-gradient(120deg, #e8efe3 0%, #f0f1e7 100%);
+      border: 0; border-radius: 22px; padding: clamp(1.5rem, 4vw, 2.5rem);
+      margin-bottom: 1.75rem; box-shadow: none;
+    }
+    .hero-banner::after {
+      content: ""; position: absolute; right: -35px; bottom: -85px; width: 250px;
+      height: 250px; border-radius: 50%; background: rgba(93, 133, 86, 0.08);
+      pointer-events: none; z-index: 0;
+    }
+    .hero-banner > * { position: relative; z-index: 1; }
+    .hero-banner h2 {
+      max-width: 620px; color: #26392d; font-size: clamp(1.75rem, 4vw, 2.35rem);
+      letter-spacing: -0.045em;
+    }
+    .hero-banner p { color: #526458; max-width: 650px; font-size: 0.98rem; line-height: 1.7; }
+    .btn-reconnect {
+      background: #356747; border: 0; border-radius: 999px; box-shadow: none; padding: 0.72rem 1.2rem;
+    }
+    .btn-reconnect:hover { background: #294f38; transform: translateY(-1px); }
+    .tab-bar { gap: 0.45rem; margin-bottom: 1.2rem; padding: 0.25rem 0; }
+    .tab-btn {
+      background: transparent; border: 0; border-radius: 999px; color: #66736a;
+      padding: 0.65rem 1rem; transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+    .tab-btn:hover { background: #e7ece3; color: #2f5e3e; transform: translateY(-1px); }
+    .tab-btn.active { background: #356747; color: #fff; box-shadow: none; }
+    .card-grid { gap: 1rem; }
+    .crop-card, .scratchpad-box, .contact-card {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px;
+      box-shadow: 0 6px 20px rgba(39, 55, 45, 0.035); padding: 1.35rem;
+    }
+    .crop-card h3 { color: #315a3c; font-size: 1.08rem; }
+    .crop-badge { background: #eff3e9; border: 0; border-radius: 999px; color: #55704f; font-weight: 650; white-space: nowrap; }
+    .crop-card ul { color: #5e6e62; line-height: 1.8; }
+    .crop-card li { padding-left: 0.1rem; margin: 0.25rem 0; }
+    .crop-card li strong { color: #35483a; font-weight: 650; }
+    .scratchpad-box h3 { color: #315a3c !important; }
+    .scratchpad-box p { color: #647269 !important; }
+    .scratchpad-box input, .scratchpad-box select, .scratchpad-box textarea {
+      background: #fbfcf9; border: 1px solid #dce3d8; border-radius: 10px; color: #27372d;
+    }
+    .scratchpad-box input::placeholder, .scratchpad-box textarea::placeholder { color: #87938a; }
+    .scratchpad-box input:focus, .scratchpad-box select:focus, .scratchpad-box textarea:focus {
+      outline: 3px solid rgba(53, 103, 71, 0.16); border-color: #73917b;
+    }
+    .note-item { background: #f7f8f4; border: 0; border-radius: 12px; }
+    .note-item strong { color: #315a3c !important; }
+    .note-item p { color: #526458 !important; }
+    .contact-card { text-align: left; }
+    .contact-card h4 { color: #526f50; }
+    .contact-card .number { color: #2c4935; font-family: inherit; font-size: 1.45rem; }
+    :focus-visible { outline: 3px solid rgba(53, 103, 71, 0.48); outline-offset: 3px; }
+    @media (max-width: 640px) {
+      body { padding: 0.75rem 0.8rem 2.5rem; }
+      header { align-items: flex-start; }
+      .status-badge { font-size: 0.72rem; }
+      .tab-bar { display: grid; grid-template-columns: 1fr 1fr; }
+      .tab-btn { padding: 0.65rem 0.55rem; font-size: 0.82rem; }
+      .card-grid, .contacts-grid { grid-template-columns: 1fr; }
+      .scratchpad-box { padding: 1rem; }
+      .scratchpad-box > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; gap: 0 !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
   </style>
 </head>
 <body>
@@ -282,152 +373,152 @@
       </a>
       <div id="connectionStatus" class="status-badge">
         <span class="pulse-dot"></span>
-        <span id="statusText">Offline Mode Active</span>
+        <span id="statusText">Offline mode · Your notes stay on this device</span>
       </div>
     </header>
 
     <div class="hero-banner">
-      <h2>Offline Agricultural Intelligence Hub</h2>
+      <h2>Your field guide, even without a signal</h2>
       <p>
-        No active connection detected. You are viewing locally cached Rwanda seasonal planting baselines,
-        district soil metrics, and emergency agro-support tools.
+        There’s no connection right now, but you can still check crop guidance, look up local growing conditions,
+        keep field notes, and find important phone numbers. Notes you save here stay on this device until you’re ready to share them.
       </p>
       <button class="btn-reconnect" onclick="checkConnection(true)">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-        Retry Live Connection
+        Try connecting again
       </button>
     </div>
 
-    <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('crops')">Crops &amp; Field Calendars</button>
-      <button class="tab-btn" onclick="switchTab('districts')">30 Districts Baselines</button>
-      <button class="tab-btn" onclick="switchTab('scratchpad')">Offline Field Notes</button>
-      <button class="tab-btn" onclick="switchTab('contacts')">Emergency Contacts</button>
+    <div class="tab-bar" role="tablist" aria-label="Offline field tools">
+      <button id="tab-control-crops" class="tab-btn active" role="tab" aria-controls="tab-crops" onclick="switchTab('crops', this)" aria-selected="true">Crop guides</button>
+      <button id="tab-control-districts" class="tab-btn" role="tab" aria-controls="tab-districts" onclick="switchTab('districts', this)" aria-selected="false">District guides</button>
+      <button id="tab-control-scratchpad" class="tab-btn" role="tab" aria-controls="tab-scratchpad" onclick="switchTab('scratchpad', this)" aria-selected="false">My field notes</button>
+      <button id="tab-control-contacts" class="tab-btn" role="tab" aria-controls="tab-contacts" onclick="switchTab('contacts', this)" aria-selected="false">Quick help</button>
     </div>
 
     <!-- TAB 1: CROPS -->
-    <div id="tab-crops" class="tab-content active">
+    <div id="tab-crops" class="tab-content active" role="tabpanel" aria-labelledby="tab-control-crops" tabindex="0">
       <div class="card-grid">
         <div class="crop-card">
           <h3>Maize (Ibigori) <span class="crop-badge">Season A / B</span></h3>
           <ul>
-            <li><strong>Optimal Window:</strong> Sept 15 to Oct 20 (Season A)</li>
-            <li><strong>Soil pH:</strong> 5.5 to 6.8 (Liming if pH &lt; 5.2)</li>
-            <li><strong>Fertilizer:</strong> 100 kg/ha DAP at planting, 50 kg/ha Urea at knee-high</li>
-            <li><strong>Pest Watch:</strong> Fall Armyworm (FAW): spray neem or Emamectin benzoate at first leaf holes</li>
-            <li><strong>NISR Benchmark:</strong> 2.2 to 3.8 MT/ha</li>
+            <li><strong>Best time to plant:</strong> Sept 15 to Oct 20 (Season A)</li>
+            <li><strong>Soil acidity:</strong> pH 5.5 to 6.8 (consider lime below 5.2)</li>
+            <li><strong>Fertilizer guide:</strong> 100 kg/ha DAP at planting, 50 kg/ha Urea at knee-high</li>
+            <li><strong>Look out for:</strong> Fall Armyworm; ask a local agronomist about treatment at the first signs</li>
+            <li><strong>Typical Rwanda yield:</strong> 2.2 to 3.8 MT/ha</li>
           </ul>
         </div>
         <div class="crop-card">
           <h3>Climbing Beans (Ibishyimbo) <span class="crop-badge">Season A / B</span></h3>
           <ul>
-            <li><strong>Optimal Window:</strong> Sept 25 to Oct 30</li>
-            <li><strong>Soil pH:</strong> 5.8 to 6.5</li>
+            <li><strong>Best time to plant:</strong> Sept 25 to Oct 30</li>
+            <li><strong>Soil acidity:</strong> pH 5.8 to 6.5</li>
             <li><strong>Staking:</strong> 2 to 2.5m stakes at 2 weeks post-emergence</li>
-            <li><strong>Fertilizer:</strong> NPK 17-17-17 (50 kg/ha) + rhizobium inoculant</li>
-            <li><strong>Disease Watch:</strong> Anthracnose &amp; Angular leaf spot: ensure spacing</li>
-            <li><strong>NISR Benchmark:</strong> 1.5 to 2.4 MT/ha</li>
+            <li><strong>Fertilizer guide:</strong> NPK 17-17-17 (50 kg/ha) + rhizobium inoculant</li>
+            <li><strong>Look out for:</strong> Anthracnose and angular leaf spot; give plants room to breathe</li>
+            <li><strong>Typical Rwanda yield:</strong> 1.5 to 2.4 MT/ha</li>
           </ul>
         </div>
         <div class="crop-card">
           <h3>Irish Potato (Ibirayi) <span class="crop-badge">Volcanic / High</span></h3>
           <ul>
-            <li><strong>Priority Zones:</strong> Musanze, Nyabihu, Rubavu, Burera</li>
-            <li><strong>Altitude:</strong> 1,800 to 2,600m</li>
-            <li><strong>Fertilizer:</strong> NPK 17-17-17 (300 kg/ha) at planting</li>
-            <li><strong>Disease Watch:</strong> Late Blight (Phytophthora): preventive copper spraying</li>
-            <li><strong>NISR Benchmark:</strong> 12.0 to 18.5 MT/ha</li>
+            <li><strong>Common growing areas:</strong> Musanze, Nyabihu, Rubavu, Burera</li>
+            <li><strong>Typical elevation:</strong> 1,800 to 2,600m</li>
+            <li><strong>Fertilizer guide:</strong> NPK 17-17-17 (300 kg/ha) at planting</li>
+            <li><strong>Look out for:</strong> Late blight; ask an agronomist about prevention</li>
+            <li><strong>Typical Rwanda yield:</strong> 12.0 to 18.5 MT/ha</li>
           </ul>
         </div>
         <div class="crop-card">
           <h3>Rice (Umuceri) <span class="crop-badge">Marshland</span></h3>
           <ul>
-            <li><strong>Priority Zones:</strong> Bugarama, Rwamagana, Bugesera, Kirehe</li>
-            <li><strong>Water Regimen:</strong> Continuous saturation from transplanting to heading</li>
-            <li><strong>Fertilizer:</strong> Basal NPK + split Urea (tillering &amp; panicle initiation)</li>
-            <li><strong>NISR Benchmark:</strong> 4.5 to 6.2 MT/ha</li>
+            <li><strong>Common growing areas:</strong> Bugarama, Rwamagana, Bugesera, Kirehe</li>
+            <li><strong>Water needs:</strong> Keep the field moist from transplanting until the heads form</li>
+            <li><strong>Fertilizer guide:</strong> Basal NPK + split Urea (tillering &amp; panicle initiation)</li>
+            <li><strong>Typical Rwanda yield:</strong> 4.5 to 6.2 MT/ha</li>
           </ul>
         </div>
         <div class="crop-card">
           <h3>Cassava (Imyumbati) <span class="crop-badge">Perennial</span></h3>
           <ul>
-            <li><strong>Priority Zones:</strong> Bugesera, Ruhango, Kamonyi, Gatsibo</li>
+            <li><strong>Common growing areas:</strong> Bugesera, Ruhango, Kamonyi, Gatsibo</li>
             <li><strong>Varieties:</strong> CBSD &amp; CMD resistant clones (e.g. NASE 14, Gahene)</li>
             <li><strong>Spacing:</strong> 1m x 1m (10,000 cuttings/ha)</li>
-            <li><strong>NISR Benchmark:</strong> 14.0 to 22.0 MT/ha</li>
+            <li><strong>Typical Rwanda yield:</strong> 14.0 to 22.0 MT/ha</li>
           </ul>
         </div>
         <div class="crop-card">
           <h3>Soybean (Soya) <span class="crop-badge">Rotational</span></h3>
           <ul>
-            <li><strong>Priority Zones:</strong> Eastern &amp; Southern Provinces</li>
-            <li><strong>Inoculation:</strong> Bradyrhizobium japonicum before planting</li>
-            <li><strong>Optimal pH:</strong> 6.0 to 6.8</li>
-            <li><strong>NISR Benchmark:</strong> 1.1 to 1.8 MT/ha</li>
+            <li><strong>Common growing areas:</strong> Eastern and Southern Provinces</li>
+            <li><strong>Seed treatment:</strong> Bradyrhizobium japonicum before planting</li>
+            <li><strong>Soil acidity:</strong> pH 6.0 to 6.8</li>
+            <li><strong>Typical Rwanda yield:</strong> 1.1 to 1.8 MT/ha</li>
           </ul>
         </div>
       </div>
     </div>
 
     <!-- TAB 2: DISTRICTS -->
-    <div id="tab-districts" class="tab-content">
+    <div id="tab-districts" class="tab-content" role="tabpanel" aria-labelledby="tab-control-districts" tabindex="0">
       <div class="scratchpad-box">
-        <h3 style="margin-bottom:0.8rem;color:#38bdf8;">Rwanda 30 Districts Regional Agro-Baselines</h3>
-        <input type="text" id="districtSearch" placeholder="Type district name (e.g. Bugesera, Musanze, Gasabo)..." oninput="filterDistricts()">
+        <h3 style="margin-bottom:0.8rem;color:#38bdf8;">Growing conditions by district</h3>
+        <input type="text" id="districtSearch" placeholder="Search districts, provinces, or crops…" aria-label="Search districts, provinces, or crops" oninput="filterDistricts()">
         <div id="districtsGrid" class="card-grid" style="margin-top:1rem;"></div>
       </div>
     </div>
 
     <!-- TAB 3: FIELD NOTES SCRATCHPAD -->
-    <div id="tab-scratchpad" class="tab-content">
+    <div id="tab-scratchpad" class="tab-content" role="tabpanel" aria-labelledby="tab-control-scratchpad" tabindex="0">
       <div class="scratchpad-box">
-        <h3 style="color:#00E599;margin-bottom:0.5rem;">Offline Field Observation Logger</h3>
+        <h3 style="color:#00E599;margin-bottom:0.5rem;">Jot down what you see</h3>
         <p style="color:#94a3b8;font-size:0.88rem;margin-bottom:1rem;">
-          Recorded observations are safely stored in your browser's local memory and can be exported or synchronized once connected.
+          Your notes are saved only on this device. You can download a copy to share or keep for later.
         </p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
           <div>
-            <label style="font-size:0.82rem;font-weight:700;">District &amp; Sector</label>
-            <input type="text" id="noteDistrict" placeholder="e.g. Bugesera - Nyamata">
+            <label style="font-size:0.82rem;font-weight:700;" for="noteDistrict">Where is the field?</label>
+            <input type="text" id="noteDistrict" placeholder="District or sector, e.g. Nyamata">
           </div>
           <div>
-            <label style="font-size:0.82rem;font-weight:700;">Crop &amp; Area</label>
-            <input type="text" id="noteCrop" placeholder="e.g. Maize - 1.5 Ha">
+            <label style="font-size:0.82rem;font-weight:700;" for="noteCrop">What are you growing?</label>
+            <input type="text" id="noteCrop" placeholder="Crop and plot size, if useful">
           </div>
         </div>
-        <label style="font-size:0.82rem;font-weight:700;">Field Observations &amp; Pest / Soil Conditions</label>
-        <textarea id="noteContent" placeholder="Describe plant vigor, rainfall adequacy, pest sightings, or fertilizer timing..."></textarea>
-        <button class="btn-reconnect" style="background:#059669;border-color:#10b981;" onclick="saveNote()">
-          Save Observation Locally
+        <label style="font-size:0.82rem;font-weight:700;" for="noteContent">What did you notice?</label>
+        <textarea id="noteContent" placeholder="For example: leaves turning yellow, rain was light, or pests on the lower leaves…"></textarea>
+        <button class="btn-reconnect" style="background:#356747;" onclick="saveNote()">
+          Save note on this device
         </button>
-        <button class="btn-reconnect" style="background:#475569;border-color:#64748b;margin-left:0.5rem;" onclick="exportNotes()">
-          Export Notes (JSON)
+        <button class="btn-reconnect" style="background:#e8eee5;color:#365b3f;margin-left:0.5rem;" onclick="exportNotes()">
+          Download my notes
         </button>
 
         <div class="notes-list" id="savedNotesContainer">
-          <h4 style="font-size:0.95rem;margin:1rem 0 0.5rem;color:#e0f2fe;">Stored Field Records (<span id="noteCount">0</span>)</h4>
+          <h4 style="font-size:0.95rem;margin:1rem 0 0.5rem;color:#35483a;">Saved notes (<span id="noteCount">0</span>)</h4>
           <div id="notesList"></div>
         </div>
       </div>
     </div>
 
     <!-- TAB 4: CONTACTS -->
-    <div id="tab-contacts" class="tab-content">
+    <div id="tab-contacts" class="tab-content" role="tabpanel" aria-labelledby="tab-control-contacts" tabindex="0">
       <div class="contacts-grid">
         <div class="contact-card">
           <h4>RAB Agro Hotline</h4>
           <div class="number">8008</div>
-          <p style="color:#94a3b8;font-size:0.82rem;">Rwanda Agriculture Board Toll-Free</p>
+          <p style="color:#65746a;font-size:0.82rem;">Rwanda Agriculture Board · toll-free</p>
         </div>
         <div class="contact-card">
           <h4>Meteo Rwanda</h4>
           <div class="number">4121</div>
-          <p style="color:#94a3b8;font-size:0.82rem;">Weather &amp; Seasonal Advisories</p>
+          <p style="color:#65746a;font-size:0.82rem;">Weather and seasonal updates</p>
         </div>
         <div class="contact-card">
           <h4>Emergency Dispatch</h4>
           <div class="number">112</div>
-          <p style="color:#94a3b8;font-size:0.82rem;">Police / Disaster Management</p>
+          <p style="color:#65746a;font-size:0.82rem;">Police and disaster response</p>
         </div>
       </div>
     </div>
@@ -435,10 +526,14 @@
 
   <script>
     // Tab switching logic
-    function switchTab(name) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    function switchTab(name, button) {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      event.target.classList.add('active');
+      button.classList.add('active');
+      button.setAttribute('aria-selected', 'true');
       document.getElementById('tab-' + name).classList.add('active');
     }
 
@@ -451,7 +546,7 @@
         .then(res => {
           if (res.ok) {
             badge.className = 'status-badge online';
-            text.textContent = 'Back Online: Redirecting...';
+            text.textContent = 'You’re back online · Returning to agrimenya…';
             setTimeout(() => { window.location.href = '/'; }, 1000);
           } else {
             throw new Error('Not healthy');
@@ -459,8 +554,8 @@
         })
         .catch(() => {
           badge.className = 'status-badge';
-          text.textContent = 'Offline Mode Active';
-          if (manual) alert('Still offline. Offline baselines and tools remain available.');
+          text.textContent = 'Offline mode · Your notes stay on this device';
+          if (manual) alert('No connection yet. Your field guides and saved notes are still available here.');
         });
     }
 
@@ -507,13 +602,13 @@
       document.getElementById('noteCount').textContent = notes.length;
       const list = document.getElementById('notesList');
       if (notes.length === 0) {
-        list.innerHTML = '<p style="color:#64748b;font-size:0.85rem;">No offline notes logged yet.</p>';
+        list.innerHTML = '<p style="color:#65746a;font-size:0.88rem;">No notes yet. Add one above whenever something is worth remembering.</p>';
         return;
       }
       list.innerHTML = notes.map((n, idx) => `
         <div class="note-item">
           <div>
-            <strong style="color:#38bdf8;">${n.district || 'General'}: ${n.crop || 'Field'}</strong>
+            <strong style="color:#315a3c;">${n.district || 'Field note'}${n.crop ? ' · ' + n.crop : ''}</strong>
             <p style="color:#cbd5e1;font-size:0.85rem;margin-top:0.25rem;">${n.content}</p>
             <span style="color:#64748b;font-size:0.75rem;">${n.date}</span>
           </div>
