@@ -245,8 +245,8 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
       .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
       [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover {
-        background: rgba(2, 132, 199, 0.08) !important;
-        background-color: rgba(2, 132, 199, 0.08) !important;
+        background: transparent !important;
+        background-color: transparent !important;
         transform: none !important;
       }
       .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
@@ -257,7 +257,7 @@ def render_navbar() -> None:
         color: #0284c7 !important;
       }
 
-      /* ACTIVE / SELECTED TAB: Crisp Sky Blue Capsule */
+      /* ACTIVE / SELECTED TAB: text emphasis without a filled capsule */
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"],
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"],
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink-NavLink"][aria-current="page"],
@@ -268,14 +268,14 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"],
       .st-key-ag_navbar a.ag-nav-active,
       .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active {
-        background: #e0f2fe !important;
-        background-color: #e0f2fe !important;
+        background: transparent !important;
+        background-color: transparent !important;
         border: none !important;
         border-radius: 9999px !important;
         height: 2.35rem !important;
         min-height: 2.35rem !important;
         padding: 0.45rem 1.35rem !important;
-        box-shadow: 0 2px 10px rgba(2, 132, 199, 0.20) !important;
+        box-shadow: inset 0 -2px 0 #0284c7 !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -300,8 +300,8 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active:hover,
       .st-key-ag_navbar a[aria-current="page"]:hover,
       .st-key-ag_navbar a.ag-nav-active:hover {
-        background: #bae6fd !important;
-        background-color: #bae6fd !important;
+        background: transparent !important;
+        background-color: transparent !important;
         transform: none !important;
       }
 
@@ -690,15 +690,17 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stPopover"] > button:hover,
       .st-key-ag_navbar [data-testid="stPopover"] button:hover {
         border: none !important;
-        background: linear-gradient(135deg, rgba(186, 230, 253, 0.72), rgba(209, 250, 229, 0.58)) !important;
-        box-shadow: 0 7px 18px rgba(2, 132, 199, 0.14) !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
         transform: translateY(-2px) scale(1.035) !important;
       }
       .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"],
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"],
       .st-key-ag_navbar a[aria-current="page"] {
         border: none !important;
-        background: linear-gradient(135deg, #e0f2fe, #ecfdf5) !important;
+        background: transparent !important;
+        background-color: transparent !important;
         box-shadow: inset 0 -2px 0 #0284c7 !important;
       }
       div[data-testid="stPopoverBody"],
