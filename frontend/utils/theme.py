@@ -628,6 +628,61 @@ def load_theme() -> None:
       outline-offset: 2px !important;
     }}
 
+    /* Calm, consistent surfaces across every Streamlit page */
+    [data-testid="stAppViewContainer"] {{
+      background-image: radial-gradient(ellipse at 50% -18%, rgba(14, 165, 233, 0.075), transparent 42%) !important;
+    }}
+    .block-container,
+    [data-testid="stMainBlockContainer"],
+    [data-testid="stAppViewBlockContainer"],
+    .main .block-container {{
+      max-width: 1360px !important;
+      padding-left: clamp(1rem, 3vw, 2.5rem) !important;
+      padding-right: clamp(1rem, 3vw, 2.5rem) !important;
+    }}
+    [data-testid="stVerticalBlockBorderWrapper"] {{
+      border-radius: 16px !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.035), 0 8px 24px rgba(15, 23, 42, 0.045) !important;
+    }}
+    [data-testid="stVerticalBlockBorderWrapper"]:hover {{
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.09) !important;
+    }}
+    [data-testid="stMetric"] {{
+      border: 1px solid var(--ag-border) !important;
+      border-top: 1px solid var(--ag-border) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.035), 0 8px 24px rgba(15, 23, 42, 0.045) !important;
+    }}
+    [data-baseweb="input"] > div,
+    [data-baseweb="select"] > div,
+    [data-testid="stTextArea"] textarea {{
+      min-height: 42px;
+      border-radius: 10px !important;
+    }}
+    .stButton > button:not([role="tab"]):not([data-baseweb="tab"]),
+    button[data-testid="stPopoverButton"] {{
+      min-height: 40px;
+      border-radius: 10px !important;
+      box-shadow: none !important;
+    }}
+    [data-testid="stDataFrame"],
+    [data-testid="stTable"] {{
+      border-radius: 14px !important;
+    }}
+    @media (max-width: 768px) {{
+      .block-container,
+      [data-testid="stMainBlockContainer"],
+      [data-testid="stAppViewBlockContainer"],
+      .main .block-container {{
+        padding-top: 0.25rem !important;
+        padding-bottom: 2rem !important;
+      }}
+      h1 {{ font-size: clamp(1.6rem, 7vw, 2rem) !important; }}
+      [data-testid="stMetric"] {{ padding: 0.85rem !important; }}
+      [data-testid="stMetricValue"] div {{ font-size: 1.5rem !important; }}
+    }}
+
     @media (prefers-reduced-motion: reduce) {{
       *, *::before, *::after {{
         animation-duration: 0.01ms !important;

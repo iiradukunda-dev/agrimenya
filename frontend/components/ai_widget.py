@@ -34,8 +34,8 @@ def _get_ai_icon_base64() -> str:
 def render_floating_ai_widget() -> None:
     """Renders a persistent, static floating AI Assistant bulb in the bottom right corner.
 
-    The bulb has a steady, clean bio-luminescent glow with zero continuous pulsing
-    animations and is anchored persistently to the top-level window body so that on page
+    The bulb has no glow or continuous pulsing animations and is anchored persistently
+    to the top-level window body so that on page
     reload, refresh, or navigation it always stays in place without flickering or restarting animations.
     """
     img_b64 = _get_ai_icon_base64()
@@ -45,7 +45,7 @@ def render_floating_ai_widget() -> None:
         icon_html = f'<img src="data:image/png;base64,{img_b64}" alt="AI Assistant" />'
         js_img_markup = f'<img src="data:image/png;base64,{img_b64}" alt="AI Assistant" />'
     else:
-        svg_icon = '<svg width="44" height="60" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 10px rgba(56,189,248,0.85));"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>'
+        svg_icon = '<svg width="44" height="60" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>'
         icon_html = svg_icon
         js_img_markup = svg_icon
 
@@ -70,21 +70,7 @@ def render_floating_ai_widget() -> None:
         text-decoration: none !important;
     }
     .ag-floating-ai-fab::before {
-        content: "" !important;
-        position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        width: 70px !important;
-        height: 100px !important;
-        transform: translate(-50%, -52%) !important;
-        background: radial-gradient(ellipse at 50% 40%, rgba(56, 189, 248, 0.4) 0%, rgba(14, 165, 233, 0.18) 45%, transparent 75%) !important;
-        border-radius: 50% !important;
-        filter: blur(12px) !important;
-        pointer-events: none !important;
-        z-index: -1 !important;
-        animation: none !important;
-        opacity: 0.85 !important;
-        transition: opacity 0.25s ease, transform 0.25s ease !important;
+        display: none !important;
     }
     .ag-floating-ai-fab:hover {
         transform: translateY(-4px) scale(1.05) !important;
@@ -100,14 +86,12 @@ def render_floating_ai_widget() -> None:
         max-height: 92px !important;
         object-fit: contain !important;
         animation: none !important;
-        filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75))
-                drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) !important;
-        transition: filter 0.25s ease, transform 0.25s ease !important;
+        filter: none !important;
+        transition: transform 0.25s ease !important;
     }
     .ag-floating-ai-fab:hover img {
         animation: none !important;
-        filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.9))
-                drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35)) !important;
+        filter: none !important;
     }
     .ag-floating-ai-tooltip {
         position: absolute !important;

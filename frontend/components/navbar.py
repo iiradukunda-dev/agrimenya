@@ -672,16 +672,20 @@ def render_navbar() -> None:
 
     init_user_session()
     auth = is_authenticated()
-    user = st.session_state.get("user_profile", DEFAULT_USER)
 
     # Enforce page-level access control (unauthenticated users can only view Home and Overview)
     check_page_access()
 
     # Single Centered Row Container
     with st.container(key="ag_navbar"):
-        c_home, c_overview, c_zones, c_decide, c_more, c_sep, c_signin, c_lang = st.columns(
-            [1.15, 1.1, 0.95, 1.15, 0.9, 0.02, 1.45, 0.45], vertical_alignment="center"
-        )
+        if auth:
+            c_home, c_overview, c_zones, c_decide, c_more, c_sep, c_lang = st.columns(
+                [1.15, 1.1, 0.95, 1.15, 1.05, 0.02, 0.45], vertical_alignment="center"
+            )
+        else:
+            c_home, c_overview, c_zones, c_decide, c_more, c_sep, c_signin, c_lang = st.columns(
+                [1.15, 1.1, 0.95, 1.15, 0.9, 0.02, 1.45, 0.45], vertical_alignment="center"
+            )
         with c_home:
             st.page_link("Home.py", label=t("nav.home", "Home"))
         with c_overview:
@@ -722,24 +726,13 @@ def render_navbar() -> None:
                         f'<button id="ag-nav-install-btn" onclick="if(window.parent&&window.parent.__agrimenya_trigger_install){{window.parent.__agrimenya_trigger_install();}}else{{const b=window.parent.document.getElementById(\'ag-pwa-install-badge\');if(b){{b.click();}}}}" style="width:100%;text-align:left;border:none;background:linear-gradient(135deg,#031d28 0%,#063143 100%);color:#ffffff;border:1.5px solid rgba(56,189,248,0.55);border-radius:8px;padding:0.45rem 0.75rem;margin-top:0.35rem;display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:0.85rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,0.35);transition:all 0.2s;"><img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(56,189,248,0.9));"> <span style="color:#ffffff;">{t("nav.install_app", "Install agrimenya App")}</span></button>',
                         unsafe_allow_html=True,
                     )
+                    st.divider()
+                    if st.button(t("nav.sign_out", "Sign out"), key="navbar_signout_action_btn", use_container_width=True):
+                        st.session_state["authenticated"] = False
+                        st.rerun()
 
             with c_sep:
                 st.empty()
-            with c_signin:
-                officer_name = user.get("name", "Officer") if isinstance(user, dict) else "Officer"
-                with st.popover(officer_name, width="stretch"):
-                    st.markdown(f"""
-                    <div style="padding:0.15rem 0 0.4rem;font-family:'Plus Jakarta Sans',sans-serif;">
-                        <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0284c7;margin-bottom:0.25rem;">Active Session</div>
-                        <div style="font-size:0.95rem;font-weight:800;color:#0f172a;">{user.get('name', 'Extension Officer') if isinstance(user, dict) else 'Extension Officer'}</div>
-                        <div style="font-size:0.8rem;color:#64748b;margin-top:0.15rem;">{user.get('role', 'Agronomist') if isinstance(user, dict) else 'Agronomist'}</div>
-                        <div style="font-size:0.75rem;color:#94a3b8;">{user.get('email', 'officer@rab.gov.rw') if isinstance(user, dict) else 'officer@rab.gov.rw'}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.divider()
-                    if st.button("Sign Out", key="navbar_signout_action_btn", use_container_width=True):
-                        st.session_state["authenticated"] = False
-                        st.rerun()
         else:
             with c_zones:
                 st.empty()
