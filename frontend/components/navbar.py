@@ -182,7 +182,7 @@ def render_navbar() -> None:
         backdrop-filter: blur(14px) !important;
         -webkit-backdrop-filter: blur(14px) !important;
         border-radius: 9999px !important;
-        border: 1px solid rgba(2, 132, 199, 0.22) !important;
+        border: none !important;
         box-shadow: 0 8px 30px rgba(2, 132, 199, 0.14), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
         gap: 6px !important;
       }
@@ -270,7 +270,7 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active {
         background: #e0f2fe !important;
         background-color: #e0f2fe !important;
-        border: 1.5px solid #0284c7 !important;
+        border: none !important;
         border-radius: 9999px !important;
         height: 2.35rem !important;
         min-height: 2.35rem !important;
@@ -400,7 +400,7 @@ def render_navbar() -> None:
       div[data-testid="stPopoverBody"] {
         max-height: 520px !important;
         border-radius: 16px !important;
-        border: 1px solid rgba(2, 132, 199, 0.22) !important;
+        border: none !important;
         background: #ffffff !important;
         box-shadow: 0 16px 40px rgba(4, 31, 38, 0.14), 0 4px 12px rgba(2, 132, 199, 0.08) !important;
         padding: 0.75rem 0.65rem !important;
@@ -411,7 +411,7 @@ def render_navbar() -> None:
         padding: 0.4rem 0.85rem !important;
         margin: 0.15rem 0 !important;
         background: #f4f8fa !important;
-        border: 1px solid rgba(2, 132, 199, 0.10) !important;
+        border: none !important;
         border-radius: 10px !important;
         justify-content: flex-start !important;
       }
@@ -424,7 +424,7 @@ def render_navbar() -> None:
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
         background: rgba(2, 132, 199, 0.12) !important;
-        border-color: rgba(2, 132, 199, 0.35) !important;
+        border: none !important;
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover p,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover p {
@@ -452,7 +452,7 @@ def render_navbar() -> None:
       .st-key-ag_navbar a[href*="Admin"] {
         background: rgba(2, 132, 199, 0.08) !important;
         background-color: rgba(2, 132, 199, 0.08) !important;
-        border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
+        border: none !important;
         border-radius: 9999px !important;
         height: 2.25rem !important;
         min-height: 2.25rem !important;
@@ -482,7 +482,7 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]):hover,
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]):hover,
       .st-key-ag_navbar a[href*="Admin"]:hover {
-        border-color: #0284c7 !important;
+        border: none !important;
         background: #0284c7 !important;
         background-color: #0284c7 !important;
         box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
@@ -514,7 +514,7 @@ def render_navbar() -> None:
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:last-child button {
         background: rgba(2, 132, 199, 0.08) !important;
         background-color: rgba(2, 132, 199, 0.08) !important;
-        border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
+        border: none !important;
         border-radius: 50% !important;
         height: 2.25rem !important;
         min-height: 2.25rem !important;
@@ -532,7 +532,7 @@ def render_navbar() -> None:
       .st-key-ag_navbar .st-key-lang_cycle_btn button:hover {
         background: #0284c7 !important;
         background-color: #0284c7 !important;
-        border-color: #0284c7 !important;
+        border: none !important;
         box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
         transform: translateY(-1px) scale(1.05) !important;
       }
@@ -666,6 +666,65 @@ def render_navbar() -> None:
         .st-key-ag_navbar {
           top: 0.2rem !important;
         }
+      }
+
+      /* Borderless navbar with a lively, soft hover treatment */
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"],
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) {
+        border: none !important;
+      }
+      .st-key-ag_navbar [data-testid="stPageLink"],
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"],
+      .st-key-ag_navbar [data-testid="stPageLink"] a,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"] a,
+      .st-key-ag_navbar [data-testid="stPopover"] > button,
+      .st-key-ag_navbar [data-testid="stPopover"] button {
+        border: none !important;
+        transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                    background 180ms ease, color 180ms ease, box-shadow 180ms ease !important;
+      }
+      .st-key-ag_navbar [data-testid="stPageLink"]:hover,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:hover,
+      .st-key-ag_navbar [data-testid="stPageLink"] a:hover,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"] a:hover,
+      .st-key-ag_navbar [data-testid="stPopover"] > button:hover,
+      .st-key-ag_navbar [data-testid="stPopover"] button:hover {
+        border: none !important;
+        background: linear-gradient(135deg, rgba(186, 230, 253, 0.72), rgba(209, 250, 229, 0.58)) !important;
+        box-shadow: 0 7px 18px rgba(2, 132, 199, 0.14) !important;
+        transform: translateY(-2px) scale(1.035) !important;
+      }
+      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"],
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"],
+      .st-key-ag_navbar a[aria-current="page"] {
+        border: none !important;
+        background: linear-gradient(135deg, #e0f2fe, #ecfdf5) !important;
+        box-shadow: inset 0 -2px 0 #0284c7 !important;
+      }
+      div[data-testid="stPopoverBody"],
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink"],
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"],
+      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]),
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]),
+      .st-key-ag_navbar a[href*="Admin"],
+      .st-key-ag_navbar .stButton > button,
+      #ag-nav-install-btn,
+      div[data-testid="stPopoverBody"] a[href*="offline.html"],
+      .st-key-ag_navbar .st-key-lang_cycle_btn button {
+        border: none !important;
+      }
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
+        border: none !important;
+        background: linear-gradient(135deg, rgba(186, 230, 253, 0.72), rgba(209, 250, 229, 0.58)) !important;
+        transform: translateX(3px) !important;
+      }
+      .st-key-ag_navbar .stButton > button:hover {
+        border: none !important;
+        background: linear-gradient(135deg, #0284c7, #10b981) !important;
+        color: #ffffff !important;
+        box-shadow: 0 7px 18px rgba(2, 132, 199, 0.2) !important;
+        transform: translateY(-2px) !important;
       }
       </style>
     """, unsafe_allow_html=True)
