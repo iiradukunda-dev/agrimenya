@@ -341,27 +341,31 @@ def render_pwa_support() -> None:
         if (!pageLoader) {
           pageLoader = parentDoc.createElement('div');
           pageLoader.id = 'ag-page-loader';
-          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#021824;z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
+          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#10251c;z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
           pageLoader.innerHTML = `
             <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
               <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;position:relative;z-index:2;">
             </div>
-            <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-0.03em;color:#f0fdf4;margin:0 0 0.35rem 0;">agrimenya</h1>
-            <p id="ag-loader-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:500;color:#94a3b8;margin:0 0 1.6rem 0;">Loading agro-climate intelligence...</p>
-            <div style="width:190px;height:4px;background:rgba(255,255,255,0.08);border-radius:9999px;overflow:hidden;position:relative;">
-              <div style="position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg, #0284c7 0%, #0369a1 100%);border-radius:9999px;animation:agIndeterminateBar 1.5s infinite ease-in-out;"></div>
+            <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-0.03em;color:#f4f6ed;margin:0 0 0.35rem 0;">agrimenya</h1>
+            <p id="ag-loader-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.96rem;font-weight:500;color:#b7c4b8;margin:0 0 1.6rem 0;">Getting your field workspace ready…</p>
+            <div style="width:190px;height:4px;background:rgba(255,255,255,0.10);border-radius:9999px;overflow:hidden;position:relative;">
+              <div style="position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg, #729777 0%, #527c5d 100%);border-radius:9999px;animation:agIndeterminateBar 1.5s infinite ease-in-out;"></div>
             </div>
           `;
           parentDoc.body.appendChild(pageLoader);
         } else {
           // Update loaders left in the parent document by an older app version.
-          pageLoader.style.background = '#021824';
+          pageLoader.style.background = '#10251c';
           const oldLogoHalo = pageLoader.querySelector('div[style*="130px"]');
           if (oldLogoHalo) oldLogoHalo.remove();
           const loaderLogo = pageLoader.querySelector('img');
           if (loaderLogo) {
             loaderLogo.style.filter = 'none';
             loaderLogo.style.animation = 'none';
+          }
+          const loaderMessage = pageLoader.querySelector('#ag-loader-msg');
+          if (loaderMessage && loaderMessage.textContent === 'Loading agro-climate intelligence...') {
+            loaderMessage.textContent = 'Getting your field workspace ready…';
           }
         }
 
@@ -400,7 +404,7 @@ def render_pwa_support() -> None:
               const href = link.getAttribute('href') || link.querySelector('a')?.getAttribute('href') || '';
               if (href && !href.startsWith('#') && !link.target && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
                 const targetText = (link.textContent || 'page').trim();
-                showPageLoader('Opening ' + targetText + '...');
+                showPageLoader('Taking you to ' + targetText + '…');
               }
             }
           }, true);
