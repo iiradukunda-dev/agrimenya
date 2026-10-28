@@ -1,5 +1,4 @@
-"""Creative, animated agro-intelligence hero for agrimenya."""
-import os
+"""Welcoming home page introduction for agrimenya."""
 import streamlit as st
 import streamlit.components.v1 as components
 from utils.i18n import t
@@ -11,26 +10,22 @@ def _ensure_landing_video() -> str:
 
 
 def render_home_hero() -> None:
-    """Render a floating hero command center with high-contrast intelligence cards."""
-    badge_text = t("hero.badge", "Rwanda Agro-Climate Decision Engine")
-    title_pre = t("hero.title_pre", "Make the next")
-    title_glow = t("hero.title_glow", "field decision")
-    title_post = t("hero.title_post", "clearer.")
-    copy_text = t("hero.copy", "Explore spatial zone intelligence, evaluate seasonal crop recommendations, and turn data-grounded insights into synchronized field plans.")
-    stat_districts_val = t("hero.stat.districts_val", "30 Districts")
-    stat_districts_lbl = t("hero.stat.districts_lbl", "Spatial Coverage")
-    stat_crops_val = t("hero.stat.crops_val", "10+ Key Crops")
-    stat_crops_lbl = t("hero.stat.crops_lbl", "SAS Baselines")
-    stat_weather_val = t("hero.stat.weather_val", "Real-time Weather")
-    stat_weather_lbl = t("hero.stat.weather_lbl", "Satellite Indicators")
-    stat_timezone_val = t("hero.stat.timezone_val", "CAT (UTC+2)")
-    stat_timezone_lbl = t("hero.stat.timezone_lbl", "System Timezone")
-    card_title = t("hero.card.title", "Seasonal Horizon")
-    card_tag = t("hero.card.tag", "2026 Season A")
-    card_desc = t("hero.card.desc", "Active 2026 Season A campaign. Tracking soil moisture and conformal yield bounds.")
-    pill_priority = t("hero.pill.priority", "Priority Zones: Gasabo, Bugesera, Musanze")
-    pill_window = t("hero.pill.window", "Optimal planting window actively tracked")
-    pill_ai = t("hero.pill.ai", "AI Assistant available via corner bulb")
+    """Render a welcoming introduction to the tools available on the home page."""
+    badge_text = t("hero.badge", "Here for Rwanda’s farming seasons")
+    title_pre = t("hero.title_pre", "A clearer picture of")
+    title_glow = t("hero.title_glow", "your growing season")
+    title_post = t("hero.title_post", ".")
+    copy_text = t("hero.copy", "Start with your district. Explore the information available for your crops, then make a plan your team can put into action.")
+    stat_districts_val = t("hero.stat.districts_val", "30 districts")
+    stat_districts_lbl = t("hero.stat.districts_lbl", "Across Rwanda")
+    stat_crops_val = t("hero.stat.crops_val", "10+ crops")
+    stat_crops_lbl = t("hero.stat.crops_lbl", "Crop baselines")
+    card_title = t("hero.card.title", "A good place to begin")
+    card_tag = t("hero.card.tag", "Start here")
+    card_desc = t("hero.card.desc", "Choose an area to explore, check the information available, and agree on next steps with your team.")
+    pill_priority = t("hero.pill.priority", "Explore zones and local context")
+    pill_window = t("hero.pill.window", "Review crop and seasonal information")
+    pill_ai = t("hero.pill.ai", "Make a plan and share it with your team")
 
     st.html("""
     <style>
@@ -44,14 +39,19 @@ def render_home_hero() -> None:
       div[data-testid="stCustomComponentV1"] {
         margin-bottom: 1.5rem !important;
       }
+      @media (max-width: 900px) {
+        iframe[title="streamlit.components.v1.custom_component"] {
+          height: 680px !important;
+        }
+      }
       /* Action workflow cards: structured modern cards with classic motion */
       [data-testid="stVerticalBlockBorderWrapper"] {
         position: relative !important;
         overflow: hidden !important;
         background: #ffffff !important;
-        border: 1px solid rgba(2, 132, 199, 0.20) !important;
-        border-top: 3px solid #0284c7 !important;
-        box-shadow: 0 4px 18px rgba(2, 132, 199, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid rgba(47, 94, 67, 0.14) !important;
+        border-top: 2px solid #729277 !important;
+        box-shadow: 0 4px 18px rgba(32, 60, 42, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03) !important;
         border-radius: 18px !important;
         transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
                     box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
@@ -60,15 +60,15 @@ def render_home_hero() -> None:
         will-change: transform, box-shadow;
       }
       [data-testid="stVerticalBlockBorderWrapper"]:hover {
-        background: #f0f9ff !important;
-        border-color: #0284c7 !important;
-        border-top-color: #0369a1 !important;
-        box-shadow: 0 12px 32px rgba(2, 132, 199, 0.16), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
-        transform: translateY(-4px) scale(1.008) !important;
+        background: #fbfcfa !important;
+        border-color: rgba(47, 94, 67, 0.22) !important;
+        border-top-color: #527c5d !important;
+        box-shadow: 0 10px 25px rgba(32, 60, 42, 0.10), 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+        transform: translateY(-3px) !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"]:active {
         transform: translateY(-1px) scale(0.998) !important;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.12) !important;
+        box-shadow: 0 4px 14px rgba(32, 60, 42, 0.08) !important;
         transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.12s ease !important;
       }
 
@@ -90,29 +90,29 @@ def render_home_hero() -> None:
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]),
       [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]),
       [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) {
-        background: #f0f9ff !important;
-        border: 1.5px solid rgba(2, 132, 199, 0.35) !important;
+        background: #f4f7f3 !important;
+        border: 1px solid rgba(47, 94, 67, 0.18) !important;
         border-radius: 10px !important;
-        color: #0284c7 !important;
+        color: #426b4e !important;
         font-weight: 700 !important;
         letter-spacing: -0.01em !important;
         text-shadow: none !important;
         transition: all 0.25s ease !important;
-        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08) !important;
+        box-shadow: none !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]) *,
       [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]) * {
-        color: #0284c7 !important;
+        color: #426b4e !important;
         font-weight: 700 !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):hover,
       [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover,
       [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover {
-        background: #0284c7 !important;
-        border-color: #0284c7 !important;
+        background: #527c5d !important;
+        border-color: #527c5d !important;
         color: #ffffff !important;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.30) !important;
-        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(32, 60, 42, 0.12) !important;
+        transform: translateY(-1px) !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover *,
       [data-testid="stVerticalBlockBorderWrapper"] button:hover * {
@@ -162,16 +162,10 @@ def render_home_hero() -> None:
           width: 100%;
           min-height: 380px;
           color: #0f172a;
-          background: linear-gradient(
-            135deg,
-            #ffffff 0%,
-            #f0f9ff 50%,
-            #e0f2fe 100%
-          );
+          background: linear-gradient(135deg, #ffffff 0%, #f7faf7 58%, #edf5ef 100%);
           border-radius: 22px;
-          border: 1px solid rgba(2, 132, 199, 0.22);
-          border-top: 2.5px solid #0284c7;
-          box-shadow: 0 16px 40px rgba(2, 132, 199, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+          border: 1px solid rgba(47, 94, 67, 0.12);
+          box-shadow: 0 12px 30px rgba(32, 60, 42, 0.07);
           animation: ag-hero-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }}
 
@@ -198,12 +192,12 @@ def render_home_hero() -> None:
           right: 18%;
           width: 320px;
           height: 320px;
-          background: radial-gradient(circle, rgba(56, 189, 248, 0.24) 0%, rgba(14, 165, 233, 0) 70%);
+          background: radial-gradient(circle, rgba(122, 157, 108, 0.12) 0%, rgba(122, 157, 108, 0) 70%);
           border-radius: 50%;
           filter: blur(35px);
           pointer-events: none;
           z-index: 1;
-          animation: ag-hero-orb-float 7s ease-in-out infinite alternate;
+          animation: none;
         }}
         .ag-hero-glow-2 {{
           position: absolute;
@@ -211,12 +205,12 @@ def render_home_hero() -> None:
           left: 20%;
           width: 360px;
           height: 360px;
-          background: radial-gradient(circle, rgba(74, 222, 128, 0.20) 0%, rgba(34, 197, 94, 0) 70%);
+          background: radial-gradient(circle, rgba(213, 178, 111, 0.10) 0%, rgba(213, 178, 111, 0) 70%);
           border-radius: 50%;
           filter: blur(40px);
           pointer-events: none;
           z-index: 1;
-          animation: ag-hero-orb-float-2 9s ease-in-out infinite alternate;
+          animation: none;
         }}
 
         @keyframes ag-hero-orb-float {{
@@ -236,7 +230,7 @@ def render_home_hero() -> None:
           grid-template-columns: 1fr 1fr;
           gap: 2.5rem;
           align-items: center;
-          padding: 2.8rem 3rem;
+          padding: 2.6rem 3rem;
           min-height: 380px;
         }}
 
@@ -250,16 +244,16 @@ def render_home_hero() -> None:
           align-items: center;
           gap: 8px;
           background: #ffffff;
-          border: 1px solid rgba(2, 132, 199, 0.35);
+          border: 1px solid rgba(47, 94, 67, 0.15);
           padding: 5px 14px;
           border-radius: 9999px;
           font-size: 0.76rem;
           font-weight: 750;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: #0284c7;
+          color: #386448;
           margin-bottom: 0.85rem;
-          box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
+          box-shadow: none;
           transition: transform 0.25s ease;
         }}
         .ag-hero-badge:hover {{
@@ -268,11 +262,11 @@ def render_home_hero() -> None:
         .ag-hero-beacon {{
           width: 8px;
           height: 8px;
-          background-color: #0284c7;
+          background-color: #527c5d;
           border-radius: 50%;
           display: inline-block;
-          box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.8);
-          animation: ag-beacon-radar 2s infinite;
+          box-shadow: none;
+          animation: none;
         }}
         @keyframes ag-beacon-radar {{
           0% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.8); }}
@@ -291,11 +285,11 @@ def render_home_hero() -> None:
           text-shadow: none !important;
         }}
         .ag-hero-glow-text {{
-          background: linear-gradient(135deg, #0369a1 0%, #0284c7 60%, #0ea5e9 100%) !important;
+          background: linear-gradient(135deg, #426b4e 0%, #527c5d 100%) !important;
           -webkit-background-clip: text !important;
           -webkit-text-fill-color: transparent !important;
           display: inline-block !important;
-          filter: drop-shadow(0 2px 8px rgba(2, 132, 199, 0.25)) !important;
+          filter: none !important;
         }}
 
         .ag-hero-copy {{
@@ -315,7 +309,7 @@ def render_home_hero() -> None:
           gap: 1.4rem;
           align-items: center;
           padding-top: 1rem;
-          border-top: 1px solid rgba(2, 132, 199, 0.20);
+          border-top: 1px solid rgba(47, 94, 67, 0.13);
         }}
         .ag-hero-stat-item {{
           display: flex;
@@ -335,12 +329,12 @@ def render_home_hero() -> None:
           transition: color 0.2s ease;
         }}
         .ag-hero-stat-item:hover .ag-hero-stat-val {{
-          color: #0284c7;
+          color: #527c5d;
         }}
         .ag-hero-stat-lbl {{
           font-size: 0.72rem;
           font-weight: 650;
-          color: #0284c7;
+          color: #527c5d;
           text-transform: uppercase;
           letter-spacing: 0.05em;
           text-shadow: none;
@@ -350,18 +344,18 @@ def render_home_hero() -> None:
         .ag-hero-horizon-card {{
           position: relative;
           background: #ffffff;
-          border: 1px solid rgba(2, 132, 199, 0.22);
-          border-top: 2.5px solid #0284c7;
+          border: 1px solid rgba(47, 94, 67, 0.15);
+          border-top: 2px solid #729277;
           border-radius: 18px;
           padding: 1.5rem 1.6rem;
-          box-shadow: 0 12px 32px rgba(2, 132, 199, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
-          animation: ag-hero-card-float 6s ease-in-out infinite alternate;
+          box-shadow: 0 8px 22px rgba(32, 60, 42, 0.07);
+          animation: none;
           transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }}
         .ag-hero-horizon-card:hover {{
           transform: translateY(-4px);
-          box-shadow: 0 16px 40px rgba(2, 132, 199, 0.18);
-          border-color: #0284c7;
+          box-shadow: 0 12px 28px rgba(32, 60, 42, 0.11);
+          border-color: rgba(47, 94, 67, 0.3);
         }}
         .ag-hero-card-header {{
           display: flex;
@@ -379,9 +373,9 @@ def render_home_hero() -> None:
         .ag-hero-card-tag {{
           font-size: 0.72rem;
           font-weight: 700;
-          background: #e0f2fe;
-          color: #0284c7;
-          border: 1px solid rgba(2, 132, 199, 0.35);
+          background: #e7efe5;
+          color: #426b4e;
+          border: 1px solid rgba(47, 94, 67, 0.14);
           padding: 2px 8px;
           border-radius: 9999px;
           text-transform: uppercase;
@@ -402,19 +396,17 @@ def render_home_hero() -> None:
           display: flex;
           align-items: center;
           gap: 8px;
-          background: #f0f9ff;
-          border: 1px solid rgba(2, 132, 199, 0.20);
+          background: #f7faf6;
+          border: 1px solid rgba(47, 94, 67, 0.10);
           padding: 6px 10px;
           border-radius: 8px;
           font-size: 0.78rem;
-          color: #0369a1;
-          transition: all 0.25s ease;
+          color: #3d5543;
+          transition: background 0.2s ease, transform 0.2s ease;
         }}
         .ag-hero-pill-info:hover {{
-          background: #e0f2fe;
-          border-color: rgba(2, 132, 199, 0.45);
-          transform: translateX(4px);
-          box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
+          background: #edf3eb;
+          transform: translateX(2px);
         }}
 
         @media (max-width: 900px) {{
@@ -422,6 +414,7 @@ def render_home_hero() -> None:
             grid-template-columns: 1fr;
             padding: 1.8rem 1.5rem;
             gap: 1.5rem;
+            min-height: auto;
           }}
         }}
       </style>
@@ -453,14 +446,6 @@ def render_home_hero() -> None:
               <div class="ag-hero-stat-item">
                 <span class="ag-hero-stat-val">{stat_crops_val}</span>
                 <span class="ag-hero-stat-lbl">{stat_crops_lbl}</span>
-              </div>
-              <div class="ag-hero-stat-item">
-                <span class="ag-hero-stat-val">{stat_weather_val}</span>
-                <span class="ag-hero-stat-lbl">{stat_weather_lbl}</span>
-              </div>
-              <div class="ag-hero-stat-item">
-                <span class="ag-hero-stat-val">{stat_timezone_val}</span>
-                <span class="ag-hero-stat-lbl">{stat_timezone_lbl}</span>
               </div>
             </div>
           </div>
