@@ -740,6 +740,16 @@ def render_navbar() -> None:
         box-shadow: none !important;
         transform: none !important;
       }
+      .st-key-ag_navbar [data-testid="stPageLink"] a:hover,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"] a:hover,
+      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:hover {
+        box-sizing: border-box !important;
+        border: 2px solid #0875d1 !important;
+        border-radius: 9999px !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
       div[data-testid="stPopoverBody"],
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"],
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"],
