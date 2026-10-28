@@ -183,11 +183,48 @@ def main():
         '</div>',
         unsafe_allow_html=True,
     )
-    st.page_link(
-        "pages/11_Contact.py",
-        label=t("home.send_feedback", "Send feedback"),
-        icon=":material/feedback:",
+    st.markdown(
+        """
+        <style>
+          .st-key-home_feedback_link { display: flex; justify-content: center; }
+          .st-key-home_feedback_link a {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.45rem !important;
+            min-height: 2.65rem !important;
+            padding: 0.55rem 1rem !important;
+            border: 1px solid #d5e2e7 !important;
+            border-radius: 999px !important;
+            background: #ffffff !important;
+            color: #315d70 !important;
+            font-size: 0.9rem !important;
+            font-weight: 650 !important;
+            text-decoration: none !important;
+            box-shadow: 0 2px 7px rgba(16, 42, 52, 0.06) !important;
+            transition: border-color 160ms ease, color 160ms ease,
+                        background-color 160ms ease, transform 160ms ease !important;
+          }
+          .st-key-home_feedback_link a:hover {
+            border-color: #1682bb !important;
+            background: #f3f9fc !important;
+            color: #126c9b !important;
+            transform: translateY(-1px) !important;
+          }
+          .st-key-home_feedback_link a:focus-visible {
+            outline: 3px solid rgba(22, 130, 187, 0.3) !important;
+            outline-offset: 2px !important;
+          }
+        </style>
+        """,
+        unsafe_allow_html=True,
     )
+    with st.container(key="home_feedback_link"):
+        st.page_link(
+            "pages/11_Contact.py",
+            label=t("home.send_feedback", "Send feedback"),
+            icon=":material/feedback:",
+        )
 
 
 if __name__ == "__main__":
