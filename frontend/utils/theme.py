@@ -692,6 +692,53 @@ def load_theme(show_sidebar: bool = False) -> None:
       [data-testid="stMetricValue"] div {{ font-size: 1.5rem !important; }}
     }}
 
+    /* Phone and tablet layouts: preserve usable controls without horizontal overflow. */
+    @media (max-width: 768px) {{
+      [data-testid="stMainBlockContainer"],
+      [data-testid="stAppViewBlockContainer"],
+      .main .block-container {{
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+      }}
+      [data-testid="stMain"] [data-testid="stHorizontalBlock"] {{
+        flex-wrap: wrap !important;
+        align-items: stretch !important;
+        gap: 0.65rem !important;
+      }}
+      [data-testid="stMain"] [data-testid="stHorizontalBlock"] > [data-testid="column"] {{
+        flex: 1 1 calc(50% - 0.4rem) !important;
+        min-width: min(100%, 10rem) !important;
+        width: auto !important;
+      }}
+      [data-testid="stMetric"] {{
+        min-height: 7rem;
+        padding: 0.8rem !important;
+      }}
+      [data-testid="stMetricLabel"] p {{ font-size: 0.72rem !important; }}
+      [data-testid="stMetricValue"] div {{ font-size: clamp(1.1rem, 6vw, 1.45rem) !important; }}
+      [data-testid="stVerticalBlockBorderWrapper"] {{
+        padding: 0.35rem 0.2rem !important;
+        margin-bottom: 0.55rem !important;
+      }}
+      [data-testid="stDataFrame"], [data-testid="stTable"] {{
+        max-width: 100% !important;
+        overflow-x: auto !important;
+      }}
+      [data-testid="stPlotlyChart"] {{ max-width: 100% !important; }}
+      [data-testid="stPlotlyChart"] iframe {{ max-width: 100% !important; }}
+      [data-testid="stButton"] button,
+      [data-testid="stFormSubmitButton"] button,
+      button[data-testid="stPopoverButton"] {{ min-height: 44px !important; }}
+      [data-testid="stSidebar"] {{
+        width: min(86vw, 20rem) !important;
+        min-width: min(86vw, 20rem) !important;
+      }}
+      .ag-floating-ai-fab {{ right: 0.85rem !important; bottom: 0.85rem !important; }}
+    }}
+    @media (max-width: 420px) {{
+      h1 {{ font-size: 1.55rem !important; }}
+    }}
+
     @media (prefers-reduced-motion: reduce) {{
       *, *::before, *::after {{
         animation-duration: 0.01ms !important;

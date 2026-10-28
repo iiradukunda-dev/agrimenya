@@ -668,6 +668,27 @@ def render_navbar(show_sidebar: bool = False) -> None:
         }
         .st-key-ag_navbar {
           top: 0.2rem !important;
+          margin-bottom: 0.4rem !important;
+          padding: 0 !important;
+        }
+        .st-key-ag_navbar [data-testid="stHorizontalBlock"] {
+          flex-wrap: wrap !important;
+          justify-content: center !important;
+          gap: 0.15rem 0.4rem !important;
+          padding: 0.35rem 0.45rem !important;
+          border-radius: 16px !important;
+        }
+        .st-key-ag_navbar [data-testid="column"] {
+          flex: 0 1 auto !important;
+          width: auto !important;
+          min-width: max-content !important;
+        }
+        .st-key-ag_navbar [data-testid="stPageLink"] a,
+        .st-key-ag_navbar [data-testid="stPopover"] > button,
+        .st-key-ag_navbar [data-testid="stPopover"] button {
+          min-height: 42px !important;
+          padding: 0.4rem 0.7rem !important;
+          font-size: 0.84rem !important;
         }
       }
 
