@@ -134,10 +134,6 @@ def render_pwa_support() -> None:
           const styleEl = parentDoc.createElement('style');
           styleEl.id = 'ag-dynamic-runtime-styles';
           styleEl.textContent = `
-            @keyframes agBulbPulse {
-              0%, 100% { transform: scale(1); filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.45)); }
-              50% { transform: scale(1.05); filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.75)); }
-            }
             @keyframes agIndeterminateBar {
               0% { left: -35%; width: 35%; }
               50% { left: 30%; width: 50%; }
@@ -348,8 +344,7 @@ def render_pwa_support() -> None:
           pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at 50% 25%, #05303f 0%, #021824 100%);z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
           pageLoader.innerHTML = `
             <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
-              <div style="position:absolute;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(14,165,233,0.12) 50%, transparent 70%);animation:agBulbPulse 2s infinite ease-in-out;"></div>
-              <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;position:relative;z-index:2;animation:agBulbPulse 2.2s infinite ease-in-out;">
+              <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;position:relative;z-index:2;">
             </div>
             <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-0.03em;color:#f0fdf4;margin:0 0 0.35rem 0;">agrimenya</h1>
             <p id="ag-loader-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:500;color:#94a3b8;margin:0 0 1.6rem 0;">Loading agro-climate intelligence...</p>
