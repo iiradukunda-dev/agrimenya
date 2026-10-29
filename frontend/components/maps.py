@@ -27,6 +27,44 @@ RSA_ORTHOMOSAIC_TILES = (
     "https://portal.space.gov.rw/server/rest/services/Hosted/Ortho_Orthomosaic/"
     "MapServer/tile/{z}/{y}/{x}"
 )
+ESRI_SATELLITE_TILES = (
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/"
+    "MapServer/tile/{z}/{y}/{x}"
+)
+
+
+def create_rwanda_map(*, satellite_default: bool = False):
+    """Create the shared Rwanda map canvas with switchable street and satellite layers."""
+    if folium is None:
+        return None
+    map_view = folium.Map(
+        location=[-1.9403, 29.8739],
+        zoom_start=8,
+        max_zoom=23,
+        tiles=None,
+        control_scale=True,
+        zoom_control=True,
+        prefer_canvas=True,
+    )
+    folium.TileLayer(
+        "OpenStreetMap", name="Street", overlay=False, control=True,
+        show=not satellite_default,
+    ).add_to(map_view)
+    folium.TileLayer(
+        tiles=ESRI_SATELLITE_TILES,
+        attr="Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+        name="Satellite",
+        overlay=False,
+        control=True,
+        show=satellite_default,
+    ).add_to(map_view)
+    return map_view
+
+
+def add_map_layer_control(map_view) -> None:
+    """Add the standard compact layer selector after all map layers are registered."""
+    if folium is not None and map_view is not None:
+        folium.LayerControl(collapsed=True, position="topright").add_to(map_view)
 
 
 def render_priority_map(df, *, key: str = "priority_map") -> str | None:
@@ -44,13 +82,7 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
         st.info("Map data is not available in a usable format.")
         return None
 
-    # Center on Rwanda
-    m = folium.Map(
-        location=[-1.9403, 29.8739],
-        zoom_start=8,
-        max_zoom=23,
-        tiles="OpenStreetMap",
-    )
+    m = create_rwanda_map()
 
     show_imagery = st.toggle(
         "Show Rwanda Space Agency orthomosaic imagery",
@@ -70,7 +102,6 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
             max_zoom=23,
             max_native_zoom=23,
         ).add_to(m)
-        folium.LayerControl(collapsed=True).add_to(m)
 
     if not df.empty:
         for _, row in df.iterrows():
@@ -115,6 +146,7 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
                 opacity=0.85,
             ).add_to(m)
 
+    add_map_layer_control(m)
     st.caption("Red: High priority | Amber: Medium | Green: Low | Gray: not assessed. Click a point to select its zone.")
     if show_imagery:
         st.caption(

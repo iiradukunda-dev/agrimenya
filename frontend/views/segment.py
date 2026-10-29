@@ -17,6 +17,7 @@ except ImportError:  # Keep the table usable if optional map packages are missin
 
 from components.errors import error_boundary
 from components.icons import render_icon_title
+from components.maps import add_map_layer_control, create_rwanda_map
 from utils import api_client
 from utils.i18n import t
 from views.data_insights import normalize_agri_metrics
@@ -139,21 +140,7 @@ def _render_comparison_map(
         st.info("The map is unavailable because its optional map components could not be loaded.")
         return
 
-    map_view = folium.Map(
-        location=[-1.9403, 29.8739],
-        zoom_start=8,
-        tiles=None,
-        control_scale=True,
-    )
-    folium.TileLayer("OpenStreetMap", name="Street", control=True, show=not satellite_default).add_to(map_view)
-    folium.TileLayer(
-        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        attr="Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
-        name="Satellite",
-        overlay=False,
-        control=True,
-        show=satellite_default,
-    ).add_to(map_view)
+    map_view = create_rwanda_map(satellite_default=satellite_default)
 
     value_by_district = {
         _clean_value(row["District"]).casefold(): row
@@ -242,7 +229,7 @@ def _render_comparison_map(
         except Exception:
             logger.exception("Unable to render fallback district observation markers")
 
-    folium.LayerControl(collapsed=True, position="topright").add_to(map_view)
+    add_map_layer_control(map_view)
     st_folium(map_view, key=key, height=540, width="stretch", returned_objects=[])
 
     legend_items = "".join(
