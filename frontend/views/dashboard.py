@@ -241,8 +241,13 @@ def render_dashboard() -> None:
         with map_col:
             with st.container(border=True):
                 render_icon_subheader("assets/map.svg", t("dashboard.section.priority_map", "Interactive Priority Map"))
-                
-                clicked_zone_id = render_priority_map(filtered_df, key="dashboard_priority_map")
+
+                try:
+                    clicked_zone_id = render_priority_map(filtered_df, key="dashboard_priority_map")
+                except Exception:
+                    logger.exception("Unable to render dashboard priority map")
+                    clicked_zone_id = None
+                    st.warning("The priority map could not be loaded. The rest of the dashboard is still available.")
 
                 if clicked_zone_id:
                     st.session_state["selected_zone_id"] = clicked_zone_id
@@ -272,7 +277,11 @@ def render_dashboard() -> None:
         with st.container(border=True):
             render_icon_subheader("assets/brain.svg", t("dashboard.chart.title", "Make the chart your own"))
             st.caption(t("dashboard.chart.subtitle", "Choose what to compare. The chart updates as you adjust the controls."))
-            render_dashboard_chart(filtered_metrics_df)
+            try:
+                render_dashboard_chart(filtered_metrics_df)
+            except Exception:
+                logger.exception("Unable to render dashboard chart")
+                st.warning("The chart could not be rendered for this selection. Try changing the filters or chart fields.")
 
         with st.container(border=True):
             render_icon_subheader("assets/brain.svg", "Insights from selected records")
@@ -292,11 +301,15 @@ def render_dashboard() -> None:
         with st.container(border=True):
             render_icon_subheader("assets/compass.svg", t("dashboard.weather.live_title", "Live Micro-Climate Station"))
 
-            weather_zones = api_client.get_zones()
+            try:
+                weather_zones = api_client.get_zones() or []
+            except Exception:
+                logger.exception("Unable to load weather station list")
+                weather_zones = []
             districts = sorted({
                 str(zone.get("district", "")).strip()
                 for zone in weather_zones
-                if zone.get("district")
+                if isinstance(zone, dict) and zone.get("district")
             })
             default_district = selected_district if selected_district != all_districts_label and selected_district in districts else (districts[0] if districts else "Gasabo")
 
@@ -314,10 +327,14 @@ def render_dashboard() -> None:
                     api_client.get_weather.clear()
                     st.rerun()
 
-            with st.spinner(f"Checking live telemetry for {active_weather_district}..."):
-                weather = api_client.get_weather(active_weather_district)
+            try:
+                with st.spinner(f"Checking live telemetry for {active_weather_district}..."):
+                    weather = api_client.get_weather(active_weather_district)
+            except Exception:
+                logger.exception("Unable to load weather for %s", active_weather_district)
+                weather = None
 
-            if weather:
+            if isinstance(weather, dict) and weather:
                 w_metric1, w_metric2, w_metric3, w_metric4 = st.columns(4)
                 w_metric1.metric("Temperature", f"{weather.get('temperature_c', 'N/A')} °C")
                 w_metric2.metric("Relative Humidity", f"{weather.get('humidity_pct', 'N/A')}%")
@@ -338,9 +355,17 @@ def render_dashboard() -> None:
         with act_col:
             with st.container(border=True):
                 render_icon_subheader("assets/brain.svg", t("dashboard.section.top_priority", "Priority Action Interventions"))
-                recs = api_client.get_recommendations()
+                try:
+                    recs = api_client.get_recommendations() or []
+                except Exception:
+                    logger.exception("Unable to load dashboard recommendations")
+                    recs = []
+                    st.warning("Recommendations are temporarily unavailable.")
                 if recs:
                     for i, rec in enumerate(recs[:4]):
+                        if not isinstance(rec, dict):
+                            logger.warning("Skipping malformed dashboard recommendation: %r", rec)
+                            continue
                         with st.container():
                             r_c1, r_c2, r_c3 = st.columns([1.2, 3.2, 1.2])
                             with r_c1:
@@ -359,10 +384,18 @@ def render_dashboard() -> None:
         with alert_col:
             with st.container(border=True):
                 render_icon_subheader("assets/bell.svg", t("dashboard.section.recent_alerts", "Recent Broadcast Alerts"))
-                alerts = api_client.get_alerts()
+                try:
+                    alerts = api_client.get_alerts() or []
+                except Exception:
+                    logger.exception("Unable to load dashboard alerts")
+                    alerts = []
+                    st.warning("Broadcast alerts are temporarily unavailable.")
                 if alerts:
                     for alert in alerts[:4]:
-                        render_alert(alert)
+                        try:
+                            render_alert(alert)
+                        except Exception:
+                            logger.exception("Unable to render dashboard alert")
                 else:
                     st.info("No active broadcast alerts.")
 

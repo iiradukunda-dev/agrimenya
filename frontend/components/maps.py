@@ -32,14 +32,18 @@ RSA_ORTHOMOSAIC_TILES = (
 def render_priority_map(df, *, key: str = "priority_map") -> str | None:
     """
     Renders a Folium map with priority zone markers.
-    if folium is None or st_folium is None:
-        st.info("Interactive map module is currently initializing.")
-        return None
-
     Each marker shows district, crop, and yield on hover.
     Uses the standard OpenStreetMap tile service so the map works
     without a provider-specific API key.
     """
+    if folium is None or st_folium is None:
+        st.info("The interactive map is unavailable because its optional map components could not be loaded.")
+        return None
+
+    if df is None or not hasattr(df, "empty") or not hasattr(df, "iterrows"):
+        st.info("Map data is not available in a usable format.")
+        return None
+
     # Center on Rwanda
     m = folium.Map(
         location=[-1.9403, 29.8739],
