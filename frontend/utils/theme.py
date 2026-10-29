@@ -210,6 +210,24 @@ def load_theme(show_sidebar: bool = False) -> None:
       color: var(--ag-text-main) !important;
     }}
 
+    .ag-icon-badge {{
+      width: 40px;
+      height: 40px;
+      flex: 0 0 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--ag-card-border);
+      border-radius: var(--ag-radius-md);
+      background: var(--ag-primary-soft);
+      color: var(--ag-primary);
+    }}
+    .ag-icon-badge svg {{
+      width: 20px;
+      height: 20px;
+      stroke: currentColor !important;
+    }}
+
     /* Modern KPI Metric Cards */
     [data-testid="stMetric"] {{
       background: var(--ag-metric-bg) !important;
@@ -495,16 +513,6 @@ def load_theme(show_sidebar: bool = False) -> None:
       text-transform: uppercase;
       margin: 0;
     }}
-    .ag-kpi-icon {{
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--ag-primary-soft);
-      color: var(--ag-primary);
-    }}
     .ag-kpi-body {{
       display: flex;
       align-items: baseline;
@@ -551,7 +559,7 @@ def load_theme(show_sidebar: bool = False) -> None:
     .ag-weather-card {{
       background: var(--ag-surface);
       border: 1px solid var(--ag-card-border);
-      border-radius: var(--ag-radius-sm);
+      border-radius: var(--ag-radius-md);
       padding: 0.85rem 0.75rem;
       text-align: center;
       box-shadow: var(--ag-card-shadow);

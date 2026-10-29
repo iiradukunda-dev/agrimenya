@@ -28,18 +28,10 @@ def pillar_card(
             html_block = f"""
             <style>
             @keyframes ag-badge-pulse {{
-                0%, 100% {{ transform: scale(1); box-shadow: 0 2px 8px {accent_color}25; }}
-                50% {{ transform: scale(1.06); box-shadow: 0 0 16px {accent_color}55; }}
+                0%, 100% {{ transform: scale(1); box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12); }}
+                50% {{ transform: scale(1.04); box-shadow: 0 0 14px rgba(2, 132, 199, 0.22); }}
             }}
             .ag-workflow-icon-wrap {{
-                width: 44px;
-                height: 44px;
-                border-radius: 12px;
-                background: linear-gradient(135deg, {accent_color}20 0%, {accent_color}08 100%);
-                border: 1.5px solid {accent_color}66;
-                display: flex;
-                align-items: center;
-                justify-content: center;
                 box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.45);
                 transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
                 will-change: transform, box-shadow;
@@ -47,7 +39,7 @@ def pillar_card(
             [data-testid="stVerticalBlockBorderWrapper"]:hover .ag-workflow-icon-wrap {{
                 transform: translateY(-5px) scale(1.12) rotate(-4deg);
                 box-shadow: 0 12px 26px rgba(15, 23, 42, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.7);
-                border-color: {accent_color}90;
+                border-color: var(--ag-primary);
             }}
             [data-testid="stVerticalBlockBorderWrapper"]:active .ag-workflow-icon-wrap {{
                 transform: translateY(-1px) scale(1.02);
@@ -57,23 +49,23 @@ def pillar_card(
                 font-weight: 750;
                 letter-spacing: 0.06em;
                 text-transform: uppercase;
-                color: {accent_color};
-                background: rgba(255,255,255,0.7);
+                color: var(--ag-primary);
+                background: var(--ag-primary-soft);
                 padding: 3px 10px;
                 border-radius: 9999px;
-                border: 1px solid {accent_color}50;
+                border: 1px solid var(--ag-card-border);
                 box-shadow: none;
                 transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.3s ease;
             }}
             [data-testid="stVerticalBlockBorderWrapper"]:hover .ag-workflow-tag {{
                 transform: scale(1.05);
-                box-shadow: 0 4px 14px {accent_color}25;
-                border-color: {accent_color}90;
+                box-shadow: 0 4px 14px rgba(2, 132, 199, 0.14);
+                border-color: var(--ag-primary);
                 animation: ag-badge-pulse 2s infinite ease-in-out;
             }}
             </style>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-                <div class="ag-workflow-icon-wrap">{icon_markup}</div>
+                <div class="ag-icon-badge ag-workflow-icon-wrap">{icon_markup}</div>
                 <span class="ag-workflow-tag">{tag}</span>
             </div>
             <h3 style="margin:0.2rem 0 0.45rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.15rem;font-weight:800;color:#0f172a;letter-spacing:-0.02em;text-shadow:none;filter:none;-webkit-text-stroke:0;transition:color 0.25s ease;">{title}</h3>
@@ -102,17 +94,7 @@ def login_card_header(
     html = f"""
     <div style="text-align: left; margin-bottom: 0.5rem;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
-            <div class="ag-login-icon-box" style="
-                width: 48px;
-                height: 48px;
-                border-radius: 13px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: {accent_color}12;
-                border: 1px solid {accent_color}28;
-                box-shadow: none;
-            ">{icon_markup}</div>
+            <div class="ag-icon-badge ag-login-icon-box">{icon_markup}</div>
             <span style="
                 display: inline-flex;
                 align-items: center;
@@ -683,7 +665,7 @@ def render_kpi_card(
     elif subtitle:
         delta_markup = f'<div class="ag-kpi-footer"><span>{subtitle}</span></div>'
 
-    icon_html = f'<div class="ag-kpi-icon">{icon}</div>' if icon else ""
+    icon_html = f'<div class="ag-icon-badge ag-kpi-icon">{icon}</div>' if icon else ""
 
     html = f"""
     <div class="ag-kpi-card">
