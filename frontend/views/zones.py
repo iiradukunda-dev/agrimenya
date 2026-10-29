@@ -4,16 +4,12 @@ from typing import Any
 import requests
 import streamlit as st
 from components.badges import priority_badge, status_badge
+from components.charts import render_zone_portfolio_chart
 from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
 from utils.i18n import t
 from utils.mock_data import CROPS
-
-try:
-    import pandas as pd
-except ImportError:
-    pd = None
 
 logger = logging.getLogger(__name__)
 
@@ -304,19 +300,38 @@ def render_zones() -> None:
             st.info("No agricultural zones match the filter.")
             return
 
-        # ── Zone Table ───────────────────────────────────────────────────────
-        table_rows = []
-        for z in filtered:
-            table_rows.append({
-                "District": z.get("district", "N/A"),
-                "Site / Sector": z.get("site_name") or z.get("sector") or z.get("cell") or "-",
-                "Crop": z.get("crop_type") or z.get("crop") or "Unspecified",
-                "Priority": z.get("priority") or "Not assessed",
-                "Est. Output (kg)": f"{float(z.get('predicted_production_kg') or 0):,.0f}" if z.get("predicted_production_kg") else "-",
-                "Risk": z.get("risk_status") or "Normal",
-            })
-        if pd is not None:
-            st.dataframe(pd.DataFrame(table_rows), width="stretch", hide_index=True)
+        # ── Interactive Zone Portfolio ───────────────────────────────────────
+        st.markdown("### Zone portfolio")
+        district_count = len({
+            str(zone.get("district")).strip().casefold()
+            for zone in filtered
+            if zone.get("district")
+        })
+        high_priority_count = sum(
+            str(zone.get("priority") or "").strip().casefold() == "high"
+            for zone in filtered
+        )
+        predicted_outputs = []
+        for zone in filtered:
+            try:
+                output = float(zone.get("predicted_production_kg"))
+            except (TypeError, ValueError):
+                continue
+            if output >= 0:
+                predicted_outputs.append(output)
+        output_total = sum(predicted_outputs) if predicted_outputs else None
+
+        portfolio_metrics = st.columns(4)
+        portfolio_metrics[0].metric("Registered zones", f"{len(filtered):,}")
+        portfolio_metrics[1].metric("Districts represented", f"{district_count:,}")
+        portfolio_metrics[2].metric("High-priority zones", f"{high_priority_count:,}")
+        portfolio_metrics[3].metric(
+            "Predicted output",
+            f"{output_total:,.0f} kg" if output_total is not None else "Not recorded",
+            help="Sum of available zone-level production predictions; zones without a prediction are excluded.",
+        )
+
+        render_zone_portfolio_chart(filtered)
 
         st.markdown("---")
 

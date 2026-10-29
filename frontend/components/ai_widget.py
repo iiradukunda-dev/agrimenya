@@ -119,12 +119,6 @@ def render_floating_ai_widget() -> None:
         gap: 6px !important;
         z-index: 10000000 !important;
     }
-    .ag-ai-spark {
-        color: #38bdf8 !important;
-        display: flex !important;
-        align-items: center !important;
-        line-height: 1 !important;
-    }
     .ag-floating-ai-fab:hover .ag-floating-ai-tooltip,
     .ag-floating-ai-fab:focus .ag-floating-ai-tooltip,
     .ag-floating-ai-fab:active .ag-floating-ai-tooltip {
@@ -134,21 +128,25 @@ def render_floating_ai_widget() -> None:
     }
     @media (max-width: 600px) {
         .ag-floating-ai-fab {
-            bottom: 16px !important;
-            right: 16px !important;
-            width: 58px !important;
-            height: 84px !important;
+            bottom: 12px !important;
+            right: 12px !important;
+            width: 48px !important;
+            height: 48px !important;
+            border-radius: 50% !important;
+            background: rgba(255, 255, 255, 0.96) !important;
+            box-shadow: 0 4px 16px rgba(2, 132, 199, 0.24) !important;
         }
         .ag-floating-ai-fab img {
-            width: 48px !important;
-            max-height: 76px !important;
+            width: 34px !important;
+            height: 42px !important;
+            max-height: 42px !important;
         }
         .ag-floating-ai-fab::before {
-            width: 58px !important;
-            height: 84px !important;
+            width: 48px !important;
+            height: 48px !important;
         }
         .ag-floating-ai-tooltip {
-            right: 64px !important;
+            right: 54px !important;
             padding: 6px 14px !important;
             font-size: 0.78rem !important;
         }
@@ -162,7 +160,7 @@ def render_floating_ai_widget() -> None:
     <a id="ag-persistent-ai-fab" class="ag-floating-ai-fab" href="/AI_Assistant" target="_self" aria-label="{ask_ai_text}" title="{ask_ai_text}">
         {icon_html}
         <div class="ag-floating-ai-tooltip">
-            <span class="ag-ai-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#38bdf8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> {ask_ai_text}
+            {ask_ai_text}
         </div>
     </a>
     <script>
@@ -236,7 +234,7 @@ def render_floating_ai_widget() -> None:
                 fab.innerHTML = `
                     {js_img_markup}
                     <div class="ag-floating-ai-tooltip">
-                        <span class="ag-ai-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#38bdf8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> {ask_ai_text}
+                        {ask_ai_text}
                     </div>
                 `;
                 parentDoc.body.appendChild(fab);
@@ -250,7 +248,7 @@ def render_floating_ai_widget() -> None:
                 fab.setAttribute('title', '{ask_ai_text}');
                 const tt = fab.querySelector('.ag-floating-ai-tooltip');
                 if (tt) {{
-                    tt.innerHTML = `<span class="ag-ai-spark"><svg width="11" height="11" viewBox="0 0 24 24" fill="#38bdf8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> {ask_ai_text}`;
+                    tt.textContent = '{ask_ai_text}';
                 }}
             }}
             wireFabClick(fab);
@@ -261,4 +259,3 @@ def render_floating_ai_widget() -> None:
     </script>
     """
     components.html(js_script, height=0)
-

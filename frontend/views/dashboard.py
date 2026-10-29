@@ -414,12 +414,12 @@ def render_dashboard() -> None:
                     if st.button("Broadcast Alert", use_container_width=True):
                         st.switch_page("pages/9_Communication.py")
 
-        # ── 9. Interactive Data Table & CSV Export ────────────────────
+        # ── 9. Interactive Record Explorer & CSV Export ────────────────
         with st.container(border=True):
             st.markdown(
                 '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:0.5rem;">'
                 '<div>'
-                '<h3 style="margin:0;font-size:1.15rem;font-weight:750;">Agricultural Records & Performance</h3>'
+                '<h3 style="margin:0;font-size:1.15rem;font-weight:750;">Explore agricultural records</h3>'
                 ''
                 '</div>'
                 '</div>',
@@ -427,9 +427,56 @@ def render_dashboard() -> None:
             )
 
             if not filtered_metrics_df.empty:
-                clean_df = filtered_metrics_df.head(100).copy()
-                st.caption(f"Showing the first {len(clean_df):,} of {len(filtered_metrics_df):,} filtered records.")
-                st.dataframe(clean_df, width="stretch", hide_index=True)
+                records = filtered_metrics_df.reset_index(drop=True)
+                st.caption(
+                    f"{len(records):,} records match the dashboard filters. Select a record to inspect its field metrics."
+                )
+                record_options = list(range(len(records)))
+
+                def _record_label(index: int) -> str:
+                    record = records.iloc[index]
+                    district = record.get("District")
+                    crop_value = record.get("Crop")
+                    season_value = record.get("Season")
+                    location = str(district) if pd.notna(district) else "Unspecified district"
+                    crop = str(crop_value) if pd.notna(crop_value) else "Unspecified crop"
+                    season = str(season_value) if pd.notna(season_value) else "Season not recorded"
+                    return f"{location} · {crop} · {season} · Record {index + 1}"
+
+                selected_record_index = st.selectbox(
+                    "Choose a record",
+                    record_options,
+                    format_func=_record_label,
+                    key="dashboard_record_select",
+                )
+                selected_record = records.iloc[selected_record_index]
+                metric_columns = [
+                    ("Yield (kg/ha)", "Yield (kg/ha)", "kg/ha"),
+                    ("Production (MT)", "Production", "MT"),
+                    ("Cultivated area (ha)", "Cultivated area", "ha"),
+                    ("Rainfall (mm)", "Rainfall", "mm"),
+                ]
+                available_record_metrics = [
+                    (column, label, unit)
+                    for column, label, unit in metric_columns
+                    if column in records.columns
+                ]
+                if available_record_metrics:
+                    metric_cols = st.columns(min(len(available_record_metrics), 4))
+                    for metric_col, (column, label, unit) in zip(metric_cols, available_record_metrics):
+                        value = pd.to_numeric(pd.Series([selected_record.get(column)]), errors="coerce").iloc[0]
+                        metric_col.metric(
+                            label,
+                            f"{value:,.1f} {unit}" if pd.notna(value) else "Not recorded",
+                        )
+                location = selected_record.get("District")
+                crop_value = selected_record.get("Crop")
+                season_value = selected_record.get("Season")
+                st.caption(
+                    f"Location: {location if pd.notna(location) else 'Not recorded'}"
+                    f" · Crop: {crop_value if pd.notna(crop_value) else 'Not recorded'}"
+                    f" · Season: {season_value if pd.notna(season_value) else 'Not recorded'}"
+                )
 
                 # Export CSV button
                 csv_buffer = io.StringIO()

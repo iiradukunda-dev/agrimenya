@@ -148,6 +148,11 @@ def load_theme(show_sidebar: bool = False) -> None:
       animation: ag-fade-in 0.3s ease-out;
     }}
 
+    @keyframes ag-dashboard-enter {{
+      from {{ opacity: 0; transform: translateY(12px) scale(0.99); }}
+      to {{ opacity: 1; transform: translateY(0) scale(1); }}
+    }}
+
     {sidebar_suppression}
     {sidebar_navigation_css}
 
@@ -188,8 +193,10 @@ def load_theme(show_sidebar: bool = False) -> None:
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                   box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                   border-color 0.2s ease !important;
+      animation: ag-dashboard-enter 0.48s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }}
     [data-testid="stVerticalBlockBorderWrapper"]:hover {{
+      transform: translateY(-2px);
       border-color: rgba(2, 132, 199, 0.4) !important;
       box-shadow: var(--ag-card-shadow-hover) !important;
     }}
@@ -212,6 +219,7 @@ def load_theme(show_sidebar: bool = False) -> None:
       padding: 1rem 1.15rem !important;
       box-shadow: var(--ag-card-shadow) !important;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      animation: ag-dashboard-enter 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }}
     [data-testid="stMetric"]:hover {{
       transform: translateY(-2px);
@@ -466,6 +474,7 @@ def load_theme(show_sidebar: bool = False) -> None:
       position: relative;
       overflow: hidden;
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+      animation: ag-dashboard-enter 0.48s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }}
     .ag-kpi-card:hover {{
       transform: translateY(-2px);
@@ -547,6 +556,7 @@ def load_theme(show_sidebar: bool = False) -> None:
       text-align: center;
       box-shadow: var(--ag-card-shadow);
       transition: transform 0.2s ease, border-color 0.2s ease;
+      animation: ag-dashboard-enter 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }}
     .ag-weather-card:hover {{
       transform: translateY(-2px);
@@ -730,7 +740,10 @@ def load_theme(show_sidebar: bool = False) -> None:
         max-width: 100% !important;
         overflow-x: auto !important;
       }}
-      [data-testid="stPlotlyChart"] {{ max-width: 100% !important; }}
+      [data-testid="stPlotlyChart"] {{
+        max-width: 100% !important;
+        animation: ag-dashboard-enter 0.58s cubic-bezier(0.2, 0.8, 0.2, 1) 0.06s both;
+      }}
       [data-testid="stPlotlyChart"] iframe {{ max-width: 100% !important; }}
       [data-testid="stButton"] button,
       [data-testid="stFormSubmitButton"] button,

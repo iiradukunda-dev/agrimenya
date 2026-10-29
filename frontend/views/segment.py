@@ -17,6 +17,7 @@ except ImportError:  # Keep the table usable if optional map packages are missin
 
 from components.errors import error_boundary
 from components.icons import render_icon_title
+from components.charts import render_segment_distribution_chart, render_segment_summary_chart
 from components.maps import add_map_layer_control, create_rwanda_map
 from utils import api_client
 from utils.i18n import t
@@ -359,15 +360,10 @@ def render_segment() -> None:
                 )
                 st.caption(f"{top['District']} has the highest observed district value in this selection.")
 
-            summary_display = summary.rename(columns={
-                "Value": f"{selected_metric_label} ({metric_unit})",
-                "Record count": "Records",
-                "Range": "Observed range",
-            })
-            st.dataframe(summary_display, width="stretch", hide_index=True)
+            render_segment_summary_chart(summary, selected_metric_label, metric_unit)
 
     st.divider()
-    st.subheader("Matching yield records")
+    st.subheader("Explore matching observations")
     st.caption("Search within the current crop, season, district, sector, and cell selection.")
     search_term = st.text_input("Search records", key="seg_records_search", placeholder="Search a district, sector, cell, or crop")
     searchable_columns = [
@@ -382,20 +378,64 @@ def render_segment() -> None:
         ).any(axis=1)
         visible_records = filtered[matches]
 
-    columns_to_show = [
-        column for column in [
-            "District", "Sector", "Cell", "Crop", "Season", "Yield (kg/ha)",
-            "Production (MT)", "Cultivated area (ha)", "Rainfall (mm)", "Soil type",
-        ]
-        if column in visible_records.columns
-    ]
     st.caption(f"Showing {len(visible_records):,} of {len(filtered):,} matching records.")
     if visible_records.empty:
         st.info("No records match the current filters and search.")
     else:
-        st.dataframe(
-            visible_records[columns_to_show],
-            width="stretch",
-            hide_index=True,
-            height=380,
+        render_segment_distribution_chart(
+            visible_records,
+            metric_column,
+            selected_metric_label,
+            metric_unit,
+        )
+        records_for_inspection = visible_records.reset_index(drop=True)
+
+        def _observation_label(index: int) -> str:
+            record = records_for_inspection.iloc[index]
+            location = " / ".join(
+                str(record.get(column)).strip()
+                for column in ("District", "Sector", "Cell")
+                if record.get(column) is not None and not pd.isna(record.get(column)) and str(record.get(column)).strip()
+            )
+            value = record.get(metric_column)
+            crop_value = record.get("Crop")
+            value_label = f"{float(value):,.1f} {metric_unit}" if pd.notna(value) else "Value not recorded"
+            crop_label = str(crop_value) if pd.notna(crop_value) else selected_crop
+            return f"{location or 'Location not recorded'} · {crop_label} · {value_label}"
+
+        selected_record_index = st.selectbox(
+            "Inspect an observation",
+            list(range(len(records_for_inspection))),
+            format_func=_observation_label,
+            key="seg_observation_select",
+        )
+        selected_record = records_for_inspection.iloc[selected_record_index]
+        observation_metrics = [
+            ("Yield (kg/ha)", "Yield", "kg/ha"),
+            ("Production (MT)", "Production", "MT"),
+            ("Cultivated area (ha)", "Cultivated area", "ha"),
+            ("Rainfall (mm)", "Rainfall", "mm"),
+        ]
+        available_observation_metrics = [
+            (column, label, unit)
+            for column, label, unit in observation_metrics
+            if column in records_for_inspection.columns
+        ]
+        if available_observation_metrics:
+            metric_cols = st.columns(min(len(available_observation_metrics), 4))
+            for metric_col, (column, label, unit) in zip(metric_cols, available_observation_metrics):
+                value = pd.to_numeric(pd.Series([selected_record.get(column)]), errors="coerce").iloc[0]
+                metric_col.metric(
+                    label,
+                    f"{value:,.1f} {unit}" if pd.notna(value) else "Not recorded",
+                )
+        def _location_value(column: str) -> str:
+            value = selected_record.get(column)
+            return str(value) if pd.notna(value) else "Not recorded"
+
+        st.caption(
+            f"District: {_location_value('District')}"
+            f" · Sector: {_location_value('Sector')}"
+            f" · Cell: {_location_value('Cell')}"
+            f" · Soil: {_location_value('Soil type')}"
         )
