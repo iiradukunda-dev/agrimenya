@@ -803,6 +803,21 @@ def render_navbar(show_sidebar: bool = False) -> None:
         box-shadow: none !important;
         transform: translateY(-2px) scale(1.02) !important;
       }
+      /* A Streamlit page link has a wrapper and a clickable anchor; outline only the anchor. */
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover {
+        border: none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
+        border: 2px solid #0875d1 !important;
+        border-radius: 9999px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        transform: translateY(-2px) scale(1.02) !important;
+      }
       </style>
     """
     if show_sidebar:
