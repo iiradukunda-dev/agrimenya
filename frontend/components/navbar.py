@@ -4,7 +4,6 @@ import streamlit as st
 from components.ai_widget import render_floating_ai_widget
 from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
-from utils.theme import get_current_theme, toggle_theme
 
 
 DEFAULT_USER = {
@@ -841,13 +840,6 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
             with c_more:
                 with st.popover(t("nav.more", "More"), width="stretch"):
-                    # Theme Mode Switcher
-                    current_mode = get_current_theme()
-                    theme_label = "Switch to Light Mode" if current_mode == "dark" else "Switch to Dark Mode"
-                    if st.button(theme_label, key="ag_navbar_theme_toggle_btn", use_container_width=True):
-                        toggle_theme()
-                        st.rerun()
-
                     st.divider()
                     st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
                     st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))

@@ -14,8 +14,10 @@ def toggle_theme() -> None:
 
 
 def load_theme(show_sidebar: bool = False) -> None:
-    """Apply a modern, high-contrast, professional visual system with dark/light mode support."""
-    theme_mode = get_current_theme()
+    """Apply the modern, high-contrast light visual system used throughout agrimenya."""
+    # Keep the application on its light palette and clear any older saved dark-mode state.
+    st.session_state["ag_theme_mode"] = "light"
+    theme_mode = "light"
     is_dark = theme_mode == "dark"
 
     # Dynamic CSS variable values based on active theme mode
