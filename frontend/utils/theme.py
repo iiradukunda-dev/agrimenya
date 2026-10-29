@@ -27,8 +27,8 @@ def load_theme(show_sidebar: bool = False) -> None:
     surface_hover = "#16243b" if is_dark else "#f0f9ff"
     card_bg = "#111c2e" if is_dark else "#ffffff"
     card_border = "rgba(56, 189, 248, 0.22)" if is_dark else "rgba(2, 132, 199, 0.16)"
-    card_shadow = "0 10px 25px -5px rgba(0,0,0,0.45)" if is_dark else "0 2px 12px -2px rgba(2, 132, 199, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)"
-    card_shadow_hover = "0 16px 32px -4px rgba(0,0,0,0.6), 0 0 20px rgba(56,189,248,0.25)" if is_dark else "0 8px 24px -4px rgba(2, 132, 199, 0.18), 0 2px 6px -1px rgba(0, 0, 0, 0.04)"
+    card_shadow = "0 10px 25px -5px rgba(0,0,0,0.45)" if is_dark else "0 4px 14px -3px rgba(2, 132, 199, 0.12), 0 2px 5px -1px rgba(15, 23, 42, 0.06)"
+    card_shadow_hover = "0 16px 32px -4px rgba(0,0,0,0.6), 0 0 20px rgba(56,189,248,0.25)" if is_dark else "0 12px 28px -5px rgba(2, 132, 199, 0.22), 0 4px 9px -2px rgba(15, 23, 42, 0.08)"
     
     text_main = "#f8fafc" if is_dark else "#0f172a"
     text_muted = "#94a3b8" if is_dark else "#334155"
@@ -221,6 +221,7 @@ def load_theme(show_sidebar: bool = False) -> None:
       border-radius: var(--ag-radius-md);
       background: var(--ag-primary-soft);
       color: var(--ag-primary);
+      box-shadow: 0 3px 8px rgba(2, 132, 199, 0.12);
     }}
     .ag-icon-badge svg {{
       width: 20px;
@@ -563,12 +564,13 @@ def load_theme(show_sidebar: bool = False) -> None:
       padding: 0.85rem 0.75rem;
       text-align: center;
       box-shadow: var(--ag-card-shadow);
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       animation: ag-dashboard-enter 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }}
     .ag-weather-card:hover {{
       transform: translateY(-2px);
       border-color: var(--ag-primary);
+      box-shadow: var(--ag-card-shadow-hover);
     }}
     .ag-weather-date {{
       font-size: 0.75rem;
