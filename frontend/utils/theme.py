@@ -221,6 +221,7 @@ def load_theme(show_sidebar: bool = False) -> None:
       border-radius: var(--ag-radius-md);
       background: var(--ag-primary-soft);
       color: var(--ag-primary);
+      box-shadow: 0 3px 8px rgba(2, 132, 199, 0.12);
     }}
     .ag-icon-badge svg {{
       width: 20px;
