@@ -73,7 +73,7 @@ def ensure_pwa_assets() -> None:
 
 
 def render_pwa_support() -> None:
-    """Inject PWA manifest, service worker, branded loading screen, network-lost screen, and error screens."""
+    """Inject PWA metadata, service worker, offline state, and error screens."""
     ensure_pwa_assets()
 
     pwa_script = """
@@ -82,6 +82,13 @@ def render_pwa_support() -> None:
       try {
         const parentDoc = window.parent.document;
         if (!parentDoc) return;
+
+        // Remove persistent loaders from earlier app versions. Loading UI is
+        // reserved for explicit actions that are actually fetching data.
+        ['ag-top-progress', 'ag-page-loader'].forEach(id => {
+          const staleLoader = parentDoc.getElementById(id);
+          if (staleLoader) staleLoader.remove();
+        });
 
         // Cleanup any stale background video elements
         try {
@@ -129,16 +136,11 @@ def render_pwa_support() -> None:
           parentDoc.head.appendChild(appleIcon);
         }
 
-        // 4. Inject Dynamic Global Styles for Loaders, Modals, and Animations
+        // 4. Inject Dynamic Global Styles for Modals and Animations
         if (!parentDoc.getElementById('ag-dynamic-runtime-styles')) {
           const styleEl = parentDoc.createElement('style');
           styleEl.id = 'ag-dynamic-runtime-styles';
           styleEl.textContent = `
-            @keyframes agIndeterminateBar {
-              0% { left: -35%; width: 35%; }
-              50% { left: 30%; width: 50%; }
-              100% { left: 100%; width: 35%; }
-            }
             @keyframes agFadeInUp {
               from { opacity: 0; transform: translateY(16px); }
               to { opacity: 1; transform: translateY(0); }
@@ -146,26 +148,6 @@ def render_pwa_support() -> None:
             @keyframes agPulseDot {
               0%, 100% { opacity: 1; transform: scale(1); }
               50% { opacity: 0.35; transform: scale(0.85); }
-            }
-            #ag-top-progress {
-              position: fixed;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 3px;
-              background: rgba(2, 132, 199, 0.2);
-              z-index: 9999999;
-              overflow: hidden;
-              opacity: 0;
-              transition: opacity 0.25s ease;
-              pointer-events: none;
-            }
-            #ag-top-progress .ag-top-bar {
-              position: absolute;
-              height: 100%;
-              background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%);
-              border-radius: 9999px;
-              animation: agIndeterminateBar 1.4s infinite linear;
             }
             /* Permanently suppress native header, sidebar, and toolbar on client */
             header[data-testid="stHeader"],
@@ -327,109 +309,7 @@ def render_pwa_support() -> None:
             });
         }
 
-        // 6. Top Progress Bar for Live Streamlit Calculations
-        let topProgress = parentDoc.getElementById('ag-top-progress');
-        if (!topProgress) {
-          topProgress = parentDoc.createElement('div');
-          topProgress.id = 'ag-top-progress';
-          topProgress.innerHTML = '<div class="ag-top-bar"></div>';
-          parentDoc.body.appendChild(topProgress);
-        }
-
-        // 7. CUSTOMIZED BRANDED LOADING SCREEN
-        let pageLoader = parentDoc.getElementById('ag-page-loader');
-        if (!pageLoader) {
-          pageLoader = parentDoc.createElement('div');
-          pageLoader.id = 'ag-page-loader';
-          pageLoader.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#10251c;z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.35s ease, visibility 0.35s ease;pointer-events:all;';
-          pageLoader.innerHTML = `
-            <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
-              <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya" style="width:72px;height:72px;position:relative;z-index:2;">
-            </div>
-            <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-0.03em;color:#f4f6ed;margin:0 0 0.35rem 0;">agrimenya</h1>
-            <p id="ag-loader-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.96rem;font-weight:500;color:#b7c4b8;margin:0 0 1.6rem 0;">Getting your field workspace ready…</p>
-            <div style="width:190px;height:4px;background:rgba(255,255,255,0.10);border-radius:9999px;overflow:hidden;position:relative;">
-              <div style="position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg, #729777 0%, #527c5d 100%);border-radius:9999px;animation:agIndeterminateBar 1.5s infinite ease-in-out;"></div>
-            </div>
-          `;
-          parentDoc.body.appendChild(pageLoader);
-        } else {
-          // Update loaders left in the parent document by an older app version.
-          pageLoader.style.background = '#10251c';
-          const oldLogoHalo = pageLoader.querySelector('div[style*="130px"]');
-          if (oldLogoHalo) oldLogoHalo.remove();
-          const loaderLogo = pageLoader.querySelector('img');
-          if (loaderLogo) {
-            loaderLogo.style.filter = 'none';
-            loaderLogo.style.animation = 'none';
-          }
-          const loaderMessage = pageLoader.querySelector('#ag-loader-msg');
-          if (loaderMessage && loaderMessage.textContent === 'Loading agro-climate intelligence...') {
-            loaderMessage.textContent = 'Getting your field workspace ready…';
-          }
-        }
-
-        // Hide Page Loader once content is ready
-        function dismissPageLoader() {
-          if (pageLoader && pageLoader.style.opacity !== '0') {
-            pageLoader.style.opacity = '0';
-            pageLoader.style.pointerEvents = 'none';
-            setTimeout(() => {
-              if (pageLoader) pageLoader.style.visibility = 'hidden';
-            }, 350);
-          }
-        }
-
-        function showPageLoader(msg) {
-          if (pageLoader) {
-            if (msg) {
-              const msgEl = parentDoc.getElementById('ag-loader-msg');
-              if (msgEl) msgEl.textContent = msg;
-            }
-            pageLoader.style.visibility = 'visible';
-            pageLoader.style.opacity = '1';
-            pageLoader.style.pointerEvents = 'all';
-          }
-          if (topProgress) {
-            topProgress.style.opacity = '1';
-          }
-        }
-
-        // Intercept navigation clicks to smoothly display the branded loader during page loading
-        if (!parentDoc.__ag_nav_listener_attached) {
-          parentDoc.__ag_nav_listener_attached = true;
-          parentDoc.addEventListener('click', (e) => {
-            const link = e.target.closest('a[href], [data-testid="stPageLink"] a, [data-testid="stPageLink"]');
-            if (link) {
-              const href = link.getAttribute('href') || link.querySelector('a')?.getAttribute('href') || '';
-              if (href && !href.startsWith('#') && !link.target && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
-                const targetText = (link.textContent || 'page').trim();
-                showPageLoader('Taking you to ' + targetText + '…');
-              }
-            }
-          }, true);
-        }
-
-        // Intelligent Page Ready Detection:
-        function checkContentReady() {
-          const mainBlocks = parentDoc.querySelectorAll('[data-testid="stMainBlockContainer"] > div, .main .block-container > div');
-          const hasContent = mainBlocks && mainBlocks.length >= 2;
-          const statusWidget = parentDoc.querySelector('[data-testid="stStatusWidget"]');
-          const isBusy = statusWidget && statusWidget.textContent && (statusWidget.textContent.includes('RUNNING') || statusWidget.textContent.includes('Stop'));
-
-          if (hasContent && !isBusy) {
-            dismissPageLoader();
-            if (topProgress) topProgress.style.opacity = '0';
-          }
-        }
-
-        // Check readiness and auto-dismiss
-        setTimeout(checkContentReady, 250);
-        setTimeout(checkContentReady, 550);
-        setTimeout(checkContentReady, 950);
-        setTimeout(dismissPageLoader, 1600);
-
-        // 8. CUSTOMIZED DESIGNED NETWORK LOST (OFFLINE) SCREEN
+        // 6. CUSTOMIZED DESIGNED NETWORK LOST (OFFLINE) SCREEN
         let offlineScreen = parentDoc.getElementById('ag-network-lost-screen');
         if (!offlineScreen) {
           offlineScreen = parentDoc.createElement('div');
