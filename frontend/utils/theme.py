@@ -211,7 +211,21 @@ def load_theme(show_sidebar: bool = False) -> None:
     }}
 
     .ag-icon-badge {{
-      display: none !important;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--ag-card-border);
+      border-radius: var(--ag-radius-md);
+      background: var(--ag-primary-soft);
+      color: var(--ag-primary);
+    }}
+    .ag-icon-badge svg {{
+      width: 20px;
+      height: 20px;
+      stroke: currentColor !important;
     }}
 
     /* Modern KPI Metric Cards */
