@@ -225,7 +225,9 @@ def authenticated_session_badge(
             color: #087a55; background: #f5faf7; font-weight: 700;
         }}
         .{style_key} [data-testid="stButton"] button:hover {{
-            border-color: #087a55; color: #075c40; background: #edf7f1;
+            border: 2px solid #0875d1; border-radius: 9999px;
+            color: #0369a1; background: transparent; box-shadow: none;
+            transform: translateY(-2px) scale(1.02);
         }}
         @media (max-width: 600px) {{ .{style_key} [data-testid="stVerticalBlockBorderWrapper"] {{ padding: 1rem; }} }}
         </style>

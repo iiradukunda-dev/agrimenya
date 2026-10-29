@@ -108,15 +108,16 @@ def render_home_hero() -> None:
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):hover,
       [data-testid="stVerticalBlockBorderWrapper"] button:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover,
       [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stBaseButton-secondary"]:not([role="tab"]):not([data-baseweb="tab"]):not([aria-selected]):hover {
-        background: #527c5d !important;
-        border-color: #527c5d !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 12px rgba(32, 60, 42, 0.12) !important;
-        transform: translateY(-1px) !important;
+        background: transparent !important;
+        border: 2px solid #0875d1 !important;
+        border-radius: 9999px !important;
+        color: #0369a1 !important;
+        box-shadow: none !important;
+        transform: translateY(-2px) scale(1.02) !important;
       }
       [data-testid="stVerticalBlockBorderWrapper"] .stButton > button:hover *,
       [data-testid="stVerticalBlockBorderWrapper"] button:hover * {
-        color: #ffffff !important;
+        color: #0369a1 !important;
       }
 
       /* Clean section titles & subtitles */

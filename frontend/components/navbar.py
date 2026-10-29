@@ -376,10 +376,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
       }
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover,
       .st-key-ag_navbar div[data-testid="stPopover"] button:hover {
-        background: rgba(2, 132, 199, 0.08) !important;
-        background-color: rgba(2, 132, 199, 0.08) !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: 2px solid #0875d1 !important;
+        border-radius: 9999px !important;
         box-shadow: none !important;
-        transform: none !important;
+        transform: translateY(-2px) scale(1.02) !important;
       }
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover span,
@@ -426,8 +428,11 @@ def render_navbar(show_sidebar: bool = False) -> None:
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
-        background: rgba(2, 132, 199, 0.12) !important;
-        border: none !important;
+        background: transparent !important;
+        border: 2px solid #0875d1 !important;
+        border-radius: 9999px !important;
+        box-shadow: none !important;
+        transform: translateY(-2px) scale(1.02) !important;
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover p,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover p {
@@ -785,16 +790,19 @@ def render_navbar(show_sidebar: bool = False) -> None:
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
-        border: none !important;
-        background: linear-gradient(135deg, rgba(186, 230, 253, 0.72), rgba(209, 250, 229, 0.58)) !important;
-        transform: translateX(3px) !important;
+        border: 2px solid #0875d1 !important;
+        border-radius: 9999px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        transform: translateY(-2px) scale(1.02) !important;
       }
       .st-key-ag_navbar .stButton > button:hover {
-        border: none !important;
-        background: linear-gradient(135deg, #0284c7, #10b981) !important;
-        color: #ffffff !important;
-        box-shadow: 0 7px 18px rgba(2, 132, 199, 0.2) !important;
-        transform: translateY(-2px) !important;
+        border: 2px solid #0875d1 !important;
+        border-radius: 9999px !important;
+        background: transparent !important;
+        color: #0369a1 !important;
+        box-shadow: none !important;
+        transform: translateY(-2px) scale(1.02) !important;
       }
       </style>
     """

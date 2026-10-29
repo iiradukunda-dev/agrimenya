@@ -361,8 +361,12 @@ def load_theme(show_sidebar: bool = False) -> None:
     }}
     [data-testid="stTabs"] button[role="tab"]:hover,
     [data-baseweb="tab"]:hover {{
-      color: var(--ag-primary) !important;
-      background: var(--ag-primary-soft) !important;
+      color: #0369a1 !important;
+      background: transparent !important;
+      border: 2px solid #0875d1 !important;
+      border-radius: 9999px !important;
+      box-shadow: none !important;
+      transform: translateY(-2px) scale(1.02) !important;
     }}
     [data-testid="stTabs"] button[role="tab"][aria-selected="true"],
     [data-baseweb="tab"][aria-selected="true"] {{
@@ -745,6 +749,39 @@ def load_theme(show_sidebar: bool = False) -> None:
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
       }}
+    }}
+
+    /* Match the navbar's clear outline hover across every in-page action. */
+    [data-testid="stMain"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *),
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button:not(.st-key-ag_navbar *),
+    [data-testid="stMain"] [data-testid="stLinkButton"]:not(.st-key-ag_navbar *),
+    [data-testid="stMain"] button[data-testid="stPopoverButton"]:not(.st-key-ag_navbar *) {{
+      transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                  background 180ms ease, color 180ms ease,
+                  border-color 180ms ease, box-shadow 180ms ease !important;
+    }}
+    [data-testid="stMain"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *):hover,
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button:not(.st-key-ag_navbar *):hover,
+    [data-testid="stMain"] [data-testid="stLinkButton"]:not(.st-key-ag_navbar *):hover,
+    [data-testid="stMain"] button[data-testid="stPopoverButton"]:not(.st-key-ag_navbar *):hover {{
+      background: transparent !important;
+      background-color: transparent !important;
+      border: 2px solid #0875d1 !important;
+      border-radius: 9999px !important;
+      color: #0369a1 !important;
+      box-shadow: none !important;
+      transform: translateY(-2px) scale(1.02) !important;
+    }}
+    [data-testid="stMain"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *):hover *,
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button:not(.st-key-ag_navbar *):hover *,
+    [data-testid="stMain"] [data-testid="stLinkButton"]:not(.st-key-ag_navbar *):hover *,
+    [data-testid="stMain"] button[data-testid="stPopoverButton"]:not(.st-key-ag_navbar *):hover * {{
+      color: #0369a1 !important;
+    }}
+    [data-testid="stMain"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *):disabled:hover,
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button:not(.st-key-ag_navbar *):disabled:hover {{
+      transform: none !important;
+      border-color: inherit !important;
     }}
     </style>
     """)
