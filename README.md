@@ -30,8 +30,9 @@ including NISR yield observations and seasonal context, to help users explore
 zones, compare crop information, review recommendations, and plan field
 activities. Users navigate the Streamlit interface, select a district or crop,
 inspect maps and evidence, and use the available planning and field-reporting
-workflows. The live application uses a Streamlit frontend, a FastAPI backend,
-and Supabase for application records; see
+workflows. The floating bulb opens the AI assistant for agricultural questions
+and decision support. The live application uses a Streamlit frontend, a FastAPI
+backend, and Supabase for application records; see
 [`backend/docs/frontend_backend_handoff.md`](backend/docs/frontend_backend_handoff.md)
 for the API integration details.
 
