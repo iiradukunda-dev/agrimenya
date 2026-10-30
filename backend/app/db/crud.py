@@ -51,6 +51,86 @@ def get_community_account_by_id(account_id: str) -> dict | None:
     return rows[0] if rows else None
 
 
+def get_community_account_by_google_subject(subject: str) -> dict | None:
+    rows = _exec_query_get_data(
+        get_supabase().table("community_accounts").select("*")
+        .eq("google_subject", subject).limit(1)
+    )
+    return rows[0] if rows else None
+
+
+def link_community_google_identity(account_id: str, subject: str) -> dict | None:
+    now = datetime.now(timezone.utc).isoformat()
+    rows = _exec_query_get_data(
+        get_supabase().table("community_accounts").update({
+            "google_subject": subject,
+            "email_verified_at": now,
+            "updated_at": now,
+        }).eq("id", account_id).is_("google_subject", "null").select("*")
+    )
+    if rows:
+        return rows[0]
+    account = get_community_account_by_id(account_id)
+    return account if account and account.get("google_subject") == subject else None
+
+
+def create_google_community_account(email: str, display_name: str, subject: str) -> dict:
+    now = datetime.now(timezone.utc).isoformat()
+    result = get_supabase().table("community_accounts").insert({
+        "email": email.lower(),
+        "display_name": display_name,
+        "password_hash": None,
+        "google_subject": subject,
+        "email_verified_at": now,
+    }).execute()
+    return result.data[0]
+
+
+def create_community_oauth_login_code(
+    account_id: str, code_hash: str, browser_binding_hash: str, expires_at: str,
+) -> None:
+    client = get_supabase()
+    client.table("community_oauth_login_codes").delete().lt(
+        "expires_at", datetime.now(timezone.utc).isoformat()
+    ).execute()
+    client.table("community_oauth_login_codes").insert({
+        "account_id": account_id, "code_hash": code_hash,
+        "browser_binding_hash": browser_binding_hash, "expires_at": expires_at,
+    }).execute()
+
+
+def consume_community_oauth_login_code(code_hash: str, browser_binding_hash: str) -> str | None:
+    result = get_supabase().table("community_oauth_login_codes").update({
+        "consumed_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("code_hash", code_hash).eq(
+        "browser_binding_hash", browser_binding_hash
+    ).is_("consumed_at", "null").gt(
+        "expires_at", datetime.now(timezone.utc).isoformat()
+    ).select("account_id").execute()
+    if not result.data:
+        return None
+    return str(result.data[0]["account_id"])
+
+
+def create_community_email_verification_token(account_id: str, token_hash: str, expires_at: str) -> None:
+    client = get_supabase()
+    client.table("community_email_verification_tokens").insert({
+        "account_id": account_id, "token_hash": token_hash, "expires_at": expires_at,
+    }).execute()
+
+
+def verify_community_email(token_hash: str) -> bool:
+    result = get_supabase().rpc("verify_community_email", {"p_token_hash": token_hash}).execute()
+    return bool(result.data)
+
+
+def consume_api_rate_limit(scope: str, maximum: int, window_seconds: int) -> bool:
+    result = get_supabase().rpc("consume_api_rate_limit", {
+        "p_scope": scope, "p_max_hits": maximum, "p_window_seconds": window_seconds,
+    }).execute()
+    return bool(result.data)
+
+
 def reset_community_password_once(account_id: str, expected_version: int, password_hash: str) -> bool:
     """Atomically consume a signed reset link by advancing the account session version."""
     result = get_supabase().table("community_accounts").update({
@@ -73,7 +153,7 @@ def create_community_account(email: str, display_name: str, password_hash: str) 
 def list_community_accounts(limit: int = 200) -> list[dict]:
     return _exec_query_get_data(
         get_supabase().table("community_accounts")
-        .select("id,email,display_name,role,is_active,created_at")
+        .select("id,email,display_name,role,is_active,email_verified_at,created_at")
         .order("created_at", desc=True).limit(max(1, min(int(limit), 500)))
     )
 
@@ -776,9 +856,15 @@ def _delete_record(table_name: str, record_id: UUID | str) -> dict | None:
 # ---------- zones ----------
 
 def _zone_identity_key(zone: dict) -> str:
-    """Stable key for one district/subdistrict/crop/season registry entry."""
-    fields = ("district", "sector", "cell", "crop_type", "season")
+    """Stable key for one mapped site, crop, and season registry entry."""
+    fields = ("district", "sector", "cell", "crop_type", "season", "site_name")
     normalized = [" ".join(str(zone.get(field) or "").split()).casefold() for field in fields]
+    try:
+        latitude = f"{float(zone['latitude']):.6f}"
+        longitude = f"{float(zone['longitude']):.6f}"
+    except (KeyError, TypeError, ValueError):
+        latitude = longitude = ""
+    normalized.extend((latitude, longitude))
     return "|".join(normalized)
 
 
@@ -1163,6 +1249,25 @@ def get_plan(plan_id: UUID | str) -> dict | None:
     sb = get_supabase()
     rows = _exec_query_get_data(sb.table("plans").select("*").eq("id", str(plan_id)).limit(1))
     return rows[0] if rows else None
+
+
+def update_plan_action_status(
+    plan_id: UUID | str, step_number: int, new_status: str,
+    change_note: str, changed_by: str,
+) -> dict | None:
+    result = get_supabase().rpc("update_plan_action_status", {
+        "p_plan_id": str(plan_id), "p_step_number": step_number,
+        "p_new_status": new_status, "p_change_note": change_note,
+        "p_changed_by": changed_by,
+    }).execute()
+    return result.data
+
+
+def list_plan_action_history(plan_id: UUID | str, step_number: int | None = None) -> list[dict]:
+    query = get_supabase().table("plan_action_history").select("*").eq("plan_id", str(plan_id))
+    if step_number is not None:
+        query = query.eq("step_number", step_number)
+    return _exec_query_get_all(query.order("changed_at", desc=True).limit(200))
 
 
 # ---------- alerts ----------

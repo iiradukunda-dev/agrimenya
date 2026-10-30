@@ -15,6 +15,7 @@ from app.core.auth import create_token, require_role
 from app.core.audit import audit_admin_action
 from app.core.config import settings
 from app.db import crud
+from app.services.email_delivery import email_delivery_configured
 from app.services.admin_auth import (
     hash_password, hash_reset_token, new_reset_token, send_reset_email, verify_password,
 )
@@ -177,8 +178,8 @@ def create_account(
     email = str(payload.email).lower()
     if crud.get_admin_account_by_email(email):
         raise HTTPException(status_code=409, detail="An administrator account already uses that email")
-    if not settings.SMTP_HOST or not settings.EMAIL_FROM or not settings.ADMIN_PASSWORD_RESET_URL:
-        raise HTTPException(status_code=503, detail="Configure SMTP and ADMIN_PASSWORD_RESET_URL before inviting administrators")
+    if not email_delivery_configured() or not settings.ADMIN_PASSWORD_RESET_URL:
+        raise HTTPException(status_code=503, detail="Configure email delivery and ADMIN_PASSWORD_RESET_URL before inviting administrators")
     try:
         account = crud.create_admin_account(email, payload.display_name.strip(), hash_password(secrets.token_urlsafe(32)))
     except Exception as exc:
@@ -192,7 +193,7 @@ def create_account(
     except HTTPException as exc:
         raise HTTPException(
             status_code=503,
-            detail="The account was created, but the invitation email could not be delivered. Fix SMTP, then use Forgot Password to send the setup link.",
+            detail="The account was created, but the invitation email could not be delivered. Fix email delivery, then use Forgot Password to send the setup link.",
         ) from exc
     return {"id": str(account["id"]), "email": account["email"], "message": "Invitation and password setup link sent."}
 

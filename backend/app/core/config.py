@@ -42,6 +42,17 @@ class Settings:
     COMMUNITY_PASSWORD_RESET_URL: str = os.getenv(
         "COMMUNITY_PASSWORD_RESET_URL", "http://localhost:8501/Community"
     ).strip()
+    GOOGLE_OAUTH_CLIENT_ID: str = os.getenv("GOOGLE_OAUTH_CLIENT_ID", "").strip()
+    GOOGLE_OAUTH_CLIENT_SECRET: str = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", "").strip()
+    GOOGLE_OAUTH_REDIRECT_URI: str = os.getenv(
+        "GOOGLE_OAUTH_REDIRECT_URI", "http://127.0.0.1:8002/community/auth/google/callback"
+    ).strip()
+    COMMUNITY_GOOGLE_CALLBACK_URL: str = os.getenv(
+        "COMMUNITY_GOOGLE_CALLBACK_URL", "http://localhost:8501/Community"
+    ).strip()
+    COMMUNITY_GOOGLE_HANDOFF_COOKIE_DOMAIN: str = os.getenv(
+        "COMMUNITY_GOOGLE_HANDOFF_COOKIE_DOMAIN", ""
+    ).strip().lstrip(".").lower()
     USER_API_KEY: str = os.getenv("USER_API_KEY", "")
     MAX_UPLOAD_SIZE_MB: int = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10"))
     COMMUNITY_PHOTO_BUCKET: str = os.getenv("COMMUNITY_PHOTO_BUCKET", "community-field-reports").strip()
@@ -56,6 +67,7 @@ class Settings:
     WHATSAPP_PHONE_NUMBER_ID: str = os.getenv("WHATSAPP_PHONE_NUMBER_ID", "").strip()
     # Public E.164 sender number used for end-user click-to-chat links; not a secret.
     WHATSAPP_PUBLIC_NUMBER: str = os.getenv("WHATSAPP_PUBLIC_NUMBER", "").strip()
+    WHATSAPP_PUBLIC_CHAT_ENABLED: bool = _env_bool("WHATSAPP_PUBLIC_CHAT_ENABLED", False)
     WHATSAPP_BUSINESS_ACCOUNT_ID: str = os.getenv("WHATSAPP_BUSINESS_ACCOUNT_ID", "").strip()
     WHATSAPP_ACCESS_TOKEN: str = os.getenv("WHATSAPP_ACCESS_TOKEN", "")
     WHATSAPP_APP_SECRET: str = os.getenv("WHATSAPP_APP_SECRET", "")
@@ -69,6 +81,8 @@ class Settings:
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
     SMTP_USE_SSL: bool = _env_bool("SMTP_USE_SSL", False)
     SMTP_STARTTLS: bool = _env_bool("SMTP_STARTTLS", True)
+    EMAIL_PROVIDER: str = os.getenv("EMAIL_PROVIDER", "smtp").strip().lower()
+    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "").strip()
     EMAIL_FROM: str = os.getenv("EMAIL_FROM", "")
     DEFAULT_NOTIFICATION_EMAIL: str = os.getenv("DEFAULT_NOTIFICATION_EMAIL", "")
     DEFAULT_NOTIFICATION_PHONE: str = os.getenv("DEFAULT_NOTIFICATION_PHONE", "")
@@ -93,6 +107,41 @@ class Settings:
             raise RuntimeError("WHATSAPP_MODE must be either 'mock' or 'live'")
         if self.WHATSAPP_DAILY_CAP < 1:
             raise RuntimeError("WHATSAPP_DAILY_CAP must be at least 1")
+        if self.EMAIL_PROVIDER not in {"smtp", "resend"}:
+            raise RuntimeError("EMAIL_PROVIDER must be either 'smtp' or 'resend'")
+        google_oauth_values = (self.GOOGLE_OAUTH_CLIENT_ID, self.GOOGLE_OAUTH_CLIENT_SECRET)
+        if any(google_oauth_values) and not all(google_oauth_values):
+            raise RuntimeError("Google Community sign-in requires both GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET")
+        if self.GOOGLE_OAUTH_CLIENT_ID:
+            google_redirect = urlparse(self.GOOGLE_OAUTH_REDIRECT_URI)
+            google_frontend = urlparse(self.COMMUNITY_GOOGLE_CALLBACK_URL)
+            local_hosts = {"localhost", "127.0.0.1"}
+            if not google_redirect.netloc or not google_frontend.netloc:
+                raise RuntimeError("Google Community sign-in requires valid backend and frontend callback URLs")
+            backend_host = (google_redirect.hostname or "").lower()
+            frontend_host = (google_frontend.hostname or "").lower()
+            cookie_domain = self.COMMUNITY_GOOGLE_HANDOFF_COOKIE_DOMAIN
+            if cookie_domain and not all(
+                host == cookie_domain or host.endswith(f".{cookie_domain}")
+                for host in (backend_host, frontend_host)
+            ):
+                raise RuntimeError(
+                    "COMMUNITY_GOOGLE_HANDOFF_COOKIE_DOMAIN must be a parent domain of both Google callback hosts"
+                )
+            if not cookie_domain and backend_host != frontend_host:
+                raise RuntimeError(
+                    "Google sign-in requires the backend and frontend callback URLs to share a hostname, "
+                    "or COMMUNITY_GOOGLE_HANDOFF_COOKIE_DOMAIN to be set to their shared parent domain"
+                )
+            if self.APP_ENV not in {"development", "test"} and (
+                google_redirect.scheme != "https" or google_frontend.scheme != "https"
+            ):
+                raise RuntimeError("Google Community sign-in callback URLs must use HTTPS outside development")
+            if self.APP_ENV in {"development", "test"} and (
+                google_redirect.scheme != "https" and google_redirect.hostname not in local_hosts
+                or google_frontend.scheme != "https" and google_frontend.hostname not in local_hosts
+            ):
+                raise RuntimeError("Google Community sign-in may use HTTP only on localhost during development")
 
     def validate_whatsapp(self) -> None:
         if self.WHATSAPP_MODE not in {"mock", "live"}:
@@ -126,11 +175,23 @@ class Settings:
         if self.JWT_ALGORITHM != "HS256":
             missing.append("JWT_ALGORITHM (only HS256 is supported)")
         reset_url = urlparse(self.ADMIN_PASSWORD_RESET_URL)
-        if not self.SMTP_HOST or not self.EMAIL_FROM or reset_url.scheme != "https" or not reset_url.netloc:
-            missing.append("SMTP_HOST, EMAIL_FROM, and HTTPS ADMIN_PASSWORD_RESET_URL (administrator password recovery)")
+        if not self.EMAIL_FROM or (
+            self.EMAIL_PROVIDER == "smtp" and
+            (not self.SMTP_HOST or bool(self.SMTP_USER) != bool(self.SMTP_PASSWORD))
+        ) or (self.EMAIL_PROVIDER == "resend" and not self.RESEND_API_KEY):
+            missing.append("a configured EMAIL_PROVIDER and EMAIL_FROM (transactional email delivery)")
+        if reset_url.scheme != "https" or not reset_url.netloc:
+            missing.append("HTTPS ADMIN_PASSWORD_RESET_URL (administrator password recovery)")
         community_reset_url = urlparse(self.COMMUNITY_PASSWORD_RESET_URL)
         if community_reset_url.scheme != "https" or not community_reset_url.netloc:
             missing.append("HTTPS COMMUNITY_PASSWORD_RESET_URL (farmer account recovery)")
+        if self.GOOGLE_OAUTH_CLIENT_ID:
+            google_redirect = urlparse(self.GOOGLE_OAUTH_REDIRECT_URI)
+            google_frontend = urlparse(self.COMMUNITY_GOOGLE_CALLBACK_URL)
+            if google_redirect.scheme != "https" or not google_redirect.netloc:
+                missing.append("HTTPS GOOGLE_OAUTH_REDIRECT_URI (Google sign-in callback)")
+            if google_frontend.scheme != "https" or not google_frontend.netloc:
+                missing.append("HTTPS COMMUNITY_GOOGLE_CALLBACK_URL (Community sign-in completion page)")
         if missing:
             raise RuntimeError("Production configuration is incomplete: " + "; ".join(missing))
 

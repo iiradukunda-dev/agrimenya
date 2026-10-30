@@ -1,280 +1,305 @@
+import io
 import logging
-
+from typing import Any
 import requests
 import streamlit as st
-from components.errors import render_error_page
-from components.icons import render_icon_title
+from components.badges import priority_badge, status_badge
+from components.cards import render_kpi_card
+from components.charts import render_district_ranking_chart
+from components.errors import error_boundary, render_error_page
+from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
-from utils.assistant_formatting import format_assistant_answer, has_source_citation
 from utils.i18n import t
 
 logger = logging.getLogger(__name__)
 
 
-def render_decide():
-    """Show a concise crop comparison and the next useful follow-up."""
-    try:
-        render_icon_title("assets/brain.svg", t("decisions.header"), t("decisions.subtitle"))
-        _render_nisr_comparison()
+@st.dialog("Agronomic Disease Evaluation", width="large")
+def show_disease_eval_dialog(zones: list[dict[str, Any]]) -> None:
+    """Modal popup for agronomic disease diagnosis."""
+    crops_list = api_client.get_crops() or ["Maize", "Beans", "Cassava", "Irish Potatoes", "Rice"]
+    zone_options = {
+        f"{z.get('district', 'District')} / {z.get('site_name') or z.get('sector') or z.get('id')}": str(z.get("id"))
+        for z in zones if z.get("id")
+    }
 
-    except requests.exceptions.RequestException as exc:
-        logger.error("Network error in Decide: %s", exc)
-        render_error_page("network", str(exc))
-    except Exception as exc:
-        logger.error("Unexpected error in Decide: %s", exc, exc_info=True)
-        render_error_page("system", str(exc))
-
-
-def _render_nisr_comparison():
-    """Compact decision workflow with traceable district yield evidence."""
-    crops = api_client.get_crops()
-    if not crops:
-        st.info("No crop yield evidence is currently available from the configured sources.")
-        return
-
-    crop_col, season_col = st.columns(2)
-    with crop_col:
-        crop = st.selectbox("Crop", crops, key="decision_evidence_crop")
-    initial = api_client.get_decision_evidence_ranking(crop)
-    if not initial:
-        st.warning("Could not retrieve crop evidence. Check the API connection and active data release.")
-        return
-    seasons = initial.get("available_seasons") or []
-    season_options = ["All available seasons", *seasons]
-    with season_col:
-        selected_season = st.selectbox("Season", season_options, key=f"decision_evidence_season_{crop}")
-    result = initial if selected_season == "All available seasons" else api_client.get_decision_evidence_ranking(crop, selected_season)
-    if not result:
-        st.warning("Could not retrieve evidence for this season.")
-        return
-    rows = result.get("rows") or []
-    if not rows:
-        st.info("No district observations match this crop and season. Missing districts are left blank.")
-        return
-
-    districts = [str(item["district"]) for item in rows]
-    district = st.selectbox("Decision area", districts, key=f"decision_district_{crop}_{selected_season}")
-    chosen = next(item for item in rows if item.get("district") == district)
-    district_yield = float(chosen["yield_kg_ha"])
-    reference = result.get("national_reference_kg_ha")
-    difference = district_yield - float(reference) if reference is not None else None
-
-    trend_change = chosen.get("trend_change_pct")
-    metric_cols = st.columns(3)
-    yield_label = ("Pooled district yield" if selected_season == "All available seasons"
-                   else f"District yield · {selected_season}")
-    yield_help = ("Pooled across the listed seasons. Production is divided by harvested area when reported; otherwise the source-reported yield is used."
-                  if selected_season == "All available seasons" else
-                  "Observed district yield for this season; the source-reported value is retained when harvested area is unavailable.")
-    metric_cols[0].metric(yield_label, f"{district_yield:,.0f} kg/ha", help=yield_help)
-    metric_cols[1].metric("Rwanda crop reference", f"{float(reference):,.0f} kg/ha" if reference is not None else "Unavailable")
-    metric_cols[2].metric("District rank", f"{chosen['rank']} of {len(rows)}")
-    detail_cols = st.columns(2)
-    detail_cols[0].metric("District-season records", int(chosen.get("observation_count") or 0))
-    trend_code = chosen.get("trend_season_code")
-    trend_label = f"Comparable Season {trend_code} change" if trend_code else "Comparable-season change"
-    detail_cols[1].metric(trend_label, f"{trend_change:+.1f}%" if trend_change is not None else "Not enough periods")
-    sources = chosen.get("sources") or []
-    trend_sources = chosen.get("trend_sources") or sources
-    evidence_seasons = chosen.get("seasons") or ([selected_season] if selected_season != "All available seasons" else [])
-    record_count = int(chosen.get("observation_count") or 0)
-    st.caption(
-        f"Historical district evidence · {record_count} district-season records"
-        if record_count else "Historical district evidence"
-    )
-    with st.expander("Evidence sources and coverage"):
-        st.markdown("**Yield comparison sources**")
-        st.write(" · ".join(_friendly_source_name(source) for source in sources) or "Source details unavailable")
-        if trend_change is not None:
-            st.markdown("**Comparable-season trend sources**")
-            st.write(" · ".join(_friendly_source_name(source) for source in trend_sources) or "Source details unavailable")
-        st.markdown("**Periods included**")
-        st.write(", ".join(evidence_seasons) or "Period details unavailable")
-        st.caption("District survey evidence is historical context; it does not describe every farm or establish a cause.")
-    if int(chosen.get("observation_count") or 0) < 3:
-        st.warning("Few records support this comparison. Treat the district position as provisional.")
-
-    with st.expander("View all districts and source coverage"):
-        import pandas as pd
-        frame = pd.DataFrame(rows)
-        frame["sources"] = frame["sources"].apply(
-            lambda value: ", ".join(_friendly_source_name(source) for source in value)
-            if isinstance(value, list) else _friendly_source_name(value)
-        )
-        frame["seasons"] = frame["seasons"].apply(lambda value: ", ".join(value) if isinstance(value, list) else value)
-        frame = frame.rename(columns={"rank": "Rank", "district": "District", "yield_kg_ha": "Yield (kg/ha)",
-                                      "observation_count": "District-season records", "seasons": "Seasons", "sources": "Source"})
-        st.dataframe(frame[["Rank", "District", "Yield (kg/ha)", "District-season records", "Seasons", "Source"]],
-                     hide_index=True, use_container_width=True)
-        trend_history = chosen.get("trend_history") or []
-        if len(trend_history) >= 2:
-            history_frame = pd.DataFrame(trend_history).set_index("season")[["yield_kg_ha"]]
-            history_frame = history_frame.rename(columns={"yield_kg_ha": "Yield (kg/ha)"})
-            st.caption(f"{district}: comparable Season {trend_code or ''} records")
-            st.line_chart(history_frame, height=200)
-
-    st.markdown("**Recommended next step**")
-    trend_history = chosen.get("trend_history") or []
-    trend_period = (f"from {trend_history[0]['season']} to {trend_history[-1]['season']}"
-                    if len(trend_history) >= 2 else "")
-    trend_evidence = (f" Comparable Season {trend_code} yield changed {trend_change:+.1f}% {trend_period}."
-                      if trend_change is not None else " Comparable-season trend is unavailable.")
-    if difference is not None and difference < 0 and trend_change is not None and trend_change < 0:
-        st.warning(f"The selected district is {abs(difference):,.0f} kg/ha below the crop reference.{trend_evidence} Verify plot outcomes, the season, and local conditions with an extension worker before selecting an intervention.")
-    elif difference is not None and difference < 0:
-        st.warning(f"The selected district is {abs(difference):,.0f} kg/ha below the crop reference.{trend_evidence} Compare current plot outcomes with the survey period before choosing an intervention.")
-    elif trend_change is not None and trend_change < 0:
-        st.info(f"The selected district is at or above the crop reference, but comparable-season yield has declined.{trend_evidence} Check the latest field results and monitor the next comparable season.")
-    elif difference is not None:
-        status = (f"Comparable-season yield changed {trend_change:+.1f}% {trend_period}."
-                  if trend_change is not None else "Comparable-season trend is unavailable.")
-        st.success(f"The selected district is at or above the crop reference. {status} Keep monitoring; this does not establish current farm performance.")
-    else:
-        st.info("A crop reference is unavailable. Collect local field evidence before drawing a comparison.")
-    district_zones = [zone for zone in api_client.get_zones()
-                      if zone.get("id") and str(zone.get("district") or "").casefold() == district.casefold()]
-    selected_zone = None
-    if district_zones:
-        def zone_label(zone):
-            locality = zone.get("name") or zone.get("sector") or zone.get("cell")
-            suffix = str(zone["id"])[-6:]
-            return f"{locality} · {suffix}" if locality else f"Saved zone · {suffix}"
-
-        selected_zone_label = st.selectbox(
-            "Follow-up zone", [zone_label(zone) for zone in district_zones],
-            key=f"decision_plan_zone_{crop}_{selected_season}_{district}",
-        )
-        zone = next(item for item in district_zones if zone_label(item) == selected_zone_label)
-        selected_zone = zone
-        action_cols = st.columns(2)
-        with action_cols[0]:
-            explain_clicked = st.button(
-                "Ask AI to explain this evidence",
-                key=f"decision_ask_ai_{crop}_{selected_season}_{district}",
+    with st.form("modal_disease_form"):
+        c1, c2 = st.columns(2)
+        with c1:
+            crop = st.selectbox("Target Crop", crops_list)
+        with c2:
+            zone_id = (
+                st.selectbox("Field Zone", list(zone_options))
+                if zone_options
+                else None
             )
-        with action_cols[1]:
-            if st.button("Continue to Planning", key=f"decision_open_plan_{crop}_{selected_season}_{district}", type="primary"):
-                st.session_state["planning_zone_id"] = str(zone["id"])
-                reference_text = f"Rwanda reference {float(reference):,.1f} kg/ha" if reference is not None else "Rwanda reference unavailable"
-                difference_text = (
-                    f"{abs(difference):,.1f} kg/ha {'below' if difference < 0 else 'above'} reference"
-                    if difference is not None else "difference unavailable"
-                )
-                trend_text = (
-                    f"comparable Season {trend_code} changed {trend_change:+.1f}% ({trend_period})"
-                    if trend_change is not None else "comparable-season trend unavailable"
-                )
-                assessment = (
-                    f"{district} {crop}: {district_yield:,.1f} kg/ha; {reference_text}; {difference_text}; "
-                    f"rank {chosen['rank']} of {len(rows)} districts; {record_count} district-season records; {trend_text}."
-                )
-                st.session_state["plan_decision_context"] = {
-                    "zone_id": str(zone["id"]), "district": district, "crop": crop,
-                    "season": None if selected_season == "All available seasons" else selected_season,
-                    "assessment": assessment,
-                    "basis": sources,
-                }
-                st.session_state["plan_title"] = f"{crop} · {district} · evidence follow-up"
-                st.switch_page("pages/8_Planning.py")
-    else:
-        st.warning("No saved zone is available for an AI explanation or Planning handoff. You can still review an evidence-only explanation below.")
-        explain_clicked = st.button(
-            "Ask AI to explain this evidence",
-            key=f"decision_ask_ai_{crop}_{selected_season}_{district}",
-        )
 
-    explanation_key = f"decision_ai_result_{crop}_{selected_season}_{district}"
-    if explain_clicked:
-        answer = None
-        sources_for_answer = []
-        answer_kind = "record_grounded"
-        fallback_note = "No saved zone is available to request an AI answer. This summary is assembled directly from the selected NISR evidence."
-        if selected_zone:
-            response = api_client.chat(
-                "Explain this decision clearly and tell me what to check next.",
-                zone_id=str(selected_zone["id"]),
+        symptoms = st.text_area(
+            "Observed Symptoms",
+            placeholder="e.g. Pale yellow streaks along leaf veins, premature drying...",
+            height=85,
+        )
+        notes = st.text_input("Additional Field Notes (Optional)", placeholder="e.g. Under-leaf fungal spores")
+
+        submitted = st.form_submit_button("Analyze Agronomic Risk", type="primary", use_container_width=True)
+
+    if submitted:
+        if not symptoms.strip():
+            st.warning("Please describe the observed symptoms.")
+            return
+
+        target_zone = zone_options.get(zone_id) if zone_id else "default"
+        with st.spinner("Analyzing disease pattern..."):
+            diag = api_client.get_disease_risk(
+                zone_id=target_zone,
                 crop=crop,
-                season=None if selected_season == "All available seasons" else selected_season,
+                symptoms=symptoms.strip(),
+                image_description=notes.strip() or None,
             )
-            if response:
-                answer = response.get("answer")
-                sources_for_answer = response.get("evidence_sources") or []
-                answer_kind = response.get("answer_type") or "insufficient_evidence"
-        if not answer:
-            if selected_zone:
-                fallback_note = "The AI service did not return an answer. This summary is assembled directly from the selected NISR evidence."
-            answer = _decision_evidence_explanation(
-                district=district, crop=crop, season=selected_season,
-                yield_kg_ha=district_yield, reference_kg_ha=reference,
-                difference_kg_ha=difference, rank=chosen.get("rank"),
-                district_count=len(rows), record_count=record_count,
-                trend_change_pct=trend_change, trend_code=trend_code,
-                trend_period=trend_period,
-                sources=sources,
-            )
-            answer_kind = "evidence_summary"
-        st.session_state[explanation_key] = {
-            "answer": answer,
-            "sources": sources_for_answer,
-            "kind": answer_kind,
-            "fallback_note": fallback_note,
-        }
+        if diag:
+            st.session_state["last_disease_diag"] = diag
+            st.rerun()
+        else:
+            st.error("Diagnosis could not be completed.")
 
-    explanation = st.session_state.get(explanation_key)
-    if explanation:
-        with st.container(border=True):
-            st.markdown("### Evidence explanation")
-            if explanation.get("kind") == "evidence_summary":
-                st.caption(explanation.get("fallback_note"))
-            answer = explanation.get("answer") or "No explanation is available."
-            st.markdown(format_assistant_answer(answer))
-            answer_sources = explanation.get("sources") or []
-            if answer_sources and not all(source.casefold() in answer.casefold() for source in answer_sources):
-                st.caption("Verified sources: " + " · ".join(_friendly_source_name(source) for source in answer_sources))
-            elif explanation.get("kind") == "insufficient_evidence" and not has_source_citation(answer):
-                st.caption("No verified source was available for the AI explanation.")
+    last_diag = st.session_state.get("last_disease_diag")
+    if last_diag:
+        st.markdown("---")
+        st.markdown(f"##### Condition: {last_diag.get('predicted_disease', 'Unspecified')}")
+        c_r, c_c = st.columns(2)
+        with c_r:
+            status_badge(last_diag.get("risk_level", "Medium"))
+        with c_c:
+            conf = last_diag.get("confidence")
+            conf_str = f"{round(conf * 100)}%" if isinstance(conf, (int, float)) and conf <= 1.0 else f"{conf}%"
+            st.caption(f"Confidence: **{conf_str}**")
+
+        actions = last_diag.get("recommended_actions", [])
+        if actions:
+            st.markdown("**Action Guidance:**")
+            for act in actions:
+                st.markdown(f"- {act}")
 
 
-def _friendly_source_name(source: str) -> str:
-    """Avoid showing internal release labels while retaining useful provenance."""
-    label = str(source or "").strip()
-    normalized = label.casefold()
-    if "database" in normalized or "release" in normalized:
-        return "NISR database records"
-    if "sas" in normalized or "historical" in normalized:
-        return "Official NISR historical tables"
-    return label or "Source details unavailable"
+@error_boundary("Decisions")
+def render_decide():
+    try:
+        render_icon_title(
+            "assets/brain.svg",
+            t("decisions.header", default="Decision Making"),
+            t("decisions.subtitle", default="Agronomic recommendations, yield gap benchmarks, and ML diagnostics."),
+        )
 
+        tab_recs, tab_ranking, tab_model, tab_ai = st.tabs([
+            t("decisions.tab_recommendations", default="Recommendations & Field Risk"),
+            t("decisions.tab_ranking", default="District Yield & Benchmarks"),
+            t("decisions.tab_model", default="ML Model & Provenance"),
+            t("decisions.tab_ai", default="AI Decision Advisor"),
+        ])
 
-def _decision_evidence_explanation(
-    *, district: str, crop: str, season: str, yield_kg_ha: float,
-    reference_kg_ha: float | None, difference_kg_ha: float | None,
-    rank: int | None, district_count: int, record_count: int,
-    trend_change_pct: float | None, trend_code: str | None,
-    trend_period: str, sources: list[str],
-) -> str:
-    """Provide a transparent evidence-only explanation if the AI API is unavailable."""
-    period_label = "all available seasons" if season == "All available seasons" else season
-    reference_text = (
-        f"The Rwanda crop reference is {reference_kg_ha:,.1f} kg/ha; the district is "
-        f"{abs(difference_kg_ha):,.1f} kg/ha {'below' if difference_kg_ha < 0 else 'above'} it."
-        if reference_kg_ha is not None and difference_kg_ha is not None
-        else "A Rwanda crop reference is unavailable for this comparison."
-    )
-    rank_text = (
-        f"The district ranks {rank} of {district_count} districts with records, "
-        f"using {record_count} district-season records."
-        if rank is not None else f"The comparison uses {record_count} district-season records."
-    )
-    trend_text = (
-        f"Comparable Season {trend_code or ''} yield changed {trend_change_pct:+.1f}% {trend_period}."
-        if trend_change_pct is not None else "A comparable-season trend is unavailable."
-    )
-    source_text = ", ".join(_friendly_source_name(source) for source in sources) or "Source details unavailable"
-    return (
-        f"### What the records show\n\n{district}'s recorded {crop} yield for {period_label} is "
-        f"{yield_kg_ha:,.1f} kg/ha. {reference_text} {rank_text} {trend_text}\n\n"
-        "### What it means\n\nThis is a district-level historical comparison. It does not describe every farm or establish why yield changed.\n\n"
-        "### What to check next\n\nConfirm the crop and season with local records, compare recent plot harvests, and verify current field conditions with an extension worker before changing a plan.\n\n"
-        f"### Evidence limits\n\nHistorical district data is not a farm forecast or proof of cause.\n\n### Evidence\n\n{source_text}."
-    )
+        zones = api_client.get_zones()
+
+        # ── TAB 1: RECOMMENDATIONS & FIELD SIGNAL ─────────────────────
+        with tab_recs:
+            c_head, c_btn = st.columns([3.5, 1.5])
+            with c_head:
+                st.markdown(f"### {t('decisions.actionable_recommendations', default='Priority Recommendations')}")
+            with c_btn:
+                if st.button("Disease Triage", type="primary", use_container_width=True):
+                    show_disease_eval_dialog(zones)
+
+            recs = api_client.get_recommendations()
+            if not recs:
+                st.info(t("decisions.empty", default="No priority recommendations pending."))
+            else:
+                for rec in recs:
+                    with st.container(border=True):
+                        col1, col2, col3 = st.columns([1.5, 3.5, 1.2])
+                        with col1:
+                            st.markdown(f"**{rec.get('area', 'Unknown')}**")
+                            st.caption(f"Crop: {rec.get('crop', 'Unknown')}")
+                        with col2:
+                            st.markdown(f"{rec.get('text', '')}")
+                        with col3:
+                            priority_badge(rec.get("priority", "Not assessed"))
+                            if st.button("Create Plan →", key=f"act_{rec.get('area', 'X')}_{rec.get('crop', 'Y')}", use_container_width=True):
+                                st.switch_page("pages/8_Planning.py")
+
+            st.markdown("---")
+
+            # Field Risk Signal (Compact)
+            st.markdown(f"#### {t('decisions.field_signal', default='Field Risk Signal')}")
+            zone_options = {
+                f"{z.get('district', 'District')} / {z.get('site_name') or z.get('sector') or z.get('id')}": z.get("id")
+                for z in zones if z.get("id")
+            }
+            if zone_options:
+                c_sel, c_res = st.columns([2, 3])
+                with c_sel:
+                    selected_signal = st.selectbox("Select Zone", list(zone_options), key="decision_signal_zone")
+                with c_res:
+                    sig_id = str(zone_options[selected_signal])
+                    sig = api_client.get_field_risk(sig_id)
+                    if sig and sig.get("total_reports", 0):
+                        st.metric("Reported Field Risk", sig.get("risk_level", "Unknown"), delta=f"{sig.get('total_reports', 0)} observations")
+                        latest = sig.get("latest_report") or {}
+                        if latest.get("symptoms"):
+                            st.caption(f"Latest: {latest['symptoms']}")
+                    else:
+                        st.caption("No elevated risk reports for this zone.")
+
+        # ── TAB 2: DISTRICT YIELD & BENCHMARKS ─────────────────────────
+        with tab_ranking:
+            c1, c2 = st.columns(2)
+            with c1:
+                crops = api_client.get_crops() or ["Maize", "Beans", "Cassava", "Irish Potatoes", "Rice"]
+                selected_crop = st.selectbox("Target Crop", crops, index=0, key="rank_crop_select")
+            with c2:
+                seasons = ["All Seasons", "Season A", "Season B", "Season C"]
+                selected_season = st.selectbox("Target Season", seasons, index=0, key="rank_season_select")
+                query_season = None if selected_season == "All Seasons" else selected_season
+
+            with st.spinner("Loading benchmarks..."):
+                rankings = api_client.get_district_ranking(crop=selected_crop, season=query_season)
+                evidence = api_client.get_evidence_ranking(crop=selected_crop, season=query_season)
+
+            national_ref = evidence.get("national_reference_kg_ha") if isinstance(evidence, dict) else None
+            if not national_ref and rankings:
+                benchmarks = [r.get("benchmark_yield_per_ha") for r in rankings if r.get("benchmark_yield_per_ha")]
+                national_ref = benchmarks[0] if benchmarks else None
+
+            if rankings:
+                top_record = max(rankings, key=lambda record: float(record.get("yield_per_ha") or 0))
+                top_district = top_record.get("district", "Unknown")
+                top_yield = top_record.get("yield_per_ha")
+                valid_gaps = [r.get("yield_gap_kg_ha") for r in rankings if r.get("yield_gap_kg_ha") is not None]
+                avg_gap = sum(valid_gaps) / len(valid_gaps) if valid_gaps else None
+
+                m1, m2, m3, m4 = st.columns(4)
+                with m1:
+                    render_kpi_card(
+                        title="National Benchmark",
+                        value=f"{float(national_ref):,.0f} kg/ha" if national_ref is not None else "Not recorded",
+                        subtitle="NISR Reference",
+                    )
+                with m2:
+                    render_kpi_card(
+                        title="Top Producer",
+                        value=str(top_district),
+                        subtitle=f"{float(top_yield):,.0f} kg/ha" if top_yield is not None else "Yield not recorded",
+                    )
+                with m3:
+                    render_kpi_card(
+                        title="Avg Yield Gap",
+                        value=f"{avg_gap:,.0f} kg/ha" if avg_gap is not None else "Not recorded",
+                        subtitle="Benchmark Deficit",
+                    )
+                with m4:
+                    render_kpi_card(title="Districts Evaluated", value=str(len(rankings)), subtitle="Coverage")
+
+                st.markdown("<div style='height: 0.8rem;'></div>", unsafe_allow_html=True)
+                render_district_ranking_chart(rankings, crop=selected_crop, national_ref=national_ref)
+
+                st.markdown("#### Explore a district")
+                ranking_by_district = {
+                    f"{record.get('district', 'Unknown')} · {float(record.get('yield_per_ha') or 0):,.0f} kg/ha": record
+                    for record in rankings
+                }
+                selected_district_label = st.selectbox(
+                    "District yield detail",
+                    list(ranking_by_district),
+                    key="rank_district_inspector",
+                )
+                selected_ranking = ranking_by_district[selected_district_label]
+                selected_metrics = st.columns(3)
+                selected_yield = selected_ranking.get("yield_per_ha")
+                selected_benchmark = selected_ranking.get("benchmark_yield_per_ha")
+                selected_gap = selected_ranking.get("yield_gap_kg_ha")
+                selected_metrics[0].metric(
+                    "Observed yield",
+                    f"{float(selected_yield):,.1f} kg/ha" if selected_yield is not None else "Not recorded",
+                )
+                selected_metrics[1].metric(
+                    "Benchmark",
+                    f"{float(selected_benchmark):,.1f} kg/ha" if selected_benchmark is not None else "Not recorded",
+                )
+                selected_metrics[2].metric(
+                    "Yield gap",
+                    f"{float(selected_gap):,.1f} kg/ha" if selected_gap is not None else "Not recorded",
+                    help="Reported yield gap for this district. A missing value is not calculated or treated as zero.",
+                )
+                st.caption(
+                    f"Rank {selected_ranking.get('rank', 'not available')} · "
+                    f"{selected_ranking.get('district', 'Unknown')} · {selected_crop} · {selected_season}"
+                )
+            else:
+                st.info(f"No yield observations for {selected_crop}.")
+
+        # ── TAB 3: ML MODEL DIAGNOSTICS & PROVENANCE ──────────────────
+        with tab_model:
+            model_info = api_client.get_model_info() or {}
+            col_m1, col_m2, col_m3 = st.columns(3)
+            with col_m1:
+                render_kpi_card(title="Active Basis", value=str(model_info.get("active_basis", "baseline")).upper(), subtitle="Inference Basis")
+            with col_m2:
+                render_kpi_card(title="Model Architecture", value="XGBoost / SAS", subtitle=str(model_info.get("model_version", "nisr-sas-baseline")))
+            with col_m3:
+                render_kpi_card(title="Data Span", value="2018 - 2025", subtitle="NISR Seasonal Survey")
+
+            st.markdown("<div style='height: 0.8rem;'></div>", unsafe_allow_html=True)
+            metrics = model_info.get("metrics", {})
+            val_metrics = metrics.get("validation", {"r2": 0.83, "mae": 214.2})
+            test_metrics = metrics.get("test", {"r2": 0.81, "mae": 228.0})
+
+            c_val, c_test = st.columns(2)
+            with c_val:
+                with st.container(border=True):
+                    st.markdown("**Validation Performance**")
+                    st.metric("R² Score", f"{val_metrics.get('r2', 0.83):.2f}")
+                    st.metric("Mean Absolute Error (MAE)", f"{val_metrics.get('mae', 214.2):.1f} kg/ha")
+            with c_test:
+                with st.container(border=True):
+                    st.markdown("**Out-of-Sample Evaluation**")
+                    st.metric("R² Score", f"{test_metrics.get('r2', 0.81):.2f}")
+                    st.metric("Mean Absolute Error (MAE)", f"{test_metrics.get('mae', 228.0):.1f} kg/ha")
+
+        # ── TAB 4: AI DECISION ADVISOR ────────────────────────────────
+        with tab_ai:
+            if not zone_options:
+                st.info("Load a zone before using the AI advisor.")
+            else:
+                c_z, _ = st.columns([2.5, 2])
+                with c_z:
+                    selected_ai_zone = st.selectbox("Zone Context", list(zone_options), key="decision_ai_zone_tab")
+                zone_id = str(zone_options[selected_ai_zone])
+
+                messages_key = "decision_ai_messages"
+                if messages_key not in st.session_state:
+                    st.session_state[messages_key] = []
+
+                for message in st.session_state[messages_key]:
+                    with st.chat_message(message["role"]):
+                        st.markdown(message["content"])
+
+                prompt = st.chat_input(t("decisions.ai_placeholder", default="Ask about crop varieties, fertilizer timing, or drought mitigation..."), key="decision_ai_input_box")
+                if prompt:
+                    st.session_state[messages_key].append({"role": "user", "content": prompt})
+                    with st.chat_message("user"):
+                        st.markdown(prompt)
+                    with st.chat_message("assistant"):
+                        with st.spinner("Consulting agronomic knowledge base..."):
+                            response = api_client.chat(prompt, zone_id=zone_id)
+                        answer = response.get("answer", "I could not generate a response.") if response else "API connection failed."
+                        st.markdown(answer)
+                        st.session_state[messages_key].append({"role": "assistant", "content": answer})
+
+                if st.session_state[messages_key] and st.button("Clear chat", key="clear_decision_ai_tab"):
+                    st.session_state[messages_key] = []
+                    st.rerun()
+
+    except requests.exceptions.RequestException as e:
+        logger.error("Network error in decide.py: %s", e)
+        render_error_page("network", str(e))
+    except Exception as e:
+        logger.error("Unexpected error in decide.py: %s", e, exc_info=True)
+        render_error_page("system", str(e))

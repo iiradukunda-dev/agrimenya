@@ -12,7 +12,8 @@ from urllib.parse import quote, urlencode, urlparse
 import requests
 import streamlit as st
 
-from .config import API_BASE_URL, USER_API_KEY
+from .config import API_BASE_URL, USE_MOCK_DATA, USER_API_KEY
+from . import mock_data
 
 logger = logging.getLogger(__name__)
 ADMIN_SESSION_SECONDS = 30 * 60
@@ -59,67 +60,20 @@ def admin_session_authenticated() -> bool:
     return True
 
 
+def admin_sign_out() -> None:
+    """Sign out the current administrator session."""
+    st.session_state.pop("admin_session_expires_at", None)
+    st.session_state.pop("admin_access_token", None)
+    st.session_state.pop("admin_identity", None)
+    st.session_state.pop("admin_login_error", None)
+    st.session_state.pop("admin_api_errors", None)
+
+
 def render_admin_login(key_prefix: str = "admin") -> bool:
     """Require a named administrator account before using admin APIs."""
-    st.markdown(
-        f"<style>.st-key-{key_prefix}_auth_panel {{ max-width: 660px; margin: 1rem auto 2rem; }}</style>",
-        unsafe_allow_html=True,
-    )
-    reset_token = st.query_params.get("reset_token")
-    if reset_token:
-        with st.container(key=f"{key_prefix}_auth_panel"):
-            st.subheader("Reset administrator password")
-            with st.form(f"{key_prefix}_reset_form"):
-                password = st.text_input("New password (12 characters minimum)", type="password", key=f"{key_prefix}_new_password")
-                confirmation = st.text_input("Confirm new password", type="password", key=f"{key_prefix}_confirm_password")
-                submit = st.form_submit_button("Set new password", type="primary")
-            if submit:
-                if len(password) < 12:
-                    st.error("Use at least 12 characters for your password.")
-                elif password != confirmation:
-                    st.error("The passwords do not match.")
-                else:
-                    result = reset_admin_password(reset_token, password)
-                    if result:
-                        st.success("Password updated. Sign in with your new password.")
-                        st.query_params.clear()
-                        st.rerun()
-                    else:
-                        st.error(get_admin_api_error("/auth/admin/password/reset") or "This reset link is invalid or expired.")
-        return False
-    if admin_session_authenticated():
-        identity = st.session_state.get("admin_identity", {})
-        st.caption(f"Signed in as {identity.get('display_name') or identity.get('email') or 'administrator'} (session expires after 30 minutes).")
-        if st.button("Sign out of admin", key=f"{key_prefix}_signout"):
-            st.session_state.pop("admin_session_expires_at", None)
-            st.session_state.pop("admin_access_token", None)
-            st.session_state.pop("admin_identity", None)
-            st.rerun()
-        return True
-    widget_key = f"{key_prefix}_password"
-    with st.container(key=f"{key_prefix}_auth_panel"):
-        with st.form(f"{key_prefix}_login_form"):
-            st.text_input("Administrator email", key=f"{key_prefix}_email")
-            st.text_input("Password", type="password", key=widget_key)
-            st.form_submit_button(
-                "Sign in",
-                on_click=_authenticate_admin_session,
-                args=(widget_key,),
-                type="primary",
-            )
-        login_error = st.session_state.pop("admin_login_error", None)
-        if login_error:
-            st.error(login_error)
-        with st.expander("Forgot your password?"):
-            with st.form(f"{key_prefix}_forgot_form"):
-                email = st.text_input("Administrator email", key=f"{key_prefix}_forgot_email")
-                forgot = st.form_submit_button("Send reset link")
-            if forgot:
-                if request_admin_password_reset(email):
-                    st.success("If an active account matches that email, reset instructions will be sent.")
-                else:
-                    st.error(get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
-    return admin_session_authenticated()
+    from components.cards import render_centralized_login_card
+
+    return render_centralized_login_card(portal="admin", key_prefix=key_prefix)
 
 
 def request_admin_password_reset(email: str) -> bool:
@@ -209,6 +163,19 @@ def _put_api(path: str, payload: dict[str, Any], timeout: int = 15) -> dict[str,
         return None
 
 
+def _patch_api(path: str, payload: dict[str, Any] | None = None, timeout: int = 15) -> dict[str, Any] | None:
+    """PATCH request to the FastAPI backend, returns parsed JSON or None."""
+    url = f"{API_BASE_URL}{path}"
+    try:
+        resp = requests.patch(url, json=payload or {}, headers=_user_headers(), timeout=timeout)
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        logger.error("API PATCH %s failed: %s", url, e)
+        return None
+
+
+
 def _post_api_file(path: str, files: dict, data: dict | None = None, timeout: int = 30) -> dict[str, Any] | None:
     """POST multipart/form-data to the FastAPI backend."""
     url = f"{API_BASE_URL}{path}"
@@ -217,8 +184,7 @@ def _post_api_file(path: str, files: dict, data: dict | None = None, timeout: in
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
-        err_msg = f"{e} - Detail: {e.response.text}" if hasattr(e, "response") and getattr(e, "response", None) is not None else str(e)
-        logger.error("API POST (file) %s failed: %s", url, err_msg)
+        logger.error("API POST (file) %s failed: %s", url, e)
         return None
 
 
@@ -234,12 +200,15 @@ def _admin_headers() -> dict[str, str]:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_kpis() -> dict[str, Any]:
     """Return only overview metrics backed by live API data."""
+    if USE_MOCK_DATA:
+        zones = mock_data.generate_mock_zones()
+        return {"total_zones": len(zones), "baseline_yield_kg_ha": None, "active_alerts": None}
     zones = get_zones()
     alerts = get_alerts()
     data = _get_api("/health")
     return {
         "total_zones": len(zones),
-        "baseline_yield_kg_ha": data.get("baselines_overall_average") if data else None,
+        "baseline_yield_kg_ha": data.get("baselines_overall_average") if isinstance(data, dict) else None,
         "active_alerts": len(alerts),
     }
 
@@ -247,8 +216,16 @@ def get_kpis() -> dict[str, Any]:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_alignment_dashboard() -> dict[str, Any]:
     """Fetches alignment dashboard KPIs from /alignment/dashboard."""
+    if USE_MOCK_DATA:
+        return {
+            "total_zones": 30,
+            "high_priority_zones": 8,
+            "avg_credit_readiness": 62.4,
+            "export_ready_zones": 5,
+            "estimated_jobs": 12_500,
+        }
     data = _get_api("/alignment/dashboard")
-    if data:
+    if isinstance(data, dict):
         return data
     return {}
 
@@ -257,52 +234,18 @@ def get_alignment_dashboard() -> dict[str, Any]:
 # SEGMENTATION
 # ═══════════════════════════════════════════════════════════════════
 
-import pandas as pd
-
-
-def _apply_zone_data_quality(row: dict[str, Any]) -> dict[str, Any]:
-    """Attach saved assessments only when they match the zone's registered crop."""
-    zone_crop = str(row.get("crop_type") or "").strip()
-    assessment_crop = str(row.get("prediction_crop") or "").strip()
-    zone_season = str(row.get("season") or "").strip()
-    assessment_season = str(row.get("prediction_season") or "").strip()
-    matches = bool(
-        zone_crop and assessment_crop and zone_crop.casefold() == assessment_crop.casefold()
-        and (not zone_season or not assessment_season or zone_season.casefold() == assessment_season.casefold())
-    )
-    row["assessment_matches_zone_context"] = matches
-    row["assessment_crop"] = assessment_crop or None
-    row["assessment_season"] = assessment_season or None
-    if not matches:
-        row["priority_level"] = None
-        row["predicted_yield"] = None
-        row["prediction_confidence"] = None
-        row["prediction_priority_reasons"] = []
-
-    district_key = str(row.get("district") or "").strip().casefold()
-    district = next(
-        (item for item in get_districts() if str(item.get("district") or "").strip().casefold() == district_key),
-        None,
-    )
-    has_subdistrict = bool(str(row.get("sector") or "").strip() or str(row.get("cell") or "").strip())
-    try:
-        is_centroid = bool(
-            district and not has_subdistrict
-            and abs(float(row.get("latitude")) - float(district["latitude"])) < 0.0005
-            and abs(float(row.get("longitude")) - float(district["longitude"])) < 0.0005
-        )
-    except (TypeError, ValueError, KeyError):
-        is_centroid = False
-    row["location_scope"] = "district_reference" if is_centroid else "submitted_coordinates_unverified"
-    return row
+# pandas imported lazily in dataframe methods
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_priority_data() -> pd.DataFrame:
+def get_priority_data() -> Any:
     """Segmentation map data for prioritizing agricultural zones."""
+    import pandas as pd
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_priority_data()
+
     data = _get_api("/segmentation/map-data")
     if data:
-        data = [_apply_zone_data_quality(dict(row)) for row in data]
         df = pd.DataFrame(data)
         if not df.empty:
             df.rename(columns={
@@ -314,7 +257,7 @@ def get_priority_data() -> pd.DataFrame:
             }, inplace=True)
             # Saved predictions are total kg for the selected zone area.
             if "Production_MT" in df.columns:
-                df["Production_MT"] = pd.to_numeric(df["Production_MT"], errors="coerce") / 1000
+                df["Production_MT"] = pd.Series(pd.to_numeric(df["Production_MT"], errors="coerce"), dtype=float) / 1000.0
             if "Crop" not in df.columns:
                 df["Crop"] = df["crop_type"] if "crop_type" in df.columns else "Unknown"
             if "Crop" in df.columns:
@@ -325,24 +268,33 @@ def get_priority_data() -> pd.DataFrame:
                 df["District"] = df["District"].fillna("Unknown").astype(str)
             return df
 
-    return pd.DataFrame()
+    return pd.DataFrame(data=[])
 
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_zones() -> list[dict[str, Any]]:
     """Returns all zones from the backend."""
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_zones()
     data = _get_api("/segmentation/zones")
     if data and isinstance(data, list):
-        map_rows = _get_api("/segmentation/map-data") or []
-        map_by_id = {str(row.get("id")): row for row in map_rows if row.get("id")}
+        map_resp = _get_api("/segmentation/map-data")
+        map_rows = map_resp if isinstance(map_resp, list) else []
+        map_by_id = {
+            str(row.get("id")): row
+            for row in map_rows
+            if isinstance(row, dict) and row.get("id")
+        }
         normalized = []
         for zone in data:
-            row = {**zone, **map_by_id.get(str(zone.get("id")), {})}
-            row = _apply_zone_data_quality(row)
+            if not isinstance(zone, dict):
+                continue
+            matching = map_by_id.get(str(zone.get("id")), {})
+            row = {**zone, **matching}
             row["name"] = " / ".join(filter(None, [row.get("district"), row.get("sector"), row.get("cell")])) or str(row.get("id", "Zone"))
             row["crop"] = row.get("crop_type") or row.get("crop") or ""
-            row["priority"] = row.get("priority_level") or row.get("priority") or "Not assessed"
-            row["risk_status"] = row.get("climate_risk_level") or row.get("nutrition_risk_level") or "Not assessed"
+            row["priority"] = row.get("priority_level") or row.get("priority") or ""
+            row["risk_status"] = row.get("climate_risk_level") or row.get("nutrition_risk_level") or "Unknown"
             row["area_ha"] = row.get("area_cultivated")
             row["predicted_production_kg"] = row.get("predicted_yield")
             normalized.append(row)
@@ -350,64 +302,11 @@ def get_zones() -> list[dict[str, Any]]:
     return []
 
 
-@st.cache_data(ttl=30, show_spinner=False)
-def get_zone_registry_summary() -> dict[str, Any]:
-    """Small registry counts for the Zones screen; avoids downloading every row."""
-    data = _get_api("/segmentation/zones/summary")
-    return data if isinstance(data, dict) else {}
-
-
-@st.cache_data(ttl=30, show_spinner=False)
-def get_zones_page(
-    *, zone_id: str | None = None, district: str | None = None, crop: str | None = None, season: str | None = None,
-    search: str | None = None, limit: int = 50, offset: int = 0,
-) -> dict[str, Any]:
-    """Retrieve one filtered zone page from the backend."""
-    data = _get_api("/segmentation/zones/page", params={
-        "zone_id": zone_id, "district": district, "crop": crop, "season": season,
-        "search": search, "limit": limit, "offset": offset,
-    })
-    if not isinstance(data, dict):
-        return {"items": [], "total": 0, "offset": offset, "limit": limit, "has_more": False}
-    items = []
-    for raw in data.get("items") or []:
-        row = _apply_zone_data_quality(dict(raw))
-        row["name"] = " / ".join(filter(None, [row.get("district"), row.get("sector"), row.get("cell")])) or str(row.get("id", "Zone"))
-        row["crop"] = row.get("crop_type") or ""
-        row["priority"] = row.get("priority_level") or "Not assessed"
-        row["risk_status"] = row.get("climate_risk_level") or row.get("nutrition_risk_level") or "Not assessed"
-        row["area_ha"] = row.get("area_cultivated")
-        row["predicted_production_kg"] = row.get("predicted_yield")
-        items.append(row)
-    data["items"] = items
-    return data
-
-
-@st.cache_data(ttl=30, show_spinner=False)
-def get_agri_metrics_page(
-    *, district: str | None = None, crop: str | None = None, season: str | None = None,
-    search: str | None = None, limit: int = 100, offset: int = 0,
-) -> dict[str, Any]:
-    """Retrieve one filtered yield-observation page without loading all rows."""
-    data = _get_api("/segmentation/agri-metrics/page", params={
-        "district": district, "crop": crop, "season": season,
-        "search": search, "limit": limit, "offset": offset,
-    })
-    return data if isinstance(data, dict) else {"items": [], "total": 0, "offset": offset, "limit": limit, "has_more": False}
-
-
-@st.cache_data(ttl=3600, show_spinner=False)
-def get_districts() -> list[dict[str, Any]]:
-    """Return canonical Rwanda districts for coverage and zone registration."""
-    data = _get_api("/segmentation/districts")
-    return data if isinstance(data, list) else []
-
-
 @st.cache_data(ttl=300, show_spinner=False)
 def get_zone_detail(zone_id: str) -> dict[str, Any] | None:
     """Returns detail for a single zone."""
-    data = _get_api(f"/segmentation/zones/{quote(str(zone_id), safe='')}")
-    return data
+    data = _get_api(f"/segmentation/zones/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 def create_zone(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -415,30 +314,19 @@ def create_zone(payload: dict[str, Any]) -> dict[str, Any] | None:
     result = _post_api("/segmentation/zones", payload)
     if result:
         get_zones.clear()
-        get_zones_page.clear()
-        get_zone_registry_summary.clear()
         get_priority_data.clear()
     return result
 
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_agri_metrics() -> list[dict[str, Any]]:
-    """Fetch the yield-observation register in bounded pages for map summaries."""
-    rows: list[dict[str, Any]] = []
-    offset = 0
-    page_size = 200
-    while offset < 200_000:
-        page = _get_api("/segmentation/agri-metrics/page", params={"limit": page_size, "offset": offset})
-        if not isinstance(page, dict):
-            break
-        batch = page.get("items") or []
-        if not batch:
-            break
-        rows.extend(batch)
-        offset += len(batch)
-        if not page.get("has_more"):
-            break
-    return rows
+    """Returns agri metrics from segmentation."""
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_agri_metrics()
+    data = _get_api("/segmentation/agri-metrics")
+    if data and isinstance(data, list):
+        return data
+    return []
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -455,9 +343,59 @@ def get_crop_comparison(district: str, season: str | None = None) -> list[dict[s
 # ═══════════════════════════════════════════════════════════════════
 
 @st.cache_data(ttl=300, show_spinner=False)
+def get_model_info() -> dict[str, Any] | None:
+    """GET /decision/model-info: yield prediction baseline model metadata and provenance."""
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_model_info()
+    data = _get_api("/decision/model-info")
+    if isinstance(data, dict):
+        return data
+    return mock_data.generate_mock_model_info()
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_district_ranking(crop: str, season: str | None = None) -> list[dict[str, Any]]:
+    """GET /decision/district-ranking: district yield benchmarking against national reference."""
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_district_ranking(crop=crop, season=season)
+    params = {"crop": crop}
+    if season:
+        params["season"] = season
+    data = _get_api("/decision/district-ranking", params=params)
+    if isinstance(data, list):
+        return data
+    return mock_data.generate_mock_district_ranking(crop=crop, season=season)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_evidence_ranking(crop: str, season: str | None = None) -> dict[str, Any] | None:
+    """GET /decision/evidence-ranking: national reference, observations, and ranked districts."""
+    params = {"crop": crop}
+    if season:
+        params["season"] = season
+    data = _get_api("/decision/evidence-ranking", params=params)
+    return data if isinstance(data, dict) else None
+
+
+def get_disease_risk(zone_id: str, crop: str, symptoms: str, image_description: str | None = None) -> dict[str, Any] | None:
+    """POST /decision/disease-risk: evaluate agronomic risk and recommended actions."""
+    params = {
+        "zone_id": zone_id,
+        "crop": crop,
+        "symptoms": symptoms,
+    }
+    if image_description:
+        params["image_description"] = image_description
+    return _post_api("/decision/disease-risk", params=params)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
 def get_recommendations() -> list[dict[str, Any]]:
     """Fetches decision-making recommendations based on priority rankings."""
-    rankings = _get_api("/decision/priority-ranking?include_recommendations=true&limit=5")
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_recommendations()
+
+    rankings = _get_api("/decision/priority-ranking")
     if rankings and isinstance(rankings, list):
         recs = []
         for r in rankings[:5]:
@@ -466,28 +404,15 @@ def get_recommendations() -> list[dict[str, Any]]:
             priority = r.get("priority_level", "Medium")
             district = (r.get("zones") or {}).get("district", "Unknown")
 
-            texts = r.get("recommendations", [])
+            rec_data = _get_api(f"/decision/recommendations/{quote(str(zone_id), safe='')}")
+            texts = rec_data.get("recommendations", []) if isinstance(rec_data, dict) else []
             text = " ".join(texts) if texts else "No detailed recommendations."
 
             recs.append({
-                "zone_id": str(zone_id) if zone_id else None,
                 "area": district,
                 "crop": crop,
-                "season": r.get("season"),
                 "priority": priority,
                 "text": text,
-                "basis": r.get("basis"),
-                "model_version": r.get("model_version"),
-                "evidence_source": r.get("evidence_source"),
-                "evidence_period": r.get("evidence_period"),
-                "evidence_scope": r.get("evidence_scope"),
-                "yield_per_ha": r.get("yield_per_ha"),
-                "predicted_yield_low": r.get("predicted_yield_low"),
-                "predicted_yield_high": r.get("predicted_yield_high"),
-                "confidence": r.get("confidence"),
-                "warning": r.get("warning"),
-                "priority_reasons": r.get("priority_reasons") or [],
-                "interpretation_note": r.get("interpretation_note"),
                 "status": "Pending",
             })
         if recs:
@@ -510,13 +435,7 @@ def get_crops() -> list[str]:
     data = _get_api("/decision/crops")
     if data and isinstance(data, list):
         return data
-    return []
-
-
-@st.cache_data(ttl=300, show_spinner=False)
-def get_decision_evidence_ranking(crop: str, season: str | None = None) -> dict[str, Any] | None:
-    """Observed NISR district comparison with source coverage metadata."""
-    return _get_api("/decision/evidence-ranking", params={"crop": crop, "season": season})
+    return mock_data.CROPS
 
 
 def predict_yield(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -526,7 +445,8 @@ def predict_yield(payload: dict[str, Any]) -> dict[str, Any] | None:
 
 def get_zone_recommendations(zone_id: str) -> dict[str, Any] | None:
     """GET /decision/recommendations/{zone_id}."""
-    return _get_api(f"/decision/recommendations/{zone_id}")
+    data = _get_api(f"/decision/recommendations/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -536,13 +456,15 @@ def get_zone_recommendations(zone_id: str) -> dict[str, Any] | None:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_finance_readiness(zone_id: str) -> dict[str, Any] | None:
     """Finance readiness for a zone."""
-    return _get_api(f"/alignment/finance-readiness/{zone_id}")
+    data = _get_api(f"/alignment/finance-readiness/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_nutrition_risk(zone_id: str) -> dict[str, Any] | None:
     """Nutrition risk assessment for a zone."""
-    return _get_api(f"/alignment/nutrition-risk/{zone_id}")
+    data = _get_api(f"/alignment/nutrition-risk/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -558,33 +480,25 @@ def get_export_flags() -> list[dict[str, Any]]:
 # CHAT / AI ASSISTANT
 # ═══════════════════════════════════════════════════════════════════
 
-def chat(message: str, zone_id: str, history: list[dict[str, str]] | None = None,
-         crop: str | None = None, season: str | None = None) -> dict[str, Any] | None:
+def chat(message: str, zone_id: str) -> dict[str, Any] | None:
     """Sends a message to the AI assistant."""
-    payload: dict[str, Any] = {"question": message, "zone_id": zone_id, "history": history or []}
-    if crop:
-        payload["crop"] = crop
-    if season:
-        payload["season"] = season
+    payload: dict[str, Any] = {"question": message, "zone_id": zone_id}
     # The backend may wait up to 20 seconds for an LLM provider response.
     return _post_api("/chat", payload, timeout=35)
 
 
-def disease_detect(crop: str, symptoms: str, zone_id: str, image_description: str | None = None, language: str = "en") -> dict[str, Any] | None:
-    """Request preliminary crop-health triage from the backend."""
-    return _post_api("/chat/disease-detect", {
-        "zone_id": zone_id, "crop": crop, "symptoms": symptoms,
-        "image_description": image_description, "language": language,
-    }, timeout=60)
+def disease_detect(crop: str, symptoms: str, zone_id: str, image_description: str | None = None) -> dict[str, Any] | None:
+    """Text-based disease detection."""
+    return _post_api("/chat/disease-detect", {"zone_id": zone_id, "crop": crop, "symptoms": symptoms, "image_description": image_description})
 
 
-def disease_detect_upload(crop: str, symptoms: str, zone_id: str, image_file, image_description: str | None = None, language: str = "en") -> dict[str, Any] | None:
-    """Upload a crop image for preliminary provider-backed crop-health triage."""
+def disease_detect_upload(crop: str, symptoms: str, zone_id: str, image_file, image_description: str | None = None) -> dict[str, Any] | None:
+    """Image-based disease detection via multipart upload."""
     files = {"image": (image_file.name, image_file, image_file.type)}
-    data = {"zone_id": str(zone_id), "crop": crop or "Crop", "symptoms": symptoms or "", "language": language or "en"}
+    data = {"zone_id": zone_id, "crop": crop, "symptoms": symptoms}
     if image_description:
         data["image_description"] = image_description
-    return _post_api_file("/chat/disease-detect-upload", files=files, data=data, timeout=60)
+    return _post_api_file("/chat/disease-detect-upload", files=files, data=data)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -592,8 +506,12 @@ def disease_detect_upload(crop: str, symptoms: str, zone_id: str, image_file, im
 # ═══════════════════════════════════════════════════════════════════
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_roadmap(zone_id: str | None = None) -> pd.DataFrame:
+def get_roadmap(zone_id: str | None = None) -> Any:
     """Fetch the latest saved roadmap for the selected zone."""
+    import pandas as pd
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_roadmap()
+
     if zone_id:
         plans = get_zone_plans(zone_id)
         if plans:
@@ -609,13 +527,14 @@ def get_roadmap(zone_id: str | None = None) -> pd.DataFrame:
             if mapped:
                 return pd.DataFrame(mapped)
 
-    return pd.DataFrame(columns=["Task", "Timeframe", "Description"])
+    return pd.DataFrame(data={"Task": [], "Timeframe": [], "Description": []})
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_zone_resources(zone_id: str, **inputs: Any) -> dict[str, Any] | None:
+def get_zone_resources(zone_id: str, **inputs: float | None) -> dict[str, Any] | None:
     """Resource estimates for a zone."""
-    return _get_api(f"/planification/resources/{quote(str(zone_id), safe='')}", params=inputs)
+    data = _get_api(f"/planification/resources/{quote(zone_id, safe='')}", params=inputs)
+    return data if isinstance(data, dict) else None
 
 
 def create_roadmap(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -632,6 +551,25 @@ def get_zone_plans(zone_id: str) -> list[dict[str, Any]]:
     return []
 
 
+def update_plan_action_status(plan_id: str, step_number: int, status: str, change_note: str = "") -> dict[str, Any] | None:
+    """PATCH /planification/plans/{plan_id}/actions/{step_number}."""
+    payload = {"status": status, "change_note": change_note.strip()}
+    return _patch_api(f"/planification/plans/{quote(plan_id, safe='')}/actions/{step_number}", payload)
+
+
+
+def get_seasonal_plan_draft(zone_id: str, crop: str) -> dict[str, Any] | None:
+    """GET /planification/draft returns an agro-ecological seasonal draft with planting windows and phases."""
+    params = {"zone_id": zone_id, "crop": crop.strip()}
+    data = _get_api("/planification/draft", params=params)
+    return data if isinstance(data, dict) else None
+
+
+def estimate_resources_advanced(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
+    """POST /planification/resources/{zone_id}/estimate for dynamic fertilizer, seed, and input pricing."""
+    return _post_api(f"/planification/resources/{quote(zone_id, safe='')}/estimate", payload)
+
+
 def create_disease_plan(payload: dict[str, Any]) -> dict[str, Any] | None:
     """POST /planification/disease-plan."""
     params = {key: payload.get(key) for key in ("zone_id", "crop", "symptoms", "image_description")}
@@ -645,46 +583,51 @@ def create_disease_plan(payload: dict[str, Any]) -> dict[str, Any] | None:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_alerts() -> list[dict[str, str]]:
     """Fetches recent communication alerts."""
+    if USE_MOCK_DATA:
+        return mock_data.generate_mock_alerts()
+
     alerts = _get_api("/communication/alerts")
     if alerts and isinstance(alerts, list):
-        zones_by_id = {str(zone.get("id")): zone for zone in get_zones() if zone.get("id")}
-        mapped = []
-        for alert in alerts:
-            zone = zones_by_id.get(str(alert.get("zone_id")), {})
-            location = " / ".join(str(value) for value in (
-                zone.get("district"), zone.get("sector"), zone.get("cell")
-            ) if value)
-            mapped.append({
-                **alert,
-                "type": alert.get("severity", "Info"),
-                "message": alert.get("message", ""),
-                "timestamp": str(alert.get("created_at", ""))[:10],
-                "location": location or "Location not available",
-                "source_label": alert.get("created_by") or "Source not supplied",
-            })
+        mapped = [
+            {
+            "type": a.get("severity", "Info"),
+                "message": a.get("message", ""),
+                "timestamp": str(a.get("created_at", ""))[:10],
+            }
+            for a in alerts
+        ]
         if mapped:
             return mapped
 
     return []
 
 
-def send_alert(message: str, zone_id: str, severity: str) -> dict[str, Any] | None:
-    """Sends a new communication alert."""
+def send_alert(message: str, zone_id: str, severity: str, crop: str | None = None, action: str | None = None) -> dict[str, Any] | None:
+    """Sends a new communication alert with automatic email broadcast."""
+    if USE_MOCK_DATA:
+        return None
+
     url = f"{API_BASE_URL}/communication/alerts"
     payload = {
         "zone_id": zone_id,
         "message": message,
         "severity": severity,
-        "created_by": "System",
+        "created_by": "Agrimenya Portal",
     }
+    if crop:
+        payload["crop"] = crop
+    if action:
+        payload["action"] = action
+
     try:
-        resp = requests.post(url, json=payload, headers=_user_headers(), timeout=10)
+        headers = _admin_headers() if admin_session_authenticated() else _user_headers()
+        resp = requests.post(url, json=payload, headers=headers, timeout=15)
         resp.raise_for_status()
         get_alerts.clear()
         return resp.json()
     except Exception as e:
         logger.error("Error sending alert to %s: %s", url, e)
-        return False
+        return None
 
 
 def send_contact_message(name: str, email: str, subject: str, message: str) -> bool:
@@ -704,7 +647,28 @@ def notify(payload: dict[str, Any]) -> dict[str, Any] | None:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_shared_plan(plan_id: str) -> dict[str, Any] | None:
     """GET /communication/share/{plan_id}."""
-    return _get_api(f"/communication/share/{plan_id}")
+    data = _get_api(f"/communication/share/{quote(plan_id, safe='')}")
+    return data if isinstance(data, dict) else None
+
+
+def send_shared_plan(plan_id: str, email: str) -> dict[str, Any] | None:
+    """POST /communication/share/{plan_id}/send: email formatted plan to farmer or officer."""
+    return _post_api(f"/communication/share/{quote(plan_id, safe='')}/send", {"email": email})
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def get_email_status() -> dict[str, Any] | None:
+    """GET /communication/email-status: check if SMTP email delivery is operational."""
+    data = _get_api("/communication/email-status")
+    return data if isinstance(data, dict) else None
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def get_whatsapp_status_info() -> dict[str, Any] | None:
+    """GET /communication/whatsapp-status: check WhatsApp provider readiness."""
+    data = _get_api("/communication/whatsapp-status")
+    return data if isinstance(data, dict) else None
+
 
 
 def get_whatsapp_contacts() -> list[dict[str, Any]]:
@@ -778,7 +742,8 @@ def get_whatsapp_delivery(alert_id: str) -> dict[str, Any] | None:
 @st.cache_data(ttl=120, show_spinner=False)
 def get_weather(district: str) -> dict[str, Any] | None:
     """Live weather data for a district."""
-    return _get_api(f"/live/weather/{quote(district, safe='')}")
+    data = _get_api(f"/live/weather/{quote(district, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 def submit_field_report(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -789,7 +754,7 @@ def submit_field_report(payload: dict[str, Any]) -> dict[str, Any] | None:
 @st.cache_data(ttl=120, show_spinner=False)
 def get_field_reports(zone_id: str) -> list[dict[str, Any]]:
     """GET /live/field-reports/{zone_id}."""
-    data = _get_api(f"/live/field-reports/{quote(str(zone_id), safe='')}")
+    data = _get_api(f"/live/field-reports/{quote(zone_id, safe='')}")
     if data and isinstance(data, list):
         return data
     return []
@@ -799,18 +764,20 @@ def get_field_reports(zone_id: str) -> list[dict[str, Any]]:
 def get_field_risk(zone_id: str, crop: str | None = None) -> dict[str, Any] | None:
     """Recent community observation summary for decision context."""
     suffix = f"?crop={quote(crop, safe='')}" if crop else ""
-    return _get_api(f"/live/field-risk/{quote(str(zone_id), safe='')}{suffix}")
+    data = _get_api(f"/live/field-risk/{quote(zone_id, safe='')}{suffix}")
+    return data if isinstance(data, dict) else None
 
 
 @st.cache_data(ttl=120, show_spinner=False)
 def get_zone_readiness(zone_id: str) -> dict[str, Any] | None:
     """GET /alignment/readiness/{zone_id}."""
-    return _get_api(f"/alignment/readiness/{quote(str(zone_id), safe='')}")
+    data = _get_api(f"/alignment/readiness/{quote(zone_id, safe='')}")
+    return data if isinstance(data, dict) else None
 
 
 def update_zone_readiness(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
     """PUT /alignment/readiness/{zone_id}."""
-    result = _put_api(f"/alignment/readiness/{quote(str(zone_id), safe='')}", payload)
+    result = _put_api(f"/alignment/readiness/{quote(zone_id, safe='')}", payload)
     if result:
         get_zone_readiness.clear()
     return result
@@ -819,13 +786,13 @@ def update_zone_readiness(zone_id: str, payload: dict[str, Any]) -> dict[str, An
 @st.cache_data(ttl=120, show_spinner=False)
 def get_zone_work_records(zone_id: str) -> list[dict[str, Any]]:
     """GET /alignment/work-records/{zone_id}."""
-    data = _get_api(f"/alignment/work-records/{quote(str(zone_id), safe='')}")
+    data = _get_api(f"/alignment/work-records/{quote(zone_id, safe='')}")
     return data if isinstance(data, list) else []
 
 
 def create_zone_work_record(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
     """POST /alignment/work-records/{zone_id} and refresh affected dashboard totals."""
-    result = _post_api(f"/alignment/work-records/{quote(str(zone_id), safe='')}", payload)
+    result = _post_api(f"/alignment/work-records/{quote(zone_id, safe='')}", payload)
     if result:
         get_zone_work_records.clear()
         get_alignment_dashboard.clear()
@@ -842,7 +809,7 @@ def get_live_context(payload: dict[str, Any]) -> dict[str, Any] | None:
 # ═══════════════════════════════════════════════════════════════════
 
 def get_admin_zones() -> list[dict[str, Any]]:
-    """GET /admin/zones — zone management list."""
+    """GET /admin/zones: zone management list."""
     data = _request_admin("GET", "/admin/zones")
     if data and isinstance(data, list):
         return data
@@ -850,7 +817,7 @@ def get_admin_zones() -> list[dict[str, Any]]:
 
 
 def get_admin_plans() -> list[dict[str, Any]]:
-    """GET /admin/plans — plan management list."""
+    """GET /admin/plans: plan management list."""
     data = _request_admin("GET", "/admin/plans")
     if data and isinstance(data, list):
         return data
@@ -858,7 +825,7 @@ def get_admin_plans() -> list[dict[str, Any]]:
 
 
 def get_admin_alerts() -> list[dict[str, Any]]:
-    """GET /admin/alerts — alert management list."""
+    """GET /admin/alerts: alert management list."""
     data = _request_admin("GET", "/admin/alerts")
     if data and isinstance(data, list):
         return data
@@ -900,7 +867,7 @@ def get_community_moderation_field_reports() -> list[dict[str, Any]]:
 
 
 def delete_community_field_report(report_id: str) -> dict[str, Any] | None:
-    return _request_admin("DELETE", f"/community/moderation/field-reports/{quote(str(report_id), safe='')}")
+    return _request_admin("DELETE", f"/community/moderation/field-reports/{quote(report_id, safe='')}")
 
 
 def moderate_community_content(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -913,7 +880,7 @@ def get_community_accounts() -> list[dict[str, Any]]:
 
 
 def set_community_account_active(account_id: str, is_active: bool) -> dict[str, Any] | None:
-    return _request_admin("PATCH", f"/community/moderation/accounts/{quote(str(account_id), safe='')}/status",
+    return _request_admin("PATCH", f"/community/moderation/accounts/{quote(account_id, safe='')}/status",
                           {"is_active": is_active})
 
 
@@ -923,12 +890,12 @@ def invite_admin_account(email: str, display_name: str) -> dict[str, Any] | None
 
 def set_admin_account_active(account_id: str, is_active: bool) -> dict[str, Any] | None:
     return _request_admin(
-        "PATCH", f"/auth/admin/accounts/{quote(str(account_id), safe='')}/status", {"is_active": is_active}
+        "PATCH", f"/auth/admin/accounts/{quote(account_id, safe='')}/status", {"is_active": is_active}
     )
 
 
 def update_admin_zone(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
-    result = _request_admin("PATCH", f"/admin/zones/{quote(str(zone_id), safe='')}", payload)
+    result = _request_admin("PATCH", f"/admin/zones/{quote(zone_id, safe='')}", payload)
     if result:
         get_zones.clear()
         get_priority_data.clear()
@@ -936,7 +903,7 @@ def update_admin_zone(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] |
 
 
 def update_admin_plan(plan_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
-    result = _request_admin("PATCH", f"/admin/plans/{quote(str(plan_id), safe='')}", payload)
+    result = _request_admin("PATCH", f"/admin/plans/{quote(plan_id, safe='')}", payload)
     if result:
         get_zone_plans.clear()
         get_roadmap.clear()
@@ -944,10 +911,35 @@ def update_admin_plan(plan_id: str, payload: dict[str, Any]) -> dict[str, Any] |
 
 
 def update_admin_alert(alert_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
-    result = _request_admin("PATCH", f"/admin/alerts/{quote(str(alert_id), safe='')}", payload)
+    result = _request_admin("PATCH", f"/admin/alerts/{quote(alert_id, safe='')}", payload)
     if result:
         get_alerts.clear()
     return result
+
+
+def approve_admin_alert(alert_id: str) -> dict[str, Any] | None:
+    """Approve an alert for broadcast dispatch."""
+    result = _request_admin("POST", f"/communication/alerts/{quote(alert_id, safe='')}/approve")
+    if result:
+        get_alerts.clear()
+    return result
+
+
+def dispatch_admin_alert_whatsapp(alert_id: str) -> dict[str, Any] | None:
+    """Dispatch an approved alert via WhatsApp broadcast."""
+    return _request_admin("POST", f"/communication/alerts/{quote(alert_id, safe='')}/dispatch/whatsapp")
+
+
+def get_admin_alert_delivery(alert_id: str) -> dict[str, Any] | None:
+    """Fetch WhatsApp delivery status counts for an alert."""
+    return _request_admin("GET", f"/communication/alerts/{quote(alert_id, safe='')}/delivery")
+
+
+def get_plan_action_history(plan_id: str, step_number: int | None = None) -> list[dict[str, Any]]:
+    """Fetch plan action modification audit history."""
+    params = {"step_number": step_number} if step_number is not None else None
+    data = _get_api(f"/planification/plans/{quote(plan_id, safe='')}/history", params=params)
+    return data if isinstance(data, list) else []
 
 
 def get_nisr_imports() -> list[dict[str, Any]]:
@@ -991,8 +983,9 @@ def upload_nisr_release(filename: str, content: bytes, source_release: str, seas
 
 
 def get_health() -> dict[str, Any] | None:
-    """GET /health — system health check."""
-    return _get_api("/health")
+    """GET /health: system health check."""
+    data = _get_api("/health")
+    return data if isinstance(data, dict) else None
 
 
 def _request_admin(method: str, path: str, payload: dict[str, Any] | None = None, timeout: int = 15) -> Any:

@@ -43,7 +43,7 @@ Fill `backend/.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the
 project you are authorized to use. To see the same live records as Team A, both
 teams need access to the same Supabase project; exchange its credentials
 through an approved secure channel, never by committing `.env` to GitHub. Apply
-migrations `0001` through `0011` if they are not already applied. Set
+migrations `0001` through `0018` if they are not already applied. Set
 `JWT_SECRET` to a private random value of at least 32 characters for community
 sessions. Then start both
 services:
@@ -62,7 +62,7 @@ For a populated, isolated synthetic environment to explore the product, use
 The demo seed is guarded, repeatable, and must only target a separate demo
 Supabase project.
 
-Never commit `.env` files, service-role keys, WhatsApp/SMTP/LLM credentials,
+Never commit `.env` files, service-role keys, WhatsApp/email/LLM credentials,
 passwords, or local logs. The backend service-role key must stay in the
 backend environment; do not copy it to Streamlit or the browser.
 
@@ -87,6 +87,28 @@ internal service name. Stop the services with `Ctrl+C`, or run
 docker compose ps
 docker compose logs -f api frontend
 ```
+
+### Production Docker deployment
+
+Production uses a separate Compose stack with Caddy-managed HTTPS. From the
+repository root, copy `backend/production.env.example` to
+`backend/.env.production`, replace the example domains and secret placeholders,
+point both DNS names at the Docker host, and ensure public ports 80 and 443 are
+available. Then run:
+
+```powershell
+cd backend
+docker compose --env-file .env.production -f docker-compose.production.yml config
+docker compose --env-file .env.production -f docker-compose.production.yml up --build -d
+docker compose --env-file .env.production -f docker-compose.production.yml ps
+```
+
+Only the HTTPS proxy publishes host ports; the API and frontend remain on the
+private Compose network. See
+[`backend/docs/production_deployment.md`](backend/docs/production_deployment.md)
+for required secrets, Google OAuth setup, migrations, staging checks, and
+remaining external-service launch gates. Do not deploy with the example
+environment values.
 
 Set `FRONTEND_PORT` in the Compose environment to change the host port. The
 frontend image excludes local environments, secrets, logs, and editor files;
@@ -128,13 +150,23 @@ operations. Restart the relevant service after changing environment values.
 ## Database setup
 
 Apply the SQL files in `backend/app/db/migrations/` to Supabase in numeric
-order, `0001` through `0011`, using the Supabase SQL editor or your migration
+order, `0001` through `0018`, using the Supabase SQL editor or your migration
 runner. Migrations `0005` and `0006` add WhatsApp contacts, message tracking,
 consent, and alert approval; `0007` enables versioned NISR yield imports; and
 `0008` adds named administrator accounts and password recovery tokens; `0009`
 adds individually authenticated farmer discussions and moderation reports; `0010`
 adds dated farmer field observations with optional private, compressed photos;
 `0011` enforces unique lowercase community usernames.
+`0014` adds action status history for saved plans. `0015` adds one-time
+community email verification and shared API rate-limit storage. Existing
+community accounts need to verify their email through the resend flow after
+`0015` is applied. `0016` enables optional Google sign-in for Community.
+`0017` adds named, separately mapped farm sites and optional farmer-drawn field outlines.
+`0018` binds Google Community sign-in handoff codes to the browser that started
+the OAuth flow.
+Configure an email provider and the public Community URL before launch. For
+hosts that restrict SMTP, use `EMAIL_PROVIDER=resend` with a verified sending
+domain and a backend-only `RESEND_API_KEY`.
 These observations stay separate from official NISR yield records and are never
 used as NISR baselines. Check
 the migration comments and `backend/docs/` before applying these changes to a
@@ -147,7 +179,7 @@ available.
 
 ## Administrator access and recovery
 
-Apply migration `0008_admin_accounts.sql` and configure SMTP in
+Apply migration `0008_admin_accounts.sql` and configure email delivery in
 `backend/.env`. For production, set `ADMIN_PASSWORD_RESET_URL` to the public
 HTTPS Admin page. Bootstrap the first named administrator from a trusted
 backend shell:
@@ -201,8 +233,9 @@ those experiences can be treated as production access control; see the access
 model in `backend/docs/nisr_imports_and_access.md`.
 
 The optional farmer discussion pilot supports posts, comments, abuse reports,
-and administrator moderation. Roles and email ownership are self-reported;
-farmer password recovery uses a single-use email link. Satellite imagery is
+and administrator moderation. Email verification is required at sign-in, while
+farmer/organization roles remain self-reported. Farmer password recovery uses
+a single-use email link. Satellite imagery is
 currently removed because the reviewed public mosaic had limited, undated
 coverage and did not support dependable crop monitoring. See
 [`backend/docs/satellite_and_community.md`](backend/docs/satellite_and_community.md)

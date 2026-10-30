@@ -11,7 +11,7 @@ It deliberately does not add rows to `nisr_imports` or `nisr_yield_records`, doe
 ## Set up the isolated project
 
 1. Create a separate Supabase project for the demo. Do not reuse the production project or its service key.
-2. Apply `app/db/schema.sql` and the required migrations in order through `0013_zone_identity_and_retrieval.sql` in the Supabase SQL editor. The project must include the community, field observation, WhatsApp, and zone identity tables.
+2. Apply `app/db/schema.sql` and the required migrations in order through `0015_community_verification_and_shared_rate_limits.sql` in the Supabase SQL editor. The project must include the community, field observation, WhatsApp, zone identity, plan history, and verification/rate-limit tables.
 3. Copy `backend/demo.env.example` to `backend/.env.demo`. Fill in both demo Supabase variables and the runtime `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` with that same demo project. Set a private random `USER_API_KEY` and `JWT_SECRET`. This file is ignored by Git.
 4. From `backend/`, install the existing backend requirements, then run:
 
@@ -24,7 +24,7 @@ It deliberately does not add rows to `nisr_imports` or `nisr_yield_records`, doe
 
 ## Demo sign-ins
 
-The seed creates isolated sample accounts for the community and admin sign-in flows. They all use the same demo-only password:
+The seed creates isolated sample accounts for the community and admin sign-in flows. Seeded community accounts are already email-verified so the demo can be explored without sending real email. They all use the same demo-only password:
 
 - Community: `demo.farmer01@example.invalid` through `demo.farmer08@example.invalid`
 - Admin: `demo.admin@example.invalid`

@@ -2,13 +2,39 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from datetime import date
 from uuid import UUID
 import math
+from pydantic import BaseModel, Field
 from app.core.auth import require_user
-from app.models.plan import PlanCreate
+from app.models.plan import PlanCreate, ResourceEstimateRequest
 from app.db import crud
 from app.services.disease_detector import detect_crop_disease
 from app.services.resource_estimator import estimate_resources
+from app.services.seasonal_planner import CropCalendarUnavailable, build_seasonal_draft
 
 router = APIRouter(prefix="/planification", tags=["Planification"])
+
+
+class PlanActionStatusUpdate(BaseModel):
+    status: str = Field(pattern="^(planned|in_progress|completed|blocked)$")
+    change_note: str = Field(default="", max_length=1000)
+
+
+@router.get("/draft")
+def get_seasonal_plan_draft(
+    zone_id: UUID,
+    crop: str = Query(min_length=1, max_length=50),
+    _: dict = Depends(require_user),
+):
+    zone = crud.get_zone(zone_id)
+    if not zone:
+        raise HTTPException(status_code=404, detail="Zone not found")
+    try:
+        return build_seasonal_draft(
+            district=str(zone.get("district") or ""),
+            crop=crop.strip(),
+            area_ha=zone.get("area_cultivated") or zone.get("area_ha"),
+        )
+    except CropCalendarUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @router.get("/resources/{zone_id}")
@@ -73,6 +99,40 @@ def get_resource_estimate(zone_id: UUID, area_cultivated: float | None = None,
     return result
 
 
+@router.post("/resources/{zone_id}/estimate")
+def post_resource_estimate(
+    zone_id: UUID,
+    payload: ResourceEstimateRequest,
+    _: dict = Depends(require_user),
+):
+    if not crud.get_zone(zone_id):
+        raise HTTPException(status_code=404, detail="Zone not found")
+    if payload.prices_checked_on and payload.prices_checked_on > date.today():
+        raise HTTPException(status_code=422, detail="Price check date cannot be in the future")
+    result = estimate_resources(
+        payload.area_cultivated,
+        payload.rainfall_mm,
+        fertilizer_items=[item.model_dump() for item in payload.fertilizer_items],
+        **payload.inputs,
+    )
+    result.update({
+        "area_source": payload.area_source,
+        "rate_source": payload.rate_source.strip() if payload.rate_source and payload.rate_source.strip() else None,
+        "price_source": payload.price_source.strip() if payload.price_source and payload.price_source.strip() else None,
+        "prices_checked_on": payload.prices_checked_on.isoformat() if payload.prices_checked_on else None,
+    })
+    quantities = result["quantities"]
+    if "dap_kg" in quantities or "urea_kg" in quantities:
+        result["fertilizer_kg"] = quantities.get("fertilizer_kg")
+    result.update({
+        "seeds_kg": quantities.get("seeds_kg"),
+        "dap_kg": quantities.get("dap_kg"),
+        "urea_kg": quantities.get("urea_kg"),
+        "irrigation_liters": quantities.get("irrigation_liters"),
+    })
+    return result
+
+
 @router.post("/roadmap")
 def create_roadmap(plan: PlanCreate, _: dict = Depends(require_user)):
     zone = crud.get_zone(plan.zone_id)
@@ -100,6 +160,37 @@ def create_roadmap(plan: PlanCreate, _: dict = Depends(require_user)):
 @router.get("/plans/{zone_id}")
 def get_plans(zone_id: UUID, _: dict = Depends(require_user)):
     return crud.list_plans(zone_id)
+
+
+@router.patch("/plans/{plan_id}/actions/{step_number}")
+def update_plan_action(plan_id: UUID, step_number: int, payload: PlanActionStatusUpdate,
+                       account: dict = Depends(require_user)):
+    if step_number < 1:
+        raise HTTPException(status_code=422, detail="Action number must be positive")
+    if not crud.get_plan(plan_id):
+        raise HTTPException(status_code=404, detail="Plan not found")
+    try:
+        updated = crud.update_plan_action_status(
+            plan_id, step_number, payload.status, payload.change_note.strip(),
+            str(account.get("account_id") or account.get("role") or "user"),
+        )
+        if not updated:
+            raise HTTPException(status_code=404, detail="Plan not found")
+        return updated
+    except HTTPException:
+        raise
+    except Exception as exc:
+        if "Plan action was not found" in str(exc):
+            raise HTTPException(status_code=404, detail="Plan action not found") from exc
+        raise HTTPException(status_code=503, detail="Could not update plan action") from exc
+
+
+@router.get("/plans/{plan_id}/history")
+def get_plan_action_history(plan_id: UUID, step_number: int | None = Query(default=None, ge=1),
+                            _: dict = Depends(require_user)):
+    if not crud.get_plan(plan_id):
+        raise HTTPException(status_code=404, detail="Plan not found")
+    return crud.list_plan_action_history(plan_id, step_number)
 
 
 @router.post("/disease-plan")

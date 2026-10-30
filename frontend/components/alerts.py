@@ -19,7 +19,6 @@ def render_alert(alert: dict) -> None:
         "Warning": "assets/warning.svg",
         "Info":    "assets/info.svg",
         "Urgent":  "assets/urgent.svg",
-        "Critical": "assets/urgent.svg",
     }
     raw_type = alert.get("type", "Info")
     icon_path = type_icons.get(raw_type, "assets/bell.svg")
@@ -37,18 +36,11 @@ def render_alert(alert: dict) -> None:
         "Warning": "ag-alert ag-alert-warning",
         "Info":    "ag-alert ag-alert-info",
         "Urgent":  "ag-alert ag-alert-urgent",
-        "Critical": "ag-alert ag-alert-urgent",
     }
     css_class = css_class_map.get(raw_type, "ag-alert ag-alert-info")
     translated_type = escape(t(f"comm.alert_type.{str(raw_type).lower()}", default=str(raw_type)))
     timestamp = escape(str(alert.get("timestamp") or ""))
     message = escape(str(alert.get("message") or "No details provided."))
-    location = escape(str(alert.get("location") or "Location not supplied"))
-    source = escape(str(alert.get("source_label") or "Source not supplied"))
-    action = escape(str(alert.get("action") or "No action supplied"))
-    crop = escape(str(alert.get("crop") or "All crops / not specified"))
-    status = escape(str(alert.get("status") or "Status not tracked"))
-    expires = escape(str(alert.get("expires_at") or "No expiry supplied"))
 
     html = f"""
     <div class="{css_class}">
@@ -60,11 +52,6 @@ def render_alert(alert: dict) -> None:
             <span style="font-size: 0.92rem; margin-top: 4px; display: inline-block; color: #374151; line-height: 1.5;">
                 {message}
             </span>
-            <div style="margin-top:.45rem;color:#64736a;font-size:.8rem;line-height:1.5">
-                <span>{location}</span> · <span>{crop}</span> · <span>Source: {source}</span><br/>
-                <span>Next action: {action}</span><br/>
-                <span>{status}</span> · <span>{expires}</span>
-            </div>
         </div>
     </div>
     """

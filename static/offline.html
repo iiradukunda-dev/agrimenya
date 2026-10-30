@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>agrimenya: Offline Agro-Intelligence Hub</title>
+  <link rel="manifest" href="/app/static/manifest.json">
+  <meta name="theme-color" content="#05303f">
+  <link rel="icon" type="image/png" href="/app/static/icon-192.png">
+  <link rel="apple-touch-icon" href="/app/static/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #021824;
+      --card-bg: rgba(6, 40, 56, 0.72);
+      --card-border: rgba(56, 189, 248, 0.22);
+      --accent: #00E599;
+      --sky: #38bdf8;
+      --text: #f0fdf4;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 15%, #05303f 0%, #021824 100%);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 1.5rem 1rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 980px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0.8rem 1.4rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      
+      margin-bottom: 2rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: #fff;
+    }
+    .brand img {
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      padding: 0;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.55));
+    }
+    .brand h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+    .status-badge.online {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(6, 40, 56, 0.85), rgba(2, 24, 36, 0.9));
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner h2 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    .hero-banner p {
+      color: #cbd5e1;
+      font-size: 0.96rem;
+      max-width: 680px;
+      line-height: 1.6;
+      margin-bottom: 1.2rem;
+    }
+    .btn-reconnect {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #fff;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-reconnect:hover {
+      background: linear-gradient(135deg, #0369a1, #075985);
+      transform: translateY(-1px);
+    }
+    .tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 0.55rem 1.1rem;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: rgba(56, 189, 248, 0.6);
+      color: #38bdf8;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .crop-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.3rem;
+      
+    }
+    .crop-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .crop-badge {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      background: rgba(0, 229, 153, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(0, 229, 153, 0.3);
+    }
+    .crop-card ul {
+      list-style: none;
+      font-size: 0.86rem;
+      line-height: 1.7;
+      color: #cbd5e1;
+      margin-top: 0.5rem;
+    }
+    .crop-card li strong {
+      color: #fff;
+    }
+    .scratchpad-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .scratchpad-box input, .scratchpad-box select, .scratchpad-box textarea {
+      width: 100%;
+      background: rgba(2, 24, 36, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+      margin-bottom: 0.9rem;
+      font-family: inherit;
+    }
+    .scratchpad-box textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+    .notes-list {
+      margin-top: 1.2rem;
+    }
+    .note-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .contact-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .contact-card h4 {
+      color: #38bdf8;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+    .contact-card .number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0.4rem 0;
+    }
+
+    /* A calm, practical field guide with a little warmth */
+    :root {
+      --bg: #f4f5ef;
+      --card-bg: #ffffff;
+      --card-border: #e5e9df;
+      --accent: #356747;
+      --sky: #477b69;
+      --text: #27372d;
+      --muted: #65746a;
+    }
+    body { background: var(--bg); color: var(--text); padding: 1.25rem 1rem 4rem; }
+    .container { max-width: 1040px; }
+    header {
+      padding: 0.5rem 0 1rem; background: transparent; border: 0;
+      border-bottom: 1px solid var(--card-border); border-radius: 0; margin-bottom: 1.5rem;
+    }
+    .brand { color: var(--text); }
+    .brand img { filter: none; }
+    .brand h1 { font-size: 1.15rem; letter-spacing: -0.03em; }
+    .status-badge, .status-badge.online {
+      background: #e8efe5; border: 0; color: #365b3f; font-size: 0.78rem;
+      font-weight: 650; padding: 0.45rem 0.8rem;
+    }
+    .pulse-dot { box-shadow: none; animation: none; }
+    .hero-banner {
+      background: linear-gradient(120deg, #e8efe3 0%, #f0f1e7 100%);
+      border: 0; border-radius: 22px; padding: clamp(1.5rem, 4vw, 2.5rem);
+      margin-bottom: 1.75rem; box-shadow: none;
+    }
+    .hero-banner::after {
+      content: ""; position: absolute; right: -35px; bottom: -85px; width: 250px;
+      height: 250px; border-radius: 50%; background: rgba(93, 133, 86, 0.08);
+      pointer-events: none; z-index: 0;
+    }
+    .hero-banner > * { position: relative; z-index: 1; }
+    .hero-banner h2 {
+      max-width: 620px; color: #26392d; font-size: clamp(1.75rem, 4vw, 2.35rem);
+      letter-spacing: -0.045em;
+    }
+    .hero-banner p { color: #526458; max-width: 650px; font-size: 0.98rem; line-height: 1.7; }
+    .btn-reconnect {
+      background: #356747; border: 0; border-radius: 999px; box-shadow: none; padding: 0.72rem 1.2rem;
+    }
+    .btn-reconnect:hover { background: #294f38; transform: translateY(-1px); }
+    .tab-bar { gap: 0.45rem; margin-bottom: 1.2rem; padding: 0.25rem 0; }
+    .tab-btn {
+      background: transparent; border: 0; border-radius: 999px; color: #66736a;
+      padding: 0.65rem 1rem; transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+    .tab-btn:hover { background: #e7ece3; color: #2f5e3e; transform: translateY(-1px); }
+    .tab-btn.active { background: #356747; color: #fff; box-shadow: none; }
+    .card-grid { gap: 1rem; }
+    .crop-card, .scratchpad-box, .contact-card {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px;
+      box-shadow: 0 6px 20px rgba(39, 55, 45, 0.035); padding: 1.35rem;
+    }
+    .crop-card h3 { color: #315a3c; font-size: 1.08rem; }
+    .crop-badge { background: #eff3e9; border: 0; border-radius: 999px; color: #55704f; font-weight: 650; white-space: nowrap; }
+    .crop-card ul { color: #5e6e62; line-height: 1.8; }
+    .crop-card li { padding-left: 0.1rem; margin: 0.25rem 0; }
+    .crop-card li strong { color: #35483a; font-weight: 650; }
+    .scratchpad-box h3 { color: #315a3c !important; }
+    .scratchpad-box p { color: #647269 !important; }
+    .scratchpad-box input, .scratchpad-box select, .scratchpad-box textarea {
+      background: #fbfcf9; border: 1px solid #dce3d8; border-radius: 10px; color: #27372d;
+    }
+    .scratchpad-box input::placeholder, .scratchpad-box textarea::placeholder { color: #87938a; }
+    .scratchpad-box input:focus, .scratchpad-box select:focus, .scratchpad-box textarea:focus {
+      outline: 3px solid rgba(53, 103, 71, 0.16); border-color: #73917b;
+    }
+    .note-item { background: #f7f8f4; border: 0; border-radius: 12px; }
+    .note-item strong { color: #315a3c !important; }
+    .note-item p { color: #526458 !important; }
+    .contact-card { text-align: left; }
+    .contact-card h4 { color: #526f50; }
+    .contact-card .number { color: #2c4935; font-family: inherit; font-size: 1.45rem; }
+    :focus-visible { outline: 3px solid rgba(53, 103, 71, 0.48); outline-offset: 3px; }
+    @media (max-width: 640px) {
+      body { padding: 0.75rem 0.8rem 2.5rem; }
+      header { align-items: flex-start; }
+      .status-badge { font-size: 0.72rem; }
+      .tab-bar { display: grid; grid-template-columns: 1fr 1fr; }
+      .tab-btn { padding: 0.65rem 0.55rem; font-size: 0.82rem; }
+      .card-grid, .contacts-grid { grid-template-columns: 1fr; }
+      .scratchpad-box { padding: 1rem; }
+      .scratchpad-box > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; gap: 0 !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="brand">
+        <img src="/app/static/ai_assistant_bulb.png" alt="agrimenya logo">
+        <h1>agrimenya</h1>
+      </a>
+      <div id="connectionStatus" class="status-badge">
+        <span class="pulse-dot"></span>
+        <span id="statusText">Offline mode · Your notes stay on this device</span>
+      </div>
+    </header>
+
+    <div class="hero-banner">
+      <h2>Your field guide, even without a signal</h2>
+      <p>
+        There’s no connection right now, but you can still check crop guidance, look up local growing conditions,
+        keep field notes, and find important phone numbers. Notes you save here stay on this device until you’re ready to share them.
+      </p>
+      <button class="btn-reconnect" onclick="checkConnection(true)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        Try connecting again
+      </button>
+    </div>
+
+    <div class="tab-bar" role="tablist" aria-label="Offline field tools">
+      <button id="tab-control-crops" class="tab-btn active" role="tab" aria-controls="tab-crops" onclick="switchTab('crops', this)" aria-selected="true">Crop guides</button>
+      <button id="tab-control-districts" class="tab-btn" role="tab" aria-controls="tab-districts" onclick="switchTab('districts', this)" aria-selected="false">District guides</button>
+      <button id="tab-control-scratchpad" class="tab-btn" role="tab" aria-controls="tab-scratchpad" onclick="switchTab('scratchpad', this)" aria-selected="false">My field notes</button>
+      <button id="tab-control-contacts" class="tab-btn" role="tab" aria-controls="tab-contacts" onclick="switchTab('contacts', this)" aria-selected="false">Quick help</button>
+    </div>
+
+    <!-- TAB 1: CROPS -->
+    <div id="tab-crops" class="tab-content active" role="tabpanel" aria-labelledby="tab-control-crops" tabindex="0">
+      <div class="card-grid">
+        <div class="crop-card">
+          <h3>Maize (Ibigori) <span class="crop-badge">Season A / B</span></h3>
+          <ul>
+            <li><strong>Best time to plant:</strong> Sept 15 to Oct 20 (Season A)</li>
+            <li><strong>Soil acidity:</strong> pH 5.5 to 6.8 (consider lime below 5.2)</li>
+            <li><strong>Fertilizer guide:</strong> 100 kg/ha DAP at planting, 50 kg/ha Urea at knee-high</li>
+            <li><strong>Look out for:</strong> Fall Armyworm; ask a local agronomist about treatment at the first signs</li>
+            <li><strong>Typical Rwanda yield:</strong> 2.2 to 3.8 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Climbing Beans (Ibishyimbo) <span class="crop-badge">Season A / B</span></h3>
+          <ul>
+            <li><strong>Best time to plant:</strong> Sept 25 to Oct 30</li>
+            <li><strong>Soil acidity:</strong> pH 5.8 to 6.5</li>
+            <li><strong>Staking:</strong> 2 to 2.5m stakes at 2 weeks post-emergence</li>
+            <li><strong>Fertilizer guide:</strong> NPK 17-17-17 (50 kg/ha) + rhizobium inoculant</li>
+            <li><strong>Look out for:</strong> Anthracnose and angular leaf spot; give plants room to breathe</li>
+            <li><strong>Typical Rwanda yield:</strong> 1.5 to 2.4 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Irish Potato (Ibirayi) <span class="crop-badge">Volcanic / High</span></h3>
+          <ul>
+            <li><strong>Common growing areas:</strong> Musanze, Nyabihu, Rubavu, Burera</li>
+            <li><strong>Typical elevation:</strong> 1,800 to 2,600m</li>
+            <li><strong>Fertilizer guide:</strong> NPK 17-17-17 (300 kg/ha) at planting</li>
+            <li><strong>Look out for:</strong> Late blight; ask an agronomist about prevention</li>
+            <li><strong>Typical Rwanda yield:</strong> 12.0 to 18.5 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Rice (Umuceri) <span class="crop-badge">Marshland</span></h3>
+          <ul>
+            <li><strong>Common growing areas:</strong> Bugarama, Rwamagana, Bugesera, Kirehe</li>
+            <li><strong>Water needs:</strong> Keep the field moist from transplanting until the heads form</li>
+            <li><strong>Fertilizer guide:</strong> Basal NPK + split Urea (tillering &amp; panicle initiation)</li>
+            <li><strong>Typical Rwanda yield:</strong> 4.5 to 6.2 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Cassava (Imyumbati) <span class="crop-badge">Perennial</span></h3>
+          <ul>
+            <li><strong>Common growing areas:</strong> Bugesera, Ruhango, Kamonyi, Gatsibo</li>
+            <li><strong>Varieties:</strong> CBSD &amp; CMD resistant clones (e.g. NASE 14, Gahene)</li>
+            <li><strong>Spacing:</strong> 1m x 1m (10,000 cuttings/ha)</li>
+            <li><strong>Typical Rwanda yield:</strong> 14.0 to 22.0 MT/ha</li>
+          </ul>
+        </div>
+        <div class="crop-card">
+          <h3>Soybean (Soya) <span class="crop-badge">Rotational</span></h3>
+          <ul>
+            <li><strong>Common growing areas:</strong> Eastern and Southern Provinces</li>
+            <li><strong>Seed treatment:</strong> Bradyrhizobium japonicum before planting</li>
+            <li><strong>Soil acidity:</strong> pH 6.0 to 6.8</li>
+            <li><strong>Typical Rwanda yield:</strong> 1.1 to 1.8 MT/ha</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DISTRICTS -->
+    <div id="tab-districts" class="tab-content" role="tabpanel" aria-labelledby="tab-control-districts" tabindex="0">
+      <div class="scratchpad-box">
+        <h3 style="margin-bottom:0.8rem;color:#38bdf8;">Growing conditions by district</h3>
+        <input type="text" id="districtSearch" placeholder="Search districts, provinces, or crops…" aria-label="Search districts, provinces, or crops" oninput="filterDistricts()">
+        <div id="districtsGrid" class="card-grid" style="margin-top:1rem;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: FIELD NOTES SCRATCHPAD -->
+    <div id="tab-scratchpad" class="tab-content" role="tabpanel" aria-labelledby="tab-control-scratchpad" tabindex="0">
+      <div class="scratchpad-box">
+        <h3 style="color:#00E599;margin-bottom:0.5rem;">Jot down what you see</h3>
+        <p style="color:#94a3b8;font-size:0.88rem;margin-bottom:1rem;">
+          Your notes are saved only on this device. You can download a copy to share or keep for later.
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+          <div>
+            <label style="font-size:0.82rem;font-weight:700;" for="noteDistrict">Where is the field?</label>
+            <input type="text" id="noteDistrict" placeholder="District or sector, e.g. Nyamata">
+          </div>
+          <div>
+            <label style="font-size:0.82rem;font-weight:700;" for="noteCrop">What are you growing?</label>
+            <input type="text" id="noteCrop" placeholder="Crop and plot size, if useful">
+          </div>
+        </div>
+        <label style="font-size:0.82rem;font-weight:700;" for="noteContent">What did you notice?</label>
+        <textarea id="noteContent" placeholder="For example: leaves turning yellow, rain was light, or pests on the lower leaves…"></textarea>
+        <button class="btn-reconnect" style="background:#356747;" onclick="saveNote()">
+          Save note on this device
+        </button>
+        <button class="btn-reconnect" style="background:#e8eee5;color:#365b3f;margin-left:0.5rem;" onclick="exportNotes()">
+          Download my notes
+        </button>
+
+        <div class="notes-list" id="savedNotesContainer">
+          <h4 style="font-size:0.95rem;margin:1rem 0 0.5rem;color:#35483a;">Saved notes (<span id="noteCount">0</span>)</h4>
+          <div id="notesList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: CONTACTS -->
+    <div id="tab-contacts" class="tab-content" role="tabpanel" aria-labelledby="tab-control-contacts" tabindex="0">
+      <div class="contacts-grid">
+        <div class="contact-card">
+          <h4>RAB Agro Hotline</h4>
+          <div class="number">8008</div>
+          <p style="color:#65746a;font-size:0.82rem;">Rwanda Agriculture Board · toll-free</p>
+        </div>
+        <div class="contact-card">
+          <h4>Meteo Rwanda</h4>
+          <div class="number">4121</div>
+          <p style="color:#65746a;font-size:0.82rem;">Weather and seasonal updates</p>
+        </div>
+        <div class="contact-card">
+          <h4>Emergency Dispatch</h4>
+          <div class="number">112</div>
+          <p style="color:#65746a;font-size:0.82rem;">Police and disaster response</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching logic
+    function switchTab(name, button) {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      button.classList.add('active');
+      button.setAttribute('aria-selected', 'true');
+      document.getElementById('tab-' + name).classList.add('active');
+    }
+
+    // Connection monitoring & auto-recovery
+    function checkConnection(manual = false) {
+      const badge = document.getElementById('connectionStatus');
+      const text = document.getElementById('statusText');
+      
+      fetch('/_stcore/health', { cache: 'no-cache' })
+        .then(res => {
+          if (res.ok) {
+            badge.className = 'status-badge online';
+            text.textContent = 'You’re back online · Returning to agrimenya…';
+            setTimeout(() => { window.location.href = '/'; }, 1000);
+          } else {
+            throw new Error('Not healthy');
+          }
+        })
+        .catch(() => {
+          badge.className = 'status-badge';
+          text.textContent = 'Offline mode · Your notes stay on this device';
+          if (manual) alert('No connection yet. Your field guides and saved notes are still available here.');
+        });
+    }
+
+    window.addEventListener('online', () => { checkConnection(); });
+    setInterval(checkConnection, 6000);
+
+    // District data baselines
+    const DISTRICTS = [
+      { name: 'Bugesera', prov: 'Eastern', alt: 'Lowland (1,300 to 1,500m)', rain: '850 to 1,000mm', crops: 'Cassava, Maize, Sorghum, Beans' },
+      { name: 'Musanze', prov: 'Northern', alt: 'Volcanic Highland (1,850 to 2,500m)', rain: '1,200 to 1,600mm', crops: 'Irish Potato, Maize, Pyrethrum, Wheat' },
+      { name: 'Gasabo', prov: 'Kigali', alt: 'Midland (1,400 to 1,650m)', rain: '950 to 1,100mm', crops: 'Vegetables, Maize, Beans, Fruits' },
+      { name: 'Nyagatare', prov: 'Eastern', alt: 'Lowland (1,250 to 1,450m)', rain: '800 to 950mm', crops: 'Maize, Soya, Beans, Dairy Pasture' },
+      { name: 'Huye', prov: 'Southern', alt: 'Midland (1,600 to 1,800m)', rain: '1,100 to 1,250mm', crops: 'Coffee, Beans, Maize, Cassava' },
+      { name: 'Rubavu', prov: 'Western', alt: 'Lakeside / Volcanic (1,460 to 2,200m)', rain: '1,200 to 1,500mm', crops: 'Irish Potato, Vegetables, Maize, Tea' },
+      { name: 'Gicumbi', prov: 'Northern', alt: 'Highland (1,800 to 2,300m)', rain: '1,200 to 1,450mm', crops: 'Wheat, Tea, Irish Potato, Beans' },
+      { name: 'Rwamagana', prov: 'Eastern', alt: 'Midland (1,400 to 1,600m)', rain: '900 to 1,050mm', crops: 'Banana, Maize, Rice (Marshlands), Soya' },
+      { name: 'Rusizi', prov: 'Western', alt: 'Lowland / Bugarama (900 to 1,600m)', rain: '1,300 to 1,600mm', crops: 'Rice, Coffee, Cassava, Oil Palm' },
+      { name: 'Muhanga', prov: 'Southern', alt: 'Midland (1,550 to 1,850m)', rain: '1,150 to 1,300mm', crops: 'Cassava, Beans, Maize, Coffee' }
+    ];
+
+    function renderDistricts(list) {
+      const el = document.getElementById('districtsGrid');
+      el.innerHTML = list.map(d => `
+        <div class="crop-card">
+          <h3>${d.name} <span class="crop-badge">${d.prov}</span></h3>
+          <ul>
+            <li><strong>Altitude:</strong> ${d.alt}</li>
+            <li><strong>Rainfall:</strong> ${d.rain}</li>
+            <li><strong>Key Crops:</strong> ${d.crops}</li>
+          </ul>
+        </div>
+      `).join('');
+    }
+
+    function filterDistricts() {
+      const q = document.getElementById('districtSearch').value.toLowerCase();
+      renderDistricts(DISTRICTS.filter(d => d.name.toLowerCase().includes(q) || d.prov.toLowerCase().includes(q) || d.crops.toLowerCase().includes(q)));
+    }
+    renderDistricts(DISTRICTS);
+
+    // Scratchpad localStorage
+    function loadNotes() {
+      const notes = JSON.parse(localStorage.getItem('agrimenya_offline_notes') || '[]');
+      document.getElementById('noteCount').textContent = notes.length;
+      const list = document.getElementById('notesList');
+      if (notes.length === 0) {
+        list.innerHTML = '<p style="color:#65746a;font-size:0.88rem;">No notes yet. Add one above whenever something is worth remembering.</p>';
+        return;
+      }
+      list.innerHTML = notes.map((n, idx) => `
+        <div class="note-item">
+          <div>
+            <strong style="color:#315a3c;">${n.district || 'Field note'}${n.crop ? ' · ' + n.crop : ''}</strong>
+            <p style="color:#cbd5e1;font-size:0.85rem;margin-top:0.25rem;">${n.content}</p>
+            <span style="color:#64748b;font-size:0.75rem;">${n.date}</span>
+          </div>
+          <button onclick="deleteNote(${idx})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:0.82rem;">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function saveNote() {
+      const district = document.getElementById('noteDistrict').value.trim();
+      const crop = document.getElementById('noteCrop').value.trim();
+      const content = document.getElementById('noteContent').value.trim();
+      if (!content) { alert('Please enter observation details.'); return; }
+      const notes = JSON.parse(localStorage.getItem('agrimenya_offline_notes') || '[]');
+      notes.unshift({ district, crop, content, date: new Date().toLocaleString() });
+      localStorage.setItem('agrimenya_offline_notes', JSON.stringify(notes));
+      document.getElementById('noteContent').value = '';
+      loadNotes();
+    }
+
+    function deleteNote(idx) {
+      const notes = JSON.parse(localStorage.getItem('agrimenya_offline_notes') || '[]');
+      notes.splice(idx, 1);
+      localStorage.setItem('agrimenya_offline_notes', JSON.stringify(notes));
+      loadNotes();
+    }
+
+    function exportNotes() {
+      const data = localStorage.getItem('agrimenya_offline_notes') || '[]';
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'agrimenya_field_observations.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    loadNotes();
+  </script>
+</body>
+</html>

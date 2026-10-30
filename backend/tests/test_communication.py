@@ -104,6 +104,7 @@ def test_alert_creation_broadcasts_to_community_emails(mock_create_alert, monkey
 def test_contact_message_reports_unavailable_without_smtp(monkeypatch):
     from app.core.config import settings
 
+    monkeypatch.setattr(settings, "EMAIL_PROVIDER", "smtp")
     monkeypatch.setattr(settings, "SMTP_HOST", "")
     monkeypatch.setattr(settings, "EMAIL_FROM", "")
     monkeypatch.setattr(settings, "DEFAULT_NOTIFICATION_EMAIL", "")
@@ -112,12 +113,13 @@ def test_contact_message_reports_unavailable_without_smtp(monkeypatch):
         json={"name": "A Farmer", "email": "farmer@example.com", "subject": "Help", "message": "Please call me."},
     )
     assert response.status_code == 503
-    assert "configure SMTP_HOST" in response.json()["detail"]
+    assert "configure email delivery" in response.json()["detail"]
 
 
 def test_contact_message_sends_to_support_inbox(monkeypatch):
     from app.core.config import settings
 
+    monkeypatch.setattr(settings, "EMAIL_PROVIDER", "smtp")
     monkeypatch.setattr(settings, "SMTP_HOST", "smtp.example.com")
     monkeypatch.setattr(settings, "SMTP_PORT", 587)
     monkeypatch.setattr(settings, "SMTP_USER", "smtp-user")
@@ -149,6 +151,7 @@ def test_smtp_implicit_tls_does_not_starttls(monkeypatch):
     from app.routers.communication import _deliver_smtp
     from email.message import EmailMessage
 
+    monkeypatch.setattr(settings, "EMAIL_PROVIDER", "smtp")
     monkeypatch.setattr(settings, "SMTP_HOST", "smtp.example.com")
     monkeypatch.setattr(settings, "SMTP_PORT", 465)
     monkeypatch.setattr(settings, "SMTP_USER", "")
@@ -159,6 +162,24 @@ def test_smtp_implicit_tls_does_not_starttls(monkeypatch):
         _deliver_smtp(EmailMessage())
     factory.assert_called_once_with("smtp.example.com", 465, timeout=15)
     factory.return_value.__enter__.return_value.starttls.assert_not_called()
+
+
+def test_resend_alert_broadcast_sends_private_individual_messages(monkeypatch):
+    from app.core.config import settings
+    from app.routers.communication import _broadcast_alert_email
+
+    monkeypatch.setattr(settings, "EMAIL_PROVIDER", "resend")
+    monkeypatch.setattr(settings, "RESEND_API_KEY", "test-resend-key")
+    monkeypatch.setattr(settings, "EMAIL_FROM", "Agri-Menya <no-reply@mail.example.org>")
+    alert = {"severity": "Warning", "message": "Rain expected."}
+    recipients = ["one@example.org", "two@example.org"]
+
+    with patch("app.db.crud.list_active_community_emails", return_value=recipients), \
+         patch("app.routers.communication.send_email_message", return_value={"provider": "resend", "message_id": "id"}) as send:
+        result = _broadcast_alert_email(alert, {"district": "Bugesera"})
+
+    assert result == {"status": "sent", "recipients": 2, "sent": 2, "failed": 0}
+    assert [call.kwargs["recipient"] for call in send.call_args_list] == recipients
 
 
 def test_twilio_sms_prefers_restricted_api_key(monkeypatch):
