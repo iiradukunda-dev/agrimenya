@@ -37,10 +37,17 @@ for the API integration details.
 
 The repository already includes the README, application scripts, and project
 datasets. Data inventory and source notes are in [`data/README.md`](data/README.md).
-The frontend's `frontend/assets/landing video.mp4` is a site asset, not a
-recording of a product demonstration. Record a separate walkthrough of no more
-than three minutes and put it in `demo/`; recording from a computer is
-preferred unless the product being demonstrated is a mobile app.
+The live application is available at
+<https://agrimenya-app-20261030.onrender.com/>. The product walkthrough is
+[shared on Google Drive](https://drive.google.com/file/d/17Ko3W0DCiL7RJbVDtnvmJQp4RtiH60uL/view).
+Set the Drive file's General access to "Anyone with the link" so reviewers can
+open it. The frontend's `frontend/assets/landing video.mp4` is a site asset,
+not the product demonstration.
+
+Reviewer administrator credentials are not published in this repository.
+Provide the account email and password only through an organizer-approved
+private channel, and use a dedicated demo account rather than production
+administrator credentials.
 
 Dependencies are separated by service: install
 [`backend/requirements.txt`](backend/requirements.txt) for the API or
