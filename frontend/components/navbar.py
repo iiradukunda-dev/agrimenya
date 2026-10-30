@@ -190,12 +190,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
           margin: 0 !important;
           padding: 6px 12px !important;
           gap: 8px !important;
-          background: rgba(255, 255, 255, 0.97) !important;
-          border: 1px solid rgba(2, 132, 199, 0.1) !important;
-          border-radius: 9999px !important;
-          box-shadow: 0 8px 26px rgba(2, 132, 199, 0.12) !important;
-          backdrop-filter: blur(14px) !important;
-          -webkit-backdrop-filter: blur(14px) !important;
+          background: transparent !important;
+          border: none !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
         }
         .st-key-ag_mobile_navbar [data-testid="column"],
         .st-key-ag_mobile_navbar [data-testid="stColumn"] {

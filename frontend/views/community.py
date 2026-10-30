@@ -67,7 +67,6 @@ COPY = {
         "verify_sent": "If your account needs verification, a new link will be sent.", "verify_dev_link": "Open the local verification link",
         "verify_dev_error": "Could not prepare the verification link. Check the backend and database connection.",
         "register_sent": "Account created. Check your email to verify it before signing in.",
-        "register_required": "Enter a username, email address, and password to create your account.",
     },
     "rw": {
         "title": "Umuryango w'abahinzi", "intro": "Sangiza abandi ubunararibonye, ubaze ibibazo kandi wungurane ubumenyi.",
@@ -126,7 +125,6 @@ COPY = {
         "verify_sent": "Niba konti yawe itaremezwa, umurongo mushya uraza koherezwa.", "verify_dev_link": "Fungura umurongo wo kwemeza kuri mudasobwa yawe",
         "verify_dev_error": "Ntibyashobotse gutegura umurongo wo kwemeza. Reba backend na database.",
         "register_sent": "Konti yafunguwe. Reba imeyili yawe uyemeze mbere yo kwinjira.",
-        "register_required": "Andika izina ukoresha, imeyili n'ijambo ry'ibanga kugira ngo ufungure konti.",
     },
     "fr": {
         "title": "Communauté des agriculteurs", "intro": "Partagez votre expérience pratique, posez des questions et apprenez d'autres producteurs.",
@@ -137,8 +135,6 @@ COPY = {
         "saved": "Observation partagée.", "no_reports": "Aucune observation de terrain pour le moment.", "unknown_author": "Membre de la communauté",
         "signin": "Connexion", "create": "Créer un compte", "email": "Adresse e-mail", "password": "Mot de passe",
         "name": "Nom d'utilisateur (3-30 lettres, chiffres ou _)", "create_farmer": "Créer un compte agriculteur", "signout": "Déconnexion",
-        "register_required": "Saisissez un nom d'utilisateur, une adresse e-mail et un mot de passe pour créer votre compte.",
-        "google_signin": "Continuer avec Google",
         "new_post": "Partager une actualité ou une question", "topic": "Sujet", "post_body": "Votre expérience ou question",
         "publish": "Publier dans la communauté", "posted": "Votre publication a été partagée.", "replies": "Lire les réponses et participer à la discussion",
         "reply": "Ajouter une réponse", "send_reply": "Répondre", "report": "Signaler le contenu", "reason": "Motif (obligatoire)",
@@ -460,50 +456,50 @@ def render_community() -> None:
 
             sign_in, create_account = st.tabs([c["signin"], c["create"]])
             with sign_in:
-                    with st.form("community_sign_in"):
-                        email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_login_email")
-                        password = st.text_input(c["password"], type="password", placeholder="••••••••••••", key="community_login_password")
-                        submit = st.form_submit_button(f"{c['signin']} →", type="primary", use_container_width=True)
-                    if submit:
+                with st.form("community_sign_in"):
+                    email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_login_email")
+                    password = st.text_input(c["password"], type="password", placeholder="••••••••••••", key="community_login_password")
+                    submit = st.form_submit_button(f"{c['signin']} →", type="primary", use_container_width=True)
+                if submit:
+                    try:
+                        response = _request("POST", "/community/login", payload={"email": email, "password": password})
+                        _store_community_session(response)
+                        st.rerun()
+                    except requests.RequestException as exc:
+                        st.error(_error_message(exc, language))
+
+                with st.popover(c["forgot_password"], use_container_width=True):
+                    with st.form("community_password_forgot_form"):
+                        reset_email = st.text_input(c["email"], key="community_reset_email")
+                        send_reset = st.form_submit_button(c["send_reset"])
+                    if send_reset:
                         try:
-                            response = _request("POST", "/community/login", payload={"email": email, "password": password})
-                            _store_community_session(response)
-                            st.rerun()
+                            reset_result = _request("POST", "/community/password/forgot", payload={"email": reset_email})
+                            st.success(c["reset_requested"])
+                            if reset_result.get("development_reset_url"):
+                                _show_development_mail_status(reset_result, language)
+                                st.link_button(c["reset_dev_link"], reset_result["development_reset_url"], type="primary")
+                            elif reset_result.get("development_error"):
+                                st.warning(c["reset_dev_error"])
                         except requests.RequestException as exc:
                             st.error(_error_message(exc, language))
 
-                    with st.popover(c["forgot_password"], use_container_width=True):
-                        with st.form("community_password_forgot_form"):
-                            reset_email = st.text_input(c["email"], key="community_reset_email")
-                            send_reset = st.form_submit_button(c["send_reset"])
-                        if send_reset:
-                            try:
-                                reset_result = _request("POST", "/community/password/forgot", payload={"email": reset_email})
-                                st.success(c["reset_requested"])
-                                if reset_result.get("development_reset_url"):
-                                    _show_development_mail_status(reset_result, language)
-                                    st.link_button(c["reset_dev_link"], reset_result["development_reset_url"], type="primary")
-                                elif reset_result.get("development_error"):
-                                    st.warning(c["reset_dev_error"])
-                            except requests.RequestException as exc:
-                                st.error(_error_message(exc, language))
-
-                    with st.popover(c["verify_resend"], use_container_width=True):
-                        st.caption(c["verify_resend_help"])
-                        with st.form("community_verification_resend"):
-                            verify_email = st.text_input(c["email"], key="community_verify_email_input")
-                            resend = st.form_submit_button(c["verify_resend"])
-                        if resend:
-                            try:
-                                verify_result = _request("POST", "/community/email/verification/resend", payload={"email": verify_email})
-                                st.success(c["verify_sent"])
-                                if verify_result.get("development_verification_url"):
-                                    _show_development_mail_status(verify_result, language)
-                                    st.link_button(c["verify_dev_link"], verify_result["development_verification_url"])
-                                elif verify_result.get("development_error"):
-                                    st.warning(c["verify_dev_error"])
-                            except requests.RequestException as exc:
-                                st.error(_error_message(exc, language))
+                with st.popover(c["verify_resend"], use_container_width=True):
+                    st.caption(c["verify_resend_help"])
+                    with st.form("community_verification_resend"):
+                        verify_email = st.text_input(c["email"], key="community_verify_email_input")
+                        resend = st.form_submit_button(c["verify_resend"])
+                    if resend:
+                        try:
+                            verify_result = _request("POST", "/community/email/verification/resend", payload={"email": verify_email})
+                            st.success(c["verify_sent"])
+                            if verify_result.get("development_verification_url"):
+                                _show_development_mail_status(verify_result, language)
+                                st.link_button(c["verify_dev_link"], verify_result["development_verification_url"])
+                            elif verify_result.get("development_error"):
+                                st.warning(c["verify_dev_error"])
+                        except requests.RequestException as exc:
+                            st.error(_error_message(exc, language))
 
             with create_account:
                 with st.form("community_register"):
@@ -517,24 +513,19 @@ def render_community() -> None:
                     )
                     submit = st.form_submit_button(f"{c['create_farmer']} →", type="primary", use_container_width=True)
                 if submit:
-                    display_name = display_name.strip()
-                    email = email.strip()
-                    if not display_name or not email or not password:
-                        st.error(c["register_required"])
-                    else:
-                        try:
-                            response = _request("POST", "/community/register", payload={
-                                "display_name": display_name, "email": email, "password": password,
-                            })
-                            st.success(c["register_sent"])
-                            if response.get("development_verification_url"):
-                                _show_development_mail_status(response, language)
-                                st.link_button(c["verify_dev_link"], response["development_verification_url"])
-                            if response.get("access_token"):
-                                _store_community_session(response)
-                                st.rerun()
-                        except requests.RequestException as exc:
-                            st.error(_error_message(exc, language))
+                    try:
+                        response = _request("POST", "/community/register", payload={
+                            "display_name": display_name, "email": email, "password": password,
+                        })
+                        st.success(c["register_sent"])
+                        if response.get("development_verification_url"):
+                            _show_development_mail_status(response, language)
+                            st.link_button(c["verify_dev_link"], response["development_verification_url"])
+                        if response.get("access_token"):
+                            _store_community_session(response)
+                            st.rerun()
+                    except requests.RequestException as exc:
+                        st.error(_error_message(exc, language))
 
             st.markdown(
                 '<div style="text-align:center;margin-top:0.75rem;font-size:0.82rem;color:#94a3b8;">Administrator or agronomist? <a href="/Admin" style="color:#38bdf8;font-weight:700;text-decoration:none;">Go to Administrator Portal →</a></div>',
