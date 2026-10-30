@@ -26,6 +26,9 @@ def test_home_hero_sets_up_landing_video_background():
         assert "/assets/landing%20video.mp4" in hero_html
         assert "autoplay muted loop playsinline" in hero_html
         assert "object-fit: cover" in hero_html
+        assert "syncVideoLayerSize" in hero_html
+        assert "mainContent?.scrollHeight" in hero_html
+        assert "new parentWindow.ResizeObserver(syncVideoLayerSize)" in hero_html
         assert "rgba(248, 250, 252, 0.64)" in hero_html
         assert "setupLandingVideoBackground" in hero_html
         assert "ag-landing-fullpage-video" in hero_html
