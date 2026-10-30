@@ -790,7 +790,10 @@ RWANDA_DISTRICT_COORDS: dict[str, tuple[float, float]] = {
 
 def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
     norm = district.strip().lower()
-    coords = RWANDA_DISTRICT_COORDS.get(norm) or (-1.9441, 30.0619)
+    coords = RWANDA_DISTRICT_COORDS.get(norm)
+    if coords is None:
+        logger.warning("Cannot fetch weather for unknown district %s", district)
+        return None
     try:
         resp = requests.get(
             "https://api.open-meteo.com/v1/forecast",
@@ -799,6 +802,7 @@ def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
                 "longitude": coords[1],
                 "current": "temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,weather_code",
                 "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum",
+                "wind_speed_unit": "kmh",
                 "forecast_days": 5,
                 "timezone": "auto",
             },
@@ -817,7 +821,12 @@ def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
                 "precipitation_sum_mm": daily.get("precipitation_sum", [])[i],
             }
             for i, date in enumerate(daily.get("time", []))
-            if i < len(daily.get("temperature_2m_max", []))
+            if all(i < len(daily.get(key, [])) for key in (
+                "temperature_2m_max",
+                "temperature_2m_min",
+                "precipitation_probability_max",
+                "precipitation_sum",
+            ))
         ]
         temp = current.get("temperature_2m")
         hum = current.get("relative_humidity_2m")

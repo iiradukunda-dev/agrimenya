@@ -99,6 +99,9 @@ def test_navbar_more_and_language_controls_have_visible_contrast():
     assert "background: #e0f2fe !important;" in css
     assert "color: #075985 !important;" in css
     assert ".st-key-lang_cycle_btn button" in css
+    assert "position: fixed !important;" in css
+    assert "max-width: 840px" in css
+    assert any(call.args[0] == "Menu" for call in mock_st.popover.call_args_list)
 
 
 def test_user_session_and_page_access_control():

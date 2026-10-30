@@ -133,14 +133,23 @@ def render_navbar(show_sidebar: bool = False) -> None:
       [data-testid="stMainBlockContainer"],
       [data-testid="stAppViewBlockContainer"],
       .main .block-container {
-        padding-top: 0.35rem !important;
+        padding-top: 4.25rem !important;
         margin-top: 0 !important;
+      }
+
+      .st-key-ag_desktop_navbar {
+        position: fixed !important;
+        top: 0.25rem !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 999990 !important;
+        display: flex !important;
+        justify-content: center !important;
+        pointer-events: none !important;
       }
 
       /* Outer Floating Container */
       .st-key-ag_navbar {
-        position: sticky !important;
-        top: 0.25rem !important;
         z-index: 999990 !important;
         display: flex !important;
         flex-direction: row !important;
@@ -152,6 +161,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
         padding: 0 0.5rem !important;
         background: transparent !important;
         box-sizing: border-box !important;
+        pointer-events: auto !important;
       }
       .st-key-ag_navbar > div {
         display: flex !important;
@@ -167,14 +177,16 @@ def render_navbar(show_sidebar: bool = False) -> None:
         display: none !important;
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: 840px) {
         .st-key-ag_desktop_navbar {
           display: none !important;
         }
         .st-key-ag_mobile_navbar {
           display: block !important;
-          position: sticky !important;
+          position: fixed !important;
           top: 0.25rem !important;
+          left: 0 !important;
+          right: 0 !important;
           z-index: 999990 !important;
           width: 100% !important;
           margin: 0 auto 0.45rem !important;
@@ -205,15 +217,23 @@ def render_navbar(show_sidebar: bool = False) -> None:
           align-items: center !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button {
-          width: 2.35rem !important;
+          width: auto !important;
           height: 2.35rem !important;
-          min-width: 2.35rem !important;
-          border-radius: 50% !important;
+          min-width: 4.5rem !important;
+          border-radius: 9999px !important;
           background: #e0f2fe !important;
-          color: #0284c7 !important;
+          color: #075985 !important;
           border: 1px solid #7dd3fc !important;
-          padding: 0 !important;
-          font-size: 1.25rem !important;
+          padding: 0.4rem 0.9rem !important;
+          font-size: 0.9rem !important;
+          font-weight: 700 !important;
+        }
+        .st-key-ag_mobile_navbar [data-testid="stPopover"] button p {
+          color: #075985 !important;
+          font-size: 0.9rem !important;
+          font-weight: 700 !important;
+          margin: 0 !important;
+          white-space: nowrap !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] {
           width: min(20rem, calc(100vw - 2rem)) !important;
@@ -485,7 +505,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
     with st.container(key="ag_mobile_navbar"):
         mobile_menu_col, mobile_language_col = st.columns([1, 1], vertical_alignment="center")
         with mobile_menu_col:
-            with st.popover("☰", help="Open navigation menu", width="content"):
+            with st.popover("Menu", help="Open navigation menu", width="content"):
                 st.page_link("Home.py", label=t("nav.home", "Home"))
                 st.page_link("pages/3_Dashboard.py", label=t("nav.overview", "Overview"))
                 if auth:

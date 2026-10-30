@@ -1,4 +1,4 @@
-"""Descriptive district comparisons for observed agricultural metrics with Google Earth satellite drill-down."""
+"""Descriptive district comparisons with NISR administrative-boundary map drill-down."""
 from __future__ import annotations
 
 import html
@@ -470,7 +470,7 @@ def _render_location_explorer(
     *,
     key: str,
 ) -> None:
-    """High-resolution Google Earth satellite viewer with hierarchical district -> sector -> cell zoom."""
+    """Esri satellite basemap with NISR district -> sector -> cell boundary drill-down."""
     if folium is None or st_folium is None:
         st.info("The interactive satellite map is unavailable because its map components could not be loaded.")
         return
@@ -704,8 +704,8 @@ def _render_location_explorer(
             st.rerun()
 
     st.caption(
-        "🛰️ Google Earth High-Resolution Satellite: Esri World Imagery (Maxar / GIS Community). "
-        "Boundaries: NISR 2022 Census Mapping. Zoom in down to Level 18 to inspect crop fields, terraces, and farm boundaries."
+        "Satellite imagery: Esri World Imagery. Boundaries: NISR 2022 census mapping. "
+        "Imagery is visual context only; it does not classify crops, confirm farm boundaries, or assess suitability."
     )
 
 
@@ -828,7 +828,7 @@ def _render_farming_zone_card(
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:0.6rem;">
                 <div>
                     <span style="font-size:0.75rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#0284c7;background:#e0f2fe;padding:3px 10px;border-radius:999px;">
-                        🌾 Farming Zone Determination
+                        🌾 District Farming Context
                     </span>
                     <h3 style="margin:0.35rem 0 0;color:#082f49;font-size:1.35rem;font-weight:800;">
                         {html.escape(d_clean)}{f" › {html.escape(sector)}" if sector and sector != ALL_SECTORS else ""}{f" › {html.escape(cell)}" if cell and cell != ALL_CELLS else ""}
@@ -858,16 +858,20 @@ def _render_farming_zone_card(
                 delta_color="off",
             )
         else:
-            c4.metric("Current Weather", "Central Africa Time", delta="CAT UTC+2", delta_color="off")
+            c4.metric("Current Weather", "Not available")
 
-        st.markdown("##### Recommended Crops for this Farming Zone")
+        st.caption(
+            "Indicative district-level context only. Satellite imagery and these general examples do not "
+            "replace field inspection, soil testing, or advice from a local extension officer."
+        )
+        st.markdown("##### Example crops listed for this district")
         crop_badges = "".join(
             f"<span style='display:inline-block;padding:4px 12px;margin:3px 6px 3px 0;border-radius:9999px;font-size:0.82rem;font-weight:700;background:{'#dcfce7;color:#166534;border:1.5px solid #86efac;' if c.casefold() == crop.casefold() else '#f1f5f9;color:#334155;border:1px solid #cbd5e1;'}'>{html.escape(c)}{' ★ Selected' if c.casefold() == crop.casefold() else ''}</span>"
             for c in zone_info["crops"]
         )
         st.markdown(f"<div style='margin-bottom:0.75rem;'>{crop_badges}</div>", unsafe_allow_html=True)
 
-        st.info(f"**Agronomic Guidance for {d_clean}:** {zone_info['advisory']}")
+        st.info(f"**General district context for {d_clean}:** {zone_info['advisory']}")
 
 
 @error_boundary("Segmentation")
@@ -945,13 +949,13 @@ def render_segment() -> None:
                 <span class="segmentation-hero__eyebrow">Rwanda · District insights</span>
                 <span class="segmentation-hero__badge">Observed data</span>
             </div>
-            <h1>District comparison & Satellite Farming Zones</h1>
+            <h1>District comparison & satellite location explorer</h1>
             <p class="segmentation-hero__description">
                 Explore recorded yield, production, and cultivated area across crops, seasons, and districts.
-                Click any district on the Google Earth satellite map to zoom directly to sectors, cells, and high-resolution farm fields.
+                Click a district, then a sector or cell, to zoom through official administrative boundaries over satellite imagery.
             </p>
             <div class="segmentation-hero__note">
-                Descriptive summaries and high-resolution satellite imagery — designed for extension officers and farmers.
+                Imagery provides visual context only; it does not generate crop classifications or field-level suitability estimates.
             </div>
         </section>
         """,
@@ -1137,8 +1141,8 @@ def render_segment() -> None:
     st.markdown("---")
     map_head_c1, map_head_c2 = st.columns([3, 1], vertical_alignment="center")
     with map_head_c1:
-        st.subheader("🛰️ Interactive Google Earth Satellite & Zone Viewer")
-        st.caption("Click any district to zoom into its sectors, click a sector to zoom into cells, and inspect clear satellite imagery to determine farming zones.")
+        st.subheader("🛰️ Satellite map & location explorer")
+        st.caption("Click a district to open its sectors, then select a cell. Satellite clarity and capture dates vary by location.")
     with map_head_c2:
         if st.button("↺ Rwanda Overview", use_container_width=True, help="Reset zoom to show all Rwanda districts"):
             st.session_state["seg_map_pending_selection"] = {
@@ -1156,8 +1160,8 @@ def render_segment() -> None:
         f"""
         <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;font-size:0.85rem;color:#475569;margin-bottom:0.75rem;">
             <span>📍 Active Zoom:</span>
-            <strong>{html.escape(cur_d)}</strong> › 
-            <span>{html.escape(cur_s)}</span> › 
+            <strong>{html.escape(cur_d)}</strong> ›
+            <span>{html.escape(cur_s)}</span> ›
             <span>{html.escape(cur_c)}</span>
         </div>
         """,
@@ -1166,7 +1170,7 @@ def render_segment() -> None:
 
     map_mode = st.radio(
         "Map visualization mode",
-        ["🛰️ Satellite Farm Explorer (Google Earth Drill-down)", "📊 Observed Yield Benchmark Map"],
+        ["🛰️ Satellite location explorer", "📊 Observed Yield Benchmark Map"],
         horizontal=True,
         key="seg_map_mode_select",
         label_visibility="collapsed",

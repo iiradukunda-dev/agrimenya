@@ -38,7 +38,7 @@ ESRI_BOUNDARIES_TILES = (
 
 
 def create_rwanda_map(*, satellite_default: bool = False, hybrid: bool = True):
-    """Create high-resolution Google Earth style Rwanda satellite canvas with road/boundary overlays."""
+    """Create a Rwanda map with Esri satellite imagery and optional labels overlay."""
     if folium is None:
         return None
     map_view = folium.Map(

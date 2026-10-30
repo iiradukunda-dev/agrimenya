@@ -9,6 +9,45 @@ from utils import api_client
 
 class TestApiClientExtended(unittest.TestCase):
 
+    @patch("utils.api_client.requests.get")
+    @patch("utils.api_client._get_api")
+    def test_weather_falls_back_to_district_weather_and_requests_kmh(self, mock_api, mock_get):
+        mock_api.return_value = {"district": "Bugesera", "temperature_c": None}
+        response = MagicMock()
+        response.json.return_value = {
+            "current": {
+                "temperature_2m": 22.0,
+                "relative_humidity_2m": 65,
+                "precipitation": 0.0,
+                "wind_speed_10m": 12.5,
+                "weather_code": 1,
+                "time": "2026-10-30T12:00",
+            },
+            "daily": {
+                "time": ["2026-10-30"],
+                "temperature_2m_max": [25.0],
+                "temperature_2m_min": [17.0],
+                "precipitation_probability_max": [50],
+                "precipitation_sum": [2.0],
+            },
+        }
+        response.raise_for_status = MagicMock()
+        mock_get.return_value = response
+        api_client.get_weather.clear()
+
+        try:
+            weather = api_client.get_weather("Bugesera")
+            self.assertEqual(weather["wind_kph"], 12.5)
+            self.assertEqual(weather["source"], "Open-Meteo Live API")
+            self.assertEqual(mock_get.call_args.kwargs["params"]["wind_speed_unit"], "kmh")
+        finally:
+            api_client.get_weather.clear()
+
+    @patch("utils.api_client.requests.get")
+    def test_direct_weather_does_not_use_kigali_for_unknown_district(self, mock_get):
+        self.assertIsNone(api_client._fetch_direct_open_meteo("Unknown district"))
+        mock_get.assert_not_called()
+
     @patch("utils.api_client._get_api")
     def test_get_official_yields_uses_historical_segmentation_endpoint(self, mock_get):
         rows = [{"crop": "Maize", "season": "2022 Season A", "yield_actual": "1200"}]
