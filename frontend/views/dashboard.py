@@ -406,7 +406,11 @@ def render_dashboard() -> None:
                 with qa1:
                     if st.button("Predict Yield", use_container_width=True):
                         st.switch_page("pages/4_Zones.py")
-                    if st.button("Detect Disease", use_container_width=True):
+                    if st.button(
+                        "Detect Disease",
+                        use_container_width=True,
+                        key="detect_disease_button",
+                    ):
                         st.switch_page("pages/7_AI_Assistant.py")
                 with qa2:
                     if st.button("Create Plan", use_container_width=True):

@@ -793,5 +793,91 @@ def load_theme(show_sidebar: bool = False) -> None:
       transform: none !important;
       border-color: inherit !important;
     }}
+
+    .st-key-disease_triage_button button,
+    .st-key-detect_disease_button button,
+    .st-key-detect_disease_submit button {{
+      position: relative !important;
+      min-height: 5rem !important;
+      padding: 0.9rem 3.75rem !important;
+      overflow: hidden !important;
+      border: 0 !important;
+      border-radius: 9999px !important;
+      background: linear-gradient(110deg, #1596f4 0%, #0561ce 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 10px 24px rgba(2, 102, 202, 0.22) !important;
+      font-size: clamp(1.05rem, 2.2vw, 1.8rem) !important;
+      font-weight: 700 !important;
+      transition: transform 180ms ease, box-shadow 180ms ease !important;
+    }}
+    .st-key-disease_triage_button button p,
+    .st-key-detect_disease_button button p,
+    .st-key-detect_disease_submit button p {{
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }}
+    .st-key-disease_triage_button button::before,
+    .st-key-detect_disease_button button::before,
+    .st-key-detect_disease_submit button::before {{
+      content: "" !important;
+      position: absolute !important;
+      left: clamp(1.1rem, 28%, calc(50% - 9.5rem)) !important;
+      top: 50% !important;
+      width: 2.5rem !important;
+      height: 2.5rem !important;
+      transform: translateY(-50%) !important;
+      background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M24 4 41 10v12c0 11-7.5 18-17 23C14.5 40 7 33 7 22V10L24 4Z'/%3E%3Cpath d='M24 16v14M17 23h14'/%3E%3C/svg%3E") !important;
+      pointer-events: none !important;
+    }}
+    .st-key-disease_triage_button button::after,
+    .st-key-detect_disease_button button::after,
+    .st-key-detect_disease_submit button::after {{
+      content: "→" !important;
+      position: absolute !important;
+      right: 1.5rem !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      color: #ffffff !important;
+      font-size: 2rem !important;
+      font-weight: 500 !important;
+      line-height: 1 !important;
+      pointer-events: none !important;
+    }}
+    .st-key-disease_triage_button button:hover,
+    .st-key-detect_disease_button button:hover,
+    .st-key-detect_disease_submit button:hover {{
+      border: 0 !important;
+      background: linear-gradient(110deg, #1596f4 0%, #0561ce 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 13px 28px rgba(2, 102, 202, 0.3) !important;
+      transform: translateY(-2px) !important;
+    }}
+    .st-key-disease_triage_button button:hover p,
+    .st-key-detect_disease_button button:hover p,
+    .st-key-detect_disease_submit button:hover p {{
+      color: #ffffff !important;
+    }}
+    @media (max-width: 520px) {{
+      .st-key-disease_triage_button button,
+      .st-key-detect_disease_button button,
+      .st-key-detect_disease_submit button {{
+        min-height: 3.75rem !important;
+        padding: 0.7rem 3rem !important;
+        font-size: 1rem !important;
+      }}
+      .st-key-disease_triage_button button::before,
+      .st-key-detect_disease_button button::before,
+      .st-key-detect_disease_submit button::before {{
+        left: 1rem !important;
+        width: 1.8rem !important;
+        height: 1.8rem !important;
+      }}
+      .st-key-disease_triage_button button::after,
+      .st-key-detect_disease_button button::after,
+      .st-key-detect_disease_submit button::after {{
+        right: 1rem !important;
+        font-size: 1.6rem !important;
+      }}
+    }}
     </style>
     """)

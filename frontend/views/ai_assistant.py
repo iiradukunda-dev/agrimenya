@@ -136,7 +136,12 @@ def render_ai_assistant() -> None:
                     if image_file:
                         st.image(image_file, caption="Uploaded image", width="stretch")
 
-                submitted = st.form_submit_button(t("ai.detect_btn", "Detect Disease"), type="primary", width="stretch")
+                submitted = st.form_submit_button(
+                    t("ai.detect_btn", "Detect Disease"),
+                    type="primary",
+                    width="stretch",
+                    key="detect_disease_submit",
+                )
 
             if submitted and symptoms:
                 with st.spinner("Analyzing symptoms..."):
