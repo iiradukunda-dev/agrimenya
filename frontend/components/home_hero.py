@@ -508,7 +508,10 @@ def render_home_hero() -> None:
               }}
               #ag-landing-video-layer {{
                 position: fixed;
-                inset: 0;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
                 z-index: 0;
                 overflow: hidden;
                 pointer-events: none;
@@ -540,17 +543,45 @@ def render_home_hero() -> None:
             parentDoc.head.appendChild(style);
             parentDoc.body.prepend(videoLayer);
 
-            const initialUrl = parentDoc.defaultView.location.href;
+            const parentWindow = parentDoc.defaultView;
+            const main = parentDoc.querySelector('[data-testid="stMain"]');
+            const mainContent = parentDoc.querySelector('[data-testid="stMainBlockContainer"]');
+            const syncVideoLayerSize = () => {{
+              const pageWidth = parentDoc.documentElement.clientWidth;
+              const pageHeight = Math.max(
+                parentWindow.innerHeight,
+                parentDoc.documentElement.scrollHeight,
+                main?.scrollHeight || 0,
+                mainContent?.scrollHeight || 0
+              );
+              videoLayer.style.width = `${{pageWidth}}px`;
+              videoLayer.style.height = `${{pageHeight}}px`;
+            }};
+            syncVideoLayerSize();
+
+            const resizeObserver = new parentWindow.ResizeObserver(syncVideoLayerSize);
+            if (main) resizeObserver.observe(main);
+            if (mainContent) resizeObserver.observe(mainContent);
+            const mutationObserver = new parentWindow.MutationObserver(syncVideoLayerSize);
+            if (mainContent) {{
+              mutationObserver.observe(mainContent, {{ childList: true, subtree: true, attributes: true }});
+            }}
+            parentWindow.addEventListener('resize', syncVideoLayerSize);
+
+            const initialUrl = parentWindow.location.href;
             const cleanup = () => {{
               parentDoc.getElementById('ag-landing-video-layer')?.remove();
               parentDoc.getElementById('ag-landing-video-style')?.remove();
-              parentDoc.defaultView.clearInterval(cleanupTimer);
-              delete parentDoc.defaultView.__agrimenyaLandingVideoCleanup;
+              resizeObserver.disconnect();
+              mutationObserver.disconnect();
+              parentWindow.removeEventListener('resize', syncVideoLayerSize);
+              parentWindow.clearInterval(cleanupTimer);
+              delete parentWindow.__agrimenyaLandingVideoCleanup;
             }};
-            const cleanupTimer = parentDoc.defaultView.setInterval(() => {{
-              if (parentDoc.defaultView.location.href !== initialUrl) cleanup();
+            const cleanupTimer = parentWindow.setInterval(() => {{
+              if (parentWindow.location.href !== initialUrl) cleanup();
             }}, 500);
-            parentDoc.defaultView.__agrimenyaLandingVideoCleanup = cleanup;
+            parentWindow.__agrimenyaLandingVideoCleanup = cleanup;
           }} catch (err) {{
             console.error('Unable to set up the landing-page video background:', err);
           }}
