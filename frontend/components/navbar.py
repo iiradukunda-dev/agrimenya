@@ -271,7 +271,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
           line-height: 1 !important;
           pointer-events: none !important;
         }
-        .st-key-ag_mobile_navbar [data-testid="stIconMaterial"],
+        .st-key-ag_mobile_navbar [data-testid="stPopover"] button [data-testid="stIconMaterial"],
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button svg {
           display: none !important;
         }
@@ -293,18 +293,19 @@ def render_navbar(show_sidebar: bool = False) -> None:
         flex-direction: row !important;
         flex-wrap: nowrap !important;
         align-items: center !important;
-        justify-content: center !important;
-        width: auto !important;
-        max-width: 100% !important;
+        justify-content: space-around !important;
+        width: min(95vw, 1360px) !important;
+        max-width: 95vw !important;
+        min-height: 7.25rem !important;
         margin: 0 auto !important;
-        padding: 5px 14px !important;
+        padding: 10px clamp(14px, 3.5vw, 48px) !important;
         background: rgba(255, 255, 255, 0.98) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
         border-radius: 9999px !important;
         border: 1px solid rgba(2, 132, 199, 0.18) !important;
         box-shadow: 0 8px 30px rgba(2, 132, 199, 0.14), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-        gap: 4px !important;
+        gap: clamp(12px, 2.5vw, 36px) !important;
         box-sizing: border-box !important;
       }
 
@@ -328,9 +329,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
         background-color: transparent !important;
         border: none !important;
         border-radius: 9999px !important;
-        height: 2.35rem !important;
-        min-height: 2.35rem !important;
-        padding: 0.45rem 1.15rem !important;
+        height: 4.25rem !important;
+        min-height: 4.25rem !important;
+        padding: 0.75rem clamp(1.15rem, 2.6vw, 2.5rem) !important;
         box-shadow: none !important;
         justify-content: center !important;
         align-items: center !important;
@@ -344,7 +345,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
       .st-key-ag_navbar [data-testid="stPageLink"] p,
       .st-key-ag_navbar [data-testid="stPageLink-NavLink"] p {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 0.88rem !important;
+        font-size: 1.12rem !important;
         font-weight: 600 !important;
         color: #0a1f26 !important;
         letter-spacing: -0.01em !important;
@@ -367,9 +368,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
         box-sizing: border-box !important;
         border: 2px solid #0875d1 !important;
         border-radius: 9999px !important;
-        height: 2.35rem !important;
-        min-height: 2.35rem !important;
-        padding: 0.45rem 1.35rem !important;
+        height: 4.25rem !important;
+        min-height: 4.25rem !important;
+        padding: 0.75rem clamp(1.15rem, 2.6vw, 2.5rem) !important;
         box-shadow: none !important;
         display: inline-flex !important;
         align-items: center !important;
@@ -382,41 +383,48 @@ def render_navbar(show_sidebar: bool = False) -> None:
         font-weight: 700 !important;
       }
 
-      /* More popover button */
-      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"] {
-        min-width: 4.25rem !important;
-        height: 2.25rem !important;
-        padding: 0.4rem 0.85rem !important;
-        border: 1px solid #7dd3fc !important;
-        border-radius: 9999px !important;
-        background: #e0f2fe !important;
-        color: #075985 !important;
+      /* Keep secondary routes available from the compact account control. */
+      .st-key-ag_profile_menu [data-testid="stPopoverButton"] {
+        width: 3rem !important;
+        min-width: 3rem !important;
+        height: 3rem !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 50% !important;
+        background: transparent !important;
+        color: #707780 !important;
         box-shadow: none !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"] p,
-      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"] span {
-        color: #075985 !important;
-        font-weight: 700 !important;
-        visibility: visible !important;
-        opacity: 1 !important;
+      .st-key-ag_profile_menu [data-testid="stPopoverButton"] p {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"]:hover {
-        border-color: #0284c7 !important;
-        background: #bae6fd !important;
+      .st-key-ag_profile_menu [data-testid="stPopoverButton"] > div > div:last-child {
+        display: none !important;
+      }
+      .st-key-ag_profile_menu [data-testid="stPopoverButton"] [data-testid="stIconMaterial"] {
+        font-size: 1.8rem !important;
+        color: #707780 !important;
+      }
+      .st-key-ag_profile_menu [data-testid="stPopoverButton"]:hover {
+        background: rgba(2, 132, 199, 0.08) !important;
       }
 
       .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button,
       .st-key-lang_cycle_btn button {
-        border: 1px solid #7dd3fc !important;
+        border: 0 !important;
         border-radius: 9999px !important;
-        background: #e0f2fe !important;
+        background: transparent !important;
         color: #075985 !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button:hover,
       .st-key-lang_cycle_btn button:hover {
-        border-color: #0284c7 !important;
-        background: #0284c7 !important;
-        color: #ffffff !important;
+        background: transparent !important;
+        color: #0284c7 !important;
       }
 
       /* Dropdown Body */
@@ -487,11 +495,11 @@ def render_navbar(show_sidebar: bool = False) -> None:
     with st.container(key="ag_desktop_navbar"):
         with st.container(key="ag_navbar"):
             if auth:
-                c_home, c_overview, c_zones, c_decide, c_more, c_sep, c_lang = st.columns(
-                    [1.15, 1.1, 0.95, 1.15, 1.05, 0.02, 0.45], vertical_alignment="center"
+                c_home, c_overview, c_zones, c_decide, c_profile, c_sep, c_lang = st.columns(
+                    [1.15, 1.1, 0.95, 1.15, 0.45, 0.02, 0.45], vertical_alignment="center"
                 )
             else:
-                c_home, c_overview, c_updates, c_about, c_more, c_sep, c_lang = st.columns(
+                c_home, c_overview, c_updates, c_about, c_profile, c_sep, c_lang = st.columns(
                     [1.15, 1.1, 1.2, 1.0, 0.25, 0.02, 0.45], vertical_alignment="center"
                 )
 
@@ -505,8 +513,14 @@ def render_navbar(show_sidebar: bool = False) -> None:
                     st.page_link("pages/4_Zones.py", label=t("nav.zones", "Zones"))
                 with c_decide:
                     st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
-                with c_more:
-                    with st.popover(t("nav.more", "More"), width="stretch"):
+                with c_profile:
+                    with st.popover(
+                        "Account",
+                        icon=":material/person:",
+                        help="Account and more tools",
+                        width="content",
+                        key="ag_profile_menu",
+                    ):
                         st.divider()
                         st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
                         st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))
@@ -539,7 +553,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                     st.page_link("pages/9_Communication.py", label=t("nav.updates", "Updates"))
                 with c_about:
                     st.page_link("pages/1_About.py", label=t("nav.about", "About"))
-                with c_more:
+                with c_profile:
                     st.empty()
                 with c_sep:
                     st.empty()

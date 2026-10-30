@@ -76,7 +76,7 @@ def test_navbar_active_link_uses_blue_outline():
         assert "background: transparent !important;" in css_found
 
 
-def test_navbar_more_and_language_controls_have_visible_contrast():
+def test_navbar_account_and_language_controls_match_the_visual_layout():
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
@@ -96,11 +96,13 @@ def test_navbar_more_and_language_controls_have_visible_contrast():
         if "<style>" in str(call[0][0])
     )
     assert '[data-testid="stPopoverButton"]' in css
-    assert "background: #e0f2fe !important;" in css
-    assert "color: #075985 !important;" in css
+    assert ".st-key-ag_profile_menu [data-testid=\"stPopoverButton\"]" in css
+    assert "width: min(95vw, 1360px) !important;" in css
+    assert "min-height: 7.25rem !important;" in css
     assert ".st-key-lang_cycle_btn button" in css
     assert "position: fixed !important;" in css
     assert "max-width: 840px" in css
+    assert any(call.kwargs.get("icon") == ":material/person:" for call in mock_st.popover.call_args_list)
     assert any(call.args[0] == "Menu" for call in mock_st.popover.call_args_list)
 
 

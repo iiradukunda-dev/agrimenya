@@ -1,6 +1,7 @@
 """Automated tests for internationalization (i18n) and AI widget translation in agrimenya."""
 import streamlit as st
-from utils.i18n import FALLBACK_TRANSLATIONS, get_current_language, set_language, t
+from unittest.mock import MagicMock, patch
+from utils.i18n import FALLBACK_TRANSLATIONS, get_current_language, render_language_selector, set_language, t
 
 
 def test_ai_ask_ai_translations_exist():
@@ -34,6 +35,16 @@ def test_language_switching_translates_ai_ask_ai():
     # Reset to English
     set_language("en")
     assert t("ai.ask_ai") == "Ask AI"
+
+
+def test_language_selector_uses_globe_icon():
+    mock_st = MagicMock()
+    with patch("utils.i18n.st", mock_st), patch(
+        "utils.i18n.get_current_language", return_value="en"
+    ):
+        render_language_selector(sidebar=False)
+
+    assert mock_st.button.call_args.kwargs["icon"] == ":material/language:"
 
 
 def test_navbar_and_home_translation_keys():
@@ -109,5 +120,4 @@ def test_dynamic_language_switching_across_all_pages():
 
     # Reset to English
     set_language("en")
-
 

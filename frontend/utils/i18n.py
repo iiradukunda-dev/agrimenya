@@ -1099,6 +1099,7 @@ def render_language_selector(sidebar: bool = True, button_key: str = "lang_cycle
 
         st.button(
             label=" ",
+            icon=":material/language:",
             key=button_key,
             on_click=_cycle_lang,
             help=f"Switch language ({current_code.upper()} → {next_code.upper()})",

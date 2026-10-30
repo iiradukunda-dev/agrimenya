@@ -201,9 +201,9 @@ def render_pwa_support() -> None:
             [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .st-key-lang_cycle_btn button,
             [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="column"]:last-child button,
             [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stColumn"]:last-child button {
-              background: rgba(2, 132, 199, 0.08) !important;
-              background-color: rgba(2, 132, 199, 0.08) !important;
-              border: 1.5px solid rgba(2, 132, 199, 0.30) !important;
+              background: transparent !important;
+              background-color: transparent !important;
+              border: none !important;
               border-radius: 50% !important;
               box-shadow: none !important;
             }
