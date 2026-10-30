@@ -37,6 +37,8 @@ class TestTheme(unittest.TestCase):
         self.assertIn("--ag-primary: #0284c7;", light_css)
         self.assertIn("--ag-bg-base: #f8fafc;", light_css)
         self.assertEqual(mock_st.session_state["ag_theme_mode"], "light")
+        self.assertIn('[data-testid="stSkeleton"]', light_css)
+        self.assertIn("display: none !important;", light_css)
 
         mock_st.session_state = {"ag_theme_mode": "dark"}
         load_theme()
@@ -62,9 +64,6 @@ class TestTheme(unittest.TestCase):
         self.assertIn("animation: ag-button-shake 320ms ease-in-out !important;", css)
         self.assertIn('[data-testid="stAppViewContainer"] button:active', css)
         self.assertIn('[data-testid="stAppViewContainer"] a:active', css)
-        self.assertIn("animation: none !important;", css)
-        self.assertIn("border-radius: 9999px !important;", css)
-        self.assertIn('[data-testid="stFormSubmitButton"] button[kind="primary"]', css)
         self.assertIn("animation: none !important;", css)
         self.assertIn("border-radius: 9999px !important;", css)
         self.assertIn('[data-testid="stFormSubmitButton"] button[kind="primary"]', css)

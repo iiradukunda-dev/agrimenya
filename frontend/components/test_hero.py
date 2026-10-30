@@ -1,10 +1,10 @@
-"""Unit tests for the landing-page hero and video background."""
+"""Unit tests for the landing-page hero."""
 from unittest.mock import MagicMock, patch
 import pytest
 
 
-def test_home_hero_sets_up_landing_video_background():
-    """Verify the landing page uses its static video behind readable page content."""
+def test_home_hero_does_not_inject_a_video_background():
+    """Verify the hero renders without a page-wide video or background override."""
     from components.home_hero import render_home_hero
 
     mock_st = MagicMock()
@@ -23,19 +23,9 @@ def test_home_hero_sets_up_landing_video_background():
         assert mock_components.html.called, "components.html was not called"
         hero_html = str(mock_components.html.call_args[0][0])
 
-        assert "/assets/landing%20video.mp4" in hero_html
-        assert "autoplay muted loop playsinline" in hero_html
-        assert "object-fit: cover" in hero_html
-        assert "syncVideoLayerSize" in hero_html
-        assert "mainContent?.scrollHeight" in hero_html
-        assert "new parentWindow.ResizeObserver(syncVideoLayerSize)" in hero_html
-        assert "rgba(248, 250, 252, 0.64)" in hero_html
-        assert "setupLandingVideoBackground" in hero_html
-        assert "ag-landing-fullpage-video" in hero_html
-        assert "__agrimenyaLandingVideoCleanup" in hero_html
-
-
-def test_landing_video_url_encodes_asset_name():
-    from components.home_hero import _landing_video_url
-
-    assert _landing_video_url() == "/assets/landing%20video.mp4"
+        assert "<video" not in hero_html
+        assert "landing video.mp4" not in hero_html
+        assert "setupLandingVideoBackground" not in hero_html
+        assert "ag-landing-video-layer" not in hero_html
+        assert "background: transparent !important;" not in hero_html
+        assert "ag-hero-title" in hero_html
