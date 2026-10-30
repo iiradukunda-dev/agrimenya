@@ -311,6 +311,7 @@ def render_segment() -> None:
         st.subheader("Observed values by district")
         st.caption(
             "Use the map controls to switch between road and Google satellite imagery, or toggle the RSA overlay. "
+            "Zoom in to explore districts, sectors, cells, and villages. "
             f"{RSA_ORTHOMOSAIC_NOTE}"
         )
         _render_comparison_map(

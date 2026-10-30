@@ -40,6 +40,34 @@
         display: flex;
       }
 
+      #map-level-status {
+        position: absolute;
+        top: 10px;
+        left: 126px;
+        z-index: 1;
+        max-width: calc(100% - 150px);
+        padding: 6px 9px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, .94);
+        color: #334155;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, .24);
+        font: 11px/1.35 Arial, sans-serif;
+        pointer-events: none;
+      }
+
+      .admin-boundary-label {
+        color: #123b3b;
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        text-shadow:
+          -1px -1px 2px #fff,
+          1px -1px 2px #fff,
+          -1px 1px 2px #fff,
+          1px 1px 2px #fff;
+        white-space: nowrap;
+      }
+
       .rsa-toggle {
         margin: 10px 0 0 10px;
         padding: 8px 11px;
@@ -75,6 +103,7 @@
   </head>
   <body>
     <div id="map" role="application" aria-label="Interactive Google map"></div>
+    <div id="map-level-status" aria-live="polite">Rwanda administrative boundaries · NISR 2022</div>
     <div id="map-status" role="status" aria-live="polite"></div>
     <script src="google_map.js"></script>
   </body>

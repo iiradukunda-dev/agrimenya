@@ -108,3 +108,23 @@ def test_google_map_component_uses_maps_javascript_api_and_click_events():
     assert 'mapTypeIds: ["roadmap", "satellite"]' in script
     assert 'name: "Rwanda Space Agency orthomosaic"' in script
     assert 'aria-label="Interactive Google map"' in html
+
+
+def test_google_map_loads_official_admin_levels_as_zoom_increases():
+    assert [
+        (level["name"], level["min_zoom"], level["layer_id"])
+        for level in maps.ADMIN_BOUNDARY_LEVELS
+    ] == [
+        ("District", 0, 0),
+        ("Sector", 9, 1),
+        ("Cell", 12, 2),
+        ("Village", 15, 3),
+    ]
+
+    component_path = maps.Path(__file__).parent / "google_map_component"
+    script = (component_path / "google_map.js").read_text(encoding="utf-8")
+    assert "map.addListener(\"idle\", scheduleBoundaryRefresh)" in script
+    assert "geometryType: \"esriGeometryEnvelope\"" in script
+    assert "spatialRel: \"esriSpatialRelIntersects\"" in script
+    assert "resultRecordCount: \"1000\"" in script
+    assert 'level.name_field' in script

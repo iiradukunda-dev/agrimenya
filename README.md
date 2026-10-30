@@ -55,7 +55,8 @@ Supabase settings (`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`).
 For interactive Google satellite maps, create a root `.env` from `.env.example`
 and set `GOOGLE_MAPS_API_KEY`. Restrict this browser key to the Maps JavaScript
 API and the application's allowed HTTP referrers; enable billing in Google
-Cloud. Never commit the populated `.env` file.
+Cloud. Map boundaries load from NISR census mapping as you zoom from districts
+to sectors, cells, and villages. Never commit the populated `.env` file.
 
 ### Option A: Run from the repository root (recommended)
 
