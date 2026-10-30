@@ -22,6 +22,18 @@ Use paginated endpoints for large zone and metric collections, and preserve
 their pagination metadata and filters. Keep area, crop, and season context
 aligned with API IDs and filters.
 
+The Decision page obtains crop options from `GET /decision/crops`, available
+seasons from `GET /decision/evidence-ranking?crop=...`, and district comparisons
+from `/decision/district-ranking`. A field assessment sends the selected
+`zone_id`, `crop`, and backend-listed `season` to `POST /decision/predict`;
+`area_cultivated` is optional and is sent only when the user requests a total
+output estimate. This POST requires the configured user API credential. After
+an assessment, the UI loads field guidance from
+`GET /decision/recommendations/{zone_id}`. Saved assessment actions are
+available from `/decision/priority-ranking?include_recommendations=true`.
+Show unavailable evidence as unavailable rather than generating substitute
+crops, seasons, rankings, or model/provenance claims.
+
 ## Data and evidence handling
 
 - Display missing values as unavailable; do not substitute guessed or mock

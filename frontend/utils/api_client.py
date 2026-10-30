@@ -357,17 +357,6 @@ def get_crop_comparison(district: str, season: str | None = None) -> list[dict[s
 # ═══════════════════════════════════════════════════════════════════
 
 @st.cache_data(ttl=300, show_spinner=False)
-def get_model_info() -> dict[str, Any] | None:
-    """GET /decision/model-info: yield prediction baseline model metadata and provenance."""
-    if USE_MOCK_DATA:
-        return mock_data.generate_mock_model_info()
-    data = _get_api("/decision/model-info")
-    if isinstance(data, dict):
-        return data
-    return mock_data.generate_mock_model_info()
-
-
-@st.cache_data(ttl=300, show_spinner=False)
 def get_district_ranking(crop: str, season: str | None = None) -> list[dict[str, Any]]:
     """GET /decision/district-ranking: district yield benchmarking against national reference."""
     if USE_MOCK_DATA:
@@ -376,9 +365,7 @@ def get_district_ranking(crop: str, season: str | None = None) -> list[dict[str,
     if season:
         params["season"] = season
     data = _get_api("/decision/district-ranking", params=params)
-    if isinstance(data, list):
-        return data
-    return mock_data.generate_mock_district_ranking(crop=crop, season=season)
+    return data if isinstance(data, list) else []
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -405,33 +392,38 @@ def get_disease_risk(zone_id: str, crop: str, symptoms: str, image_description: 
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_recommendations() -> list[dict[str, Any]]:
-    """Fetches decision-making recommendations based on priority rankings."""
+    """Fetch saved assessments and actionable suggestions from the backend."""
     if USE_MOCK_DATA:
         return mock_data.generate_mock_recommendations()
 
-    rankings = _get_api("/decision/priority-ranking")
-    if rankings and isinstance(rankings, list):
-        recs = []
-        for r in rankings[:5]:
-            zone_id = r.get("zone_id")
-            crop = r.get("crop", "Unknown")
-            priority = r.get("priority_level", "Medium")
-            district = (r.get("zones") or {}).get("district", "Unknown")
+    rows = _get_api(
+        "/decision/priority-ranking",
+        params={"include_recommendations": "true", "limit": 20},
+    )
+    if not isinstance(rows, list):
+        return []
 
-            rec_data = _get_api(f"/decision/recommendations/{quote(str(zone_id), safe='')}")
-            texts = rec_data.get("recommendations", []) if isinstance(rec_data, dict) else []
-            text = " ".join(texts) if texts else "No detailed recommendations."
-
-            recs.append({
-                "area": district,
-                "crop": crop,
-                "priority": priority,
-                "text": text,
-                "status": "Pending",
-            })
-        if recs:
-            return recs
-    return []
+    recommendations = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        zone = row.get("zones") or {}
+        if not isinstance(zone, dict):
+            zone = {}
+        actions = row.get("recommendations") or []
+        if not isinstance(actions, list):
+            actions = []
+        recommendations.append({
+            "zone_id": row.get("zone_id"),
+            "area": zone.get("district") or "Unknown district",
+            "crop": row.get("crop") or "Unknown crop",
+            "season": row.get("season"),
+            "priority": row.get("priority_level") or "Unknown",
+            "text": " ".join(str(action) for action in actions if action) or "No additional action guidance returned.",
+            "recommendations": actions,
+            "status": "Pending",
+        })
+    return recommendations
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -446,10 +438,10 @@ def get_priority_ranking() -> list[dict[str, Any]]:
 @st.cache_data(ttl=300, show_spinner=False)
 def get_crops() -> list[str]:
     """Returns available crops from the decision module."""
+    if USE_MOCK_DATA:
+        return mock_data.CROPS
     data = _get_api("/decision/crops")
-    if data and isinstance(data, list):
-        return data
-    return mock_data.CROPS
+    return data if isinstance(data, list) else []
 
 
 def predict_yield(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -494,9 +486,22 @@ def get_export_flags() -> list[dict[str, Any]]:
 # CHAT / AI ASSISTANT
 # ═══════════════════════════════════════════════════════════════════
 
-def chat(message: str, zone_id: str) -> dict[str, Any] | None:
-    """Sends a message to the AI assistant."""
+def chat(
+    message: str,
+    zone_id: str,
+    *,
+    history: list[dict[str, str]] | None = None,
+    crop: str | None = None,
+    season: str | None = None,
+) -> dict[str, Any] | None:
+    """Send a zone-context question and recent conversation to the backend advisor."""
     payload: dict[str, Any] = {"question": message, "zone_id": zone_id}
+    if history:
+        payload["history"] = history[-8:]
+    if crop:
+        payload["crop"] = crop
+    if season:
+        payload["season"] = season
     # The backend may wait up to 20 seconds for an LLM provider response.
     return _post_api("/chat", payload, timeout=35)
 

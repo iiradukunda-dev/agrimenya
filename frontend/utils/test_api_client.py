@@ -72,15 +72,58 @@ class TestApiClientExtended(unittest.TestCase):
         mock_get.assert_called_once_with("/segmentation/districts")
         api_client.get_districts.clear()
 
-    def test_get_model_info_fallback(self):
-        """Verify get_model_info returns structured model diagnostics with mock fallback."""
-        with patch.object(api_client, "USE_MOCK_DATA", True):
-            info = api_client.get_model_info()
-            self.assertIsNotNone(info)
-            self.assertIn("metrics", info)
-            self.assertIn("features", info)
-            self.assertIn("known_limitations", info)
-            self.assertIn("active_basis", info)
+    def test_decision_crops_do_not_show_mock_choices_when_backend_is_unavailable(self):
+        with patch.object(api_client, "USE_MOCK_DATA", False), patch.object(
+            api_client, "_get_api", return_value=None
+        ):
+            api_client.get_crops.clear()
+            try:
+                self.assertEqual(api_client.get_crops(), [])
+            finally:
+                api_client.get_crops.clear()
+
+    def test_district_ranking_does_not_replace_api_failure_with_mock_results(self):
+        with patch.object(api_client, "USE_MOCK_DATA", False), patch.object(
+            api_client, "_get_api", return_value=None
+        ):
+            api_client.get_district_ranking.clear()
+            try:
+                self.assertEqual(api_client.get_district_ranking("Maize"), [])
+            finally:
+                api_client.get_district_ranking.clear()
+
+    def test_recommendations_use_backend_saved_assessments_and_action_guidance(self):
+        rows = [{
+            "zone_id": "zone-123",
+            "crop": "Maize",
+            "season": "2026 Season A",
+            "priority_level": "High",
+            "zones": {"district": "Huye"},
+            "recommendations": ["Review drainage", "Check soil moisture"],
+        }]
+        with patch.object(api_client, "USE_MOCK_DATA", False), patch.object(
+            api_client, "_get_api", return_value=rows
+        ) as get_api:
+            api_client.get_recommendations.clear()
+            try:
+                result = api_client.get_recommendations()
+            finally:
+                api_client.get_recommendations.clear()
+
+        get_api.assert_called_once_with(
+            "/decision/priority-ranking",
+            params={"include_recommendations": "true", "limit": 20},
+        )
+        self.assertEqual(result, [{
+            "zone_id": "zone-123",
+            "area": "Huye",
+            "crop": "Maize",
+            "season": "2026 Season A",
+            "priority": "High",
+            "text": "Review drainage Check soil moisture",
+            "recommendations": ["Review drainage", "Check soil moisture"],
+            "status": "Pending",
+        }])
 
     def test_get_district_ranking_mock(self):
         """Verify get_district_ranking returns district list with benchmarks and yield gaps."""
@@ -135,6 +178,30 @@ class TestApiClientExtended(unittest.TestCase):
         self.assertEqual(result["predicted_disease"], "Maize Lethal Necrosis")
         self.assertEqual(result["risk_level"], "High")
         self.assertTrue(mock_post.called)
+
+    @patch("utils.api_client.requests.post")
+    def test_chat_sends_recent_zone_context_to_backend(self, mock_post):
+        response = MagicMock()
+        response.json.return_value = {"answer": "Use the zone's seasonal rainfall context."}
+        response.raise_for_status = MagicMock()
+        mock_post.return_value = response
+
+        result = api_client.chat(
+            "How should I prepare?",
+            zone_id="zone-123",
+            history=[{"role": "user", "content": "I grow maize."}],
+            crop="Maize",
+            season="2026 Season A",
+        )
+
+        self.assertEqual(result["answer"], "Use the zone's seasonal rainfall context.")
+        self.assertEqual(mock_post.call_args.kwargs["json"], {
+            "question": "How should I prepare?",
+            "zone_id": "zone-123",
+            "history": [{"role": "user", "content": "I grow maize."}],
+            "crop": "Maize",
+            "season": "2026 Season A",
+        })
 
     @patch("requests.patch")
     def test_update_plan_action_status(self, mock_patch):

@@ -48,23 +48,51 @@ class TestViews(unittest.TestCase):
     @patch("views.decide.api_client")
     def test_render_decide_executes_safely(self, mock_api, mock_st):
         mock_api.get_recommendations.return_value = [
-            {"area": "Musanze", "crop": "Irish Potatoes", "priority": "High", "text": "Apply fertilizer", "status": "Pending"}
+            {
+                "zone_id": "zone-1",
+                "area": "Musanze",
+                "crop": "Irish Potatoes",
+                "season": "2026 Season A",
+                "priority": "High",
+                "text": "Apply fertilizer",
+                "status": "Pending",
+            }
         ]
         mock_api.get_crops.return_value = ["Maize", "Irish Potatoes"]
         mock_api.get_district_ranking.return_value = [
-            {"district": "Musanze", "yield_per_ha": 3500.0, "rank": 1}
+            {
+                "district": "Musanze",
+                "yield_per_ha": 3500.0,
+                "benchmark_yield_per_ha": 3200.0,
+                "yield_gap_kg_ha": 0.0,
+                "observation_count": 12,
+                "rank": 1,
+            }
         ]
-        mock_api.get_evidence_ranking.return_value = {"national_reference_kg_ha": 3200.0}
-        mock_api.get_model_info.return_value = {
-            "active_basis": "baseline",
-            "model_version": "nisr-sas-baseline",
-            "metrics": {"validation": {"r2": 0.83, "mae": 214.2}},
-            "features": ["district", "crop"],
-            "known_limitations": ["Limited historical data"],
+        mock_api.get_evidence_ranking.return_value = {
+            "national_reference_kg_ha": 3200.0,
+            "available_seasons": ["2026 Season A"],
+            "interpretation": "District evidence only.",
         }
         mock_api.get_zones.return_value = [
-            {"id": "zone-1", "district": "Musanze", "crop": "Irish Potatoes"}
+            {"id": "zone-1", "district": "Musanze", "crop": "Irish Potatoes", "area_cultivated": 2.0}
         ]
+        mock_api.predict_yield.return_value = {
+            "yield_per_ha": 2400.0,
+            "predicted_yield": 4800.0,
+            "priority_level": "Medium",
+            "district_observations": 12,
+            "priority_reasons": ["Historical observations support this assessment."],
+            "yield_data_status": "available",
+        }
+        mock_api.get_zone_recommendations.return_value = {
+            "recommendations": ["Review soil moisture before planting."]
+        }
+        mock_st.selectbox.side_effect = lambda label, options, **kwargs: options[0]
+        mock_st.button.return_value = False
+        mock_st.checkbox.return_value = False
+        mock_st.form_submit_button.return_value = True
+        mock_st.chat_input.return_value = None
         mock_api.get_field_risk.return_value = None
 
         mock_st.session_state = {}
@@ -74,6 +102,13 @@ class TestViews(unittest.TestCase):
 
         render_decide()
         self.assertTrue(mock_st.tabs.called)
+        self.assertTrue(mock_api.get_evidence_ranking.called)
+        mock_api.predict_yield.assert_called_once_with({
+            "zone_id": "zone-1",
+            "crop": "Maize",
+            "season": "2026 Season A",
+        })
+        mock_api.get_zone_recommendations.assert_called_once_with("zone-1")
 
     @patch("views.plan.st")
     @patch("views.plan.api_client")
@@ -95,7 +130,7 @@ class TestViews(unittest.TestCase):
         mock_api.get_plan_action_history.return_value = []
         mock_api.get_crops.return_value = ["Maize", "Beans"]
 
-        mock_st.session_state = {}
+        mock_st.session_state = {"planning_pending_zone_id": "zone-1"}
         mock_st.button.return_value = False
         mock_st.tabs.return_value = [MagicMock() for _ in range(3)]
         mock_st.columns.side_effect = lambda n, **kwargs: [MagicMock() for _ in range(n if isinstance(n, int) else len(n))]
@@ -106,6 +141,7 @@ class TestViews(unittest.TestCase):
         render_plan()
         self.assertTrue(mock_api.get_zones.called)
         self.assertTrue(mock_api.get_zone_plans.called)
+        self.assertEqual(mock_st.session_state["planning_zone_select"], "Musanze / Irish Potatoes")
 
     @patch("views.communicate.st")
     @patch("views.communicate.api_client")
@@ -166,4 +202,3 @@ class TestViews(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

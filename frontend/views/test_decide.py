@@ -1,4 +1,4 @@
-from views.decide import _available_ranking_seasons, _evaluation_rows
+from views.decide import _available_ranking_seasons, _format_yield, _zone_options
 
 
 def test_available_ranking_seasons_uses_backend_season_values():
@@ -13,28 +13,22 @@ def test_available_ranking_seasons_uses_backend_season_values():
     ]
 
 
-def test_evaluation_rows_uses_reported_metrics_without_fabricated_scores():
-    rows = _evaluation_rows({
-        "metrics": {
-            "leave_one_season_out": {
-                "crop_mean": {
-                    "n": 20,
-                    "coverage": 0.9,
-                    "mae_kg_ha": 120.5,
-                    "rmse_kg_ha": 220.0,
-                    "r2": 0.75,
-                },
-                "not_evaluated": {"n": 0, "coverage": 0, "mae_kg_ha": None},
-            },
-        },
-    })
+def test_format_yield_displays_missing_and_non_finite_values_as_unavailable():
+    assert _format_yield(1250.25) == "1,250.2 kg/ha"
+    assert _format_yield(10, "kg") == "10.0 kg"
+    assert _format_yield(None) == "Not available"
+    assert _format_yield(float("nan")) == "Not available"
 
-    assert rows == [{
-        "Evaluation split": "Leave One Season Out",
-        "Candidate": "Crop Mean",
-        "Observations": 20,
-        "Coverage": 0.9,
-        "MAE (kg/ha)": 120.5,
-        "RMSE (kg/ha)": 220.0,
-        "R²": 0.75,
-    }]
+
+def test_zone_options_use_registered_zone_context_and_unique_labels():
+    options = _zone_options([
+        {"id": "12345678-a", "district": "Huye", "sector": "Ruhashya", "cell": "Gatobotobo"},
+        {"id": "12345678-b", "district": "Huye", "sector": "Ruhashya", "cell": "Gatobotobo"},
+        {"district": "No ID"},
+    ])
+
+    assert list(options) == [
+        "Huye / Ruhashya / Gatobotobo · 123456",
+        "Huye / Ruhashya / Gatobotobo · 12345678-b",
+    ]
+    assert len(options) == 2
