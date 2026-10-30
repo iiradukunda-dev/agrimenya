@@ -40,5 +40,10 @@ def test_nginx_configuration_routes_oauth_to_api_on_the_public_port():
     assert "location = /community/auth/google/callback {" in config
     assert "proxy_pass https://agri-menya-api.onrender.com;" in config
     assert "proxy_pass http://127.0.0.1:8502;" in config
+    assert "client_body_temp_path /tmp/nginx-client-body;" in config
+    assert "proxy_temp_path /tmp/nginx-proxy-temp;" in config
+    assert "fastcgi_temp_path /tmp/nginx-fastcgi-temp;" in config
+    assert "uwsgi_temp_path /tmp/nginx-uwsgi-temp;" in config
+    assert "scgi_temp_path /tmp/nginx-scgi-temp;" in config
     assert "@API_BASE_URL@" not in config
     assert "@PORT@" not in config
