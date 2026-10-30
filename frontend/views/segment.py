@@ -18,7 +18,12 @@ except ImportError:  # Keep the table usable if optional map packages are missin
 from components.errors import error_boundary
 from components.icons import render_icon_title
 from components.charts import render_segment_distribution_chart, render_segment_summary_chart
-from components.maps import add_map_layer_control, create_rwanda_map
+from components.maps import (
+    RSA_ORTHOMOSAIC_NOTE,
+    add_map_layer_control,
+    add_rsa_orthomosaic_layer,
+    create_rwanda_map,
+)
 from utils import api_client
 from utils.i18n import t
 from views.data_insights import normalize_agri_metrics
@@ -142,6 +147,7 @@ def _render_comparison_map(
         return
 
     map_view = create_rwanda_map(satellite_default=satellite_default)
+    add_rsa_orthomosaic_layer(map_view)
 
     value_by_district = {
         _clean_value(row["District"]).casefold(): row
@@ -335,7 +341,10 @@ def render_segment() -> None:
     map_col, summary_col = st.columns([1.55, 1], gap="large")
     with map_col:
         st.subheader("Observed values by district")
-        st.caption("Switch between street and satellite imagery using the map layers control at the upper right.")
+        st.caption(
+            "Switch between street, satellite, and RSA imagery using the map layers control at the upper right. "
+            f"{RSA_ORTHOMOSAIC_NOTE}"
+        )
         _render_comparison_map(
             summary,
             selected_metric_label,

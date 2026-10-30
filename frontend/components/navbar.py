@@ -251,15 +251,37 @@ def render_navbar(show_sidebar: bool = False) -> None:
         .st-key-ag_mobile_navbar [data-testid="stPopoverButton"] > div > div[aria-hidden="true"] {
           display: none !important;
         }
-        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] {
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] {
           width: min(19rem, calc(100vw - 2rem)) !important;
           max-width: calc(100vw - 2rem) !important;
           max-height: calc(100dvh - 7rem) !important;
           overflow-y: auto !important;
         }
-        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] {
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink"],
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] {
           min-height: 2.75rem !important;
           padding: 0.65rem 0.85rem !important;
+          background: transparent !important;
+          background-color: transparent !important;
+          border: none !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+        }
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover,
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover,
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink"][aria-current="page"],
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"][aria-current="page"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink"][aria-current="page"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"][aria-current="page"] {
+          background: transparent !important;
+          background-color: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
         }
       }
 

@@ -8,7 +8,10 @@ def test_navbar_css_has_no_black_background_on_buttons():
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
-    mock_st.columns.return_value = [MagicMock() for _ in range(8)]
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
     with patch("components.navbar.st", mock_st), \
          patch("components.navbar.render_floating_ai_widget"), \
          patch("components.navbar.render_pwa_support"), \
@@ -56,7 +59,10 @@ def test_navbar_active_tab_is_sky_blue():
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
-    mock_st.columns.return_value = [MagicMock() for _ in range(8)]
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
     with patch("components.navbar.st", mock_st), \
          patch("components.navbar.render_floating_ai_widget"), \
          patch("components.navbar.render_pwa_support"), \
@@ -65,9 +71,35 @@ def test_navbar_active_tab_is_sky_blue():
         render_navbar()
 
         css_found = "".join([str(call[0][0]) for call in mock_st.markdown.call_args_list if "<style>" in str(call[0][0])])
-        assert "#e0f2fe" in css_found
+        assert "border: 2px solid #0875d1" in css_found
         assert "#0284c7" in css_found
         assert "#0369a1" in css_found
+
+
+def test_mobile_menu_links_have_no_background_boxes():
+    """Verify mobile popover links render without individual background boxes."""
+    from components.navbar import render_navbar
+
+    mock_st = MagicMock()
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
+    with patch("components.navbar.st", mock_st), \
+         patch("components.navbar.render_floating_ai_widget"), \
+         patch("components.navbar.render_pwa_support"), \
+         patch("components.navbar.render_language_selector"):
+        render_navbar()
+
+        css_found = "".join(
+            str(call[0][0])
+            for call in mock_st.markdown.call_args_list
+            if "<style>" in str(call[0][0])
+        )
+
+        assert '[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]' in css_found
+        assert 'body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"])' in css_found
+        assert "background: transparent !important" in css_found
 
 
 def test_user_session_and_page_access_control():

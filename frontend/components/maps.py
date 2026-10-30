@@ -1,9 +1,4 @@
-"""
-Map component for the Segmentation pillar.
-
-Renders an interactive Folium map centered on Rwanda showing
-priority zones with semantic color coding.
-"""
+"""Shared interactive Folium map components for Rwanda agricultural views."""
 import html
 import math
 
@@ -26,6 +21,10 @@ PRIORITY_COLORS = {
 RSA_ORTHOMOSAIC_TILES = (
     "https://portal.space.gov.rw/server/rest/services/Hosted/Ortho_Orthomosaic/"
     "MapServer/tile/{z}/{y}/{x}"
+)
+RSA_ORTHOMOSAIC_NOTE = (
+    "The public RSA orthomosaic cache has a limited mapped footprint near Kigali, and its capture date is not "
+    "available. It is visual reference only, not evidence of crop type, field condition, or yield."
 )
 ESRI_SATELLITE_TILES = (
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/"
@@ -67,6 +66,23 @@ def add_map_layer_control(map_view) -> None:
         folium.LayerControl(collapsed=True, position="topright").add_to(map_view)
 
 
+def add_rsa_orthomosaic_layer(map_view) -> None:
+    """Add the Rwanda Space Agency imagery as an optional overlay."""
+    if folium is None or map_view is None:
+        return
+    folium.TileLayer(
+        tiles=RSA_ORTHOMOSAIC_TILES,
+        attr=("Imagery: <a href='https://portal.space.gov.rw/server/rest/services/Hosted/"
+              "Ortho_Orthomosaic/MapServer' target='_self'>Rwanda Space Agency</a>"),
+        name="RSA orthomosaic",
+        overlay=True,
+        control=True,
+        show=False,
+        max_zoom=23,
+        max_native_zoom=23,
+    ).add_to(map_view)
+
+
 def render_priority_map(df, *, key: str = "priority_map") -> str | None:
     """
     Renders a Folium map with priority zone markers.
@@ -84,24 +100,7 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
 
     m = create_rwanda_map()
 
-    show_imagery = st.toggle(
-        "Show Rwanda Space Agency orthomosaic imagery",
-        value=False,
-        key=f"{key}_rsa_imagery",
-        help="Visual context only. This imagery does not affect yield estimates or priority levels.",
-    )
-    if show_imagery:
-        folium.TileLayer(
-            tiles=RSA_ORTHOMOSAIC_TILES,
-            attr=("Imagery: <a href='https://portal.space.gov.rw/server/rest/services/Hosted/"
-                  "Ortho_Orthomosaic/MapServer' target='_self'>Rwanda Space Agency</a>"),
-            name="RSA orthomosaic",
-            overlay=True,
-            control=True,
-            show=True,
-            max_zoom=23,
-            max_native_zoom=23,
-        ).add_to(m)
+    add_rsa_orthomosaic_layer(m)
 
     if not df.empty:
         for _, row in df.iterrows():
@@ -148,16 +147,13 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
 
     add_map_layer_control(m)
     st.caption("Red: High priority | Amber: Medium | Green: Low | Gray: not assessed. Click a point to select its zone.")
-    if show_imagery:
-        st.caption(
-            "The public RSA orthomosaic cache has a limited mapped footprint near Kigali; "
-            "the service does not expose a capture date in its layer summary. It is visual reference only "
-            "and is not evidence of crop type, field condition, or yield."
-        )
+    st.caption(
+        f"Use the layer control to switch between street, satellite, and RSA imagery. {RSA_ORTHOMOSAIC_NOTE}"
+    )
     click = st_folium(
         m,
         key=key,
-        height=500,
+        height=540,
         width="stretch",
         returned_objects=["last_object_clicked"],
     )
