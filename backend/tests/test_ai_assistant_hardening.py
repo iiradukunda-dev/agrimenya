@@ -132,6 +132,29 @@ def test_context_uses_district_nisr_baseline_when_no_field_metrics_exist(monkeyp
     assert "not total production" in answer
 
 
+def test_planting_how_to_fallback_answers_banana_beer_question():
+    context = json.dumps({
+        "district": "Musanze", "crop": None, "season": None,
+        "crop_yield_records": [
+            {"crop": "Banana for beer", "season": "2026 Season B", "source": "NISR SAS"},
+            {"crop": "Maize", "season": "2026 Season B", "source": "NISR SAS"},
+        ],
+        "basis": {"source": "NISR SAS"}, "alerts": [],
+    })
+
+    raw = assistant._local_grounded_response(
+        "then teach me how to plant banana beer", context
+    )
+    answer = assistant.validate_model_response(raw, context)
+
+    assert answer is not None
+    assert answer.startswith("General guidance:")
+    assert "disease-free suckers" in answer
+    assert "local agriculture extension worker" in answer
+    assert "Maize" not in answer
+    assert "NISR SAS" not in answer
+
+
 def test_rejects_numbers_not_in_data_and_numbers_missing_from_citations():
     context = '{"district":"Gasabo","yield_per_ha":1200,"basis":{"source":"NISR SAS"},"alerts":[]}'
     invented = '{"answer":"Gasabo yield is 9000 (NISR SAS).","numbers_used":[9000],"sources":["NISR SAS"]}'

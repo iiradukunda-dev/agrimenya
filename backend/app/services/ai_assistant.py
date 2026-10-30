@@ -57,6 +57,15 @@ def _safe_fallback_json(context: str) -> str:
     })
 
 
+def _is_crop_planting_how_to_question(question: str) -> bool:
+    folded = question.casefold()
+    return any(phrase in folded for phrase in (
+        "how to plant", "how do i plant", "how can i plant", "teach me how to plant",
+        "teach me to plant", "planting instructions", "planting steps",
+        "how to grow", "how do i grow", "how can i grow", "teach me how to grow",
+    ))
+
+
 def _local_grounded_response(prompt: str, context: str) -> str:
     """Write concise, conversational answers using only the selected DATA scope."""
     try:
@@ -78,6 +87,31 @@ def _local_grounded_response(prompt: str, context: str) -> str:
                    "category proxy" if basis == "category_proxy" else "baseline average")
     records = data.get("crop_yield_records") or []
     decision_intent = _is_decision_comparison_question(question)
+    if _is_crop_planting_how_to_question(question):
+        banana_intent = any(term in question for term in ("banana", "bananas", "urwagwa", "beer banana"))
+        if banana_intent:
+            answer = (
+                "General guidance: If you mean growing bananas for banana beer (urwagwa), first ask a local "
+                "agriculture extension worker which brewing cultivar suits your area. Start with healthy, "
+                "disease-free suckers from a trusted source; plant when reliable rains begin in deep, fertile, "
+                "well-drained soil; then mulch, control weeds, avoid waterlogging, and remove diseased plants. "
+                "Cultivar, spacing, and planting-hole guidance vary with local conditions, so confirm those "
+                "details locally. Did you mean growing the bananas or making the drink?"
+            )
+        else:
+            named_crop = next(
+                (str(row.get("crop")) for row in records
+                 if row.get("crop") and str(row["crop"]).casefold() in question),
+                None,
+            )
+            crop_label = f" {named_crop}" if named_crop else ""
+            answer = (
+                f"General guidance: To plant{crop_label}, use healthy planting material suited to your area, "
+                "prepare fertile, well-drained soil, and plant when local rainfall is reliable. Keep the plot "
+                "weeded, protect soil moisture with mulch where appropriate, and check for pests or disease. "
+                "Ask a local extension worker for crop- and variety-specific spacing and planting depth."
+            )
+        return json.dumps({"answer": answer, "numbers_used": [], "sources": []}, ensure_ascii=False)
     if decision_intent:
         comparison = data.get("decision_comparison")
         if not comparison:
@@ -979,7 +1013,7 @@ def _assistant_system_prompt() -> str:
     return (
         "You are Agri-Menya, a practical agricultural assistant for Rwanda. Answer open-ended questions naturally and helpfully; do not require the user to select a crop or match a fixed menu. Use JSON DATA for claims about this district and its records. You may also use general agricultural knowledge to answer general how-to and explanation questions; begin those answers with 'General guidance:' and never imply they are measured facts about the selected district. "
         "When the user names a different Rwanda district, DATA is already scoped to that district; answer about DATA.district only and never mix districts. "
-        "Use DATA.crop_yield_records to compare observed crop yields, production, cultivated area, harvested area, and any recorded field conditions. For planting questions, say which crops had the strongest observed yields and name each crop, season, and source. Explain that historical survey yields do not prove what will be productive in a future season. "
+        "Use DATA.crop_yield_records to compare observed crop yields, production, cultivated area, harvested area, and any recorded field conditions. For crop-selection questions asking what to plant, compare the strongest observed yields and name each crop, season, and source. For how-to questions about planting or growing a named crop, answer the practical cultivation question with general guidance instead of listing or ranking crops; explain when local cultivar or field-specific advice is needed. Historical survey yields do not prove what will be productive in a future season. "
         "For a question about the Decisions page or its selected district comparison, use DATA.decision_comparison as the exact source for its crop reference, difference, rank, record count, and comparable-season change. Explain a below-reference result as a screening signal for local verification, never as proof of a farm problem or cause. Do not substitute DATA.benchmark for DATA.decision_comparison.crop_reference_kg_ha; they are different statistics. If decision_comparison is null, state that no matching decision comparison is available. "
         "When a crop record source is NISR SAS baseline, describe it as a pooled historical yield baseline, not a current field observation. A yield-per-hectare ranking does not establish total production or how much land is planted with each crop. "
         "When DATA.crop or DATA.season is null, do not treat that as a reason to refuse or ask the user to choose first. Answer broad questions from DATA.crop_yield_records, summarize the recorded crops and seasons when relevant, and ask a focused follow-up only after giving the useful answer. If there are no crop records, state that evidence gap plainly. "
