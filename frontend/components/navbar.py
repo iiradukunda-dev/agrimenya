@@ -1091,8 +1091,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
         min-width: 2.35rem !important;
         max-width: 2.35rem !important;
         min-height: 2.35rem !important;
-        padding: 0 !important;
-        flex: 0 0 2.35rem !important;
+        padding: 0 0.65rem !important;
         border: 1px solid rgba(2, 132, 199, 0.24) !important;
         border-radius: 9999px !important;
         background: rgba(2, 132, 199, 0.08) !important;
@@ -1135,6 +1134,20 @@ def render_navbar(show_sidebar: bool = False) -> None:
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button p {
         display: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover p,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover [data-testid="stIconMaterial"] {
+        color: #ffffff !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div > div:first-child,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div > div:first-child span,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button [data-testid="stMarkdownContainer"] {
+        width: auto !important;
+        min-width: max-content !important;
+        height: auto !important;
+        max-height: none !important;
+        max-width: none !important;
+        overflow: visible !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover p,
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover [data-testid="stIconMaterial"] {
