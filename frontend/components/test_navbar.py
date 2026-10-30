@@ -125,6 +125,12 @@ def test_desktop_more_and_language_icons_remain_visible():
     assert '[data-testid="stPopover"] button p' in css_found
     assert "min-width: 4.8rem !important" in css_found
     assert "position: absolute !important" in css_found
+    assert "background: rgba(2, 132, 199, 0.08) !important" in css_found
+    assert "border: 1px solid rgba(2, 132, 199, 0.24) !important" in css_found
+    assert "button [data-testid=\"stMarkdownContainer\"]" in css_found
+    assert 'html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar' in css_found
+    assert 'button:not([data-testid="stPopoverButton"])' in css_found
+    assert '.st-key-ag_navbar [data-testid="stPopover"] button * {' not in css_found
 
 
 def test_mobile_menu_button_shows_more_label():

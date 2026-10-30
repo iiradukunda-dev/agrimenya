@@ -494,7 +494,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
       [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button,
       [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover button,
       [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:not(.ag-nav-active):not(#ag-nav-install-btn):not([aria-current="page"]),
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:not([data-testid="stPopoverButton"]):not(.ag-nav-active):not(#ag-nav-install-btn):not([aria-current="page"]),
       [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stBaseButton-secondary"]:not(#ag-nav-install-btn) {
         background: transparent !important;
         background-color: transparent !important;
@@ -526,16 +526,6 @@ def render_navbar(show_sidebar: bool = False) -> None:
       .st-key-ag_navbar [data-testid="stPopover"] button:hover::after {
         background: #ffffff !important;
         box-shadow: 0 6px 0 #ffffff, 0 -6px 0 #ffffff !important;
-      }
-      .st-key-ag_navbar [data-testid="stPopover"] button p,
-      .st-key-ag_navbar [data-testid="stPopover"] button span,
-      .st-key-ag_navbar [data-testid="stPopover"] button * {
-        font-size: 0 !important;
-        color: transparent !important;
-        width: 0 !important;
-        height: 0 !important;
-        margin: 0 !important;
-        overflow: hidden !important;
       }
       @media (max-width: 840px) {
         .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
@@ -1066,12 +1056,34 @@ def render_navbar(show_sidebar: bool = False) -> None:
         min-width: 4.8rem !important;
         min-height: 2.35rem !important;
         padding: 0 0.65rem !important;
+        border: 1px solid rgba(2, 132, 199, 0.24) !important;
+        border-radius: 9999px !important;
+        background: rgba(2, 132, 199, 0.08) !important;
         color: #0a1f26 !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.88rem !important;
         font-weight: 600 !important;
+        box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08) !important;
         opacity: 1 !important;
         visibility: visible !important;
+      }
+      html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
+        background: rgba(2, 132, 199, 0.1) !important;
+        background-color: rgba(2, 132, 199, 0.1) !important;
+        border: 1px solid rgba(2, 132, 199, 0.28) !important;
+        color: #0a1f26 !important;
+      }
+      html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
+        background: #0284c7 !important;
+        background-color: #0284c7 !important;
+        border-color: #0284c7 !important;
+        color: #ffffff !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover {
+        border-color: #0284c7 !important;
+        background: #0284c7 !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.24) !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div,
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div > div {
@@ -1094,6 +1106,20 @@ def render_navbar(show_sidebar: bool = False) -> None:
         font-weight: 600 !important;
         opacity: 1 !important;
         visibility: visible !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover p,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover [data-testid="stIconMaterial"] {
+        color: #ffffff !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div > div:first-child,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div > div:first-child span,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button [data-testid="stMarkdownContainer"] {
+        width: auto !important;
+        min-width: max-content !important;
+        height: auto !important;
+        max-height: none !important;
+        max-width: none !important;
+        overflow: visible !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button [data-testid="stIconMaterial"] {
         display: inline-block !important;
