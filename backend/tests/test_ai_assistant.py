@@ -53,6 +53,17 @@ def test_no_llm_returns_safe_grounded_fallback(monkeypatch):
         assert "Gasabo" in r.json()["evidence_scope"]
 
 
+def test_general_guidance_is_not_labelled_as_insufficient_evidence():
+    zone_id = str(uuid.uuid4())
+    with patch("app.routers.chat.ask_assistant_with_source", return_value=(
+        "General guidance: Keep soil covered with clean mulch.", "grounded-local", "Musanze", []
+    )), patch("app.routers.chat.enforce_request_limit"):
+        response = client.post("/chat", json={"zone_id": zone_id, "question": "Teach me something"})
+
+    assert response.status_code == 200
+    assert response.json()["answer_type"] == "general_guidance"
+
+
 def test_configured_llm_uses_anthropic_messages_api(monkeypatch):
     from app.core.config import settings
     from app.services.ai_assistant import _call_llm

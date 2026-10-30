@@ -155,6 +155,28 @@ def test_planting_how_to_fallback_answers_banana_beer_question():
     assert "NISR SAS" not in answer
 
 
+@pytest.mark.parametrize("question", [
+    "teach me something",
+    "anything you want",
+])
+def test_open_learning_question_gets_practical_general_guidance(question):
+    context = json.dumps({
+        "district": "Musanze", "crop": None, "season": None,
+        "crop_yield_records": [
+            {"crop": "Banana", "season": "2026 Season B", "source": "NISR SAS"},
+        ],
+        "basis": {"source": "NISR SAS"}, "alerts": [],
+    })
+
+    raw = assistant._local_grounded_response(question, context)
+    answer = assistant.validate_model_response(raw, context)
+
+    assert answer is not None
+    assert answer.startswith("General guidance:")
+    assert "keeping soil covered" in answer
+    assert "Would you like a short lesson" in answer
+
+
 def test_rejects_numbers_not_in_data_and_numbers_missing_from_citations():
     context = '{"district":"Gasabo","yield_per_ha":1200,"basis":{"source":"NISR SAS"},"alerts":[]}'
     invented = '{"answer":"Gasabo yield is 9000 (NISR SAS).","numbers_used":[9000],"sources":["NISR SAS"]}'
