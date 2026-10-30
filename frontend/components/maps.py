@@ -6,8 +6,11 @@ priority zones with semantic color coding.
 """
 import html
 import math
+import os
+from pathlib import Path
 
 import streamlit as st
+import streamlit.components.v1 as components
 try:
     import folium
     from streamlit_folium import st_folium
@@ -27,6 +30,50 @@ RSA_ORTHOMOSAIC_TILES = (
     "https://portal.space.gov.rw/server/rest/services/Hosted/Ortho_Orthomosaic/"
     "MapServer/tile/{z}/{y}/{x}"
 )
+NISR_BOUNDARIES_URL = "https://gis-server.statistics.gov.rw/server/rest/services/Hosted"
+ADMIN_BOUNDARY_LEVELS = [
+    {
+        "name": "District",
+        "min_zoom": 0,
+        "service": "District_Boundary_2022",
+        "layer_id": 0,
+        "name_field": "district",
+        "fields": ["province", "district"],
+        "max_allowable_offset": 0.003,
+    },
+    {
+        "name": "Sector",
+        "min_zoom": 9,
+        "service": "Sector_Boundary__Open_Data_",
+        "layer_id": 1,
+        "name_field": "sector",
+        "fields": ["province", "district", "sector"],
+        "max_allowable_offset": 0.0008,
+    },
+    {
+        "name": "Cell",
+        "min_zoom": 12,
+        "service": "Cell_Boundary_2022__Open_Data_",
+        "layer_id": 2,
+        "name_field": "cell",
+        "fields": ["province", "district", "sector", "cell"],
+        "max_allowable_offset": 0.0002,
+    },
+    {
+        "name": "Village",
+        "min_zoom": 15,
+        "service": "Village_Boundary_2022",
+        "layer_id": 3,
+        "name_field": "village",
+        "fields": ["province", "district", "sector", "cell", "village"],
+        "max_allowable_offset": 0.00005,
+    },
+]
+
+_google_location_map = components.declare_component(
+    "agrimenya_google_location_map",
+    path=str(Path(__file__).parent / "google_map_component"),
+)
 ESRI_SATELLITE_TILES = (
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/"
     "MapServer/tile/{z}/{y}/{x}"
@@ -35,6 +82,35 @@ ESRI_BOUNDARIES_TILES = (
     "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/"
     "World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
 )
+
+
+def google_maps_configured() -> bool:
+    """Return whether the optional Google Maps frontend key is configured."""
+    return bool(os.getenv("GOOGLE_MAPS_API_KEY", "").strip())
+
+
+def render_google_location_map(
+    *,
+    key: str,
+    center: dict[str, float],
+    zoom: int,
+) -> dict | None:
+    """Render NISR boundaries on Google satellite imagery when a key is configured."""
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
+    if not api_key:
+        return None
+
+    return _google_location_map(
+        api_key=api_key,
+        center=center,
+        zoom=zoom,
+        map_type="satellite",
+        boundary_levels=ADMIN_BOUNDARY_LEVELS,
+        boundaries_url=NISR_BOUNDARIES_URL,
+        height=580,
+        key=key,
+        default=None,
+    )
 
 
 def create_rwanda_map(*, satellite_default: bool = False, hybrid: bool = True):

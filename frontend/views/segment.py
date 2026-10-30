@@ -19,7 +19,12 @@ except ImportError:  # Keep the table usable if optional map packages are missin
 
 from components.errors import error_boundary
 from components.charts import render_segment_distribution_chart, render_segment_summary_chart
-from components.maps import add_map_layer_control, create_rwanda_map
+from components.maps import (
+    add_map_layer_control,
+    create_rwanda_map,
+    google_maps_configured,
+    render_google_location_map,
+)
 from utils import api_client
 from utils.i18n import t
 from views.data_insights import normalize_agri_metrics
@@ -446,6 +451,25 @@ def _parse_map_drill_key(value: object) -> tuple[str, ...] | None:
     return (parts[0].casefold(), *parts[1:])
 
 
+def _parse_google_location_selection(value: object) -> tuple[str, ...] | None:
+    """Validate the district, sector, or cell returned by the Google map component."""
+    if not isinstance(value, dict):
+        return None
+    location = value.get("admin_location")
+    if not isinstance(location, dict):
+        return None
+    district = _clean_value(location.get("district"))
+    sector = _clean_value(location.get("sector"))
+    cell = _clean_value(location.get("cell"))
+    if not district:
+        return None
+    if cell:
+        return ("cell", district, sector, cell) if sector else None
+    if sector:
+        return ("sector", district, sector)
+    return ("district", district)
+
+
 def _geometry_points(geometry: dict) -> list[tuple[float, float]]:
     """Flatten GeoJSON coordinate arrays into longitude/latitude pairs."""
     points: list[tuple[float, float]] = []
@@ -463,6 +487,60 @@ def _geometry_points(geometry: dict) -> list[tuple[float, float]]:
     return points
 
 
+def _location_map_viewport(
+    selected_district: str,
+    selected_sector: tuple[str, str] | None,
+    selected_cell: tuple[str, str, str] | None,
+) -> tuple[dict[str, float], int]:
+    """Center the Google map on the selected NISR boundary and show its next level."""
+    center = {"lat": -1.9403, "lng": 29.8739}
+    if selected_district == ALL_DISTRICTS:
+        return center, 8
+
+    try:
+        if selected_sector or selected_cell:
+            boundaries = _load_cell_boundaries(selected_district)
+            matching_points = []
+            for feature in boundaries.get("features", []):
+                properties = feature.get("properties") or {}
+                if _clean_value(properties.get("district")).casefold() != selected_district.casefold():
+                    continue
+                if selected_sector and (
+                    _clean_value(properties.get("sector")).casefold() != selected_sector[1].casefold()
+                ):
+                    continue
+                if selected_cell and (
+                    _clean_value(properties.get("cell")).casefold() != selected_cell[2].casefold()
+                ):
+                    continue
+                matching_points.extend(_geometry_points(feature.get("geometry") or {}))
+            if matching_points:
+                center = {
+                    "lat": (min(point[1] for point in matching_points) + max(point[1] for point in matching_points)) / 2,
+                    "lng": (min(point[0] for point in matching_points) + max(point[0] for point in matching_points)) / 2,
+                }
+                return center, 16 if selected_cell else 13
+            logger.warning("No NISR geometry found for selected map location in %s", selected_district)
+        else:
+            boundaries = _load_district_boundaries()
+            for feature in (boundaries or {}).get("features", []):
+                properties = feature.get("properties") or {}
+                if _clean_value(properties.get("district")).casefold() != selected_district.casefold():
+                    continue
+                points = _geometry_points(feature.get("geometry") or {})
+                if points:
+                    center = {
+                        "lat": (min(point[1] for point in points) + max(point[1] for point in points)) / 2,
+                        "lng": (min(point[0] for point in points) + max(point[0] for point in points)) / 2,
+                    }
+                    return center, 10
+            logger.warning("No NISR district geometry found for %s", selected_district)
+    except (requests.RequestException, ValueError):
+        logger.exception("Unable to center the map on selected location %s", selected_district)
+
+    return center, 8
+
+
 def _render_location_explorer(
     selected_district: str,
     selected_sector: tuple[str, str] | None,
@@ -470,17 +548,73 @@ def _render_location_explorer(
     *,
     key: str,
 ) -> None:
-    """Esri satellite basemap with NISR district -> sector -> cell boundary drill-down."""
-    if folium is None or st_folium is None:
-        st.info("The interactive satellite map is unavailable because its map components could not be loaded.")
-        return
-
-    map_view = create_rwanda_map(satellite_default=True, hybrid=True)
+    """Render a Google or Esri satellite map with NISR district -> sector -> cell drill-down."""
     current_location = (
         selected_district,
         selected_sector[1] if selected_sector else None,
         selected_cell[2] if selected_cell else None,
     )
+    if google_maps_configured():
+        center, zoom = _location_map_viewport(
+            selected_district,
+            selected_sector,
+            selected_cell,
+        )
+        if selected_district != ALL_DISTRICTS and zoom == 8:
+            st.warning(
+                "The selected NISR boundary could not be loaded for map positioning. "
+                "Showing the Rwanda overview instead."
+            )
+        selected = render_google_location_map(
+            key=(
+                f"{key}_{selected_district}_"
+                f"{selected_sector[1] if selected_sector else 'all'}_"
+                f"{selected_cell[2] if selected_cell else 'all'}"
+            ),
+            center=center,
+            zoom=zoom,
+        )
+        click = _parse_google_location_selection(selected)
+        if click:
+            if click[0] == "district":
+                next_location = (click[1], None, None)
+                next_state = {
+                    "seg_district": click[1],
+                    "seg_sector": ALL_SECTORS,
+                    "seg_cell": ALL_CELLS,
+                }
+            elif click[0] == "sector":
+                next_location = (click[1], click[2], None)
+                next_state = {
+                    "seg_district": click[1],
+                    "seg_sector": click[2],
+                    "seg_cell": ALL_CELLS,
+                }
+            else:
+                next_location = (click[1], click[2], click[3])
+                next_state = {
+                    "seg_district": click[1],
+                    "seg_sector": click[2],
+                    "seg_cell": click[3],
+                }
+            if tuple(value.casefold() if value else None for value in next_location) != tuple(
+                value.casefold() if value else None for value in current_location
+            ):
+                st.session_state["seg_map_pending_selection"] = next_state
+                st.rerun()
+
+        st.caption(
+            "Satellite imagery: Google Maps. Boundaries: NISR 2022 census mapping. "
+            "Click a district, sector, or cell to select it and zoom into the next level. "
+            "Imagery is visual context only; it does not classify crops, confirm farm boundaries, or assess suitability."
+        )
+        return
+
+    if folium is None or st_folium is None:
+        st.info("The interactive satellite map is unavailable because its map components could not be loaded.")
+        return
+
+    map_view = create_rwanda_map(satellite_default=True, hybrid=True)
 
     if selected_district == ALL_DISTRICTS:
         try:

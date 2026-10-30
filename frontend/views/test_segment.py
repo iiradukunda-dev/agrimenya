@@ -3,6 +3,8 @@ from unittest.mock import MagicMock, patch
 from views.segment import (
     _load_administrative_locations,
     _load_cell_boundaries,
+    _location_map_viewport,
+    _parse_google_location_selection,
     _parse_map_drill_key,
 )
 
@@ -73,3 +75,54 @@ def test_map_click_tooltip_decodes_location_levels():
         "Gatobotobo",
     )
     assert _parse_map_drill_key("unexpected|location") is None
+
+
+def test_google_map_click_decodes_location_levels():
+    assert _parse_google_location_selection({
+        "admin_location": {"district": "Huye"},
+    }) == ("district", "Huye")
+    assert _parse_google_location_selection({
+        "admin_location": {"district": "Huye", "sector": "Ruhashya"},
+    }) == ("sector", "Huye", "Ruhashya")
+    assert _parse_google_location_selection({
+        "admin_location": {"district": "Huye", "sector": "Ruhashya", "cell": "Gatobotobo"},
+    }) == ("cell", "Huye", "Ruhashya", "Gatobotobo")
+
+
+def test_google_map_click_rejects_incomplete_or_unexpected_location():
+    assert _parse_google_location_selection({"admin_location": {"sector": "Ruhashya"}}) is None
+    assert _parse_google_location_selection({
+        "admin_location": {"district": "Huye", "cell": "Gatobotobo"},
+    }) is None
+    assert _parse_google_location_selection("district|Huye") is None
+
+
+def test_google_map_viewport_centers_on_selected_sector_or_cell():
+    boundaries = {
+        "features": [
+            {
+                "properties": {"district": "Huye", "sector": "Ruhashya", "cell": "Gatobotobo"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[29.0, -2.5], [29.2, -2.5], [29.2, -2.3], [29.0, -2.3]]],
+                },
+            },
+            {
+                "properties": {"district": "Huye", "sector": "Mukura", "cell": "Rango"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[29.4, -2.7], [29.6, -2.7], [29.6, -2.5], [29.4, -2.5]]],
+                },
+            },
+        ],
+    }
+    with patch("views.segment._load_cell_boundaries", return_value=boundaries):
+        assert _location_map_viewport("Huye", ("Huye", "Ruhashya"), None) == (
+            {"lat": -2.4, "lng": 29.1},
+            13,
+        )
+        assert _location_map_viewport(
+            "Huye",
+            ("Huye", "Ruhashya"),
+            ("Huye", "Ruhashya", "Gatobotobo"),
+        ) == ({"lat": -2.4, "lng": 29.1}, 16)

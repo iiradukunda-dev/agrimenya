@@ -66,3 +66,5 @@ services:
           name: agrimenya-api-20261030
           type: web
           envVarKey: USER_API_KEY
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false

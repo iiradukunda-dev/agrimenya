@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      html, body, #map {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      #map {
+        background: #eaf2f6;
+      }
+
+      #map-status {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        box-sizing: border-box;
+        background: #f8fafc;
+        color: #334155;
+        text-align: center;
+        font: 14px/1.5 Arial, sans-serif;
+      }
+
+      #map-status[data-visible="true"] {
+        display: flex;
+      }
+
+      #map-level-status {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 1;
+        max-width: calc(100% - 24px);
+        padding: 6px 9px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, .94);
+        color: #334155;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, .24);
+        font: 11px/1.35 Arial, sans-serif;
+        pointer-events: none;
+      }
+
+      .admin-boundary-label {
+        color: #123b3b;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        text-shadow: -1px -1px 2px #fff, 1px 1px 2px #fff;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" role="application" aria-label="Rwanda satellite map and administrative boundaries"></div>
+    <div id="map-level-status" aria-live="polite">NISR 2022 administrative boundaries</div>
+    <div id="map-status" role="status" aria-live="polite"></div>
+    <script src="google_map.js"></script>
+  </body>
+</html>
