@@ -297,7 +297,14 @@ def render_zones() -> None:
         ]
 
         if not filtered:
-            st.info("No agricultural zones match the filter.")
+            if st.session_state.get("zones_api_unavailable"):
+                st.error("Could not load agricultural zones from the backend.")
+                if st.button("Retry loading zones", key="retry_zones_load"):
+                    api_client.clear_zones_cache()
+                    st.session_state.pop("zones_api_unavailable", None)
+                    st.rerun()
+            else:
+                st.info("No agricultural zones match the filter.")
             return
 
         # ── Interactive Zone Portfolio ───────────────────────────────────────

@@ -19,6 +19,10 @@ logger = logging.getLogger(__name__)
 ADMIN_SESSION_SECONDS = 30 * 60
 
 
+class _ZoneDataUnavailable(RuntimeError):
+    """Raised when the zones endpoint does not return a usable response."""
+
+
 def _authenticate_admin_session(widget_key: str) -> None:
     email_key = widget_key.removesuffix("_password") + "_email"
     email = st.session_state.get(email_key, "").strip()
@@ -272,34 +276,50 @@ def get_priority_data() -> Any:
 
 
 @st.cache_data(ttl=300, show_spinner=False)
+def _get_zones_cached() -> list[dict[str, Any]]:
+    data = _get_api("/segmentation/zones", timeout=30)
+    if data is None or not isinstance(data, list):
+        raise _ZoneDataUnavailable("The zones endpoint did not return a valid response.")
+
+    map_resp = _get_api("/segmentation/map-data", timeout=30)
+    map_rows = map_resp if isinstance(map_resp, list) else []
+    map_by_id = {
+        str(row.get("id")): row
+        for row in map_rows
+        if isinstance(row, dict) and row.get("id")
+    }
+    normalized = []
+    for zone in data:
+        if not isinstance(zone, dict):
+            continue
+        matching = map_by_id.get(str(zone.get("id")), {})
+        row = {**zone, **matching}
+        row["name"] = " / ".join(filter(None, [row.get("district"), row.get("sector"), row.get("cell")])) or str(row.get("id", "Zone"))
+        row["crop"] = row.get("crop_type") or row.get("crop") or ""
+        row["priority"] = row.get("priority_level") or row.get("priority") or ""
+        row["risk_status"] = row.get("climate_risk_level") or row.get("nutrition_risk_level") or "Unknown"
+        row["area_ha"] = row.get("area_cultivated")
+        row["predicted_production_kg"] = row.get("predicted_yield")
+        normalized.append(row)
+    return normalized
+
+
+def clear_zones_cache() -> None:
+    _get_zones_cached.clear()
+
+
 def get_zones() -> list[dict[str, Any]]:
-    """Returns all zones from the backend."""
+    """Return zones, without caching a temporary backend failure as empty data."""
     if USE_MOCK_DATA:
         return mock_data.generate_mock_zones()
-    data = _get_api("/segmentation/zones")
-    if data and isinstance(data, list):
-        map_resp = _get_api("/segmentation/map-data")
-        map_rows = map_resp if isinstance(map_resp, list) else []
-        map_by_id = {
-            str(row.get("id")): row
-            for row in map_rows
-            if isinstance(row, dict) and row.get("id")
-        }
-        normalized = []
-        for zone in data:
-            if not isinstance(zone, dict):
-                continue
-            matching = map_by_id.get(str(zone.get("id")), {})
-            row = {**zone, **matching}
-            row["name"] = " / ".join(filter(None, [row.get("district"), row.get("sector"), row.get("cell")])) or str(row.get("id", "Zone"))
-            row["crop"] = row.get("crop_type") or row.get("crop") or ""
-            row["priority"] = row.get("priority_level") or row.get("priority") or ""
-            row["risk_status"] = row.get("climate_risk_level") or row.get("nutrition_risk_level") or "Unknown"
-            row["area_ha"] = row.get("area_cultivated")
-            row["predicted_production_kg"] = row.get("predicted_yield")
-            normalized.append(row)
-        return normalized
-    return []
+    try:
+        zones = _get_zones_cached()
+    except _ZoneDataUnavailable:
+        logger.error("Could not load zones from the backend.")
+        st.session_state["zones_api_unavailable"] = True
+        return []
+    st.session_state.pop("zones_api_unavailable", None)
+    return zones
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -313,7 +333,7 @@ def create_zone(payload: dict[str, Any]) -> dict[str, Any] | None:
     """Create a zone through the backend and refresh cached zone views."""
     result = _post_api("/segmentation/zones", payload)
     if result:
-        get_zones.clear()
+        clear_zones_cache()
         get_priority_data.clear()
     return result
 
@@ -1037,7 +1057,7 @@ def set_admin_account_active(account_id: str, is_active: bool) -> dict[str, Any]
 def update_admin_zone(zone_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
     result = _request_admin("PATCH", f"/admin/zones/{quote(zone_id, safe='')}", payload)
     if result:
-        get_zones.clear()
+        clear_zones_cache()
         get_priority_data.clear()
     return result
 

@@ -9,6 +9,23 @@ from utils import api_client
 
 class TestApiClientExtended(unittest.TestCase):
 
+    def test_zone_api_failure_is_not_cached_as_empty_data(self):
+        zone = {"id": "zone-1", "district": "Huye"}
+        api_client.clear_zones_cache()
+        with patch.object(api_client.st, "session_state", {}) as session_state, patch.object(
+            api_client, "USE_MOCK_DATA", False
+        ), patch.object(api_client, "_get_api", side_effect=[None, [zone], []]) as get_api:
+            try:
+                self.assertEqual(api_client.get_zones(), [])
+                self.assertTrue(session_state["zones_api_unavailable"])
+
+                zones = api_client.get_zones()
+                self.assertEqual(zones[0]["name"], "Huye")
+                self.assertNotIn("zones_api_unavailable", session_state)
+                self.assertEqual(get_api.call_count, 3)
+            finally:
+                api_client.clear_zones_cache()
+
     @patch("utils.api_client.requests.get")
     @patch("utils.api_client._get_api")
     def test_weather_falls_back_to_district_weather_and_requests_kmh(self, mock_api, mock_get):
