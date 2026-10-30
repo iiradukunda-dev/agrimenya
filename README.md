@@ -18,6 +18,41 @@ templates are configured.
   offline evaluation tools.
 - `backend/docs/` — deployment, data import, retraining, model, and WhatsApp
   operating notes.
+- `data/` — submission notes pointing to the project datasets in `backend/data/`.
+- `demo/` — instructions for the short product walkthrough recording.
+- `student_cards/` — instructions for handling official eligibility documents;
+  personal documents should be submitted through an approved private channel.
+
+## Project submission materials
+
+Agri-Menya communicates district- and crop-level agricultural evidence,
+including NISR yield observations and seasonal context, to help users explore
+zones, compare crop information, review recommendations, and plan field
+activities. Users navigate the Streamlit interface, select a district or crop,
+inspect maps and evidence, and use the available planning and field-reporting
+workflows. The live application uses a Streamlit frontend, a FastAPI backend,
+and Supabase for application records; see
+[`backend/docs/frontend_backend_handoff.md`](backend/docs/frontend_backend_handoff.md)
+for the API integration details.
+
+The repository already includes the README, application scripts, and project
+datasets. Data inventory and source notes are in [`data/README.md`](data/README.md).
+The frontend's `frontend/assets/landing video.mp4` is a site asset, not a
+recording of a product demonstration. Record a separate walkthrough of no more
+than three minutes and put it in `demo/`; recording from a computer is
+preferred unless the product being demonstrated is a mobile app.
+
+Dependencies are separated by service: install
+[`backend/requirements.txt`](backend/requirements.txt) for the API or
+[`frontend/requirements.txt`](frontend/requirements.txt) for the Streamlit app.
+See the local development section below to set up both services.
+
+Eligibility documents are personal records. The `student_cards/` folder is
+intentionally a safe placeholder; do not commit student cards or identity
+documents to this public repository. Submit the minimum official evidence
+through the organizers' approved private channel. If the organizers explicitly
+require repository submission, first confirm an approved restricted repository
+and handling procedure.
 
 ## Requirements
 
