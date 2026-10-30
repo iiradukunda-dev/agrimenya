@@ -513,6 +513,7 @@ def disease_detect(crop: str, symptoms: str, zone_id: str, image_description: st
 
 def disease_detect_upload(crop: str, symptoms: str, zone_id: str, image_file, image_description: str | None = None) -> dict[str, Any] | None:
     """Image-based disease detection via multipart upload."""
+    image_file.seek(0)
     files = {"image": (image_file.name, image_file, image_file.type)}
     data = {"zone_id": zone_id, "crop": crop, "symptoms": symptoms}
     if image_description:

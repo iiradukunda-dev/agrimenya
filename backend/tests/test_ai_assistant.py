@@ -98,6 +98,9 @@ def test_disease_detection_from_prompt():
         assert "predicted_disease" in data
         assert "confidence" in data
         assert "recommended_actions" in data
+        assert "observations" in data
+        assert "possible_causes" in data
+        assert "urgency" in data
 
 
 def test_disease_detection_from_uploaded_image():
@@ -114,3 +117,87 @@ def test_disease_detection_from_uploaded_image():
         data = r.json()
         assert "predicted_disease" in data
         assert "recommended_actions" in data
+
+
+def test_decision_disease_risk_returns_cautious_triage_details():
+    zone_id = str(uuid.uuid4())
+    assessment = {
+        "crop": "Maize",
+        "predicted_disease": "Unconfirmed",
+        "plant_identification": "Maize",
+        "confidence": None,
+        "risk_level": "Unknown",
+        "urgency": "unclear",
+        "observations": ["Yellowing reported"],
+        "possible_causes": ["Nutrient stress"],
+        "recommended_actions": ["Ask a district agronomist to inspect the crop."],
+        "source": "unavailable",
+        "interpretation_note": "Evidence is insufficient.",
+    }
+
+    with patch("app.db.crud.get_zone", return_value={"id": zone_id}), \
+         patch("app.routers.decision.detect_crop_disease", return_value=assessment) as detect:
+        response = client.post(
+            "/decision/disease-risk",
+            params={
+                "zone_id": zone_id,
+                "crop": "Maize",
+                "symptoms": "Yellowing",
+                "image_description": "Lower leaves affected",
+            },
+        )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["risk_level"] == "Unknown"
+    assert data["urgency"] == "unclear"
+    assert data["observations"] == ["Yellowing reported"]
+    assert data["possible_causes"] == ["Nutrient stress"]
+    detect.assert_called_once_with("Maize", "Yellowing", "Lower leaves affected")
+
+
+def test_disease_triage_includes_additional_field_notes(monkeypatch):
+    from app.core.config import settings
+    from app.services.disease_detector import _groq_triage
+
+    monkeypatch.setattr(settings, "GROQ_API_KEY", "test-key")
+    response = Mock()
+    response.json.return_value = {
+        "choices": [{
+            "message": {
+                "content": (
+                    '{"likely_issue":"Unconfirmed","plant_identification":"Maize",'
+                    '"observations":["Brown marks reported"],"possible_causes":[],'
+                    '"next_steps":["Ask an agronomist"],"urgency":"unclear","limitations":"Preliminary"}'
+                )
+            }
+        }]
+    }
+
+    with patch("app.services.disease_detector.requests.post", return_value=response) as post:
+        _groq_triage(
+            "Maize",
+            "Yellowing leaves",
+            image_description="Brown marks underneath the leaves",
+            image_bytes=None,
+            language="en",
+        )
+
+    provider_prompt = post.call_args.kwargs["json"]["messages"][1]["content"]
+    assert "Yellowing leaves" in provider_prompt
+    assert "Brown marks underneath the leaves" in provider_prompt
+
+
+def test_disease_triage_keeps_safe_unconfirmed_fallback_without_provider(monkeypatch):
+    from app.core.config import settings
+    from app.services.disease_detector import SAFE_NEXT_STEP, detect_crop_disease
+
+    monkeypatch.setattr(settings, "GROQ_API_KEY", "")
+    with patch("app.services.disease_detector.vision_model_status", return_value={"trained": False}):
+        result = detect_crop_disease("Maize", "Yellowing leaves")
+
+    assert result["predicted_disease"] == "Unconfirmed"
+    assert result["confidence"] is None
+    assert result["risk_level"] == "Unknown"
+    assert result["source"] == "unavailable"
+    assert SAFE_NEXT_STEP in result["recommended_actions"]

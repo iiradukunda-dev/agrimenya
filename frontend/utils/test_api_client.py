@@ -203,6 +203,31 @@ class TestApiClientExtended(unittest.TestCase):
             "season": "2026 Season A",
         })
 
+    @patch("utils.api_client.requests.post")
+    def test_disease_upload_rewinds_image_before_multipart_request(self, mock_post):
+        response = MagicMock()
+        response.json.return_value = {"predicted_disease": "Unconfirmed"}
+        response.raise_for_status = MagicMock()
+        mock_post.return_value = response
+        image_file = MagicMock()
+        image_file.name = "leaf.png"
+        image_file.type = "image/png"
+
+        result = api_client.disease_detect_upload(
+            "Maize",
+            "Yellowing leaves",
+            "zone-123",
+            image_file,
+        )
+
+        self.assertEqual(result["predicted_disease"], "Unconfirmed")
+        image_file.seek.assert_called_once_with(0)
+        self.assertEqual(mock_post.call_args.kwargs["files"]["image"], (
+            "leaf.png",
+            image_file,
+            "image/png",
+        ))
+
     @patch("requests.patch")
     def test_update_plan_action_status(self, mock_patch):
         """Verify update_plan_action_status sends PATCH to plan action endpoint."""

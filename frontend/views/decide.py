@@ -3,6 +3,7 @@ import math
 from typing import Any
 import requests
 import streamlit as st
+from components.ai_response import render_advisor_response
 from components.badges import priority_badge, status_badge
 from components.charts import render_district_ranking_chart
 from components.errors import error_boundary, render_error_page
@@ -162,10 +163,12 @@ def show_disease_eval_dialog(zones: list[dict[str, Any]]) -> None:
     last_diag = st.session_state.get("last_disease_diag")
     if last_diag:
         st.markdown("---")
-        st.markdown(f"##### Condition: {last_diag.get('predicted_disease', 'Unspecified')}")
+        st.markdown(f"##### Condition: {last_diag.get('predicted_disease', 'Unconfirmed')}")
+        st.warning("Preliminary triage only—not a confirmed diagnosis. Verify with an RAB or district agronomist before treatment.")
         c_r, c_c = st.columns(2)
         with c_r:
-            status_badge(last_diag.get("risk_level", "Medium"))
+            risk_level = last_diag.get("risk_level")
+            status_badge(risk_level if risk_level in {"High", "Medium", "Low"} else "Unknown")
         with c_c:
             conf = last_diag.get("confidence")
             if isinstance(conf, (int, float)) and math.isfinite(float(conf)):
@@ -174,6 +177,20 @@ def show_disease_eval_dialog(zones: list[dict[str, Any]]) -> None:
             else:
                 st.caption("Confidence was not reported.")
 
+        if last_diag.get("plant_identification"):
+            st.caption(f"Crop identification: {last_diag['plant_identification']}")
+        if last_diag.get("urgency"):
+            st.caption(f"Urgency: {str(last_diag['urgency']).replace('_', ' ').title()}")
+        observations = last_diag.get("observations") or []
+        if observations:
+            st.markdown("**Reported or observed signs:**")
+            for observation in observations:
+                st.markdown(f"- {observation}")
+        possible_causes = last_diag.get("possible_causes") or []
+        if possible_causes:
+            st.markdown("**Other possible causes to check:**")
+            for cause in possible_causes:
+                st.markdown(f"- {cause}")
         actions = last_diag.get("recommended_actions", [])
         if actions:
             st.markdown("**Action Guidance:**")
@@ -181,6 +198,8 @@ def show_disease_eval_dialog(zones: list[dict[str, Any]]) -> None:
                 st.markdown(f"- {act}")
         if last_diag.get("interpretation_note"):
             st.caption(str(last_diag["interpretation_note"]))
+        if last_diag.get("source"):
+            st.caption(f"Analysis source: {last_diag['source']}")
 
 
 @error_boundary("Decisions")
@@ -535,7 +554,10 @@ def render_decide():
 
                 for message in st.session_state[messages_key]:
                     with st.chat_message(message["role"]):
-                        st.markdown(message["content"])
+                        if message["role"] == "assistant" and isinstance(message.get("response"), dict):
+                            render_advisor_response(message["response"])
+                        else:
+                            st.markdown(message["content"])
 
                 prompt = st.chat_input(
                     t(
@@ -570,8 +592,12 @@ def render_decide():
                                 )
                             if response and response.get("answer"):
                                 answer = str(response["answer"])
-                                st.markdown(answer)
-                                st.session_state[messages_key].append({"role": "assistant", "content": answer})
+                                render_advisor_response(response)
+                                st.session_state[messages_key].append({
+                                    "role": "assistant",
+                                    "content": answer,
+                                    "response": response,
+                                })
                             else:
                                 st.error("The advisor could not respond. Please check the backend connection and try again.")
 

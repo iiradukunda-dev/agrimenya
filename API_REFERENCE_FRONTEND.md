@@ -255,13 +255,19 @@ Returns:
   "zone_id": "123e4567-e89b-12d3-a456-426614174000",
   "crop": "Maize",
   "predicted_disease": "...",
-  "confidence": 0.72,
-  "risk_level": "Medium",
-  "recommended_actions": ["..."]
+  "plant_identification": "Not confirmed",
+  "confidence": null,
+  "risk_level": "Unknown",
+  "urgency": "unclear",
+  "observations": [],
+  "possible_causes": [],
+  "recommended_actions": ["..."],
+  "source": "unavailable",
+  "interpretation_note": "..."
 }
 ```
 
-Returns `404` if the zone does not exist.
+Returns `404` if the zone does not exist. Triage is preliminary, not a confirmed diagnosis. `image_description` is farmer-provided context and is not independently verified. Without a configured provider or trained local image model, the response remains explicitly unconfirmed with a safe next step.
 
 ## 6. National alignment
 
@@ -335,7 +341,7 @@ JSON body:
 }
 ```
 
-`question` must contain 1-500 characters.
+`question` must contain 1-500 characters. Optional context: `crop` (1-50 characters), `season` (1-80 characters), and up to eight `history` turns; each turn contains a `role` (`user` or `assistant`) and `content` (up to 500 characters).
 
 Response:
 
@@ -344,11 +350,16 @@ Response:
   "zone_id": "123e4567-e89b-12d3-a456-426614174000",
   "question": "What should we prioritize for this zone?",
   "answer": "...",
-  "source": "grounded-context"
+  "source": "grounded-context",
+  "district": "Huye",
+  "evidence_sources": ["..."],
+  "evidence_source_details": [],
+  "evidence_scope": "Huye / Maize / 2026 Season A",
+  "answer_type": "record_grounded"
 }
 ```
 
-Returns `404` if the zone does not exist. The assistant may use local grounded context if an external LLM is not configured or unavailable; the frontend should display the answer and source rather than assume every answer came from an external model.
+`answer_type` is `record_grounded`, `general_guidance`, or `insufficient_evidence`. The evidence fields describe the district/crop/season scope and source limitations; they do not represent current farm measurements. Returns `404` if the zone does not exist. The assistant may use local grounded context if an external LLM is not configured or unavailable; the frontend should distinguish that fallback from a generated answer.
 
 ### `POST /chat/disease-detect`
 JSON body:
@@ -363,7 +374,7 @@ JSON body:
 }
 ```
 
-Required: `zone_id`, `crop` (1-50 characters), `symptoms` (1-1000 characters). `image_description` and `image_url` are optional; the current handler passes symptoms and description to the detector and does not use `image_url` to fetch an image.
+Required: `zone_id` and `crop` (1-50 characters), plus at least one of `symptoms` (up to 1000 characters) or `image_description` (up to 1000 characters). `image_url` is accepted but not used to fetch an image.
 
 Response:
 
@@ -371,11 +382,16 @@ Response:
 {
   "zone_id": "123e4567-e89b-12d3-a456-426614174000",
   "crop": "Maize",
+  "plant_identification": "Not confirmed",
   "predicted_disease": "...",
-  "confidence": 0.72,
-  "risk_level": "Medium",
+  "confidence": null,
+  "risk_level": "Unknown",
+  "urgency": "unclear",
+  "observations": [],
+  "possible_causes": [],
   "recommended_actions": ["..."],
-  "source": "trained-disease-model"
+  "source": "unavailable",
+  "interpretation_note": "..."
 }
 ```
 

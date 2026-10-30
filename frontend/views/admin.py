@@ -180,7 +180,7 @@ def render_admin() -> None:
                         st.caption("30 Districts Active")
 
                 st.write("")
-                render_icon_subheader("assets/phone.svg", "WhatsApp Channel Telemetry")
+                render_icon_subheader("assets/message.svg", "WhatsApp Channel Telemetry")
                 wa_health = api_client.get_whatsapp_health()
                 if wa_health:
                     w_cols = st.columns(4)
