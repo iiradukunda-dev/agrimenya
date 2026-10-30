@@ -1051,11 +1051,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 0.3rem !important;
-        width: auto !important;
-        min-width: 4.8rem !important;
+        width: 2.35rem !important;
+        min-width: 2.35rem !important;
+        max-width: 2.35rem !important;
         min-height: 2.35rem !important;
-        padding: 0 0.65rem !important;
+        padding: 0 !important;
+        flex: 0 0 2.35rem !important;
         border: 1px solid rgba(2, 132, 199, 0.24) !important;
         border-radius: 9999px !important;
         background: rgba(2, 132, 199, 0.08) !important;
@@ -1097,15 +1098,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
         overflow: visible !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button p {
-        display: inline-block !important;
-        width: auto !important;
-        min-width: max-content !important;
-        height: auto !important;
-        color: #0a1f26 !important;
-        font-size: 0.88rem !important;
-        font-weight: 600 !important;
-        opacity: 1 !important;
-        visibility: visible !important;
+        display: none !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover p,
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover [data-testid="stIconMaterial"] {
@@ -1123,10 +1116,10 @@ def render_navbar(show_sidebar: bool = False) -> None:
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button [data-testid="stIconMaterial"] {
         display: inline-block !important;
-        width: 1rem !important;
-        height: 1rem !important;
+        width: 1.35rem !important;
+        height: 1.35rem !important;
         color: #0284c7 !important;
-        font-size: 1rem !important;
+        font-size: 1.35rem !important;
         opacity: 1 !important;
         visibility: visible !important;
       }
@@ -1195,7 +1188,11 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 with c_decide:
                     st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
                 with c_more:
-                    with st.popover(t("nav.more", "More"), width="stretch"):
+                    with st.popover(
+                        " ",
+                        help=t("nav.more", "More"),
+                        width="stretch",
+                    ):
                         st.divider()
                         st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
                         st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))

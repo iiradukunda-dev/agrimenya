@@ -102,8 +102,8 @@ def test_mobile_menu_links_have_no_background_boxes():
         assert "background: transparent !important" in css_found
 
 
-def test_desktop_more_and_language_icons_remain_visible():
-    """Keep the desktop More label and globe from collapsing inside navbar columns."""
+def test_desktop_dropdown_and_language_icons_remain_visible():
+    """Keep the icon-only desktop menu and globe visible inside navbar columns."""
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
@@ -122,11 +122,16 @@ def test_desktop_more_and_language_icons_remain_visible():
         for call in mock_st.markdown.call_args_list
         if "<style>" in str(call[0][0])
     )
+    desktop_popover_call = mock_st.popover.call_args_list[0]
+    assert desktop_popover_call.args[0] == " "
+    assert desktop_popover_call.kwargs["help"] == "More"
     assert '[data-testid="stPopover"] button p' in css_found
-    assert "min-width: 4.8rem !important" in css_found
+    assert "min-width: 2.35rem !important" in css_found
     assert "position: absolute !important" in css_found
     assert "background: rgba(2, 132, 199, 0.08) !important" in css_found
     assert "border: 1px solid rgba(2, 132, 199, 0.24) !important" in css_found
+    assert "display: none !important;" in css_found
+    assert "font-size: 1.35rem !important" in css_found
     assert "button [data-testid=\"stMarkdownContainer\"]" in css_found
     assert 'html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar' in css_found
     assert 'button:not([data-testid="stPopoverButton"])' in css_found
