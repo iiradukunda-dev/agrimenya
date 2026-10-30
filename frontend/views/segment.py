@@ -20,7 +20,9 @@ except ImportError:  # Keep the table usable if optional map packages are missin
 from components.errors import error_boundary
 from components.charts import render_segment_distribution_chart, render_segment_summary_chart
 from components.maps import (
+    RSA_ORTHOMOSAIC_NOTE,
     add_map_layer_control,
+    add_rsa_orthomosaic_layer,
     create_rwanda_map,
     google_maps_configured,
     render_google_location_map,
@@ -857,6 +859,7 @@ def _render_comparison_map(
         return
 
     map_view = create_rwanda_map(satellite_default=satellite_default, hybrid=True)
+    add_rsa_orthomosaic_layer(map_view)
     try:
         boundaries = _load_district_boundaries()
     except Exception:
@@ -916,6 +919,9 @@ def _render_comparison_map(
         folium.FitBounds([[-2.85, 28.85], [-1.0, 30.9]]).add_to(map_view)
 
     add_map_layer_control(map_view)
+    st.caption(
+        f"Use the layer control to switch between street, satellite, and RSA imagery. {RSA_ORTHOMOSAIC_NOTE}"
+    )
     st_folium(map_view, key=key, height=580, width="stretch", returned_objects=[])
 
     legend_items = "".join(
