@@ -455,7 +455,12 @@ def render_decide():
             with head_col:
                 st.markdown("### Recommendations from saved field assessments")
             with button_col:
-                if st.button("Disease triage", type="primary", use_container_width=True):
+                if st.button(
+                    "Disease triage",
+                    type="primary",
+                    use_container_width=True,
+                    key="disease_triage_button",
+                ):
                     show_disease_eval_dialog(zones)
 
             recs = api_client.get_recommendations()

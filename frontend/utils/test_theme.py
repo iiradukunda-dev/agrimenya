@@ -44,6 +44,18 @@ class TestTheme(unittest.TestCase):
         self.assertIn("--ag-bg-base: #f8fafc;", forced_light_css)
         self.assertEqual(mock_st.session_state["ag_theme_mode"], "light")
 
+    @patch("utils.theme.st")
+    def test_disease_action_buttons_use_triage_style(self, mock_st):
+        mock_st.session_state = {"ag_theme_mode": "light"}
+        load_theme()
+
+        css = mock_st.html.call_args[0][0]
+        self.assertIn(".st-key-disease_triage_button button", css)
+        self.assertIn(".st-key-detect_disease_button button", css)
+        self.assertIn(".st-key-detect_disease_submit button", css)
+        self.assertIn('content: "→"', css)
+        self.assertIn("linear-gradient(110deg, #1596f4 0%, #0561ce 100%)", css)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -202,10 +202,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
           margin: 0 !important;
           padding: 6px 14px !important;
           gap: 8px !important;
-          background: rgba(255, 255, 255, 0.98) !important;
-          border-radius: 9999px !important;
-          box-shadow: 0 6px 24px rgba(2, 132, 199, 0.12) !important;
-          border: 1px solid rgba(2, 132, 199, 0.18) !important;
+          background: transparent !important;
+          border: none !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
         }
         .st-key-ag_mobile_navbar [data-testid="column"],
         .st-key-ag_mobile_navbar [data-testid="stColumn"] {
@@ -217,27 +219,70 @@ def render_navbar(show_sidebar: bool = False) -> None:
           align-items: center !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: flex-start !important;
+          position: relative !important;
           width: auto !important;
-          height: 2.35rem !important;
-          min-width: 4.5rem !important;
+          min-width: 5.4rem !important;
+          height: 2.5rem !important;
+          min-height: 2.5rem !important;
+          padding: 0 0.75rem 0 2.55rem !important;
+          border: 0 !important;
           border-radius: 9999px !important;
-          background: #e0f2fe !important;
-          color: #075985 !important;
-          border: 1px solid #7dd3fc !important;
-          padding: 0.4rem 0.9rem !important;
-          font-size: 0.9rem !important;
-          font-weight: 700 !important;
+          background: rgba(2, 132, 199, 0.09) !important;
+          color: #0284c7 !important;
+          font-size: 1.45rem !important;
+          line-height: 1 !important;
+          box-shadow: none !important;
+        }
+        .st-key-ag_mobile_navbar [data-testid="stPopover"] button:hover {
+          background: #0284c7 !important;
+          color: #ffffff !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button p {
-          color: #075985 !important;
-          font-size: 0.9rem !important;
-          font-weight: 700 !important;
+          font-size: 0 !important;
+          line-height: 0 !important;
+          width: 0 !important;
+          height: 0 !important;
           margin: 0 !important;
-          white-space: nowrap !important;
+          overflow: hidden !important;
         }
-        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] {
-          width: min(20rem, calc(100vw - 2rem)) !important;
-          max-height: calc(100dvh - 6rem) !important;
+        .st-key-ag_mobile_navbar [data-testid="stPopover"] button::before {
+          content: "" !important;
+          position: absolute !important;
+          left: 0.85rem !important;
+          top: 50% !important;
+          display: block !important;
+          width: 18px !important;
+          height: 2px !important;
+          transform: translateY(-50%) !important;
+          border-radius: 999px !important;
+          background: currentColor !important;
+          box-shadow: 0 6px 0 currentColor, 0 -6px 0 currentColor !important;
+        }
+        .st-key-ag_mobile_navbar [data-testid="stPopover"] button::after {
+          content: "More" !important;
+          display: inline-block !important;
+          color: currentColor !important;
+          font-family: 'Plus Jakarta Sans', sans-serif !important;
+          font-size: 0.9rem !important;
+          font-weight: 650 !important;
+          line-height: 1 !important;
+          pointer-events: none !important;
+        }
+        .st-key-ag_mobile_navbar [data-testid="stIconMaterial"],
+        .st-key-ag_mobile_navbar [data-testid="stPopover"] button svg {
+          display: none !important;
+        }
+        .st-key-ag_mobile_navbar [data-testid="stPopoverButton"] > div > div[aria-hidden="true"] {
+          display: none !important;
+        }
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] {
+          width: min(19rem, calc(100vw - 2rem)) !important;
+          max-width: calc(100vw - 2rem) !important;
+          max-height: calc(100dvh - 7rem) !important;
           overflow-y: auto !important;
         }
       }
