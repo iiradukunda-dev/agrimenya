@@ -26,6 +26,7 @@ class TestViews(unittest.TestCase):
         mock_df.empty = True
         mock_df.columns = []
         mock_api.get_priority_data.return_value = mock_df
+        mock_api.get_agri_metrics.return_value = []
         mock_api.get_zones.return_value = [
             {"id": "z1", "district": "Gasabo", "crop": "Maize", "priority": "High", "risk_status": "At Risk", "area_ha": 40.0, "latitude": -1.9, "longitude": 30.1}
         ]
@@ -34,6 +35,7 @@ class TestViews(unittest.TestCase):
 
         mock_st.session_state = {}
         mock_st.sidebar = MagicMock()
+        mock_st.sidebar.radio.return_value = "Dashboard"
         mock_st.sidebar.selectbox.return_value = "All"
         mock_st.sidebar.multiselect.return_value = []
         mock_st.columns.side_effect = lambda n, **kwargs: [MagicMock() for _ in range(n if isinstance(n, int) else len(n))]

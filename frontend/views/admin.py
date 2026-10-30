@@ -61,81 +61,21 @@ def show_plan_inspector_dialog(plan_labels: dict) -> None:
 
 
 def _render_admin_session_header() -> None:
-    """Renders the executive identity and session status header for logged-in administrators."""
+    """Render the shared responsive administrator session card."""
+    from components.cards import authenticated_session_badge
+
     identity = st.session_state.get("admin_identity", {})
     display_name = identity.get("display_name") or "Administrator"
     email = identity.get("email") or "admin@agrimenya.gov.rw"
     role = identity.get("role") or "System Administrator"
-
-    # Compute display initials
-    parts = display_name.strip().split()
-    initials = "".join(p[0].upper() for p in parts[:2]) if parts else "AD"
-
-    col_profile, col_signout = st.columns([5, 1.2])
-    with col_profile:
-        st.markdown(
-            f"""
-            <div style="
-                display: flex;
-                align-items: center;
-                gap: 14px;
-                padding: 12px 18px;
-                background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
-                border: 1px solid rgba(2, 132, 199, 0.22);
-                border-top: 2.5px solid #0284c7;
-                border-radius: 14px;
-                box-shadow: 0 4px 18px rgba(2, 132, 199, 0.08);
-                margin-bottom: 1.2rem;
-            ">
-                <div style="
-                    width: 44px;
-                    height: 44px;
-                    border-radius: 12px;
-                    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-                    border: 1.5px solid rgba(2, 132, 199, 0.4);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #ffffff;
-                    font-family: 'Plus Jakarta Sans', sans-serif;
-                    font-weight: 800;
-                    font-size: 1.15rem;
-                    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
-                ">
-                    {escape(initials)}
-                </div>
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.02rem; color: #0f172a;">
-                            {escape(display_name)}
-                        </span>
-                        <span style="
-                            font-size: 0.7rem;
-                            font-weight: 750;
-                            letter-spacing: 0.06em;
-                            text-transform: uppercase;
-                            padding: 2px 9px;
-                            border-radius: 9999px;
-                            background: #e0f2fe;
-                            border: 1px solid rgba(2, 132, 199, 0.35);
-                            color: #0284c7;
-                        ">
-                            {escape(role.upper())}
-                        </span>
-                    </div>
-                    <div style="font-size: 0.82rem; color: #475569; margin-top: 2px;">
-                        {escape(email)} &bull; <span style="color: #059669; font-weight: 700;">Active Administrative Session</span>
-                    </div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-    with col_signout:
-        st.write("")
-        if st.button("Sign Out", key="btn_admin_sign_out", use_container_width=True, type="secondary"):
-            api_client.admin_sign_out()
-            st.rerun()
+    if authenticated_session_badge(
+        display_name=display_name,
+        email=email,
+        role=role,
+        key_prefix="admin_panel",
+    ):
+        api_client.admin_sign_out()
+        st.rerun()
 
 
 @error_boundary("Admin Panel")

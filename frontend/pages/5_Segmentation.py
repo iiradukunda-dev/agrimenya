@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+from components.footer import render_footer
 from components.navbar import render_navbar
 from utils.theme import load_theme
 from utils.timezone import setup_system_timezone
@@ -15,3 +16,4 @@ render_navbar()
 
 if __name__ == "__main__":
     render_segment()
+render_footer()

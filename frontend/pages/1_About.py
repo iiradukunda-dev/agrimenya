@@ -2,6 +2,7 @@ import os
 
 import streamlit as st
 from components.errors import error_boundary
+from components.footer import render_footer
 from components.navbar import render_navbar
 from utils.i18n import t
 from utils.theme import load_theme
@@ -36,5 +37,7 @@ with error_boundary("About agrimenya"):
     st.markdown(f"## {t('about.reading_title', 'Reading the information')}")
     st.write(t("about.reading_desc", "Values depend on the records and services currently connected to this workspace. An unavailable value means the backend did not provide it; it should not be read as zero. Forecasts and model outputs are estimates and should be checked against local conditions and qualified agricultural advice."))
     st.caption(t("about.caption", "The application uses a Streamlit frontend connected to the agrimenya API. Features and available data depend on the active deployment configuration."))
+
+render_footer()
 
 

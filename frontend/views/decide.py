@@ -11,11 +11,6 @@ from components.icons import render_icon_subheader, render_icon_title
 from utils import api_client
 from utils.i18n import t
 
-try:
-    import pandas as pd
-except ImportError:
-    pd = None
-
 logger = logging.getLogger(__name__)
 
 
@@ -171,40 +166,72 @@ def render_decide():
             national_ref = evidence.get("national_reference_kg_ha") if isinstance(evidence, dict) else None
             if not national_ref and rankings:
                 benchmarks = [r.get("benchmark_yield_per_ha") for r in rankings if r.get("benchmark_yield_per_ha")]
-                national_ref = benchmarks[0] if benchmarks else 3200.0
+                national_ref = benchmarks[0] if benchmarks else None
 
             if rankings:
-                top_district = rankings[0].get("district", "Unknown")
-                top_yield = rankings[0].get("yield_per_ha", 0)
+                top_record = max(rankings, key=lambda record: float(record.get("yield_per_ha") or 0))
+                top_district = top_record.get("district", "Unknown")
+                top_yield = top_record.get("yield_per_ha")
                 valid_gaps = [r.get("yield_gap_kg_ha") for r in rankings if r.get("yield_gap_kg_ha") is not None]
-                avg_gap = sum(valid_gaps) / len(valid_gaps) if valid_gaps else 0.0
+                avg_gap = sum(valid_gaps) / len(valid_gaps) if valid_gaps else None
 
                 m1, m2, m3, m4 = st.columns(4)
                 with m1:
-                    render_kpi_card(title="National Benchmark", value=f"{national_ref:,.0f} kg/ha", subtitle="NISR Reference")
+                    render_kpi_card(
+                        title="National Benchmark",
+                        value=f"{float(national_ref):,.0f} kg/ha" if national_ref is not None else "Not recorded",
+                        subtitle="NISR Reference",
+                    )
                 with m2:
-                    render_kpi_card(title="Top Producer", value=str(top_district), subtitle=f"{top_yield:,.0f} kg/ha")
+                    render_kpi_card(
+                        title="Top Producer",
+                        value=str(top_district),
+                        subtitle=f"{float(top_yield):,.0f} kg/ha" if top_yield is not None else "Yield not recorded",
+                    )
                 with m3:
-                    render_kpi_card(title="Avg Yield Gap", value=f"{avg_gap:,.0f} kg/ha", subtitle="Benchmark Deficit")
+                    render_kpi_card(
+                        title="Avg Yield Gap",
+                        value=f"{avg_gap:,.0f} kg/ha" if avg_gap is not None else "Not recorded",
+                        subtitle="Benchmark Deficit",
+                    )
                 with m4:
                     render_kpi_card(title="Districts Evaluated", value=str(len(rankings)), subtitle="Coverage")
 
                 st.markdown("<div style='height: 0.8rem;'></div>", unsafe_allow_html=True)
                 render_district_ranking_chart(rankings, crop=selected_crop, national_ref=national_ref)
 
-                # Exportable Table
-                table_rows = []
-                for r in rankings:
-                    table_rows.append({
-                        "Rank": r.get("rank", "-"),
-                        "District": r.get("district", "Unknown"),
-                        "Yield (kg/ha)": f"{r.get('yield_per_ha', 0):,.1f}",
-                        "Benchmark": f"{r.get('benchmark_yield_per_ha', 0):,.1f}",
-                        "Gap (kg/ha)": f"{r.get('yield_gap_kg_ha', 0):,.1f}",
-                    })
-                if pd is not None:
-                    df_rank = pd.DataFrame(table_rows)
-                    st.dataframe(df_rank, width="stretch", hide_index=True)
+                st.markdown("#### Explore a district")
+                ranking_by_district = {
+                    f"{record.get('district', 'Unknown')} · {float(record.get('yield_per_ha') or 0):,.0f} kg/ha": record
+                    for record in rankings
+                }
+                selected_district_label = st.selectbox(
+                    "District yield detail",
+                    list(ranking_by_district),
+                    key="rank_district_inspector",
+                )
+                selected_ranking = ranking_by_district[selected_district_label]
+                selected_metrics = st.columns(3)
+                selected_yield = selected_ranking.get("yield_per_ha")
+                selected_benchmark = selected_ranking.get("benchmark_yield_per_ha")
+                selected_gap = selected_ranking.get("yield_gap_kg_ha")
+                selected_metrics[0].metric(
+                    "Observed yield",
+                    f"{float(selected_yield):,.1f} kg/ha" if selected_yield is not None else "Not recorded",
+                )
+                selected_metrics[1].metric(
+                    "Benchmark",
+                    f"{float(selected_benchmark):,.1f} kg/ha" if selected_benchmark is not None else "Not recorded",
+                )
+                selected_metrics[2].metric(
+                    "Yield gap",
+                    f"{float(selected_gap):,.1f} kg/ha" if selected_gap is not None else "Not recorded",
+                    help="Reported yield gap for this district. A missing value is not calculated or treated as zero.",
+                )
+                st.caption(
+                    f"Rank {selected_ranking.get('rank', 'not available')} · "
+                    f"{selected_ranking.get('district', 'Unknown')} · {selected_crop} · {selected_season}"
+                )
             else:
                 st.info(f"No yield observations for {selected_crop}.")
 

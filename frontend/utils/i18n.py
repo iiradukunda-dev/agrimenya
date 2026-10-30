@@ -1084,12 +1084,8 @@ def t(key: str, default: str | None = None, **kwargs) -> str:
     """Alias for standard translation method."""
     return _l10n_manager.translate(key, default, **kwargs)
 
-def render_language_selector(sidebar: bool = True) -> None:
-    """
-    Renders the language selector.
-    Adheres to user constraint: "when changing the lanuage there should only be the world icon no more other unnecessary words".
-    We use an icon-only button to cycle through languages seamlessly.
-    """
+def render_language_selector(sidebar: bool = True, button_key: str = "lang_cycle_btn") -> None:
+    """Render a compact globe icon button with the app theme and cycle the active language."""
     current_code = get_current_language()
     codes = list(LANGUAGES.keys())
     next_idx = (codes.index(current_code) + 1) % len(codes)
@@ -1101,11 +1097,59 @@ def render_language_selector(sidebar: bool = True) -> None:
         def _cycle_lang():
             set_language(next_code)
 
-        # Renders an icon-only button styled with vector SVG globe via CSS.
         st.button(
-            label=" ", 
-            key="lang_cycle_btn",
+            label=" ",
+            key=button_key,
             on_click=_cycle_lang,
-            help="Switch language (EN, RW, FR)",
-            width="stretch" if sidebar else "content"
+            help=f"Switch language ({current_code.upper()} → {next_code.upper()})",
+            width="stretch" if sidebar else "content",
+            type="secondary",
+        )
+
+        st.markdown(
+            """
+            <style>
+            .st-key-lang_cycle_btn > button,
+            .st-key-lang_cycle_mobile_btn > button {
+                color: #0284c7 !important;
+                background: rgba(2, 132, 199, 0.08) !important;
+                border: 1px solid rgba(2, 132, 199, 0.16) !important;
+                border-radius: 999px !important;
+                width: 2.3rem !important;
+                height: 2.3rem !important;
+                min-width: 2.3rem !important;
+                min-height: 2.3rem !important;
+                padding: 0 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                box-shadow: none !important;
+            }
+            .st-key-lang_cycle_btn > button:hover,
+            .st-key-lang_cycle_mobile_btn > button:hover {
+                color: #ffffff !important;
+                background: #0284c7 !important;
+                border-color: #0284c7 !important;
+                transform: translateY(-1px) scale(1.04) !important;
+                box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25) !important;
+            }
+            .st-key-lang_cycle_btn > button svg,
+            .st-key-lang_cycle_mobile_btn > button svg {
+                width: 16px !important;
+                height: 16px !important;
+                stroke: currentColor !important;
+                fill: none !important;
+            }
+            @media (max-width: 840px) {
+                .st-key-lang_cycle_btn > button,
+                .st-key-lang_cycle_mobile_btn > button {
+                    width: 2.1rem !important;
+                    height: 2.1rem !important;
+                    min-width: 2.1rem !important;
+                    min-height: 2.1rem !important;
+                }
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
         )

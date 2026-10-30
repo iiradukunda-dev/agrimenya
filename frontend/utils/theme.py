@@ -13,9 +13,11 @@ def toggle_theme() -> None:
     st.session_state["ag_theme_mode"] = "dark" if current == "light" else "light"
 
 
-def load_theme() -> None:
-    """Apply a modern, high-contrast, professional visual system with dark/light mode support."""
-    theme_mode = get_current_theme()
+def load_theme(show_sidebar: bool = False) -> None:
+    """Apply the modern, high-contrast light visual system used throughout agrimenya."""
+    # Keep the application on its light palette and clear any older saved dark-mode state.
+    st.session_state["ag_theme_mode"] = "light"
+    theme_mode = "light"
     is_dark = theme_mode == "dark"
 
     # Dynamic CSS variable values based on active theme mode
@@ -25,8 +27,8 @@ def load_theme() -> None:
     surface_hover = "#16243b" if is_dark else "#f0f9ff"
     card_bg = "#111c2e" if is_dark else "#ffffff"
     card_border = "rgba(56, 189, 248, 0.22)" if is_dark else "rgba(2, 132, 199, 0.16)"
-    card_shadow = "0 10px 25px -5px rgba(0,0,0,0.45)" if is_dark else "0 2px 12px -2px rgba(2, 132, 199, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)"
-    card_shadow_hover = "0 16px 32px -4px rgba(0,0,0,0.6), 0 0 20px rgba(56,189,248,0.25)" if is_dark else "0 8px 24px -4px rgba(2, 132, 199, 0.18), 0 2px 6px -1px rgba(0, 0, 0, 0.04)"
+    card_shadow = "0 10px 25px -5px rgba(0,0,0,0.45)" if is_dark else "0 4px 14px -3px rgba(2, 132, 199, 0.12), 0 2px 5px -1px rgba(15, 23, 42, 0.06)"
+    card_shadow_hover = "0 16px 32px -4px rgba(0,0,0,0.6), 0 0 20px rgba(56,189,248,0.25)" if is_dark else "0 12px 28px -5px rgba(2, 132, 199, 0.22), 0 4px 9px -2px rgba(15, 23, 42, 0.08)"
     
     text_main = "#f8fafc" if is_dark else "#0f172a"
     text_muted = "#94a3b8" if is_dark else "#334155"
@@ -35,6 +37,22 @@ def load_theme() -> None:
     input_bg = "#0a1524" if is_dark else "#ffffff"
     input_border = "rgba(56, 189, 248, 0.3)" if is_dark else "rgba(2, 132, 199, 0.25)"
     metric_bg = "#111c2e" if is_dark else "#ffffff"
+    sidebar_suppression = "" if show_sidebar else """
+    [data-testid="stSidebar"], [data-testid="collapsedControl"],
+    section[data-testid="stSidebar"], aside[data-testid="stSidebar"] {
+      display: none !important;
+      width: 0 !important;
+      visibility: hidden !important;
+    }
+    """
+    sidebar_navigation_css = """
+    [data-testid="stSidebar"], section[data-testid="stSidebar"], aside[data-testid="stSidebar"] {
+      display: flex !important; visibility: visible !important; pointer-events: auto !important;
+    }
+    [data-testid="collapsedControl"] { display: flex !important; visibility: visible !important; }
+    [data-testid="stSidebarNav"] { display: none !important; }
+    [data-testid="stSidebarContent"] { padding-top: 1rem !important; }
+    """ if show_sidebar else ""
 
     st.html(f"""
     <style>
@@ -130,15 +148,13 @@ def load_theme() -> None:
       animation: ag-fade-in 0.3s ease-out;
     }}
 
-    /* Sidebar suppression (custom executive top navigation is used) */
-    [data-testid="stSidebar"],
-    [data-testid="collapsedControl"],
-    section[data-testid="stSidebar"],
-    aside[data-testid="stSidebar"] {{
-      display: none !important;
-      width: 0 !important;
-      visibility: hidden !important;
+    @keyframes ag-dashboard-enter {{
+      from {{ opacity: 0; transform: translateY(12px) scale(0.99); }}
+      to {{ opacity: 1; transform: translateY(0) scale(1); }}
     }}
+
+    {sidebar_suppression}
+    {sidebar_navigation_css}
 
     /* Typography */
     h1, h2, h3, h4, h5, h6 {{
@@ -177,8 +193,10 @@ def load_theme() -> None:
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                   box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                   border-color 0.2s ease !important;
+      animation: ag-dashboard-enter 0.48s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }}
     [data-testid="stVerticalBlockBorderWrapper"]:hover {{
+      transform: translateY(-2px);
       border-color: rgba(2, 132, 199, 0.4) !important;
       box-shadow: var(--ag-card-shadow-hover) !important;
     }}
@@ -192,6 +210,10 @@ def load_theme() -> None:
       color: var(--ag-text-main) !important;
     }}
 
+    .ag-icon-badge {{
+      display: none !important;
+    }}
+
     /* Modern KPI Metric Cards */
     [data-testid="stMetric"] {{
       background: var(--ag-metric-bg) !important;
@@ -201,6 +223,7 @@ def load_theme() -> None:
       padding: 1rem 1.15rem !important;
       box-shadow: var(--ag-card-shadow) !important;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      animation: ag-dashboard-enter 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }}
     [data-testid="stMetric"]:hover {{
       transform: translateY(-2px);
@@ -352,8 +375,12 @@ def load_theme() -> None:
     }}
     [data-testid="stTabs"] button[role="tab"]:hover,
     [data-baseweb="tab"]:hover {{
-      color: var(--ag-primary) !important;
-      background: var(--ag-primary-soft) !important;
+      color: #0369a1 !important;
+      background: transparent !important;
+      border: 2px solid #0875d1 !important;
+      border-radius: 9999px !important;
+      box-shadow: none !important;
+      transform: translateY(-2px) scale(1.02) !important;
     }}
     [data-testid="stTabs"] button[role="tab"][aria-selected="true"],
     [data-baseweb="tab"][aria-selected="true"] {{
@@ -451,6 +478,7 @@ def load_theme() -> None:
       position: relative;
       overflow: hidden;
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+      animation: ag-dashboard-enter 0.48s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }}
     .ag-kpi-card:hover {{
       transform: translateY(-2px);
@@ -470,16 +498,6 @@ def load_theme() -> None:
       letter-spacing: 0.04em;
       text-transform: uppercase;
       margin: 0;
-    }}
-    .ag-kpi-icon {{
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--ag-primary-soft);
-      color: var(--ag-primary);
     }}
     .ag-kpi-body {{
       display: flex;
@@ -527,15 +545,17 @@ def load_theme() -> None:
     .ag-weather-card {{
       background: var(--ag-surface);
       border: 1px solid var(--ag-card-border);
-      border-radius: var(--ag-radius-sm);
+      border-radius: var(--ag-radius-md);
       padding: 0.85rem 0.75rem;
       text-align: center;
       box-shadow: var(--ag-card-shadow);
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      animation: ag-dashboard-enter 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }}
     .ag-weather-card:hover {{
       transform: translateY(-2px);
       border-color: var(--ag-primary);
+      box-shadow: var(--ag-card-shadow-hover);
     }}
     .ag-weather-date {{
       font-size: 0.75rem;
@@ -683,12 +703,95 @@ def load_theme() -> None:
       [data-testid="stMetricValue"] div {{ font-size: 1.5rem !important; }}
     }}
 
+    /* Phone and tablet layouts: preserve usable controls without horizontal overflow. */
+    @media (max-width: 768px) {{
+      [data-testid="stMainBlockContainer"],
+      [data-testid="stAppViewBlockContainer"],
+      .main .block-container {{
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+      }}
+      [data-testid="stMain"] [data-testid="stHorizontalBlock"] {{
+        flex-wrap: wrap !important;
+        align-items: stretch !important;
+        gap: 0.65rem !important;
+      }}
+      [data-testid="stMain"] [data-testid="stHorizontalBlock"] > [data-testid="column"] {{
+        flex: 1 1 calc(50% - 0.4rem) !important;
+        min-width: min(100%, 10rem) !important;
+        width: auto !important;
+      }}
+      [data-testid="stMetric"] {{
+        min-height: 7rem;
+        padding: 0.8rem !important;
+      }}
+      [data-testid="stMetricLabel"] p {{ font-size: 0.72rem !important; }}
+      [data-testid="stMetricValue"] div {{ font-size: clamp(1.1rem, 6vw, 1.45rem) !important; }}
+      [data-testid="stVerticalBlockBorderWrapper"] {{
+        padding: 0.35rem 0.2rem !important;
+        margin-bottom: 0.55rem !important;
+      }}
+      [data-testid="stDataFrame"], [data-testid="stTable"] {{
+        max-width: 100% !important;
+        overflow-x: auto !important;
+      }}
+      [data-testid="stPlotlyChart"] {{
+        max-width: 100% !important;
+        animation: ag-dashboard-enter 0.58s cubic-bezier(0.2, 0.8, 0.2, 1) 0.06s both;
+      }}
+      [data-testid="stPlotlyChart"] iframe {{ max-width: 100% !important; }}
+      [data-testid="stButton"] button,
+      [data-testid="stFormSubmitButton"] button,
+      button[data-testid="stPopoverButton"] {{ min-height: 44px !important; }}
+      [data-testid="stSidebar"] {{
+        width: min(86vw, 20rem) !important;
+        min-width: min(86vw, 20rem) !important;
+      }}
+      .ag-floating-ai-fab {{ right: 0.85rem !important; bottom: 0.85rem !important; }}
+    }}
+    @media (max-width: 420px) {{
+      h1 {{ font-size: 1.55rem !important; }}
+    }}
+
     @media (prefers-reduced-motion: reduce) {{
       *, *::before, *::after {{
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
       }}
+    }}
+
+    /* Match the navbar's clear outline hover across every in-page action. */
+    [data-testid="stMain"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *),
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button:not(.st-key-ag_navbar *),
+    [data-testid="stMain"] [data-testid="stLinkButton"]:not(.st-key-ag_navbar *),
+    [data-testid="stMain"] button[data-testid="stPopoverButton"]:not(.st-key-ag_navbar *) {{
+      transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                  background 180ms ease, color 180ms ease,
+                  border-color 180ms ease, box-shadow 180ms ease !important;
+    }}
+    [data-testid="stMain"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *):hover,
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button:not(.st-key-ag_navbar *):hover,
+    [data-testid="stMain"] [data-testid="stLinkButton"]:not(.st-key-ag_navbar *):hover,
+    [data-testid="stMain"] button[data-testid="stPopoverButton"]:not(.st-key-ag_navbar *):hover {{
+      background: transparent !important;
+      background-color: transparent !important;
+      border: 2px solid #0875d1 !important;
+      border-radius: 9999px !important;
+      color: #0369a1 !important;
+      box-shadow: none !important;
+      transform: translateY(-2px) scale(1.02) !important;
+    }}
+    [data-testid="stMain"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *):hover *,
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button:not(.st-key-ag_navbar *):hover *,
+    [data-testid="stMain"] [data-testid="stLinkButton"]:not(.st-key-ag_navbar *):hover *,
+    [data-testid="stMain"] button[data-testid="stPopoverButton"]:not(.st-key-ag_navbar *):hover * {{
+      color: #0369a1 !important;
+    }}
+    [data-testid="stMain"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *):disabled:hover,
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button:not(.st-key-ag_navbar *):disabled:hover {{
+      transform: none !important;
+      border-color: inherit !important;
     }}
     </style>
     """)

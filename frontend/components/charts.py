@@ -206,7 +206,7 @@ def render_dashboard_chart(df) -> None:
         return
 
     dimensions = [
-        column for column in ("District", "Crop", "Priority", "season", "Province")
+        column for column in ("District", "Crop", "Priority", "Season", "season", "Province")
         if column in df.columns and df[column].nunique(dropna=True) > 1
     ]
     if not dimensions:
@@ -218,7 +218,7 @@ def render_dashboard_chart(df) -> None:
         column for column in df.select_dtypes(include="number").columns
         if column.lower() not in excluded_numeric and df[column].notna().any()
     ]
-    preferred_metrics = [column for column in ("Production_MT", "Yield_MT_ha") if column in numeric_columns]
+    preferred_metrics = [column for column in ("Production (MT)", "Yield (kg/ha)", "Production_MT", "Yield_MT_ha") if column in numeric_columns]
     metric_columns = preferred_metrics + [column for column in numeric_columns if column not in preferred_metrics]
 
     dimension_labels = {
@@ -226,11 +226,14 @@ def render_dashboard_chart(df) -> None:
         "Crop": t("common.crop", "Crop"),
         "Priority": t("dashboard.chart.priority", "Priority"),
         "season": t("common.season", "Season"),
+        "Season": t("common.season", "Season"),
         "Province": t("common.province", "Province"),
     }
     metric_labels = {
         "Production_MT": t("dashboard.chart.production", "Production (MT)"),
         "Yield_MT_ha": t("dashboard.chart.yield", "Yield (MT/ha)"),
+        "Production (MT)": "Production (MT)",
+        "Yield (kg/ha)": "Yield (kg/ha)",
     }
     for column in metric_columns:
         metric_labels.setdefault(column, column.replace("_", " "))
@@ -244,7 +247,8 @@ def render_dashboard_chart(df) -> None:
             key="dashboard_chart_group_by",
         )
     with controls[1]:
-        measure_options = [t("dashboard.chart.record_count", "Number of zones")] + metric_columns
+        record_count_label = "Records"
+        measure_options = [record_count_label] + metric_columns
         measure = st.selectbox(
             t("dashboard.chart.measure", "Measure"),
             measure_options,
@@ -258,7 +262,7 @@ def render_dashboard_chart(df) -> None:
             t("dashboard.chart.summary", "Summary"),
             [t("dashboard.chart.average", "Average"), t("dashboard.chart.total", "Total")],
             key="dashboard_chart_summary",
-            disabled=measure == measure_options[0],
+            disabled=measure == record_count_label,
         )
     with controls[3]:
         chart_type = st.selectbox(
@@ -281,9 +285,9 @@ def render_dashboard_chart(df) -> None:
         series_column = selected_series or None
 
     group_columns = [x_column] + ([series_column] if series_column else [])
-    if measure == measure_options[0]:
+    if measure == record_count_label:
         chart_data = df.groupby(group_columns, dropna=False).size().rename("value").reset_index()
-        metric_title = t("dashboard.chart.record_count", "Number of zones")
+        metric_title = record_count_label
     else:
         numeric_values = df[group_columns + [measure]].copy()
         numeric_values[measure] = pd.to_numeric(numeric_values[measure], errors="coerce")
@@ -310,6 +314,133 @@ def render_dashboard_chart(df) -> None:
     fig.update_yaxes(gridcolor="rgba(150, 150, 150, 0.1)", linecolor="rgba(150, 150, 150, 0.2)", rangemode="tozero")
     fig.update_traces(hovertemplate=f"<b>%{{x}}</b><br>{metric_title}: %{{y:,.2f}}<extra></extra>")
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="dashboard_explorer_chart")
+
+
+def render_zone_portfolio_chart(zones: list[dict]) -> None:
+    """Compare registered zones across districts and priority levels."""
+    if px is None or pd is None:
+        st.info("The chart is unavailable right now.")
+        return
+    if not zones:
+        st.info("No zone records are available for this selection.")
+        return
+
+    zone_rows = []
+    for zone in zones:
+        district = zone.get("district")
+        priority = zone.get("priority")
+        district_label = str(district).strip() if district is not None and pd.notna(district) else ""
+        priority_label = str(priority).strip().title() if priority is not None and pd.notna(priority) else ""
+        zone_rows.append({
+            "District": district_label or "Unspecified",
+            "Priority": priority_label or "Unassessed",
+        })
+    frame = pd.DataFrame(zone_rows)
+    priority_order = ["High", "Medium", "Low", "Unassessed"]
+    frame["Priority"] = frame["Priority"].where(frame["Priority"].isin(priority_order), "Unassessed")
+    counts = frame.groupby(["District", "Priority"]).size().rename("Zones").reset_index()
+    counts = counts.sort_values("Zones", ascending=True)
+
+    fig = px.bar(
+        counts,
+        x="Zones",
+        y="District",
+        color="Priority",
+        orientation="h",
+        barmode="stack",
+        category_orders={"Priority": priority_order},
+        color_discrete_map=PRIORITY_COLORS,
+        title="Zone portfolio by district",
+        hover_data={"Zones": True, "Priority": True, "District": True},
+    )
+    fig.update_layout(
+        **get_plotly_layout(),
+        height=max(320, min(520, 34 * counts["District"].nunique() + 120)),
+        xaxis_title="Registered zones",
+        yaxis_title="",
+        legend_title_text="Priority",
+    )
+    fig.update_xaxes(dtick=1, rangemode="tozero", gridcolor="rgba(150, 150, 150, 0.1)")
+    fig.update_yaxes(automargin=True)
+    fig.update_traces(hovertemplate="<b>%{y}</b><br>%{fullData.name}: %{x} zones<extra></extra>")
+    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="zone_portfolio_chart")
+
+
+def render_segment_summary_chart(summary, metric_label: str, unit: str) -> None:
+    """Show comparable district observations as an interactive ranked bar chart."""
+    if px is None or pd is None:
+        st.info("The chart is unavailable right now.")
+        return
+    if summary is None or summary.empty:
+        st.info("No matching observations include a value for this measure.")
+        return
+
+    chart_data = summary.sort_values("Value", ascending=True)
+    fig = px.bar(
+        chart_data,
+        x="Value",
+        y="District",
+        color="Range",
+        orientation="h",
+        color_discrete_map={
+            "Lower observed range": "#c66c55",
+            "Middle observed range": "#d4a347",
+            "Upper observed range": "#458b70",
+            "Not comparable": "#94a3b8",
+        },
+        hover_data={"Record count": True, "Range": True, "Value": ":,.1f"},
+        title=f"District comparison · {metric_label}",
+    )
+    fig.update_layout(
+        **get_plotly_layout(),
+        height=max(320, min(560, 36 * len(chart_data) + 110)),
+        xaxis_title=f"{metric_label} ({unit})",
+        yaxis_title="",
+        legend_title_text="Observed range",
+    )
+    fig.update_xaxes(rangemode="tozero", gridcolor="rgba(150, 150, 150, 0.1)")
+    fig.update_yaxes(automargin=True)
+    fig.update_traces(hovertemplate="<b>%{y}</b><br>%{x:,.1f} " + unit + "<extra></extra>")
+    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="segment_summary_chart")
+
+
+def render_segment_distribution_chart(frame, metric_column: str, metric_label: str, unit: str) -> None:
+    """Explore the spread of matching observations without implying a time trend."""
+    if px is None or pd is None:
+        st.info("The chart is unavailable right now.")
+        return
+    if frame is None or frame.empty or metric_column not in frame.columns:
+        st.info("No matching observations include a value for this measure.")
+        return
+
+    chart_data = frame.copy()
+    chart_data[metric_column] = pd.to_numeric(chart_data[metric_column], errors="coerce")
+    chart_data = chart_data.dropna(subset=[metric_column])
+    if chart_data.empty:
+        st.info("No matching observations include a value for this measure.")
+        return
+
+    district_count = chart_data["District"].nunique(dropna=True) if "District" in chart_data else 0
+    x_column = "District" if district_count > 1 else None
+    fig = px.box(
+        chart_data,
+        x=x_column,
+        y=metric_column,
+        color=x_column,
+        points="all",
+        hover_data=[column for column in ("Crop", "Season", "Sector", "Cell") if column in chart_data],
+        title=f"Observed {metric_label.casefold()} distribution",
+    )
+    fig.update_layout(
+        **get_plotly_layout(),
+        height=380,
+        xaxis_title="District" if x_column else "",
+        yaxis_title=f"{metric_label} ({unit})",
+        showlegend=False,
+    )
+    fig.update_xaxes(gridcolor="rgba(150, 150, 150, 0.1)", automargin=True)
+    fig.update_yaxes(rangemode="tozero", gridcolor="rgba(150, 150, 150, 0.1)")
+    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="segment_record_distribution")
 
 
 

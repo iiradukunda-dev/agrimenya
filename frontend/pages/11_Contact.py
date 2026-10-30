@@ -2,6 +2,7 @@
 import os
 
 import streamlit as st
+from components.footer import render_footer
 from components.errors import error_boundary
 from components.navbar import render_navbar
 from utils import api_client
@@ -47,11 +48,12 @@ with error_boundary("Feedback & Support"):
                         transform 160ms ease !important;
           }
           [data-testid="stForm"] [data-testid="stFormSubmitButton"] button:hover {
-            border-color: #0563ad !important;
-            background: #0563ad !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 11px rgba(8, 117, 209, 0.24) !important;
-            transform: translateY(-1px) !important;
+            border: 2px solid #0875d1 !important;
+            border-radius: 9999px !important;
+            background: transparent !important;
+            color: #0369a1 !important;
+            box-shadow: none !important;
+            transform: translateY(-2px) scale(1.02) !important;
           }
           [data-testid="stForm"] [data-testid="stFormSubmitButton"] button:focus-visible {
             outline: 3px solid rgba(8, 117, 209, 0.28) !important;
@@ -88,5 +90,7 @@ with error_boundary("Feedback & Support"):
                     st.success(t("contact.success", "Your feedback was submitted."))
                 else:
                     st.error(t("contact.err_send", "Feedback could not be submitted. Please try again when the service is available."))
+
+render_footer()
 
 

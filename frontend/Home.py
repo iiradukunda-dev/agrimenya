@@ -3,6 +3,7 @@ import os
 import streamlit as st
 from components.cards import pillar_card
 from components.errors import error_boundary
+from components.footer import render_footer
 from components.home_hero import render_home_hero
 from components.navbar import render_navbar
 from utils.i18n import t
@@ -230,3 +231,4 @@ def main():
 if __name__ == "__main__":
     with error_boundary("Home"):
         main()
+    render_footer()

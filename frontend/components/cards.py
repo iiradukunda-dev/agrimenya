@@ -28,26 +28,18 @@ def pillar_card(
             html_block = f"""
             <style>
             @keyframes ag-badge-pulse {{
-                0%, 100% {{ transform: scale(1); box-shadow: 0 2px 8px {accent_color}25; }}
-                50% {{ transform: scale(1.06); box-shadow: 0 0 16px {accent_color}55; }}
+                0%, 100% {{ transform: scale(1); box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12); }}
+                50% {{ transform: scale(1.04); box-shadow: 0 0 14px rgba(2, 132, 199, 0.22); }}
             }}
             .ag-workflow-icon-wrap {{
-                width: 44px;
-                height: 44px;
-                border-radius: 12px;
-                background: linear-gradient(135deg, {accent_color}25 0%, {accent_color}10 100%);
-                border: 1.5px solid {accent_color}55;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 4px 14px {accent_color}30, inset 0 1px 1px rgba(255, 255, 255, 0.45);
+                box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.45);
                 transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
                 will-change: transform, box-shadow;
             }}
             [data-testid="stVerticalBlockBorderWrapper"]:hover .ag-workflow-icon-wrap {{
                 transform: translateY(-5px) scale(1.12) rotate(-4deg);
-                box-shadow: 0 12px 26px {accent_color}55, inset 0 1px 2px rgba(255, 255, 255, 0.7);
-                border-color: {accent_color}90;
+                box-shadow: 0 12px 26px rgba(15, 23, 42, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+                border-color: var(--ag-primary);
             }}
             [data-testid="stVerticalBlockBorderWrapper"]:active .ag-workflow-icon-wrap {{
                 transform: translateY(-1px) scale(1.02);
@@ -57,27 +49,27 @@ def pillar_card(
                 font-weight: 750;
                 letter-spacing: 0.06em;
                 text-transform: uppercase;
-                color: {accent_color};
-                background: {accent_color}22;
+                color: var(--ag-primary);
+                background: var(--ag-primary-soft);
                 padding: 3px 10px;
                 border-radius: 9999px;
-                border: 1px solid {accent_color}50;
-                box-shadow: 0 2px 8px {accent_color}20;
+                border: 1px solid var(--ag-card-border);
+                box-shadow: none;
                 transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.3s ease;
             }}
             [data-testid="stVerticalBlockBorderWrapper"]:hover .ag-workflow-tag {{
                 transform: scale(1.05);
-                box-shadow: 0 4px 14px {accent_color}45;
-                border-color: {accent_color}90;
+                box-shadow: 0 4px 14px rgba(2, 132, 199, 0.14);
+                border-color: var(--ag-primary);
                 animation: ag-badge-pulse 2s infinite ease-in-out;
             }}
             </style>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-                <div class="ag-workflow-icon-wrap">{icon_markup}</div>
+                <div class="ag-icon-badge ag-workflow-icon-wrap">{icon_markup}</div>
                 <span class="ag-workflow-tag">{tag}</span>
             </div>
-            <h3 style="margin:0.2rem 0 0.45rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.15rem;font-weight:750;color:#ffffff;letter-spacing:-0.02em;text-shadow:0 2px 8px rgba(0,0,0,0.7);transition:color 0.25s ease;">{title}</h3>
-            <p style="color:#e0f2fe;font-size:0.88rem;line-height:1.55;min-height:42px;margin:0 0 0.85rem;text-shadow:0 1px 6px rgba(0,0,0,0.7);">{desc}</p>
+            <h3 style="margin:0.2rem 0 0.45rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.15rem;font-weight:800;color:#0f172a;letter-spacing:-0.02em;text-shadow:none;filter:none;-webkit-text-stroke:0;transition:color 0.25s ease;">{title}</h3>
+            <p style="color:#334e5b;font-size:0.88rem;line-height:1.55;min-height:42px;margin:0 0 0.85rem;text-shadow:none;filter:none;opacity:1;">{desc}</p>
             """
             st.markdown(html_block, unsafe_allow_html=True)
             if st.button(f"{btn_text} →", key=f"btn_{page_route}", width="stretch"):
@@ -102,17 +94,7 @@ def login_card_header(
     html = f"""
     <div style="text-align: left; margin-bottom: 0.5rem;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
-            <div class="ag-login-icon-box" style="
-                width: 48px;
-                height: 48px;
-                border-radius: 13px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: linear-gradient(135deg, {accent_color}28 0%, {accent_color}12 100%);
-                border: 1.5px solid {accent_color}60;
-                box-shadow: 0 6px 18px {accent_color}35, inset 0 1px 1px rgba(255, 255, 255, 0.45);
-            ">{icon_markup}</div>
+            <div class="ag-icon-badge ag-login-icon-box">{icon_markup}</div>
             <span style="
                 display: inline-flex;
                 align-items: center;
@@ -124,17 +106,17 @@ def login_card_header(
                 text-transform: uppercase;
                 padding: 4px 12px;
                 border-radius: 9999px;
-                border: 1px solid {accent_color}55;
-                background: {accent_color}18;
+                border: 1px solid {accent_color}20;
+                background: {accent_color}10;
                 color: {accent_color};
-                box-shadow: 0 2px 10px {accent_color}22;
+                box-shadow: none;
             ">
                 <span style="
                     width: 7px;
                     height: 7px;
                     border-radius: 50%;
                     background: {accent_color};
-                    box-shadow: 0 0 8px {accent_color};
+                    box-shadow: none;
                 "></span>
                 {badge_text}
             </span>
@@ -144,22 +126,22 @@ def login_card_header(
             font-family: 'Plus Jakarta Sans', sans-serif !important;
             font-size: 1.45rem !important;
             font-weight: 800 !important;
-            color: #ffffff !important;
+            color: #104b3b !important;
             letter-spacing: -0.025em !important;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+            text-shadow: none !important;
         ">{title}</h2>
         <p style="
-            color: #cbe5f5 !important;
+            color: #60766f !important;
             font-size: 0.88rem !important;
             line-height: 1.55 !important;
             margin: 0 0 0.65rem 0 !important;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+            text-shadow: none !important;
         ">{subtitle}</p>
         <div style="
             height: 1px;
             width: 100%;
-            background: linear-gradient(90deg, transparent 0%, {accent_color}66 50%, transparent 100%);
-            margin: 0.7rem 0 1.15rem 0;
+            background: #e7efeb;
+            margin: 0.7rem 0 1rem 0;
         "></div>
     </div>
     """
@@ -179,8 +161,8 @@ def security_trust_footer(
         gap: 8px;
         margin-top: 1.1rem;
         padding-top: 0.85rem;
-        border-top: 1px solid rgba(56, 189, 248, 0.18);
-        color: #94a3b8;
+        border-top: 1px solid #e7efeb;
+        color: #70847c;
         font-size: 0.76rem;
         font-weight: 550;
         letter-spacing: 0.01em;
@@ -204,77 +186,50 @@ def authenticated_session_badge(
     role: str = "Administrator",
     key_prefix: str = "auth",
 ) -> bool:
-    """Render an executive authenticated session card with user identity and sign-out action.
-    Returns True if sign-out was clicked."""
-    initials = (display_name[:2] if len(display_name) >= 2 else "AD").upper()
-    html = f"""
-    <div style="
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.95rem 1.25rem;
-        margin-bottom: 1.2rem;
-        border-radius: 14px;
-        background: linear-gradient(135deg, rgba(8, 26, 38, 0.95) 0%, rgba(12, 36, 53, 0.95) 100%);
-        border: 1px solid rgba(56, 189, 248, 0.35);
-        border-top: 1.5px solid rgba(56, 189, 248, 0.6);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    ">
-        <div style="display: flex; align-items: center; gap: 14px;">
-            <div style="
-                width: 44px;
-                height: 44px;
-                border-radius: 12px;
-                background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #ffffff;
-                font-family: 'Plus Jakarta Sans', sans-serif;
-                font-weight: 800;
-                font-size: 1rem;
-                box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
-                letter-spacing: 0.04em;
-            ">{initials}</div>
-            <div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="
-                        font-family: 'Plus Jakarta Sans', sans-serif;
-                        font-weight: 750;
-                        font-size: 0.98rem;
-                        color: #ffffff;
-                    ">{display_name}</span>
-                    <span style="
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 4px;
-                        font-size: 0.68rem;
-                        font-weight: 750;
-                        text-transform: uppercase;
-                        letter-spacing: 0.05em;
-                        color: #4ade80;
-                        background: rgba(74, 222, 128, 0.15);
-                        border: 1px solid rgba(74, 222, 128, 0.35);
-                        padding: 2px 8px;
-                        border-radius: 9999px;
-                    ">
-                        <span style="width: 5px; height: 5px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80;"></span>
-                        {role}
-                    </span>
-                </div>
-                <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 2px;">
-                    {email if email else 'Authenticated session'} <span style="color: rgba(56, 189, 248, 0.4);">•</span> <span style="color: #38bdf8;">Active (30m refresh)</span>
-                </div>
+    """Show the matching signed-in card and return True when sign-out is clicked."""
+    import html as html_lib
+
+    safe_name = html_lib.escape(str(display_name or "Community member"))
+    safe_email = html_lib.escape(str(email or "Authenticated session"))
+    safe_role = html_lib.escape(str(role or "Member"))
+    initials = html_lib.escape((str(display_name)[:2] if display_name else "AG").upper())
+    style_key = f"st-key-{key_prefix}_authenticated_session_card"
+    st.markdown(
+        f"""
+        <style>
+        .{style_key} [data-testid="stVerticalBlockBorderWrapper"] {{
+            max-width: 460px; margin: 0 auto 1.25rem auto; padding: 1.25rem 1.45rem;
+            border: 1px solid #dce9e3; border-radius: 20px; background: #fff;
+            box-shadow: 0 12px 32px rgba(17, 73, 55, 0.08);
+        }}
+        .{style_key} [data-testid="stButton"] button {{
+            min-height: 2.8rem; border: 1px solid #cce2d8; border-radius: 11px;
+            color: #087a55; background: #f5faf7; font-weight: 700;
+        }}
+        .{style_key} [data-testid="stButton"] button:hover {{
+            border: 2px solid #0875d1; border-radius: 9999px;
+            color: #0369a1; background: transparent; box-shadow: none;
+            transform: translateY(-2px) scale(1.02);
+        }}
+        @media (max-width: 600px) {{ .{style_key} [data-testid="stVerticalBlockBorderWrapper"] {{ padding: 1rem; }} }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    with st.container(key=f"{key_prefix}_authenticated_session_card", border=True):
+        st.markdown(
+            f"""
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+              <div style="width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#e7f5ed;color:#087a55;font-weight:800;">{initials}</div>
+              <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:#e7f5ed;color:#087a55;font-size:.72rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase;">
+                <span style="width:7px;height:7px;border-radius:50%;background:#16a36a;"></span>{safe_role}
+              </span>
             </div>
-        </div>
-    </div>
-    """
-    col_info, col_btn = st.columns([4, 1.2])
-    with col_info:
-        st.markdown(html, unsafe_allow_html=True)
-    with col_btn:
-        st.write("")
-        st.write("")
+            <h2 style="margin:0 0 .35rem;color:#104b3b;font-size:1.45rem;letter-spacing:-.03em;">You're signed in, {safe_name}</h2>
+            <p style="margin:0 0 1rem;color:#60766f;font-size:.9rem;line-height:1.5;">{safe_email} &middot; Your session is active.</p>
+            """,
+            unsafe_allow_html=True,
+        )
         return st.button("Sign out", key=f"{key_prefix}_signout_btn", width="stretch")
 
 
@@ -297,14 +252,31 @@ def centralized_login_container(max_width: int = 460):
             max-width: {max_width}px !important;
             width: 100% !important;
             margin: 0 auto !important;
-            border-radius: 18px !important;
-            background: linear-gradient(135deg, rgba(8, 26, 38, 0.94) 0%, rgba(5, 18, 27, 0.96) 100%) !important;
-            border: 1px solid rgba(56, 189, 248, 0.28) !important;
-            border-top: 1.5px solid rgba(56, 189, 248, 0.6) !important;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 1px rgba(255, 255, 255, 0.12) !important;
-            backdrop-filter: blur(18px) !important;
-            -webkit-backdrop-filter: blur(18px) !important;
+            border-radius: 20px !important;
+            background: #ffffff !important;
+            border: 1px solid #dce9e3 !important;
+            box-shadow: 0 12px 32px rgba(17, 73, 55, 0.08) !important;
             padding: 1.25rem 1.45rem !important;
+        }}
+        .st-key-ag_centralized_login_col [data-testid="stTextInput"] input {{
+            min-height: 2.8rem;
+            border: 1px solid #d9e5e0;
+            border-radius: 11px;
+            background: #ffffff;
+        }}
+        .st-key-ag_centralized_login_col [data-testid="stTextInput"] input:focus {{
+            border-color: #0b8059;
+            box-shadow: 0 0 0 3px rgba(11, 128, 89, 0.11);
+        }}
+        .st-key-ag_centralized_login_col [data-testid="stFormSubmitButton"] button {{
+            min-height: 2.8rem;
+            border-radius: 11px;
+            background: #087a55;
+            border-color: #087a55;
+        }}
+        .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a {{
+            min-height: 2.8rem;
+            border-radius: 11px;
         }}
         @media (max-width: 768px) {{
             .st-key-ag_centralized_login_col [data-testid="stVerticalBlockBorderWrapper"] {{
@@ -316,11 +288,9 @@ def centralized_login_container(max_width: int = 460):
         """,
         unsafe_allow_html=True,
     )
-    col_l, col_center, col_r = st.columns([1, 1.35, 1])
-    with col_center:
-        with st.container(key="ag_centralized_login_col"):
-            with st.container(border=True):
-                yield
+    with st.container(key="ag_centralized_login_col"):
+        with st.container(border=True):
+            yield
 
 
 def render_centralized_login_card(
@@ -353,7 +323,7 @@ def render_centralized_login_card(
                 title="Reset Password",
                 subtitle="Set a new secure password for your administrator account.",
                 badge_text="SECURITY RECOVERY",
-                accent_color="#0284c7",
+                accent_color="#087a55",
             )
             with st.form(f"{key_prefix}_reset_form"):
                 password = st.text_input(
@@ -387,6 +357,8 @@ def render_centralized_login_card(
 
     # 2. Check for active authenticated admin session
     if portal in ("admin", "unified") and api_client.admin_session_authenticated():
+        if portal == "admin":
+            return True
         identity = st.session_state.get("admin_identity", {})
         display_name = str(identity.get("display_name") or identity.get("email") or "Administrator")
         email = str(identity.get("email") or "")
@@ -422,7 +394,7 @@ def render_centralized_login_card(
                 title=title or default_title,
                 subtitle=subtitle or default_subtitle,
                 badge_text="SECURITY PROTOCOL",
-                accent_color="#0284c7",
+                accent_color="#087a55",
             )
             login_error = st.session_state.pop("admin_login_error", None)
             if login_error:
@@ -549,7 +521,7 @@ def render_centralized_login_card(
                 title=title or "agrimenya Portal Access",
                 subtitle=subtitle or "Sign in with your credentials to access spatial intelligence, decisions, or the community grower network.",
                 badge_text="SECURE ACCESS",
-                accent_color="#0284c7",
+                accent_color="#087a55",
             )
             tab_admin, tab_comm = st.tabs(["Administrator & Officer", "Farmer Community"])
             with tab_admin:
@@ -693,7 +665,7 @@ def render_kpi_card(
     elif subtitle:
         delta_markup = f'<div class="ag-kpi-footer"><span>{subtitle}</span></div>'
 
-    icon_html = f'<div class="ag-kpi-icon">{icon}</div>' if icon else ""
+    icon_html = f'<div class="ag-icon-badge ag-kpi-icon">{icon}</div>' if icon else ""
 
     html = f"""
     <div class="ag-kpi-card">

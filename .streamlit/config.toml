@@ -6,8 +6,9 @@ showSidebarNavigation = false
 toolbarMode = "minimal"
 
 [theme]
+base = "light"
 primaryColor = "#2D6A4F"
-backgroundColor = "#F0F7F2"
-secondaryBackgroundColor = "#E8F0EA"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F8FAFC"
 textColor = "#1F2937"
 font = "sans serif"
