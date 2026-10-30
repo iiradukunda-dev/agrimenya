@@ -37,6 +37,8 @@ class TestTheme(unittest.TestCase):
         light_css = mock_st.html.call_args[0][0]
         self.assertIn("--ag-primary: #0284c7;", light_css)
         self.assertIn("--ag-bg-base: #f8fafc;", light_css)
+        self.assertIn('[data-testid="stSkeleton"]', light_css)
+        self.assertIn("display: none !important;", light_css)
 
         # Clear any previously saved dark-mode selection.
         mock_st.session_state = {"ag_theme_mode": "dark"}

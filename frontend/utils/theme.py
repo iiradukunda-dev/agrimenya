@@ -134,6 +134,10 @@ def load_theme(show_sidebar: bool = False) -> None:
       visibility: hidden !important;
     }}
 
+    [data-testid="stSkeleton"] {{
+      display: none !important;
+    }}
+
     /* Main Container Spacing */
     .block-container,
     [data-testid="stMainBlockContainer"],
