@@ -64,6 +64,26 @@ def test_general_guidance_is_not_labelled_as_insufficient_evidence():
     assert response.json()["answer_type"] == "general_guidance"
 
 
+def test_general_guidance_does_not_show_an_insufficient_evidence_warning():
+    zone_id = str(uuid.uuid4())
+    answer = (
+        "The available records do not support a specific conclusion for this question.\n\n"
+        "Crop rotation can help break pest and disease cycles and balance nutrient use."
+    )
+    with patch("app.routers.chat.ask_assistant_with_source", return_value=(
+        answer, "groq", "Musanze", []
+    )), patch("app.routers.chat.enforce_request_limit"):
+        response = client.post(
+            "/chat",
+            json={"zone_id": zone_id, "question": "How can crop rotation help improve soil health?"},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["answer_type"] == "general_guidance"
+    assert response.json()["answer"].startswith("General guidance:")
+    assert "available records do not support" not in response.json()["answer"].casefold()
+
+
 def test_configured_llm_uses_anthropic_messages_api(monkeypatch):
     from app.core.config import settings
     from app.services.ai_assistant import _call_llm
