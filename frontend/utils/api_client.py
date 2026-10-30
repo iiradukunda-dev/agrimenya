@@ -329,6 +329,20 @@ def get_agri_metrics() -> list[dict[str, Any]]:
     return []
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_official_yields() -> list[dict[str, Any]]:
+    """Return bundled district-level NISR yield observations across available seasons."""
+    data = _get_api("/segmentation/official-yields", timeout=20)
+    return data if isinstance(data, list) else []
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_districts() -> list[dict[str, Any]]:
+    """Return the canonical district directory used by maps and weather views."""
+    data = _get_api("/segmentation/districts")
+    return data if isinstance(data, list) else []
+
+
 @st.cache_data(ttl=300, show_spinner=False)
 def get_crop_comparison(district: str, season: str | None = None) -> list[dict[str, Any]]:
     """Returns crop comparison for a district."""

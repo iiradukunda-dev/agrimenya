@@ -9,6 +9,30 @@ from utils import api_client
 
 class TestApiClientExtended(unittest.TestCase):
 
+    @patch("utils.api_client._get_api")
+    def test_get_official_yields_uses_historical_segmentation_endpoint(self, mock_get):
+        rows = [{"crop": "Maize", "season": "2022 Season A", "yield_actual": "1200"}]
+        mock_get.return_value = rows
+        api_client.get_official_yields.clear()
+
+        result = api_client.get_official_yields()
+
+        self.assertEqual(result, rows)
+        mock_get.assert_called_once_with("/segmentation/official-yields", timeout=20)
+        api_client.get_official_yields.clear()
+
+    @patch("utils.api_client._get_api")
+    def test_get_districts_uses_canonical_backend_directory(self, mock_get):
+        districts = [{"district": "Huye", "province": "Southern Province"}]
+        mock_get.return_value = districts
+        api_client.get_districts.clear()
+
+        result = api_client.get_districts()
+
+        self.assertEqual(result, districts)
+        mock_get.assert_called_once_with("/segmentation/districts")
+        api_client.get_districts.clear()
+
     def test_get_model_info_fallback(self):
         """Verify get_model_info returns structured model diagnostics with mock fallback."""
         with patch.object(api_client, "USE_MOCK_DATA", True):
@@ -127,4 +151,3 @@ class TestApiClientExtended(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -76,6 +76,31 @@ def test_navbar_active_link_uses_blue_outline():
         assert "background: transparent !important;" in css_found
 
 
+def test_navbar_more_and_language_controls_have_visible_contrast():
+    from components.navbar import render_navbar
+
+    mock_st = MagicMock()
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
+    with patch("components.navbar.st", mock_st), \
+         patch("components.navbar.render_floating_ai_widget"), \
+         patch("components.navbar.render_pwa_support"), \
+         patch("components.navbar.render_language_selector"):
+        render_navbar()
+
+    css = "".join(
+        str(call[0][0])
+        for call in mock_st.markdown.call_args_list
+        if "<style>" in str(call[0][0])
+    )
+    assert '[data-testid="stPopoverButton"]' in css
+    assert "background: #e0f2fe !important;" in css
+    assert "color: #075985 !important;" in css
+    assert ".st-key-lang_cycle_btn button" in css
+
+
 def test_user_session_and_page_access_control():
     """Verify user session defaults to signed-in and unauthenticated access is gated."""
     from components.navbar import init_user_session, is_authenticated, check_page_access

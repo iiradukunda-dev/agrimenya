@@ -14,6 +14,41 @@ from utils.i18n import t
 logger = logging.getLogger(__name__)
 
 
+def _available_ranking_seasons(evidence: dict[str, Any] | None) -> list[str]:
+    seasons = evidence.get("available_seasons", []) if isinstance(evidence, dict) else []
+    return [
+        "All available seasons",
+        *sorted(
+            {str(season).strip() for season in seasons if str(season).strip()},
+            reverse=True,
+        ),
+    ]
+
+
+def _evaluation_rows(model_info: dict[str, Any]) -> list[dict[str, Any]]:
+    metrics = model_info.get("metrics")
+    if not isinstance(metrics, dict):
+        return []
+
+    rows = []
+    for split_name, candidates in metrics.items():
+        if not isinstance(candidates, dict):
+            continue
+        for candidate_name, scores in candidates.items():
+            if not isinstance(scores, dict) or not scores.get("n"):
+                continue
+            rows.append({
+                "Evaluation split": str(split_name).replace("_", " ").title(),
+                "Candidate": str(candidate_name).replace("_", " ").title(),
+                "Observations": scores.get("n"),
+                "Coverage": scores.get("coverage"),
+                "MAE (kg/ha)": scores.get("mae_kg_ha"),
+                "RMSE (kg/ha)": scores.get("rmse_kg_ha"),
+                "R²": scores.get("r2"),
+            })
+    return rows
+
+
 @st.dialog("Agronomic Disease Evaluation", width="large")
 def show_disease_eval_dialog(zones: list[dict[str, Any]]) -> None:
     """Modal popup for agronomic disease diagnosis."""
@@ -154,14 +189,21 @@ def render_decide():
             with c1:
                 crops = api_client.get_crops() or ["Maize", "Beans", "Cassava", "Irish Potatoes", "Rice"]
                 selected_crop = st.selectbox("Target Crop", crops, index=0, key="rank_crop_select")
+            all_evidence = api_client.get_evidence_ranking(crop=selected_crop)
+            seasons = _available_ranking_seasons(all_evidence)
+            season_key = "rank_season_select"
+            if st.session_state.get(season_key) not in seasons:
+                st.session_state.pop(season_key, None)
             with c2:
-                seasons = ["All Seasons", "Season A", "Season B", "Season C"]
                 selected_season = st.selectbox("Target Season", seasons, index=0, key="rank_season_select")
-                query_season = None if selected_season == "All Seasons" else selected_season
+                query_season = None if selected_season == "All available seasons" else selected_season
 
             with st.spinner("Loading benchmarks..."):
                 rankings = api_client.get_district_ranking(crop=selected_crop, season=query_season)
-                evidence = api_client.get_evidence_ranking(crop=selected_crop, season=query_season)
+                evidence = (
+                    all_evidence if query_season is None
+                    else api_client.get_evidence_ranking(crop=selected_crop, season=query_season)
+                )
 
             national_ref = evidence.get("national_reference_kg_ha") if isinstance(evidence, dict) else None
             if not national_ref and rankings:
@@ -238,30 +280,49 @@ def render_decide():
         # ── TAB 3: ML MODEL DIAGNOSTICS & PROVENANCE ──────────────────
         with tab_model:
             model_info = api_client.get_model_info() or {}
+            official_years = sorted(
+                {str(year) for year in model_info.get("official_sas_years", []) if str(year).isdigit()}
+            )
+            official_period = (
+                f"{official_years[0]}–{official_years[-1]}" if official_years else "Not reported"
+            )
             col_m1, col_m2, col_m3 = st.columns(3)
             with col_m1:
-                render_kpi_card(title="Active Basis", value=str(model_info.get("active_basis", "baseline")).upper(), subtitle="Inference Basis")
+                render_kpi_card(
+                    title="Active Basis",
+                    value=str(model_info.get("active_basis") or "Not reported").replace("_", " ").title(),
+                    subtitle="Served by the backend",
+                )
             with col_m2:
-                render_kpi_card(title="Model Architecture", value="XGBoost / SAS", subtitle=str(model_info.get("model_version", "nisr-sas-baseline")))
+                render_kpi_card(
+                    title="Evaluation Decision",
+                    value=str(model_info.get("winner") or "Not reported"),
+                    subtitle="Backend model selection",
+                )
             with col_m3:
-                render_kpi_card(title="Data Span", value="2018 - 2025", subtitle="NISR Seasonal Survey")
+                render_kpi_card(
+                    title="Official NISR years",
+                    value=official_period,
+                    subtitle=f"{model_info.get('official_sas_observation_rows', 0):,} observations",
+                )
 
             st.markdown("<div style='height: 0.8rem;'></div>", unsafe_allow_html=True)
-            metrics = model_info.get("metrics", {})
-            val_metrics = metrics.get("validation", {"r2": 0.83, "mae": 214.2})
-            test_metrics = metrics.get("test", {"r2": 0.81, "mae": 228.0})
+            evaluation_rows = _evaluation_rows(model_info)
+            st.markdown("#### Offline evaluation evidence")
+            st.caption(
+                "These are backend-reported comparisons across held-out districts or seasons. "
+                "They are not live farm-level prediction accuracy."
+            )
+            if evaluation_rows:
+                st.dataframe(evaluation_rows, use_container_width=True, hide_index=True)
+            else:
+                st.info("The backend did not report evaluation metrics for this release.")
 
-            c_val, c_test = st.columns(2)
-            with c_val:
-                with st.container(border=True):
-                    st.markdown("**Validation Performance**")
-                    st.metric("R² Score", f"{val_metrics.get('r2', 0.83):.2f}")
-                    st.metric("Mean Absolute Error (MAE)", f"{val_metrics.get('mae', 214.2):.1f} kg/ha")
-            with c_test:
-                with st.container(border=True):
-                    st.markdown("**Out-of-Sample Evaluation**")
-                    st.metric("R² Score", f"{test_metrics.get('r2', 0.81):.2f}")
-                    st.metric("Mean Absolute Error (MAE)", f"{test_metrics.get('mae', 228.0):.1f} kg/ha")
+            limitations = model_info.get("known_limitations") or []
+            if limitations:
+                st.markdown("#### Known limitations")
+                for limitation in limitations:
+                    st.markdown(f"- {limitation}")
 
         # ── TAB 4: AI DECISION ADVISOR ────────────────────────────────
         with tab_ai:

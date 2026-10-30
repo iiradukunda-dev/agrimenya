@@ -28,6 +28,10 @@ DISTRICT_BOUNDARIES_URL = (
     "https://gis-server.statistics.gov.rw/server/rest/services/Hosted/"
     "District_Boundary_2022/FeatureServer/0/query"
 )
+CELL_BOUNDARIES_URL = (
+    "https://gis-server.statistics.gov.rw/server/rest/services/Hosted/"
+    "Cell_Boundary_2022__Open_Data_/FeatureServer/2/query"
+)
 METRIC_OPTIONS = {
     "Yield": ("Yield (kg/ha)", "kg/ha"),
     "Production": ("Production (MT)", "MT"),
@@ -43,6 +47,54 @@ RANGE_COLORS = {
 ALL_DISTRICTS = "All districts"
 ALL_SECTORS = "All sectors"
 ALL_CELLS = "All cells"
+
+
+@st.cache_data(ttl=86400, show_spinner=False)
+def _load_administrative_locations() -> pd.DataFrame:
+    """Load NISR's complete 2022 district-sector-cell directory without geometries."""
+    locations = []
+    offset = 0
+    for _ in range(10):
+        response = requests.get(
+            CELL_BOUNDARIES_URL,
+            params={
+                "where": "1=1",
+                "outFields": "district,sector,cell",
+                "returnGeometry": "false",
+                "orderByFields": "objectid",
+                "resultOffset": offset,
+                "resultRecordCount": 2000,
+                "f": "json",
+            },
+            timeout=20,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        if not isinstance(payload, dict) or payload.get("error"):
+            raise ValueError("NISR returned an invalid administrative-location response")
+        features = payload.get("features") or []
+        locations.extend(
+            feature.get("attributes") or {}
+            for feature in features
+            if isinstance(feature, dict)
+        )
+        if not payload.get("exceededTransferLimit") or not features:
+            break
+        offset += len(features)
+    else:
+        raise ValueError("NISR administrative-location response exceeded the pagination limit")
+
+    frame = pd.DataFrame(locations).rename(columns={
+        "district": "District",
+        "sector": "Sector",
+        "cell": "Cell",
+    })
+    required = ["District", "Sector", "Cell"]
+    if frame.empty or not all(column in frame.columns for column in required):
+        raise ValueError("NISR returned no district-sector-cell records")
+    for column in required:
+        frame[column] = frame[column].astype("string").str.strip()
+    return frame.dropna(subset=required).drop_duplicates(required).sort_values(required).reset_index(drop=True)
 
 
 @st.cache_data(ttl=86400, show_spinner=False)
@@ -327,11 +379,49 @@ def render_segment() -> None:
     )
 
     try:
-        records = normalize_agri_metrics(api_client.get_agri_metrics())
+        official_rows = api_client.get_official_yields()
     except Exception:
-        logger.exception("Unable to load agricultural observations for segmentation")
-        records = normalize_agri_metrics([])
-        st.error("Agricultural observations could not be loaded. Please check the data connection and try again.")
+        logger.exception("Unable to load bundled NISR observations for segmentation")
+        official_rows = []
+    official_data_available = bool(official_rows)
+    if official_data_available:
+        records = normalize_agri_metrics(official_rows)
+        st.caption("NISR district-level observations · all seasons available in the bundled 2022–2026 evidence.")
+    else:
+        try:
+            records = normalize_agri_metrics(api_client.get_agri_metrics())
+        except Exception:
+            logger.exception("Unable to load agricultural observations for segmentation")
+            records = normalize_agri_metrics([])
+            st.error("Agricultural observations could not be loaded. Please check the data connection and try again.")
+        if not records.empty:
+            st.warning("The historical NISR dataset is unavailable. Showing only operational records returned by the backend.")
+
+    try:
+        locations = _load_administrative_locations()
+    except (requests.RequestException, ValueError):
+        logger.exception("Unable to load the NISR 2022 administrative-location directory")
+        locations = pd.DataFrame(columns=["District", "Sector", "Cell"])
+        st.warning(
+            "The complete NISR location directory is temporarily unavailable. "
+            "Location choices are limited to places present in the available records."
+        )
+    if locations.empty and not records.empty:
+        locations = records[["District", "Sector", "Cell"]].dropna(how="all").drop_duplicates()
+    try:
+        zone_locations = api_client.get_zones() or []
+    except Exception:
+        logger.exception("Unable to load registered zone locations")
+        zone_locations = []
+    if zone_locations:
+        registered_locations = pd.DataFrame([{
+            "District": zone.get("district"),
+            "Sector": zone.get("sector"),
+            "Cell": zone.get("cell"),
+        } for zone in zone_locations if isinstance(zone, dict)])
+        if not registered_locations.empty:
+            locations = pd.concat([locations, registered_locations], ignore_index=True)
+            locations = locations.dropna(subset=["District"], how="any").drop_duplicates()
 
     available_metrics = [
         (label, column, unit)
@@ -347,7 +437,9 @@ def render_segment() -> None:
         return
 
     crops = sorted(value for value in records["Crop"].dropna().astype(str).str.strip().unique() if value)
-    seasons = sorted(value for value in records["Season"].dropna().astype(str).str.strip().unique() if value)
+    if not crops:
+        st.info("No crop labels are available in the current observations.")
+        return
 
     with st.container(border=True):
         st.subheader("Choose what to compare")
@@ -356,39 +448,88 @@ def render_segment() -> None:
             selected_metric_label = st.selectbox("Measure", [item[0] for item in available_metrics], key="seg_measure")
         with filter_row_one[1]:
             selected_crop = st.selectbox("Crop", crops, key="seg_crop")
+
+        crop_records = records[records["Crop"].astype(str).eq(selected_crop)]
+        seasons = sorted(
+            (value for value in crop_records["Season"].dropna().astype(str).str.strip().unique() if value),
+            reverse=True,
+        )
+        if not seasons:
+            st.info(f"No observed seasons are available for {selected_crop}.")
+            return
         with filter_row_one[2]:
             selected_season = st.selectbox("Season", seasons, key="seg_season")
 
-        crop_season_records = records[
-            records["Crop"].astype(str).eq(selected_crop)
-            & records["Season"].astype(str).eq(selected_season)
-        ]
-        districts = sorted(value for value in crop_season_records["District"].dropna().astype(str).unique() if value)
+        crop_season_records = crop_records[crop_records["Season"].astype(str).eq(selected_season)]
+        if locations.empty or "District" not in locations.columns:
+            districts = sorted(
+                value for value in crop_season_records["District"].dropna().astype(str).unique() if value
+            )
+        else:
+            districts = sorted(
+                value for value in locations["District"].dropna().astype(str).str.strip().unique() if value
+            )
         filter_row_two = st.columns(3)
         with filter_row_two[0]:
             selected_district = st.selectbox("District", [ALL_DISTRICTS, *districts], key="seg_district")
 
-        geography_records = crop_season_records
-        if selected_district != ALL_DISTRICTS:
-            geography_records = geography_records[geography_records["District"].astype(str).eq(selected_district)]
-
-        sectors = sorted(value for value in geography_records["Sector"].dropna().astype(str).unique() if value)
+        district_locations = locations
+        if selected_district != ALL_DISTRICTS and "District" in district_locations.columns:
+            district_locations = district_locations[
+                district_locations["District"].astype(str).str.casefold().eq(selected_district.casefold())
+            ]
+        sector_records = district_locations[["District", "Sector"]].dropna().drop_duplicates()
+        sector_labels = {
+            (str(row["Sector"]) if selected_district != ALL_DISTRICTS
+             else f"{row['District']} · {row['Sector']}"): (str(row["District"]), str(row["Sector"]))
+            for _, row in sector_records.iterrows()
+        }
         with filter_row_two[1]:
-            selected_sector = st.selectbox("Sector", [ALL_SECTORS, *sectors], key="seg_sector")
+            selected_sector = st.selectbox("Sector", [ALL_SECTORS, *sector_labels], key="seg_sector")
 
-        if selected_sector != ALL_SECTORS:
-            geography_records = geography_records[geography_records["Sector"].astype(str).eq(selected_sector)]
-        cells = sorted(value for value in geography_records["Cell"].dropna().astype(str).unique() if value)
+        selected_sector_location = sector_labels.get(selected_sector)
+        cell_records = district_locations[["District", "Sector", "Cell"]].dropna().drop_duplicates()
+        if selected_sector_location:
+            cell_records = cell_records[
+                cell_records["District"].astype(str).str.casefold().eq(selected_sector_location[0].casefold())
+                & cell_records["Sector"].astype(str).str.casefold().eq(selected_sector_location[1].casefold())
+            ]
+        cell_labels = {
+            (str(row["Cell"]) if selected_district != ALL_DISTRICTS and selected_sector_location
+             else f"{row['District']} · {row['Sector']} · {row['Cell']}"):
+                (str(row["District"]), str(row["Sector"]), str(row["Cell"]))
+            for _, row in cell_records.iterrows()
+        }
         with filter_row_two[2]:
-            selected_cell = st.selectbox("Cell", [ALL_CELLS, *cells], key="seg_cell")
+            selected_cell = st.selectbox("Cell", [ALL_CELLS, *cell_labels], key="seg_cell")
 
+    selected_cell_location = cell_labels.get(selected_cell)
+    effective_district = (
+        selected_district if selected_district != ALL_DISTRICTS
+        else selected_cell_location[0] if selected_cell_location
+        else selected_sector_location[0] if selected_sector_location
+        else None
+    )
     filtered = crop_season_records.copy()
-    if selected_district != ALL_DISTRICTS:
-        filtered = filtered[filtered["District"].astype(str).eq(selected_district)]
-    if selected_sector != ALL_SECTORS:
-        filtered = filtered[filtered["Sector"].astype(str).eq(selected_sector)]
-    if selected_cell != ALL_CELLS:
-        filtered = filtered[filtered["Cell"].astype(str).eq(selected_cell)]
+    if effective_district:
+        filtered = filtered[
+            filtered["District"].astype(str).str.casefold().eq(effective_district.casefold())
+        ]
+    if not official_data_available and selected_sector_location and "Sector" in filtered.columns:
+        filtered = filtered[
+            filtered["Sector"].astype(str).str.casefold().eq(selected_sector_location[1].casefold())
+        ]
+    if not official_data_available and selected_cell_location and "Cell" in filtered.columns:
+        filtered = filtered[
+            filtered["Cell"].astype(str).str.casefold().eq(selected_cell_location[2].casefold())
+        ]
+
+    if official_data_available and (selected_sector_location or selected_cell_location):
+        st.info(
+            "The location directory includes all NISR 2022 sectors and cells. "
+            "The available crop observations are district-level, so the results below show the selected location's district "
+            "and do not estimate yield or production for an individual sector or cell."
+        )
 
     metric_column, metric_unit = METRIC_OPTIONS[selected_metric_label]
     summary = _summarize_districts(filtered, metric_column)

@@ -1017,6 +1017,37 @@ def render_navbar(show_sidebar: bool = False) -> None:
       .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button:not(#ag-nav-install-btn):hover::before {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='2' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'%3E%3C/path%3E%3C/svg%3E") !important;
       }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"] {
+        min-width: 4.25rem !important;
+        height: 2.25rem !important;
+        padding: 0.4rem 0.85rem !important;
+        border: 1px solid #7dd3fc !important;
+        border-radius: 9999px !important;
+        background: #e0f2fe !important;
+        color: #075985 !important;
+        box-shadow: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"] p,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"] span {
+        color: #075985 !important;
+        font-weight: 700 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"]:hover {
+        border-color: #0284c7 !important;
+        background: #bae6fd !important;
+        color: #075985 !important;
+        transform: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button {
+        border: 1px solid #7dd3fc !important;
+        background: #e0f2fe !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button:hover {
+        border-color: #0284c7 !important;
+        background: #0284c7 !important;
+      }
       </style>
     """
     if show_sidebar:
