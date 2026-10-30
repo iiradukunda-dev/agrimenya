@@ -8,6 +8,7 @@ import threading
 import time
 from collections import deque
 from email.message import EmailMessage
+from email.utils import parseaddr
 from typing import Any
 from uuid import UUID
 
@@ -20,7 +21,11 @@ from app.core.auth import require_admin, require_user
 from app.core.audit import audit_admin_action
 from app.db import crud
 from app.models.alert import AlertCreate
-from app.services.email_delivery import email_delivery_configured, send_email_message
+from app.services.email_delivery import (
+    email_delivery_configuration_issue,
+    email_delivery_configured,
+    send_email_message,
+)
 
 router = APIRouter(prefix="/communication", tags=["Communication"])
 logger = logging.getLogger(__name__)
@@ -369,10 +374,10 @@ def notify(payload: NotificationRequest, request: Request, _: dict = Depends(req
 def email_status(_: dict = Depends(require_user)) -> dict[str, Any]:
     """Expose safe email readiness flags for the authenticated communication UI."""
     auth_pair_valid = bool(settings.SMTP_USER) == bool(settings.SMTP_PASSWORD)
-    smtp_configured = (
-        settings.EMAIL_PROVIDER == "smtp"
-        and bool(settings.SMTP_HOST and settings.EMAIL_FROM and auth_pair_valid)
-    )
+    gmail_smtp = settings.SMTP_HOST.casefold().rstrip(".") == "smtp.gmail.com"
+    sender_address = parseaddr(settings.EMAIL_FROM)[1].strip().casefold()
+    smtp_username = settings.SMTP_USER.strip().casefold() if settings.SMTP_USER else sender_address
+    gmail_sender_matches_login = not gmail_smtp or sender_address == smtp_username
     email_configured = email_delivery_configured()
     if settings.SMTP_USE_SSL:
         transport = "implicit TLS"
@@ -388,6 +393,9 @@ def email_status(_: dict = Depends(require_user)) -> dict[str, Any]:
         "sender_configured": bool(settings.EMAIL_FROM),
         "authentication_configured": bool(settings.SMTP_USER and settings.SMTP_PASSWORD),
         "authentication_pair_valid": auth_pair_valid,
+        "gmail_smtp": gmail_smtp,
+        "gmail_sender_matches_login": gmail_sender_matches_login,
+        "configuration_issue": email_delivery_configuration_issue(),
         "default_recipient_configured": bool(settings.DEFAULT_NOTIFICATION_EMAIL),
         "port": settings.SMTP_PORT,
         "transport": transport,

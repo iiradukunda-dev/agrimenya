@@ -151,6 +151,7 @@ class TestViews(unittest.TestCase):
         ]
         mock_api.get_email_status.return_value = {"ready": True, "port": 587, "transport": "TLS"}
         mock_api.get_whatsapp_status_info.return_value = {"ready": True, "mode": "live"}
+        mock_api.get_email_status.return_value = {"ready": True, "provider": "smtp"}
         mock_api.get_zones.return_value = [
             {"id": "zone-1", "district": "Rubavu"}
         ]

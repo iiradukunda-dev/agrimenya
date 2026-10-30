@@ -164,9 +164,12 @@ community accounts need to verify their email through the resend flow after
 `0017` adds named, separately mapped farm sites and optional farmer-drawn field outlines.
 `0018` binds Google Community sign-in handoff codes to the browser that started
 the OAuth flow.
-Configure an email provider and the public Community URL before launch. For
-hosts that restrict SMTP, use `EMAIL_PROVIDER=resend` with a verified sending
-domain and a backend-only `RESEND_API_KEY`.
+Configure an email provider and the public Community URL before launch. Render
+Free services block outbound SMTP ports, so use `EMAIL_PROVIDER=resend` with a
+verified sending domain and a backend-only `RESEND_API_KEY`. Gmail SMTP requires
+a paid Render service, `smtp.gmail.com` on port 587 with STARTTLS, matching
+`EMAIL_FROM` and `SMTP_USER`, and a Google App Password (not the normal account
+password).
 These observations stay separate from official NISR yield records and are never
 used as NISR baselines. Check
 the migration comments and `backend/docs/` before applying these changes to a

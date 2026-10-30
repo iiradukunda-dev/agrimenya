@@ -9,7 +9,22 @@ Set these values before starting with `APP_ENV=production`:
 - `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`: use the project's server-side secret key. The current local configuration uses a publishable key, which is suitable for reads when RLS allows them but not for production server-side writes.
 - `USER_API_KEY`: a random value of at least 32 characters for protected user write APIs. Administrator access uses named accounts and short-lived bearer sessions; the legacy `ADMIN_API_KEY` is no longer accepted.
 - `JWT_SECRET`: a separate random value of at least 32 characters.
-- `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`, `EMAIL_FROM`, `ADMIN_PASSWORD_RESET_URL`, and `COMMUNITY_PASSWORD_RESET_URL`: recommended backend-only email settings for Render and other hosts that restrict SMTP. Verify your sending domain with Resend and use a sender address on that domain. The Resend API is called over HTTPS; keep its API key backend-only. The free Resend plan currently allows up to 100 emails per day and 3,000 per month, subject to provider terms and account limits. Alternatively, `EMAIL_PROVIDER=smtp` uses `SMTP_HOST`, `SMTP_PORT`, optional `SMTP_USER`/`SMTP_PASSWORD`, and TLS settings where outbound SMTP is allowed. These settings support administrator and farmer-community recovery, community email verification, invitations, contact messages, plan sharing, and administrator-issued alert broadcasts. A newly sent alert is emailed individually to each active Farmer Community account. URLs must be HTTPS and point to the corresponding frontend pages.
+- `EMAIL_PROVIDER`, `EMAIL_FROM`, `ADMIN_PASSWORD_RESET_URL`, and `COMMUNITY_PASSWORD_RESET_URL`: configure backend-only transactional email for administrator and farmer recovery, verification, invitations, contact messages, plan sharing, and alerts. On Render Free, use `EMAIL_PROVIDER=resend`, a backend-only `RESEND_API_KEY`, and `EMAIL_FROM` on a domain verified with Resend. The hosted `onrender.com` address and personal Gmail addresses are not domains you can verify for Resend. Render Free web services block outbound ports 25, 465, and 587, so SMTP cannot deliver from this deployment; use SMTP only after upgrading the backend service to a paid plan. For Gmail SMTP on a supported plan, use `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_STARTTLS=true`, `SMTP_USE_SSL=false`, `SMTP_USER` equal to the sending Gmail address, and `SMTP_PASSWORD` set to a Google App Password (not the normal account password); `EMAIL_FROM` must match that mailbox. Never put mail credentials in the frontend, chat, or source control. URLs must be HTTPS and point to the corresponding frontend pages.
+
+For the Gmail sender on a paid Render instance, set these values in the **backend** Render service environment (never in chat or source control):
+
+```text
+EMAIL_PROVIDER=smtp
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_STARTTLS=true
+SMTP_USE_SSL=false
+SMTP_USER=<the sending Gmail address>
+SMTP_PASSWORD=<a Google App Password>
+EMAIL_FROM=<the same sending Gmail address>
+```
+
+For the current Free Render deployment, configure `EMAIL_PROVIDER=resend`, a Resend API key, and a sender such as `no-reply@<your-verified-domain>` in the backend service. Add the DNS records Resend provides and wait for domain verification before sending. Save the variables and wait for redeploy; the Admin System Health tab reports configuration problems without revealing credentials. Then request a setup link from **Forgot password?** for the already-created administrator account.
 - Optional Google Community sign-in: set backend-only `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, `GOOGLE_OAUTH_REDIRECT_URI`, and `COMMUNITY_GOOGLE_CALLBACK_URL`. Register the redirect URI exactly in Google Cloud Console. With Docker Compose or the Render configuration below, route the OAuth start and callback through the frontend hostname and use the Community page on that same hostname; leave the cookie domain unset. Apply migrations `0016` through `0018` in numeric order before enabling the updated API. Google-verified emails can create a farmer account; an existing account is automatically linked only when Google controls the email domain (Gmail or a matching Google Workspace hosted domain). Leave credentials unset to hide the Google button.
 - `ALLOWED_ORIGINS`: exact allowed browser origins, including scheme and port.
 - `ALLOWED_HOSTS`: exact API hostnames accepted by the service. Include the service hostname and `127.0.0.1` for the container health probe.

@@ -1,6 +1,7 @@
 """Shared email delivery through SMTP or the Resend HTTPS API."""
 import smtplib
 from email.message import EmailMessage
+from email.utils import parseaddr
 
 import httpx
 
@@ -9,14 +10,29 @@ from app.core.config import settings
 RESEND_EMAILS_URL = "https://api.resend.com/emails"
 
 
-def email_delivery_configured() -> bool:
+def email_delivery_configuration_issue() -> str | None:
     if not settings.EMAIL_FROM:
-        return False
+        return "EMAIL_FROM is not configured."
     if settings.EMAIL_PROVIDER == "resend":
-        return bool(settings.RESEND_API_KEY)
+        return None if settings.RESEND_API_KEY else "RESEND_API_KEY is not configured."
     if settings.EMAIL_PROVIDER == "smtp":
-        return bool(settings.SMTP_HOST) and bool(settings.SMTP_USER) == bool(settings.SMTP_PASSWORD)
-    return False
+        if not settings.SMTP_HOST:
+            return "SMTP_HOST is not configured."
+        if bool(settings.SMTP_USER) != bool(settings.SMTP_PASSWORD):
+            return "Configure both SMTP_USER and SMTP_PASSWORD, or leave both empty."
+        if settings.SMTP_HOST.casefold().rstrip(".") == "smtp.gmail.com":
+            sender = parseaddr(settings.EMAIL_FROM)[1].strip().casefold()
+            username = settings.SMTP_USER.strip().casefold() if settings.SMTP_USER else sender
+            if not settings.SMTP_PASSWORD:
+                return "Gmail SMTP requires a Gmail App Password in SMTP_PASSWORD."
+            if not sender or "@" not in sender or sender != username:
+                return "For Gmail SMTP, EMAIL_FROM must match SMTP_USER (the authenticated Gmail address)."
+        return None
+    return "EMAIL_PROVIDER must be either 'smtp' or 'resend'."
+
+
+def email_delivery_configured() -> bool:
+    return email_delivery_configuration_issue() is None
 
 
 def send_email_message(
@@ -26,10 +42,9 @@ def send_email_message(
     timeout: float = 15,
 ) -> dict[str, str | None]:
     """Deliver one message to one recipient without exposing other recipient addresses."""
-    if not email_delivery_configured():
-        raise RuntimeError("Email delivery is not configured")
-    if not settings.EMAIL_FROM:
-        raise RuntimeError("EMAIL_FROM is not configured")
+    configuration_issue = email_delivery_configuration_issue()
+    if configuration_issue:
+        raise RuntimeError(configuration_issue)
 
     if not recipient:
         raise ValueError("An email recipient is required")
@@ -75,7 +90,10 @@ def send_email_message(
     with client_factory(settings.SMTP_HOST, settings.SMTP_PORT, timeout=timeout) as smtp:
         if settings.SMTP_STARTTLS and not settings.SMTP_USE_SSL:
             smtp.starttls()
-        if settings.SMTP_USER and settings.SMTP_PASSWORD:
+        if settings.SMTP_HOST.casefold().rstrip(".") == "smtp.gmail.com":
+            smtp_user = settings.SMTP_USER or parseaddr(settings.EMAIL_FROM)[1].strip()
+            smtp.login(smtp_user, settings.SMTP_PASSWORD)
+        elif settings.SMTP_USER and settings.SMTP_PASSWORD:
             smtp.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
         smtp.send_message(message, to_addrs=[recipient])
     return {"provider": "smtp", "message_id": None}

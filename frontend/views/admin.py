@@ -109,6 +109,26 @@ def render_admin() -> None:
             render_icon_subheader("assets/compass.svg", "System Health & Channel Telemetry")
 
             health = api_client.get_health()
+            email_health = api_client.get_email_status()
+            if email_health:
+                if email_health.get("ready"):
+                    st.success(f"Transactional email settings are present ({email_health.get('provider', 'unknown')}).")
+                else:
+                    issue = email_health.get("configuration_issue") or "Email provider settings are incomplete."
+                    st.error(f"Transactional email is not ready: {issue}")
+                    if email_health.get("gmail_smtp"):
+                        st.caption(
+                            "For Gmail SMTP, use smtp.gmail.com:587 with STARTTLS, "
+                            "SMTP_USER matching EMAIL_FROM, and a Gmail App Password in SMTP_PASSWORD."
+                        )
+                    if email_health.get("provider") == "smtp":
+                        st.warning(
+                            "Render Free services block outbound SMTP ports 25, 465, and 587. "
+                            "Use Resend over HTTPS with a verified sender domain, or upgrade the backend service."
+                        )
+            else:
+                st.warning("Email delivery status could not be checked.")
+
             if health:
                 status = str(health.get("status", "unknown")).lower()
                 is_ok = status == "ok"

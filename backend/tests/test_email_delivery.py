@@ -4,9 +4,14 @@ from unittest.mock import Mock, patch
 
 import httpx
 import pytest
+from fastapi import HTTPException
 
 from app.core.config import Settings, settings
-from app.services.email_delivery import email_delivery_configured, send_email_message
+from app.services.email_delivery import (
+    email_delivery_configuration_issue,
+    email_delivery_configured,
+    send_email_message,
+)
 
 
 def test_resend_email_is_sent_over_https_without_exposing_other_recipients(monkeypatch):
@@ -48,7 +53,7 @@ def test_resend_requires_api_key_and_sender(monkeypatch):
     message = EmailMessage()
     message["Subject"] = "Test"
     message.set_content("Test")
-    with pytest.raises(RuntimeError, match="Email delivery is not configured"):
+    with pytest.raises(RuntimeError, match="RESEND_API_KEY is not configured"):
         send_email_message(message, recipient="farmer@example.net")
 
 
@@ -93,3 +98,76 @@ def test_production_validation_accepts_resend_without_smtp():
     production.SMTP_PASSWORD = ""
 
     production.validate_production()
+
+
+def test_gmail_smtp_requires_app_password_and_matching_sender(monkeypatch):
+    monkeypatch.setattr(settings, "EMAIL_PROVIDER", "smtp")
+    monkeypatch.setattr(settings, "SMTP_HOST", "smtp.gmail.com")
+    monkeypatch.setattr(settings, "SMTP_USER", "")
+    monkeypatch.setattr(settings, "SMTP_PASSWORD", "")
+    monkeypatch.setattr(settings, "EMAIL_FROM", "Agri-Menya <sender@gmail.com>")
+    assert email_delivery_configuration_issue() == "Gmail SMTP requires a Gmail App Password in SMTP_PASSWORD."
+    assert not email_delivery_configured()
+
+    monkeypatch.setattr(settings, "SMTP_PASSWORD", "test-app-password")
+    monkeypatch.setattr(settings, "SMTP_USER", "different@gmail.com")
+    assert "EMAIL_FROM must match SMTP_USER" in email_delivery_configuration_issue()
+
+
+def test_gmail_smtp_authenticates_as_configured_sender(monkeypatch):
+    monkeypatch.setattr(settings, "EMAIL_PROVIDER", "smtp")
+    monkeypatch.setattr(settings, "SMTP_HOST", "smtp.gmail.com")
+    monkeypatch.setattr(settings, "SMTP_PORT", 587)
+    monkeypatch.setattr(settings, "SMTP_USER", "sender@gmail.com")
+    monkeypatch.setattr(settings, "SMTP_PASSWORD", "test-app-password")
+    monkeypatch.setattr(settings, "SMTP_USE_SSL", False)
+    monkeypatch.setattr(settings, "SMTP_STARTTLS", True)
+    monkeypatch.setattr(settings, "EMAIL_FROM", "Agri-Menya <sender@gmail.com>")
+
+    message = EmailMessage()
+    message["Subject"] = "Test"
+    message.set_content("Test")
+
+    with patch("app.services.email_delivery.smtplib.SMTP") as factory:
+        result = send_email_message(message, recipient="recipient@example.org")
+
+    smtp = factory.return_value.__enter__.return_value
+    assert result == {"provider": "smtp", "message_id": None}
+    smtp.starttls.assert_called_once()
+    smtp.login.assert_called_once_with("sender@gmail.com", "test-app-password")
+
+
+def test_email_status_reports_gmail_configuration_issue_without_secrets(monkeypatch):
+    from app.routers.communication import email_status
+
+    monkeypatch.setattr(settings, "EMAIL_PROVIDER", "smtp")
+    monkeypatch.setattr(settings, "SMTP_HOST", "smtp.gmail.com")
+    monkeypatch.setattr(settings, "SMTP_USER", "")
+    monkeypatch.setattr(settings, "SMTP_PASSWORD", "")
+    monkeypatch.setattr(settings, "EMAIL_FROM", "Agri-Menya <sender@gmail.com>")
+
+    result = email_status()
+
+    assert result["ready"] is False
+    assert result["gmail_smtp"] is True
+    assert result["gmail_sender_matches_login"] is True
+    assert result["configuration_issue"] == "Gmail SMTP requires a Gmail App Password in SMTP_PASSWORD."
+    assert "test-app-password" not in str(result)
+
+
+def test_admin_invitation_error_explains_resend_sender_rejection(monkeypatch):
+    import httpx
+
+    from app.routers.admin_auth import _issue_reset
+
+    monkeypatch.setattr(settings, "EMAIL_PROVIDER", "resend")
+    response = httpx.Response(403, request=httpx.Request("POST", "https://api.resend.com/emails"))
+    rejection = httpx.HTTPStatusError("sender rejected", request=response.request, response=response)
+
+    with patch("app.routers.admin_auth.crud.create_admin_password_reset_token"), \
+         patch("app.routers.admin_auth.send_reset_email", side_effect=rejection):
+        with pytest.raises(HTTPException) as error:
+            _issue_reset({"id": "admin-id", "email": "admin@example.org", "display_name": "Admin"})
+
+    assert error.value.status_code == 503
+    assert "verify that EMAIL_FROM uses your Resend-verified domain" in error.value.detail
