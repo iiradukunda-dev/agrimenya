@@ -98,8 +98,8 @@ def render_floating_ai_widget() -> None:
         right: 76px !important;
         top: 50% !important;
         transform: translateY(-50%) translateX(12px) scale(0.96) !important;
-        background: #041622 !important;
-        color: #ffffff !important;
+        background: #ffffff !important;
+        color: #0284c7 !important;
         font-size: 0.86rem !important;
         font-weight: 750 !important;
         padding: 8px 18px !important;
@@ -109,8 +109,8 @@ def render_floating_ai_widget() -> None:
         opacity: 0 !important;
         visibility: hidden !important;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        border: 1px solid rgba(56, 189, 248, 0.6) !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+        border: 1px solid rgba(2, 132, 199, 0.22) !important;
+        box-shadow: 0 10px 30px rgba(2, 132, 199, 0.16) !important;
         letter-spacing: 0.02em !important;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         overflow: hidden !important;

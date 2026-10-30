@@ -53,6 +53,22 @@ def test_navbar_and_home_translation_keys():
             assert key in FALLBACK_TRANSLATIONS[lang], f"Key '{key}' missing for lang '{lang}'"
 
 
+def test_compact_navbar_labels_are_translated():
+    keys = [
+        "nav.planning_short",
+        "nav.comms_short",
+        "nav.segmentation_short",
+        "nav.ai_assistant_short",
+        "nav.admin_short",
+        "nav.data_guide_short",
+        "nav.community_short",
+        "nav.about_short",
+    ]
+    for lang in ["en", "rw", "fr"]:
+        for key in keys:
+            assert FALLBACK_TRANSLATIONS[lang].get(key)
+
+
 def test_all_pages_translation_keys_exist():
     """Verify that all main application pages have corresponding translation keys."""
     page_keys = [
@@ -109,5 +125,4 @@ def test_dynamic_language_switching_across_all_pages():
 
     # Reset to English
     set_language("en")
-
 

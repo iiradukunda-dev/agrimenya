@@ -271,9 +271,11 @@ def render_navbar(show_sidebar: bool = False) -> None:
         }
         .st-key-ag_mobile_navbar [data-testid="stPopoverBody"],
         body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] {
-          width: min(19rem, calc(100vw - 2rem)) !important;
-          max-width: calc(100vw - 2rem) !important;
+          width: min(16rem, calc(100vw - 2rem)) !important;
+          min-width: 0 !important;
+          max-width: min(16rem, calc(100vw - 2rem)) !important;
           max-height: calc(100dvh - 7rem) !important;
+          box-sizing: border-box !important;
           overflow-y: auto !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink"],
@@ -599,14 +601,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
         width: 1rem !important;
         height: 1rem !important;
       }
-      .st-key-ag_desktop_navbar [data-testid="stPopoverButton"] [data-testid="stIconMaterial"] {
-        color: #0284c7 !important;
-        font-size: 1rem !important;
-        line-height: 1 !important;
-        width: 1rem !important;
-        height: 1rem !important;
-        visibility: visible !important;
-      }
+
       .st-key-ag_desktop_navbar .st-key-lang_cycle_btn button,
       .st-key-ag_desktop_navbar .st-key-lang_cycle_btn button::before {
         color: #0284c7 !important;
@@ -626,9 +621,11 @@ def render_navbar(show_sidebar: bool = False) -> None:
         min-height: 2.2rem !important;
         padding: 0.4rem 0.85rem !important;
         margin: 0.15rem 0 !important;
-        background: #f4f8fa !important;
+        background: transparent !important;
+        background-color: transparent !important;
         border: none !important;
-        border-radius: 10px !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
         justify-content: flex-start !important;
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"] p,
@@ -640,10 +637,11 @@ def render_navbar(show_sidebar: bool = False) -> None:
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
         background: transparent !important;
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
         box-shadow: none !important;
-        transform: translateY(-2px) scale(1.02) !important;
+        transform: none !important;
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover p,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover p {
@@ -673,8 +671,8 @@ def render_navbar(show_sidebar: bool = False) -> None:
         background-color: rgba(2, 132, 199, 0.08) !important;
         border: none !important;
         border-radius: 9999px !important;
-        height: 2.25rem !important;
-        min-height: 2.25rem !important;
+        height: 2.35rem !important;
+        min-height: 2.35rem !important;
         padding: 0.4rem 1.15rem !important;
         box-shadow: none !important;
         justify-content: center !important;
@@ -724,6 +722,21 @@ def render_navbar(show_sidebar: bool = False) -> None:
         margin: 0 !important;
         padding: 0 !important;
       }
+      .st-key-ag_navbar [data-testid="column"]:has(.st-key-lang_cycle_btn),
+      .st-key-ag_mobile_navbar [data-testid="column"]:has(.st-key-lang_cycle_mobile_btn) {
+        align-self: center !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .st-key-ag_mobile_navbar .st-key-lang_cycle_mobile_btn,
+      .st-key-ag_mobile_navbar .st-key-lang_cycle_mobile_btn > div {
+        display: inline-flex !important;
+        align-self: center !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
       .st-key-lang_cycle_btn button,
       .st-key-lang_cycle_mobile_btn button,
       .st-key-lang_cycle_btn button:hover,
@@ -737,9 +750,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
         background-color: rgba(2, 132, 199, 0.08) !important;
         border: none !important;
         border-radius: 50% !important;
-        height: 2.25rem !important;
-        min-height: 2.25rem !important;
-        width: 2.25rem !important;
+        height: 2.35rem !important;
+        min-height: 2.35rem !important;
+        width: 2.35rem !important;
         box-shadow: none !important;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         display: inline-flex !important;
@@ -748,6 +761,8 @@ def render_navbar(show_sidebar: bool = False) -> None:
         padding: 0 !important;
         margin: 0 !important;
         position: relative !important;
+        align-self: center !important;
+        vertical-align: middle !important;
       }
       .st-key-lang_cycle_btn button:hover,
       .st-key-lang_cycle_mobile_btn button:hover,
@@ -1007,11 +1022,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
         background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
         box-shadow: none !important;
-        transform: translateY(-2px) scale(1.02) !important;
+        transform: none !important;
       }
       .st-key-ag_navbar .stButton > button:hover {
         border: 2px solid #0875d1 !important;
@@ -1030,11 +1046,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
         transform: none !important;
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
         background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
         box-shadow: none !important;
-        transform: translateY(-2px) scale(1.02) !important;
+        transform: none !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"] [data-testid="stIconMaterial"] {
         color: #0284c7 !important;
@@ -1115,13 +1132,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
         overflow: visible !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button [data-testid="stIconMaterial"] {
-        display: inline-block !important;
-        width: 1.35rem !important;
-        height: 1.35rem !important;
-        color: #0284c7 !important;
-        font-size: 1.35rem !important;
-        opacity: 1 !important;
-        visibility: visible !important;
+        display: none !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button {
         display: inline-flex !important;
@@ -1150,6 +1161,137 @@ def render_navbar(show_sidebar: bool = False) -> None:
         visibility: visible !important;
         opacity: 1 !important;
         pointer-events: none !important;
+      }
+      @media (max-width: 840px) {
+        .st-key-ag_mobile_navbar .st-key-lang_cycle_mobile_btn button {
+          width: 42px !important;
+          min-width: 42px !important;
+          height: 42px !important;
+          min-height: 42px !important;
+          align-self: center !important;
+        }
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stHorizontalBlock"] {
+        box-sizing: border-box !important;
+        width: min(100%, 820px) !important;
+        max-width: 820px !important;
+        flex-wrap: nowrap !important;
+        gap: 0.35rem !important;
+        padding: 0.7rem 1rem !important;
+        border: 1px solid #e8eef5 !important;
+        border-radius: 9999px !important;
+        background: #ffffff !important;
+        box-shadow: 0 8px 24px rgba(44, 112, 190, 0.12) !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"] a,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink-NavLink"] {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 3rem !important;
+        padding: 0.65rem 1.35rem !important;
+        border: 0 !important;
+        border-radius: 9999px !important;
+        background: transparent !important;
+        color: #536174 !important;
+        font-size: 0.98rem !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"] a p,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink-NavLink"] p {
+        color: inherit !important;
+        font-size: inherit !important;
+        font-weight: inherit !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"] a[aria-current="page"],
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] {
+        background: #328ff0 !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 10px rgba(50, 143, 240, 0.24) !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"] a[aria-current="page"] p,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] p {
+        color: #ffffff !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"] a:hover:not([aria-current="page"]),
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:hover:not([aria-current="page"]) {
+        background: #f3f7fc !important;
+        color: #287bc9 !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button {
+        width: 3.2rem !important;
+        min-width: 3.2rem !important;
+        max-width: 3.2rem !important;
+        height: 3.2rem !important;
+        min-height: 3.2rem !important;
+        flex-basis: 3.2rem !important;
+        border: 1px solid #e0e5ec !important;
+        border-radius: 50% !important;
+        background: #eef0f3 !important;
+        box-shadow: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button::before {
+        content: "" !important;
+        display: block !important;
+        width: 1.45rem !important;
+        height: 1.45rem !important;
+        background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b7280'%3E%3Cpath d='M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2h16v-2c0-2.76-3.58-5-8-5Z'/%3E%3C/svg%3E") !important;
+        box-shadow: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button {
+        width: 3.2rem !important;
+        min-width: 3.2rem !important;
+        max-width: 3.2rem !important;
+        height: 3.2rem !important;
+        min-height: 3.2rem !important;
+        flex-basis: 3.2rem !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 50% !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button::before {
+        width: 1.55rem !important;
+        height: 1.55rem !important;
+        background-size: contain !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"] a[aria-current="page"],
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] {
+        border: 2px solid #0875d1 !important;
+        background: #ffffff !important;
+        color: #0875d1 !important;
+        box-shadow: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"] a[aria-current="page"] p,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] p {
+        color: #0875d1 !important;
+      }
+      html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+      html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
+        border: 0 !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        color: inherit !important;
+        filter: none !important;
+        transform: none !important;
+      }
+      html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover::before {
+        background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b7280'%3E%3Cpath d='M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2h16v-2c0-2.76-3.58-5-8-5Z'/%3E%3C/svg%3E") !important;
+        background-color: transparent !important;
+        transform: none !important;
+        filter: none !important;
+        transition: none !important;
       }
       </style>
     """
@@ -1195,16 +1337,16 @@ def render_navbar(show_sidebar: bool = False) -> None:
                     ):
                         st.divider()
                         st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
-                        st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))
-                        st.page_link("pages/9_Communication.py", label=t("nav.comms", "Field alerts & comms"))
-                        st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation", "Zone segmentation"))
-                        st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant", "AI assistant"))
+                        st.page_link("pages/8_Planning.py", label=t("nav.planning_short", "season-plan"))
+                        st.page_link("pages/9_Communication.py", label=t("nav.comms_short", "field-alerts"))
+                        st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation_short", "zone-seg"))
+                        st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant_short", "AI-assist"))
                         st.divider()
                         st.caption(t("nav.platform_community", "PLATFORM & COMMUNITY"))
-                        st.page_link("pages/10_Admin.py", label=t("nav.admin", "Administration"))
-                        st.page_link("pages/99_Showcase.py", label=t("nav.data_guide", "Data guide"))
-                        st.page_link("pages/12_Community.py", label=t("nav.community", "Farmer community"))
-                        st.page_link("pages/1_About.py", label=t("nav.about", "About agrimenya"))
+                        st.page_link("pages/10_Admin.py", label=t("nav.admin_short", "admin"))
+                        st.page_link("pages/99_Showcase.py", label=t("nav.data_guide_short", "data-guide"))
+                        st.page_link("pages/12_Community.py", label=t("nav.community_short", "community"))
+                        st.page_link("pages/1_About.py", label=t("nav.about_short", "about"))
                         st.markdown(
                             f'<a href="/app/static/offline.html" target="_self" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#0284c7;background:rgba(2,132,199,0.08);border:1px solid rgba(2,132,199,0.22);margin-top:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> {t("nav.offline_hub", "Offline Field Hub")}</a>',
                             unsafe_allow_html=True,
@@ -1243,14 +1385,14 @@ def render_navbar(show_sidebar: bool = False) -> None:
                     st.page_link("pages/4_Zones.py", label=t("nav.zones", "Zones"))
                     st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
                     st.divider()
-                    st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))
-                    st.page_link("pages/9_Communication.py", label=t("nav.comms", "Field alerts & comms"))
-                    st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation", "Zone segmentation"))
-                    st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant", "AI assistant"))
-                    st.page_link("pages/10_Admin.py", label=t("nav.admin", "Administration"))
-                    st.page_link("pages/99_Showcase.py", label=t("nav.data_guide", "Data guide"))
-                    st.page_link("pages/12_Community.py", label=t("nav.community", "Farmer community"))
-                    st.page_link("pages/1_About.py", label=t("nav.about", "About agrimenya"))
+                    st.page_link("pages/8_Planning.py", label=t("nav.planning_short", "season-plan"))
+                    st.page_link("pages/9_Communication.py", label=t("nav.comms_short", "field-alerts"))
+                    st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation_short", "zone-seg"))
+                    st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant_short", "AI-assist"))
+                    st.page_link("pages/10_Admin.py", label=t("nav.admin_short", "admin"))
+                    st.page_link("pages/99_Showcase.py", label=t("nav.data_guide_short", "data-guide"))
+                    st.page_link("pages/12_Community.py", label=t("nav.community_short", "community"))
+                    st.page_link("pages/1_About.py", label=t("nav.about_short", "about"))
                     if st.button(t("nav.sign_out", "Sign out"), key="mobile_nav_signout_btn", use_container_width=True):
                         st.session_state["authenticated"] = False
                         st.rerun()

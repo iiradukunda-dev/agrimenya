@@ -788,10 +788,66 @@ def load_theme(show_sidebar: bool = False) -> None:
     [data-testid="stMain"] button[data-testid="stPopoverButton"]:not(.st-key-ag_navbar *):hover * {{
       color: #0369a1 !important;
     }}
+    [data-testid="stMain"] .stButton > button[kind="primary"]:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *):hover,
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button[kind="primary"]:not(.st-key-ag_navbar *):hover,
+    [data-testid="stMain"] [data-testid="stLinkButton"][kind="primary"]:not(.st-key-ag_navbar *):hover,
+    [data-testid="stMain"] [data-testid="stLinkButton"] a[kind="primary"]:not(.st-key-ag_navbar *):hover {{
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+      background-color: #0369a1 !important;
+      border: none !important;
+      color: #ffffff !important;
+    }}
+    [data-testid="stMain"] .stButton > button[kind="primary"]:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *):hover *,
+    [data-testid="stMain"] [data-testid="stFormSubmitButton"] button[kind="primary"]:not(.st-key-ag_navbar *):hover *,
+    [data-testid="stMain"] [data-testid="stLinkButton"][kind="primary"]:not(.st-key-ag_navbar *):hover *,
+    [data-testid="stMain"] [data-testid="stLinkButton"] a[kind="primary"]:not(.st-key-ag_navbar *):hover * {{
+      color: #ffffff !important;
+    }}
     [data-testid="stMain"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]):not(.st-key-ag_navbar *):disabled:hover,
     [data-testid="stMain"] [data-testid="stFormSubmitButton"] button:not(.st-key-ag_navbar *):disabled:hover {{
       transform: none !important;
       border-color: inherit !important;
+    }}
+
+    @keyframes ag-button-shake {{
+      0%, 100% {{ translate: 0 0; }}
+      20%, 60% {{ translate: -2px 0; }}
+      40%, 80% {{ translate: 2px 0; }}
+    }}
+    [data-testid="stAppViewContainer"] .stButton > button:not([role="tab"]):not([data-baseweb="tab"]),
+    [data-testid="stAppViewContainer"] [data-testid="stFormSubmitButton"] button,
+    [data-testid="stAppViewContainer"] [data-testid="stLinkButton"] a,
+    [data-testid="stAppViewContainer"] button[data-testid="stPopoverButton"] {{
+      border-radius: 9999px !important;
+      font-family: var(--ag-font-display) !important;
+      min-height: 2.5rem;
+    }}
+    [data-testid="stAppViewContainer"] button:not([role="tab"]):not([data-baseweb="tab"]):focus-visible,
+    [data-testid="stAppViewContainer"] [data-testid="stLinkButton"] a:focus-visible {{
+      outline: 3px solid rgba(2, 132, 199, 0.35) !important;
+      outline-offset: 2px !important;
+    }}
+    [data-testid="stAppViewContainer"] button:active,
+    [data-testid="stAppViewContainer"] a:active {{
+      animation: ag-button-shake 320ms ease-in-out !important;
+    }}
+    @media (prefers-reduced-motion: reduce) {{
+      [data-testid="stAppViewContainer"] button:active,
+      [data-testid="stAppViewContainer"] a:active {{
+        animation: none !important;
+      }}
+    }}
+    [data-testid="stAppViewContainer"] button[kind="primary"]:not([role="tab"]):not([data-baseweb="tab"]),
+    [data-testid="stAppViewContainer"] [data-testid="stFormSubmitButton"] button[kind="primary"],
+    [data-testid="stAppViewContainer"] [data-testid="stLinkButton"][kind="primary"],
+    [data-testid="stAppViewContainer"] [data-testid="stLinkButton"] a[kind="primary"] {{
+      color: #ffffff !important;
+    }}
+    [data-testid="stAppViewContainer"] button[kind="primary"]:not([role="tab"]):not([data-baseweb="tab"]) *,
+    [data-testid="stAppViewContainer"] [data-testid="stFormSubmitButton"] button[kind="primary"] *,
+    [data-testid="stAppViewContainer"] [data-testid="stLinkButton"][kind="primary"] *,
+    [data-testid="stAppViewContainer"] [data-testid="stLinkButton"] a[kind="primary"] * {{
+      color: #ffffff !important;
     }}
 
     .st-key-disease_triage_button button,

@@ -54,8 +54,8 @@ def test_theme_excludes_tabs_from_card_button_styles():
         assert '[data-testid="stTabs"]' in combined_css
 
 
-def test_navbar_active_tab_is_sky_blue():
-    """Verify active navbar tab uses sky blue styling."""
+def test_navbar_active_tab_is_blue_outline_and_account_has_no_circle():
+    """Verify the active navbar item is outlined and the account icon has no circle."""
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
@@ -71,9 +71,24 @@ def test_navbar_active_tab_is_sky_blue():
         render_navbar()
 
         css_found = "".join([str(call[0][0]) for call in mock_st.markdown.call_args_list if "<style>" in str(call[0][0])])
-        assert "border: 2px solid #0875d1" in css_found
-        assert "#0284c7" in css_found
-        assert "#0369a1" in css_found
+        assert "border: 2px solid #0875d1 !important" in css_found
+        assert "background: #ffffff !important" in css_found
+        assert "color: #0875d1 !important" in css_found
+        assert "border-radius: 0 !important" in css_found
+        assert "background: transparent !important" in css_found
+        assert "width: min(100%, 820px) !important" in css_found
+        assert "viewBox='0 0 24 24' fill='%236b7280'" in css_found
+        account_hover = (
+            'html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar '
+            '.st-key-ag_navbar [data-testid="stHorizontalBlock"] '
+            '[data-testid="stPopover"] button:hover'
+        )
+        assert account_hover in css_found
+        assert "transform: none !important" in css_found
+        account_hover_icon = f"{account_hover}::before"
+        assert account_hover_icon in css_found
+        assert "fill='%236b7280'" in css_found
+        assert "transition: none !important" in css_found
 
 
 def test_mobile_menu_links_have_no_background_boxes():
@@ -100,10 +115,13 @@ def test_mobile_menu_links_have_no_background_boxes():
         assert '[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]' in css_found
         assert 'body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"])' in css_found
         assert "background: transparent !important" in css_found
+        assert "width: min(16rem, calc(100vw - 2rem)) !important" in css_found
+        assert "background: #f4f8fa !important" not in css_found
+        assert "div[data-testid=\"stPopoverBody\"] [data-testid=\"stPageLink-NavLink\"]:hover" in css_found
 
 
-def test_desktop_dropdown_and_language_icons_remain_visible():
-    """Keep the icon-only desktop menu and globe visible inside navbar columns."""
+def test_desktop_menu_hides_default_expand_icon_and_language_icon_remains_visible():
+    """Keep the custom menu icon and globe while hiding Streamlit's expand icon."""
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
@@ -131,9 +149,18 @@ def test_desktop_dropdown_and_language_icons_remain_visible():
     assert "background: rgba(2, 132, 199, 0.08) !important" in css_found
     assert "border: 1px solid rgba(2, 132, 199, 0.24) !important" in css_found
     assert "display: none !important;" in css_found
-    assert "font-size: 1.35rem !important" in css_found
+    assert (
+        '.st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] '
+        'button [data-testid="stIconMaterial"] {\n        display: none !important;'
+    ) in css_found
     assert "button [data-testid=\"stMarkdownContainer\"]" in css_found
     assert 'html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar' in css_found
+    assert '.st-key-ag_navbar [data-testid="column"]:has(.st-key-lang_cycle_btn)' in css_found
+    assert '.st-key-ag_mobile_navbar [data-testid="column"]:has(.st-key-lang_cycle_mobile_btn)' in css_found
+    assert "align-self: center !important" in css_found
+    assert ".st-key-ag_mobile_navbar .st-key-lang_cycle_mobile_btn button" in css_found
+    assert "height: 42px !important" in css_found
+    assert "height: 2.35rem !important" in css_found
     assert 'button:not([data-testid="stPopoverButton"])' in css_found
     assert '.st-key-ag_navbar [data-testid="stPopover"] button * {' not in css_found
 

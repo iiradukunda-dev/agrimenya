@@ -37,7 +37,7 @@ def render_footer() -> None:
         </style>
         <footer class="ag-site-footer" aria-label="Copyright">
           <span><strong>agrimenya</strong> · Agricultural insights for local decisions</span>
-          <span>© {year} agrimenya. All rights reserved.</span>
+          <span>© {year} youthInspire · agrimenya. All rights reserved.</span>
         </footer>
         """,
         unsafe_allow_html=True,
