@@ -31,10 +31,14 @@ ESRI_SATELLITE_TILES = (
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/"
     "MapServer/tile/{z}/{y}/{x}"
 )
+ESRI_BOUNDARIES_TILES = (
+    "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/"
+    "World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+)
 
 
-def create_rwanda_map(*, satellite_default: bool = False):
-    """Create the shared Rwanda map canvas with switchable street and satellite layers."""
+def create_rwanda_map(*, satellite_default: bool = False, hybrid: bool = True):
+    """Create high-resolution Google Earth style Rwanda satellite canvas with road/boundary overlays."""
     if folium is None:
         return None
     map_view = folium.Map(
@@ -47,17 +51,28 @@ def create_rwanda_map(*, satellite_default: bool = False):
         prefer_canvas=True,
     )
     folium.TileLayer(
-        "OpenStreetMap", name="Street", overlay=False, control=True,
-        show=not satellite_default,
-    ).add_to(map_view)
-    folium.TileLayer(
         tiles=ESRI_SATELLITE_TILES,
-        attr="Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
-        name="Satellite",
+        attr="Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics",
+        name="Satellite (Clear Earth)",
         overlay=False,
         control=True,
         show=satellite_default,
+        max_zoom=22,
+        max_native_zoom=19,
     ).add_to(map_view)
+    folium.TileLayer(
+        "OpenStreetMap", name="Street Map", overlay=False, control=True,
+        show=not satellite_default,
+    ).add_to(map_view)
+    if hybrid:
+        folium.TileLayer(
+            tiles=ESRI_BOUNDARIES_TILES,
+            attr="Labels & Boundaries © Esri",
+            name="Roads & Place Labels",
+            overlay=True,
+            control=True,
+            show=satellite_default,
+        ).add_to(map_view)
     return map_view
 
 

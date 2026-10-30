@@ -118,7 +118,6 @@ def render_navbar(show_sidebar: bool = False) -> None:
       /* =========================================================
          AGRIMENYA TOP STICKY FLOATING NAVBAR
          ========================================================= */
-      /* Suppress native Streamlit header and remove top padding */
       header[data-testid="stHeader"],
       .stApp > header,
       [data-testid="stHeader"] {
@@ -138,10 +137,10 @@ def render_navbar(show_sidebar: bool = False) -> None:
         margin-top: 0 !important;
       }
 
-      /* Outer Container: Pinned to the top of the viewport */
+      /* Outer Floating Container */
       .st-key-ag_navbar {
         position: sticky !important;
-        top: 0.35rem !important;
+        top: 0.25rem !important;
         z-index: 999990 !important;
         display: flex !important;
         flex-direction: row !important;
@@ -150,8 +149,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 auto 0.45rem auto !important;
-        padding: 0 !important;
+        padding: 0 0.5rem !important;
         background: transparent !important;
+        box-sizing: border-box !important;
       }
       .st-key-ag_navbar > div {
         display: flex !important;
@@ -160,14 +160,14 @@ def render_navbar(show_sidebar: bool = False) -> None:
         align-items: center !important;
         width: 100% !important;
         max-width: 100% !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
         padding: 0 !important;
       }
       .st-key-ag_mobile_navbar {
         display: none !important;
       }
 
-      @media (max-width: 840px) {
+      @media (max-width: 768px) {
         .st-key-ag_desktop_navbar {
           display: none !important;
         }
@@ -178,7 +178,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
           z-index: 999990 !important;
           width: 100% !important;
           margin: 0 auto 0.45rem !important;
-          padding: 0 0.25rem !important;
+          padding: 0 0.5rem !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stHorizontalBlock"] {
           display: flex !important;
@@ -188,133 +188,63 @@ def render_navbar(show_sidebar: bool = False) -> None:
           width: 100% !important;
           max-width: 100% !important;
           margin: 0 !important;
-          padding: 6px 12px !important;
+          padding: 6px 14px !important;
           gap: 8px !important;
-          background: transparent !important;
-          border: none !important;
-          border-radius: 0 !important;
-          box-shadow: none !important;
-          backdrop-filter: none !important;
-          -webkit-backdrop-filter: none !important;
+          background: rgba(255, 255, 255, 0.98) !important;
+          border-radius: 9999px !important;
+          box-shadow: 0 6px 24px rgba(2, 132, 199, 0.12) !important;
+          border: 1px solid rgba(2, 132, 199, 0.18) !important;
         }
         .st-key-ag_mobile_navbar [data-testid="column"],
         .st-key-ag_mobile_navbar [data-testid="stColumn"] {
           display: flex !important;
           flex: 0 0 auto !important;
           width: auto !important;
-          min-width: 0 !important;
-          max-width: none !important;
           margin: 0 !important;
           padding: 0 !important;
           align-items: center !important;
-          justify-content: center !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button {
-          width: 2.5rem !important;
-          height: 2.5rem !important;
-          min-width: 2.5rem !important;
-          min-height: 2.5rem !important;
-          padding: 0 !important;
-          border: 0 !important;
+          width: 2.35rem !important;
+          height: 2.35rem !important;
+          min-width: 2.35rem !important;
           border-radius: 50% !important;
-          background: rgba(2, 132, 199, 0.09) !important;
+          background: #e0f2fe !important;
           color: #0284c7 !important;
-          font-size: 1.45rem !important;
-          line-height: 1 !important;
-          box-shadow: none !important;
-        }
-        .st-key-ag_mobile_navbar [data-testid="stPopover"] button:hover {
-          background: #0284c7 !important;
-          color: #ffffff !important;
-        }
-        .st-key-ag_mobile_navbar [data-testid="stPopover"] button p {
-          font-size: 0 !important;
-          line-height: 0 !important;
-          width: 0 !important;
-          height: 0 !important;
-          margin: 0 !important;
-          overflow: hidden !important;
-        }
-        .st-key-ag_mobile_navbar [data-testid="stPopover"] button::before {
-          content: "" !important;
-          display: block !important;
-          width: 18px !important;
-          height: 2px !important;
-          border-radius: 999px !important;
-          background: currentColor !important;
-          box-shadow: 0 6px 0 currentColor, 0 -6px 0 currentColor !important;
-        }
-        .st-key-ag_mobile_navbar [data-testid="stIconMaterial"],
-        .st-key-ag_mobile_navbar [data-testid="stPopover"] button svg {
-          display: none !important;
-        }
-        .st-key-ag_mobile_navbar [data-testid="stPopoverButton"] > div > div[aria-hidden="true"] {
-          display: none !important;
+          border: 1px solid #7dd3fc !important;
+          padding: 0 !important;
+          font-size: 1.25rem !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] {
-          width: min(19rem, calc(100vw - 2rem)) !important;
-          max-width: calc(100vw - 2rem) !important;
-          max-height: calc(100dvh - 7rem) !important;
+          width: min(20rem, calc(100vw - 2rem)) !important;
+          max-height: calc(100dvh - 6rem) !important;
           overflow-y: auto !important;
-        }
-        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] {
-          min-height: 2.75rem !important;
-          padding: 0.65rem 0.85rem !important;
         }
       }
 
-      /* The Unified Floating Pill Capsule */
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"],
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) {
+      /* Unified Floating Pill Capsule */
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] {
         display: inline-flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
         align-items: center !important;
         justify-content: center !important;
         width: auto !important;
-        max-width: fit-content !important;
+        max-width: 100% !important;
         margin: 0 auto !important;
-        padding: 6px 16px !important;
-        background: rgba(255, 255, 255, 0.96) !important;
-        backdrop-filter: blur(14px) !important;
-        -webkit-backdrop-filter: blur(14px) !important;
+        padding: 5px 14px !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
         border-radius: 9999px !important;
-        border: none !important;
+        border: 1px solid rgba(2, 132, 199, 0.18) !important;
         box-shadow: 0 8px 30px rgba(2, 132, 199, 0.14), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-        gap: 6px !important;
-      }
-      @media (max-width: 840px) {
-        .st-key-ag_navbar {
-          padding: 0 0.25rem !important;
-        }
-        .st-key-ag_navbar [data-testid="stHorizontalBlock"],
-        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) {
-          width: calc(100% - 0.5rem) !important;
-          max-width: 100% !important;
-          padding: 6px 10px !important;
-          justify-content: space-between !important;
-          gap: 4px !important;
-          overflow-x: auto !important;
-          scrollbar-width: none !important;
-          -ms-overflow-style: none !important;
-        }
-        .st-key-ag_navbar [data-testid="stHorizontalBlock"]::-webkit-scrollbar,
-        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn)::-webkit-scrollbar {
-          display: none !important;
-        }
-        .st-key-ag_navbar [data-testid="stHorizontalBlock"] > [data-testid="column"],
-        .st-key-ag_navbar [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
-        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) > [data-testid="column"],
-        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) > [data-testid="stColumn"] {
-          flex: 0 0 auto !important;
-        }
+        gap: 4px !important;
+        box-sizing: border-box !important;
       }
 
-      /* Ensure each sub-column shrinks to content width and aligns center */
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] > [data-testid="column"],
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) > [data-testid="column"],
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) > [data-testid="stColumn"] {
+      .st-key-ag_navbar [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
         display: inline-flex !important;
         flex: 0 0 auto !important;
         width: auto !important;
@@ -326,12 +256,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
         justify-content: center !important;
       }
 
-      /* Base nav links inside the pill (Overview, Zones, Decisions) */
-      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active),
-      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active),
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active),
-      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active),
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) {
+      /* Base nav links */
+      .st-key-ag_navbar [data-testid="stPageLink"],
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"] {
         background: transparent !important;
         background-color: transparent !important;
         border: none !important;
@@ -349,11 +276,8 @@ def render_navbar(show_sidebar: bool = False) -> None:
         margin: 0 !important;
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
       }
-      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
-      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
-      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) p,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active) p {
+      .st-key-ag_navbar [data-testid="stPageLink"] p,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"] p {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.88rem !important;
         font-weight: 600 !important;
@@ -363,24 +287,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
         line-height: 1 !important;
         transition: color 0.2s ease !important;
       }
-      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
-      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
-      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover {
-        background: transparent !important;
-        background-color: transparent !important;
-        transform: none !important;
-      }
-      .st-key-ag_navbar [data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
-      .st-key-ag_navbar a[data-testid="stPageLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
-      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPageLink-NavLink"]:not([aria-current="page"]):not(.ag-nav-active):hover p {
+      .st-key-ag_navbar [data-testid="stPageLink"]:hover p,
+      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:hover p {
         color: #0284c7 !important;
       }
 
-      /* ACTIVE / SELECTED TAB: transparent capsule with a blue outline */
+      /* ACTIVE / SELECTED TAB */
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"],
       .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active,
       .st-key-ag_navbar a[aria-current="page"],
@@ -398,625 +310,14 @@ def render_navbar(show_sidebar: bool = False) -> None:
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
-        transition: all 0.2s ease !important;
       }
-      /* Keep the Streamlit page-link wrapper plain so only the link is outlined. */
-      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active,
-      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"] {
-        border: none !important;
-        background: transparent !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-      }
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"] p,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"][aria-current="page"] p,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink-NavLink"][aria-current="page"] p,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active p,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPageLink"].ag-nav-active p,
       .st-key-ag_navbar a[aria-current="page"] p,
-      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"] p,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"] p,
-      .st-key-ag_navbar a.ag-nav-active p,
-      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active p {
+      .st-key-ag_navbar a.ag-nav-active p {
         color: #0369a1 !important;
         font-weight: 700 !important;
-        text-shadow: none !important;
-      }
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a[aria-current="page"]:hover,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] a.ag-nav-active:hover,
-      .st-key-ag_navbar a[aria-current="page"]:hover,
-      .st-key-ag_navbar a.ag-nav-active:hover {
-        background: transparent !important;
-        background-color: transparent !important;
-        transform: none !important;
       }
 
-      /* More Popover Button inside the Pill: Pure transparent, pixel-aligned */
-      .st-key-ag_navbar div[data-testid="stPopover"],
-      .st-key-ag_navbar .stPopover,
-      .st-key-ag_navbar [data-testid="stPopover"] {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        height: 100% !important;
-      }
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover button,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
-      .st-key-ag_navbar div[data-testid="stPopover"] button,
-      .st-key-ag_navbar div[data-testid="stPopover"] button:hover,
-      .st-key-ag_navbar .stPopover > button,
-      .st-key-ag_navbar .stPopover > button:hover,
-      .st-key-ag_navbar div[data-testid="stPopover"] [data-testid="stBaseButton-secondary"],
-      .st-key-ag_navbar div[data-testid="stPopover"] [data-testid="baseButton-secondary"],
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover button,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:not(.ag-nav-active):not(#ag-nav-install-btn):not([aria-current="page"]),
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stBaseButton-secondary"]:not(#ag-nav-install-btn) {
-        background: transparent !important;
-        background-color: transparent !important;
-        border: none !important;
-        border-radius: 9999px !important;
-        height: 2.35rem !important;
-        min-height: 2.35rem !important;
-        padding: 0.45rem 1.15rem !important;
-        box-shadow: none !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        margin: 0 !important;
-        line-height: 1 !important;
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-      }
-      .st-key-ag_navbar [data-testid="stPopover"] button::before,
-      .st-key-ag_navbar [data-testid="stPopover"] button::after {
-        content: "" !important;
-        display: block !important;
-        position: relative !important;
-        width: 18px !important;
-        height: 2px !important;
-        border-radius: 999px !important;
-        background: #0284c7 !important;
-        box-shadow: 0 6px 0 #0284c7, 0 -6px 0 #0284c7 !important;
-      }
-      .st-key-ag_navbar [data-testid="stPopover"] button:hover::before,
-      .st-key-ag_navbar [data-testid="stPopover"] button:hover::after {
-        background: #ffffff !important;
-        box-shadow: 0 6px 0 #ffffff, 0 -6px 0 #ffffff !important;
-      }
-      .st-key-ag_navbar [data-testid="stPopover"] button p,
-      .st-key-ag_navbar [data-testid="stPopover"] button span,
-      .st-key-ag_navbar [data-testid="stPopover"] button * {
-        font-size: 0 !important;
-        color: transparent !important;
-        width: 0 !important;
-        height: 0 !important;
-        margin: 0 !important;
-        overflow: hidden !important;
-      }
-      @media (max-width: 840px) {
-        .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
-        .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover button,
-        .st-key-ag_navbar [data-testid="stHorizontalBlock"] .stPopover > button,
-        .st-key-ag_navbar div[data-testid="stPopover"] button,
-        .st-key-ag_navbar .stPopover > button,
-        .st-key-ag_navbar div[data-testid="stPopover"] [data-testid="stBaseButton-secondary"],
-        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button,
-        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover button,
-        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button,
-        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:not(.ag-nav-active):not(#ag-nav-install-btn):not([aria-current="page"]) {
-          padding: 0.4rem 0.8rem !important;
-          min-height: 2rem !important;
-          height: 2rem !important;
-        }
-        .st-key-ag_navbar [data-testid="stPopover"] button::before,
-        .st-key-ag_navbar [data-testid="stPopover"] button::after {
-          width: 16px !important;
-          box-shadow: 0 5px 0 #0284c7, 0 -5px 0 #0284c7 !important;
-        }
-      }
-      .st-key-ag_navbar div[data-testid="stPopover"] button::before,
-      .st-key-ag_navbar div[data-testid="stPopover"] button::after,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button::before,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button::after {
-        display: none !important;
-        content: none !important;
-      }
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button p,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button span,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button *,
-      .st-key-ag_navbar div[data-testid="stPopover"] button p,
-      .st-key-ag_navbar div[data-testid="stPopover"] button span,
-      .st-key-ag_navbar div[data-testid="stPopover"] button * {
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 0.88rem !important;
-        font-weight: 600 !important;
-        color: #0a1f26 !important;
-        letter-spacing: -0.01em !important;
-        margin: 0 !important;
-        line-height: 1 !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        display: inline-block !important;
-        text-shadow: none !important;
-        transition: color 0.2s ease !important;
-      }
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover,
-      .st-key-ag_navbar div[data-testid="stPopover"] button:hover {
-        background: transparent !important;
-        background-color: transparent !important;
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
-        box-shadow: none !important;
-        transform: translateY(-2px) scale(1.02) !important;
-      }
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover p,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover span,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover *,
-      .st-key-ag_navbar div[data-testid="stPopover"] button:hover p,
-      .st-key-ag_navbar div[data-testid="stPopover"] button:hover span,
-      .st-key-ag_navbar div[data-testid="stPopover"] button:hover * {
-        color: #0284c7 !important;
-      }
-      .st-key-ag_desktop_navbar [data-testid="stPopoverButton"] > div > div[aria-hidden="true"] {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        flex: 0 0 1rem !important;
-        width: 1rem !important;
-        height: 1rem !important;
-      }
-      .st-key-ag_desktop_navbar [data-testid="stPopoverButton"] [data-testid="stIconMaterial"] {
-        color: #0284c7 !important;
-        font-size: 1rem !important;
-        line-height: 1 !important;
-        width: 1rem !important;
-        height: 1rem !important;
-        visibility: visible !important;
-      }
-      .st-key-ag_desktop_navbar .st-key-lang_cycle_btn button,
-      .st-key-ag_desktop_navbar .st-key-lang_cycle_btn button::before {
-        color: #0284c7 !important;
-      }
-
-      /* Popover Dropdown Styling */
-      div[data-testid="stPopoverBody"] {
-        max-height: 520px !important;
-        border-radius: 16px !important;
-        border: none !important;
-        background: #ffffff !important;
-        box-shadow: 0 16px 40px rgba(4, 31, 38, 0.14), 0 4px 12px rgba(2, 132, 199, 0.08) !important;
-        padding: 0.75rem 0.65rem !important;
-      }
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink"],
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] {
-        min-height: 2.2rem !important;
-        padding: 0.4rem 0.85rem !important;
-        margin: 0.15rem 0 !important;
-        background: #f4f8fa !important;
-        border: none !important;
-        border-radius: 10px !important;
-        justify-content: flex-start !important;
-      }
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink"] p,
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] p {
-        font-size: 0.86rem !important;
-        font-weight: 600 !important;
-        color: #0a1f26 !important;
-      }
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
-        background: transparent !important;
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
-        box-shadow: none !important;
-        transform: translateY(-2px) scale(1.02) !important;
-      }
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover p,
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover p {
-        color: #0284c7 !important;
-      }
-      div[data-testid="stPopoverBody"] [data-testid="stCaptionContainer"] p {
-        color: #0284c7 !important;
-        font-weight: 700 !important;
-        font-size: 0.72rem !important;
-        letter-spacing: 0.06em !important;
-      }
-
-      /* Hide any unwanted nested icons in links */
-      [data-testid="stPageLink-NavLink"] span[data-testid="stIconMaterial"],
-      [data-testid="stPageLink-NavLink"] svg:not([class*="custom"]),
-      [data-testid="stPageLink-NavLink"] i {
-        display: none !important;
-      }
-
-      /* =========================================================
-         Sign In Capsule Button inside the Pill
-         ========================================================= */
-      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]),
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]),
-      .st-key-ag_navbar a[href*="Admin"] {
-        background: rgba(2, 132, 199, 0.08) !important;
-        background-color: rgba(2, 132, 199, 0.08) !important;
-        border: none !important;
-        border-radius: 9999px !important;
-        height: 2.25rem !important;
-        min-height: 2.25rem !important;
-        padding: 0.4rem 1.15rem !important;
-        box-shadow: none !important;
-        justify-content: center !important;
-        text-align: center !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        text-decoration: none !important;
-        line-height: 1 !important;
-        margin: 0 !important;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-      }
-      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]) p,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]) p,
-      .st-key-ag_navbar a[href*="Admin"] p {
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 0.86rem !important;
-        font-weight: 700 !important;
-        color: #0284c7 !important;
-        letter-spacing: -0.01em !important;
-        margin: 0 !important;
-        line-height: 1 !important;
-        transition: color 0.2s ease !important;
-      }
-      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]):hover,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]):hover,
-      .st-key-ag_navbar a[href*="Admin"]:hover {
-        border: none !important;
-        background: #0284c7 !important;
-        background-color: #0284c7 !important;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
-        transform: translateY(-1px) !important;
-      }
-      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]):hover p,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]):hover p,
-      .st-key-ag_navbar a[href*="Admin"]:hover p {
-        color: #ffffff !important;
-      }
-
-      /* =========================================================
-         Language Selector Button inside the Pill (Single Globe)
-         ========================================================= */
-      .st-key-ag_navbar .st-key-lang_cycle_btn,
-      .st-key-ag_navbar .st-key-lang_cycle_btn > div {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-      .st-key-lang_cycle_btn button,
-      .st-key-lang_cycle_mobile_btn button,
-      .st-key-lang_cycle_btn button:hover,
-      .st-key-lang_cycle_mobile_btn button:hover,
-      .st-key-ag_navbar .st-key-lang_cycle_btn button,
-      .st-key-ag_navbar .st-key-lang_cycle_btn button:hover,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] .st-key-lang_cycle_btn button,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="column"]:last-child button,
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:last-child button {
-        background: rgba(2, 132, 199, 0.08) !important;
-        background-color: rgba(2, 132, 199, 0.08) !important;
-        border: none !important;
-        border-radius: 50% !important;
-        height: 2.25rem !important;
-        min-height: 2.25rem !important;
-        width: 2.25rem !important;
-        box-shadow: none !important;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        position: relative !important;
-      }
-      .st-key-lang_cycle_btn button:hover,
-      .st-key-lang_cycle_mobile_btn button:hover,
-      .st-key-ag_navbar .st-key-lang_cycle_btn button:hover {
-        background: #0284c7 !important;
-        background-color: #0284c7 !important;
-        border: none !important;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
-        transform: translateY(-1px) scale(1.05) !important;
-      }
-      .st-key-lang_cycle_btn button *,
-      .st-key-lang_cycle_mobile_btn button * {
-        font-size: 0 !important;
-        color: transparent !important;
-        line-height: 0 !important;
-        max-width: 0 !important;
-        max-height: 0 !important;
-        overflow: hidden !important;
-        visibility: hidden !important;
-      }
-      .st-key-lang_cycle_btn button::before,
-      .st-key-lang_cycle_mobile_btn button::before {
-        content: '' !important;
-        display: block !important;
-        width: 16px !important;
-        height: 16px !important;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='2' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'%3E%3C/path%3E%3C/svg%3E") !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
-        background-size: contain !important;
-        pointer-events: none !important;
-        transition: all 0.25s ease !important;
-      }
-      .st-key-lang_cycle_btn button:hover::before,
-      .st-key-lang_cycle_mobile_btn button:hover::before {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='2' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'%3E%3C/path%3E%3C/svg%3E") !important;
-        transform: rotate(18deg) scale(1.1) !important;
-      }
-
-      /* Subtle theme divider */
-      .ag-nav-rule {
-        border: 0;
-        height: 1px;
-        background: transparent;
-        margin: 0.1rem 0 0.5rem;
-      }
-
-      /* Clean Light Styling for Streamlit Tabs across all views */
-      [data-testid="stTabs"], .stTabs { background: transparent !important; }
-      [data-testid="stTabs"] [data-baseweb="tab-list"],
-      .stTabs [data-baseweb="tab-list"],
-      [data-testid="stTabs"] div[role="tablist"],
-      .stTabs div[role="tablist"] {
-        background: rgba(255, 255, 255, 0.85) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        border-radius: 14px !important;
-        padding: 4px 8px !important;
-        border: 1px solid rgba(2, 132, 199, 0.20) !important;
-        box-shadow: 0 4px 14px rgba(4, 31, 38, 0.05) !important;
-        gap: 6px !important;
-      }
-      [data-testid="stTabs"] button[role="tab"],
-      [data-testid="stTabs"] [data-baseweb="tab"],
-      [data-testid="stTabs"] button,
-      .stTabs button[role="tab"],
-      .stTabs [data-baseweb="tab"],
-      .stTabs button,
-      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] button,
-      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] [role="tab"],
-      [data-testid="stVerticalBlockBorderWrapper"] [data-baseweb="tab"] {
-        background: transparent !important;
-        background-color: transparent !important;
-        border: none !important;
-        border-radius: 10px !important;
-        padding: 8px 18px !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 0.90rem !important;
-        font-weight: 600 !important;
-        color: #334155 !important;
-        box-shadow: none !important;
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-      }
-      [data-testid="stTabs"] button[role="tab"] p,
-      [data-testid="stTabs"] [data-baseweb="tab"] p,
-      [data-testid="stTabs"] button p,
-      .stTabs button[role="tab"] p,
-      .stTabs [data-baseweb="tab"] p {
-        color: #334155 !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-weight: 600 !important;
-      }
-      [data-testid="stTabs"] button[role="tab"]:hover,
-      [data-testid="stTabs"] [data-baseweb="tab"]:hover,
-      [data-testid="stTabs"] button:hover,
-      .stTabs button[role="tab"]:hover,
-      .stTabs [data-baseweb="tab"]:hover {
-        background: rgba(2, 132, 199, 0.08) !important;
-        background-color: rgba(2, 132, 199, 0.08) !important;
-        color: #0284c7 !important;
-        box-shadow: none !important;
-        transform: none !important;
-      }
-      [data-testid="stTabs"] button[role="tab"][aria-selected="true"],
-      [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"],
-      [data-testid="stTabs"] button[aria-selected="true"],
-      .stTabs button[role="tab"][aria-selected="true"],
-      .stTabs [data-baseweb="tab"][aria-selected="true"],
-      [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stTabs"] button[aria-selected="true"] {
-        background: #ffffff !important;
-        background-color: #ffffff !important;
-        color: #0284c7 !important;
-        font-weight: 700 !important;
-        border-radius: 10px !important;
-        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.15), 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-        border-bottom: 2.5px solid #0284c7 !important;
-      }
-      [data-testid="stTabs"] button[role="tab"][aria-selected="true"] p,
-      [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"] p {
-        color: #0284c7 !important;
-        font-weight: 700 !important;
-      }
-
-      @media(max-width:950px) {
-        .st-key-ag_navbar [data-testid="stHorizontalBlock"],
-        [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) {
-          flex-wrap: wrap !important;
-          border-radius: 20px !important;
-          gap: 0.5rem !important;
-        }
-      }
-      @media(max-width:768px) {
-        .block-container,
-        [data-testid="stMainBlockContainer"],
-        [data-testid="stAppViewBlockContainer"],
-        .main .block-container {
-          padding-top: 0.2rem !important;
-          padding-left: 1rem !important;
-          padding-right: 1rem !important;
-        }
-        .st-key-ag_navbar {
-          top: 0.2rem !important;
-          margin-bottom: 0.4rem !important;
-          padding: 0 !important;
-        }
-        .st-key-ag_navbar [data-testid="stHorizontalBlock"] {
-          flex-wrap: wrap !important;
-          justify-content: center !important;
-          gap: 0.15rem 0.4rem !important;
-          padding: 0.35rem 0.45rem !important;
-          border-radius: 16px !important;
-        }
-        .st-key-ag_navbar [data-testid="column"] {
-          flex: 0 1 auto !important;
-          width: auto !important;
-          min-width: max-content !important;
-        }
-        .st-key-ag_navbar [data-testid="stPageLink"] a,
-        .st-key-ag_navbar [data-testid="stPopover"] > button,
-        .st-key-ag_navbar [data-testid="stPopover"] button {
-          min-height: 42px !important;
-          padding: 0.4rem 0.7rem !important;
-          font-size: 0.84rem !important;
-        }
-      }
-
-      /* Borderless navbar with a lively, soft hover treatment */
-      .st-key-ag_navbar [data-testid="stHorizontalBlock"],
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) {
-        border: none !important;
-      }
-      .st-key-ag_navbar [data-testid="stPageLink"],
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"],
-      .st-key-ag_navbar [data-testid="stPageLink"] a,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"] a,
-      .st-key-ag_navbar [data-testid="stPopover"] > button,
-      .st-key-ag_navbar [data-testid="stPopover"] button {
-        border: none !important;
-        transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-                    background 180ms ease, color 180ms ease, box-shadow 180ms ease !important;
-      }
-      .st-key-ag_navbar [data-testid="stPageLink"]:hover,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:hover,
-      .st-key-ag_navbar [data-testid="stPageLink"] a:hover,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"] a:hover,
-      .st-key-ag_navbar [data-testid="stPopover"] > button:hover,
-      .st-key-ag_navbar [data-testid="stPopover"] button:hover {
-        border: none !important;
-        background: transparent !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        transform: translateY(-2px) scale(1.035) !important;
-      }
-      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"],
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"],
-      .st-key-ag_navbar a[aria-current="page"],
-      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"].ag-nav-active,
-      .st-key-ag_navbar a.ag-nav-active {
-        box-sizing: border-box !important;
-        border: none !important;
-        border-radius: 9999px !important;
-        background: transparent !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-      }
-      .st-key-ag_navbar a[aria-current="page"],
-      .st-key-ag_navbar a.ag-nav-active {
-        box-sizing: border-box !important;
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
-        background: transparent !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-      }
-      .st-key-ag_navbar [data-testid="stPageLink"][aria-current="page"]:hover,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"][aria-current="page"]:hover,
-      .st-key-ag_navbar a[aria-current="page"]:hover,
-      .st-key-ag_navbar [data-testid="stPageLink"].ag-nav-active:hover,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"].ag-nav-active:hover,
-      .st-key-ag_navbar a.ag-nav-active:hover {
-        border: none !important;
-        background: transparent !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        transform: none !important;
-      }
-      .st-key-ag_navbar a[aria-current="page"]:hover,
-      .st-key-ag_navbar a.ag-nav-active:hover {
-        border: 2px solid #0875d1 !important;
-        background: transparent !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        transform: none !important;
-      }
-      .st-key-ag_navbar [data-testid="stPageLink"] a:hover,
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"] a:hover,
-      .st-key-ag_navbar a[data-testid="stPageLink-NavLink"]:hover {
-        box-sizing: border-box !important;
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
-        background: transparent !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-      }
-      div[data-testid="stPopoverBody"],
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink"],
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"],
-      .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Admin"]),
-      .st-key-ag_navbar [data-testid="stPageLink-NavLink"]:has(a[href*="Admin"]),
-      .st-key-ag_navbar a[href*="Admin"],
-      .st-key-ag_navbar .stButton > button,
-      #ag-nav-install-btn,
-      div[data-testid="stPopoverBody"] a[href*="offline.html"],
-      .st-key-ag_navbar .st-key-lang_cycle_btn button {
-        border: none !important;
-      }
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        transform: translateY(-2px) scale(1.02) !important;
-      }
-      .st-key-ag_navbar .stButton > button:hover {
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
-        background: transparent !important;
-        color: #0369a1 !important;
-        box-shadow: none !important;
-        transform: translateY(-2px) scale(1.02) !important;
-      }
-      /* A Streamlit page link has a wrapper and a clickable anchor; outline only the anchor. */
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover {
-        border: none !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        transform: none !important;
-      }
-      div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover {
-        border: 2px solid #0875d1 !important;
-        border-radius: 9999px !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        transform: translateY(-2px) scale(1.02) !important;
-      }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"] [data-testid="stIconMaterial"] {
-        color: #0284c7 !important;
-      }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button:not(#ag-nav-install-btn):hover {
-        background: rgba(2, 132, 199, 0.08) !important;
-        background-color: rgba(2, 132, 199, 0.08) !important;
-        color: #0284c7 !important;
-      }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button:not(#ag-nav-install-btn):hover::before {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='2' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'%3E%3C/path%3E%3C/svg%3E") !important;
-      }
+      /* More popover button */
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"] {
         min-width: 4.25rem !important;
         height: 2.25rem !important;
@@ -1037,16 +338,71 @@ def render_navbar(show_sidebar: bool = False) -> None:
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopoverButton"]:hover {
         border-color: #0284c7 !important;
         background: #bae6fd !important;
-        color: #075985 !important;
-        transform: none !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button {
+
+      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button,
+      .st-key-lang_cycle_btn button {
         border: 1px solid #7dd3fc !important;
+        border-radius: 9999px !important;
         background: #e0f2fe !important;
+        color: #075985 !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button:hover {
+      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button:hover,
+      .st-key-lang_cycle_btn button:hover {
         border-color: #0284c7 !important;
         background: #0284c7 !important;
+        color: #ffffff !important;
+      }
+
+      /* Dropdown Body */
+      div[data-testid="stPopoverBody"] {
+        max-height: 520px !important;
+        border-radius: 16px !important;
+        border: 1px solid rgba(2, 132, 199, 0.15) !important;
+        background: #ffffff !important;
+        box-shadow: 0 16px 40px rgba(4, 31, 38, 0.14) !important;
+        padding: 0.75rem 0.65rem !important;
+      }
+
+      /* Tabs styling */
+      [data-testid="stTabs"] {
+        margin-top: 0.5rem !important;
+      }
+      [data-testid="stTabs"] [data-baseweb="tab-list"] {
+        background: #f1f5f9 !important;
+        padding: 4px !important;
+        border-radius: 12px !important;
+        gap: 4px !important;
+      }
+      [data-testid="stTabs"] button[role="tab"] {
+        background: transparent !important;
+        border-radius: 8px !important;
+        color: #334155 !important;
+        border: none !important;
+      }
+      [data-testid="stTabs"] button[role="tab"] p {
+        color: #334155 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 600 !important;
+      }
+      [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #0284c7 !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.15) !important;
+        border-bottom: 2.5px solid #0284c7 !important;
+      }
+      [data-testid="stTabs"] button[role="tab"][aria-selected="true"] p {
+        color: #0284c7 !important;
+        font-weight: 700 !important;
+      }
+
+      hr.ag-nav-rule {
+        border: none !important;
+        border-top: 1px solid rgba(2, 132, 199, 0.12) !important;
+        margin: 0.25rem 0 0.75rem 0 !important;
       }
       </style>
     """

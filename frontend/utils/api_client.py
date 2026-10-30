@@ -753,11 +753,122 @@ def get_whatsapp_delivery(alert_id: str) -> dict[str, Any] | None:
 # LIVE DATA
 # ═══════════════════════════════════════════════════════════════════
 
+RWANDA_DISTRICT_COORDS: dict[str, tuple[float, float]] = {
+    "gasabo": (-1.9346, 30.1044),
+    "kicukiro": (-1.9878, 30.1044),
+    "nyarugenge": (-1.9536, 30.0605),
+    "kigali city": (-1.9441, 30.0619),
+    "gisagara": (-2.5833, 29.8333),
+    "huye": (-2.5967, 29.7392),
+    "kamonyi": (-2.0333, 29.8833),
+    "muhanga": (-2.0833, 29.7500),
+    "nyamagabe": (-2.4667, 29.4667),
+    "nyanza": (-2.3500, 29.7500),
+    "nyaruguru": (-2.6167, 29.5667),
+    "ruhango": (-2.2167, 29.7833),
+    "karongi": (-2.0000, 29.3833),
+    "ngororero": (-1.8667, 29.5667),
+    "nyabihu": (-1.6500, 29.5000),
+    "nyamasheke": (-2.3500, 29.1333),
+    "rubavu": (-1.6789, 29.2661),
+    "rusizi": (-2.4846, 28.9075),
+    "rutsiro": (-1.8833, 29.3333),
+    "burera": (-1.4667, 29.8667),
+    "gakenke": (-1.6833, 29.7833),
+    "gicumbi": (-1.5667, 30.1000),
+    "musanze": (-1.4995, 29.6335),
+    "rulindo": (-1.7500, 30.0333),
+    "bugesera": (-2.2167, 30.2500),
+    "gatsibo": (-1.6000, 30.4667),
+    "kayonza": (-1.8833, 30.5333),
+    "kirehe": (-2.2500, 30.7833),
+    "ngoma": (-2.1667, 30.5333),
+    "nyagatare": (-1.2947, 30.3250),
+    "rwamagana": (-1.9487, 30.4347),
+}
+
+
+def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
+    norm = district.strip().lower()
+    coords = RWANDA_DISTRICT_COORDS.get(norm) or (-1.9441, 30.0619)
+    try:
+        resp = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": coords[0],
+                "longitude": coords[1],
+                "current": "temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,weather_code",
+                "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum",
+                "forecast_days": 5,
+                "timezone": "auto",
+            },
+            timeout=8,
+        )
+        resp.raise_for_status()
+        payload = resp.json()
+        current = payload.get("current", {})
+        daily = payload.get("daily", {})
+        forecast = [
+            {
+                "date": date,
+                "temperature_max_c": daily.get("temperature_2m_max", [])[i],
+                "temperature_min_c": daily.get("temperature_2m_min", [])[i],
+                "precipitation_probability_pct": daily.get("precipitation_probability_max", [])[i],
+                "precipitation_sum_mm": daily.get("precipitation_sum", [])[i],
+            }
+            for i, date in enumerate(daily.get("time", []))
+            if i < len(daily.get("temperature_2m_max", []))
+        ]
+        temp = current.get("temperature_2m")
+        hum = current.get("relative_humidity_2m")
+        precip = current.get("precipitation") if current.get("precipitation") is not None else current.get("rain", 0.0)
+        wind = current.get("wind_speed_10m")
+        return {
+            "district": district,
+            "source": "Open-Meteo Live API",
+            "latitude": coords[0],
+            "longitude": coords[1],
+            "temperature_c": temp,
+            "humidity_pct": hum,
+            "rainfall_mm": precip,
+            "wind_kph": wind,
+            "weather_code": current.get("weather_code"),
+            "summary": f"Live weather snapshot for {district}",
+            "updated_at": current.get("time") or time.strftime("%Y-%m-%d %H:%M"),
+            "forecast": forecast,
+        }
+    except Exception as exc:
+        logger.warning("Direct Open-Meteo weather fetch failed for %s: %s", district, exc)
+        return None
+
+
 @st.cache_data(ttl=120, show_spinner=False)
 def get_weather(district: str) -> dict[str, Any] | None:
-    """Live weather data for a district."""
-    data = _get_api(f"/live/weather/{quote(district, safe='')}")
-    return data if isinstance(data, dict) else None
+    """Live weather data for a district with seamless backend & direct Open-Meteo fallback."""
+    data = None
+    try:
+        data = _get_api(f"/live/weather/{quote(district, safe='')}", timeout=5)
+    except Exception:
+        data = None
+
+    if isinstance(data, dict) and data.get("temperature_c") is not None:
+        return data
+
+    direct = _fetch_direct_open_meteo(district)
+    if direct:
+        return direct
+
+    return data if isinstance(data, dict) else {
+        "district": district,
+        "source": "unavailable",
+        "temperature_c": None,
+        "humidity_pct": None,
+        "rainfall_mm": None,
+        "wind_kph": None,
+        "summary": "Weather data temporarily unavailable",
+        "updated_at": None,
+        "forecast": [],
+    }
 
 
 def submit_field_report(payload: dict[str, Any]) -> dict[str, Any] | None:

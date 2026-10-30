@@ -289,11 +289,21 @@ def render_dashboard() -> None:
                     weather = None
 
                 if isinstance(weather, dict) and weather:
+                    temp_val = weather.get("temperature_c")
+                    hum_val = weather.get("humidity_pct")
+                    rain_val = weather.get("rainfall_mm")
+                    wind_val = weather.get("wind_kph")
+
+                    temp_str = f"{temp_val:.1f} °C" if isinstance(temp_val, (int, float)) else "Not available °C"
+                    hum_str = f"{hum_val:.0f}%" if isinstance(hum_val, (int, float)) else "Not available%"
+                    rain_str = f"{rain_val:.1f} mm" if isinstance(rain_val, (int, float)) else "Not available mm"
+                    wind_str = f"{wind_val:.1f} km/h" if isinstance(wind_val, (int, float)) else "Not available km/h"
+
                     w_metric1, w_metric2, w_metric3, w_metric4 = st.columns(4)
-                    w_metric1.metric("Temperature", f"{weather.get('temperature_c') if weather.get('temperature_c') is not None else 'Not available'} °C")
-                    w_metric2.metric("Relative Humidity", f"{weather.get('humidity_pct') if weather.get('humidity_pct') is not None else 'Not available'}%")
-                    w_metric3.metric("Precipitation", f"{weather.get('rainfall_mm') if weather.get('rainfall_mm') is not None else 'Not available'} mm")
-                    w_metric4.metric("Wind Speed", f"{weather.get('wind_kph') if weather.get('wind_kph') is not None else 'Not available'} km/h")
+                    w_metric1.metric("Temperature", temp_str)
+                    w_metric2.metric("Relative Humidity", hum_str)
+                    w_metric3.metric("Precipitation", rain_str)
+                    w_metric4.metric("Wind Speed", wind_str)
                     forecast_data = weather.get("forecast") or []
                     if forecast_data:
                         render_weather_forecast_grid(forecast_data)
