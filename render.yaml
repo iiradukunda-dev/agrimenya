@@ -23,6 +23,10 @@ services:
         value: https://agrimenya-app-20261030.onrender.com
       - key: ALLOWED_HOSTS
         value: agrimenya-api-20261030.onrender.com,localhost,127.0.0.1
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false
       - key: EMAIL_PROVIDER
         value: resend
       - key: RESEND_API_KEY
