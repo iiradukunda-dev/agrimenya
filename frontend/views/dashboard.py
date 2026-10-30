@@ -16,6 +16,7 @@ import streamlit as st
 
 from components.alerts import render_alert
 from components.badges import priority_badge, status_badge
+from components.browser_weather import render_browser_weather
 from components.cards import (
     render_empty_state,
     render_kpi_card,
@@ -288,22 +289,17 @@ def render_dashboard() -> None:
                     logger.exception("Unable to load weather for %s", active_weather_district)
                     weather = None
 
-                if isinstance(weather, dict) and weather:
+                if isinstance(weather, dict) and weather.get("temperature_c") is not None:
                     temp_val = weather.get("temperature_c")
                     hum_val = weather.get("humidity_pct")
                     rain_val = weather.get("rainfall_mm")
                     wind_val = weather.get("wind_kph")
 
-                    temp_str = f"{temp_val:.1f} °C" if isinstance(temp_val, (int, float)) else "Not available °C"
-                    hum_str = f"{hum_val:.0f}%" if isinstance(hum_val, (int, float)) else "Not available%"
-                    rain_str = f"{rain_val:.1f} mm" if isinstance(rain_val, (int, float)) else "Not available mm"
-                    wind_str = f"{wind_val:.1f} km/h" if isinstance(wind_val, (int, float)) else "Not available km/h"
-
                     w_metric1, w_metric2, w_metric3, w_metric4 = st.columns(4)
-                    w_metric1.metric("Temperature", temp_str)
-                    w_metric2.metric("Relative Humidity", hum_str)
-                    w_metric3.metric("Precipitation", rain_str)
-                    w_metric4.metric("Wind Speed", wind_str)
+                    w_metric1.metric("Temperature", f"{temp_val:.1f} °C")
+                    w_metric2.metric("Relative Humidity", f"{hum_val:.0f}%" if hum_val is not None else "Not available")
+                    w_metric3.metric("Precipitation", f"{rain_val:.1f} mm" if rain_val is not None else "Not available")
+                    w_metric4.metric("Wind Speed", f"{wind_val:.1f} km/h" if wind_val is not None else "Not available")
                     forecast_data = weather.get("forecast") or []
                     if forecast_data:
                         render_weather_forecast_grid(forecast_data)
@@ -312,7 +308,12 @@ def render_dashboard() -> None:
                         f"Updated: {weather.get('updated_at') or 'time not reported'}"
                     )
                 else:
-                    st.warning("Weather data is temporarily unavailable.")
+                    coordinates = api_client.RWANDA_DISTRICT_COORDS.get(active_weather_district.casefold())
+                    if coordinates:
+                        st.caption("Loading live weather directly from Open-Meteo…")
+                        render_browser_weather(active_weather_district, coordinates)
+                    else:
+                        st.warning(f"Weather coordinates are unavailable for {active_weather_district}.")
                 st.markdown(
                     "For official national climate notices and reports, visit "
                     "[Meteo Rwanda](https://www.meteorwanda.gov.rw/climate-warning)."
