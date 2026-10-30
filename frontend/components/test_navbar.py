@@ -102,6 +102,31 @@ def test_mobile_menu_links_have_no_background_boxes():
         assert "background: transparent !important" in css_found
 
 
+def test_desktop_more_and_language_icons_remain_visible():
+    """Keep the desktop More label and globe from collapsing inside navbar columns."""
+    from components.navbar import render_navbar
+
+    mock_st = MagicMock()
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
+    with patch("components.navbar.st", mock_st), \
+         patch("components.navbar.render_floating_ai_widget"), \
+         patch("components.navbar.render_pwa_support"), \
+         patch("components.navbar.render_language_selector"):
+        render_navbar()
+
+    css_found = "".join(
+        str(call[0][0])
+        for call in mock_st.markdown.call_args_list
+        if "<style>" in str(call[0][0])
+    )
+    assert '[data-testid="stPopover"] button p' in css_found
+    assert "min-width: 4.8rem !important" in css_found
+    assert "position: absolute !important" in css_found
+
+
 def test_user_session_and_page_access_control():
     """Verify user session defaults to signed-in and unauthenticated access is gated."""
     from components.navbar import init_user_session, is_authenticated, check_page_access
