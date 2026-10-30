@@ -16,7 +16,6 @@ except ImportError:  # Keep the table usable if optional map packages are missin
     st_folium = None
 
 from components.errors import error_boundary
-from components.icons import render_icon_title
 from components.charts import render_segment_distribution_chart, render_segment_summary_chart
 from components.maps import add_map_layer_control, create_rwanda_map
 from utils import api_client
@@ -251,18 +250,80 @@ def _render_comparison_map(
 
 @error_boundary("Segmentation")
 def render_segment() -> None:
-    render_icon_title(
-        "assets/map.svg",
-        "District comparison",
-        "Explore recorded agricultural outcomes across Rwanda for a selected crop and season.",
-    )
     st.markdown(
-        "Compare observed yield, production, or cultivated area. Districts are grouped into lower, middle, "
-        "and upper ranges from the records currently in view. Yield uses an area-weighted average where "
-        "cultivated-area data is available."
-    )
-    st.caption(
-        "This is a descriptive view of recorded data. It is not a forecast and does not rank individual farmers."
+        """
+        <style>
+        .segmentation-hero {
+            margin: 0.4rem 0 1.25rem;
+            padding: clamp(1.25rem, 3vw, 2rem);
+            border: 1px solid rgba(2, 132, 199, 0.16);
+            border-radius: 20px;
+            background: linear-gradient(118deg, #eff8ff 0%, #ffffff 58%, #effaf4 100%);
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.055);
+        }
+        .segmentation-hero__top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            margin-bottom: 0.8rem;
+        }
+        .segmentation-hero__eyebrow {
+            color: #0b7657;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+        }
+        .segmentation-hero__badge {
+            padding: 0.3rem 0.65rem;
+            border: 1px solid rgba(11, 118, 87, 0.18);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.78);
+            color: #0b7657;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+        .segmentation-hero h1 {
+            margin: 0;
+            color: #102a36;
+            font-size: clamp(1.7rem, 3vw, 2.35rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.15;
+        }
+        .segmentation-hero__description {
+            max-width: 760px;
+            margin: 0.65rem 0 0;
+            color: #47616b;
+            font-size: 1rem;
+            line-height: 1.65;
+        }
+        .segmentation-hero__note {
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(15, 54, 64, 0.1);
+            color: #536b72;
+            font-size: 0.84rem;
+        }
+        </style>
+        <section class="segmentation-hero">
+            <div class="segmentation-hero__top">
+                <span class="segmentation-hero__eyebrow">Rwanda · District insights</span>
+                <span class="segmentation-hero__badge">Observed data</span>
+            </div>
+            <h1>District comparison</h1>
+            <p class="segmentation-hero__description">
+                Explore recorded yield, production, and cultivated area across crops, seasons, and districts.
+                Yield is area-weighted when cultivated-area data is available.
+            </p>
+            <div class="segmentation-hero__note">
+                Descriptive summaries only — not forecasts or individual-farm rankings.
+            </div>
+        </section>
+        """,
+        unsafe_allow_html=True,
     )
 
     try:
@@ -331,6 +392,23 @@ def render_segment() -> None:
 
     metric_column, metric_unit = METRIC_OPTIONS[selected_metric_label]
     summary = _summarize_districts(filtered, metric_column)
+    observed_record_count = int(
+        pd.to_numeric(filtered[metric_column], errors="coerce")
+        .replace([float("inf"), float("-inf")], float("nan"))
+        .notna()
+        .sum()
+    )
+
+    coverage_columns = st.columns(3, gap="medium")
+    coverage_metrics = (
+        ("Matching records", f"{len(filtered):,}", "Records matching the current crop, season, and location filters."),
+        ("Records with this measure", f"{observed_record_count:,}", f"Matching records with a recorded {selected_metric_label.casefold()} value."),
+        ("Districts represented", f"{len(summary):,}", "Districts with at least one usable value for the selected measure."),
+    )
+    for column, (label, value, help_text) in zip(coverage_columns, coverage_metrics):
+        with column:
+            with st.container(border=True):
+                st.metric(label, value, help=help_text)
 
     map_col, summary_col = st.columns([1.55, 1], gap="large")
     with map_col:
@@ -352,7 +430,6 @@ def render_segment() -> None:
             finite_values = summary["Value"].replace([float("inf"), float("-inf")], pd.NA).dropna()
             if not finite_values.empty:
                 top = summary.loc[summary["Value"].idxmax()]
-                st.metric("Districts with observations", f"{len(summary):,}")
                 st.metric(
                     f"Highest observed {selected_metric_label.casefold()}",
                     f"{top['Value']:,.1f} {metric_unit}",
