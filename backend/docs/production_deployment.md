@@ -36,6 +36,9 @@ Enter secrets directly in Render; they are not stored in `render.yaml`. Render
 generates separate `USER_API_KEY` and `JWT_SECRET` values and securely references
 the user API key from the frontend service.
 
+Render's API web service uses the default `PORT=10000`; the API image listens on
+Render's `PORT` and falls back to port 8000 for local Docker Compose.
+
 The Blueprint uses the service names
 `agrimenya-api-20261030` and `agrimenya-app-20261030`. Their expected public
 URLs are used for CORS, recovery links, and Google callbacks. If Render reports
