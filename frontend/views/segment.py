@@ -8,17 +8,13 @@ import pandas as pd
 import requests
 import streamlit as st
 
-try:
-    import folium
-    from streamlit_folium import st_folium
-except ImportError:  # Keep the table usable if optional map packages are missing.
-    folium = None
-    st_folium = None
-
 from components.errors import error_boundary
 from components.icons import render_icon_title
 from components.charts import render_segment_distribution_chart, render_segment_summary_chart
-from components.maps import add_map_layer_control, create_rwanda_map
+from components.maps import (
+    RSA_ORTHOMOSAIC_NOTE,
+    render_google_map,
+)
 from utils import api_client
 from utils.i18n import t
 from views.data_insights import normalize_agri_metrics
@@ -137,12 +133,6 @@ def _render_comparison_map(
     key: str,
     satellite_default: bool,
 ) -> None:
-    if folium is None or st_folium is None:
-        st.info("The map is unavailable because its optional map components could not be loaded.")
-        return
-
-    map_view = create_rwanda_map(satellite_default=satellite_default)
-
     value_by_district = {
         _clean_value(row["District"]).casefold(): row
         for _, row in summary.iterrows()
@@ -154,6 +144,7 @@ def _render_comparison_map(
         logger.warning("Unable to load official district boundaries: %s", exc)
         boundaries = None
 
+    enriched_boundaries = None
     if boundaries:
         features = []
         for feature in boundaries.get("features", []):
@@ -169,41 +160,19 @@ def _render_comparison_map(
             enriched_feature["properties"]["record_count"] = (
                 f"{record['Record count']:,}" if record is not None else "0"
             )
+            enriched_feature["properties"]["has_observations"] = record is not None
+            range_label = record["Range"] if record is not None else "No recorded value"
+            enriched_feature["properties"]["style_color"] = RANGE_COLORS.get(
+                range_label,
+                RANGE_COLORS["No recorded value"],
+            )
             features.append(enriched_feature)
         enriched_boundaries = {**boundaries, "features": features}
-
-        def style_feature(feature: dict) -> dict:
-            properties = feature.get("properties") or {}
-            district = _clean_value(properties.get("district")).casefold()
-            record = value_by_district.get(district)
-            range_label = record["Range"] if record is not None else "No recorded value"
-            return {
-                "fillColor": RANGE_COLORS.get(range_label, RANGE_COLORS["No recorded value"]),
-                "color": "#ffffff",
-                "weight": 1.6,
-                "fillOpacity": 0.72 if record is not None else 0.22,
-            }
-
-        folium.GeoJson(
-            enriched_boundaries,
-            name="District comparison",
-            style_function=style_feature,
-            highlight_function=lambda _: {"weight": 3, "color": "#0f172a", "fillOpacity": 0.86},
-            tooltip=folium.GeoJsonTooltip(
-                fields=["district", "province", "metric_value", "observed_range", "record_count"],
-                aliases=["District", "Province", metric_label, "Observed range", "Records"],
-                sticky=True,
-            ),
-            popup=folium.GeoJsonPopup(
-                fields=["district", "metric_value", "observed_range", "record_count"],
-                aliases=["District", metric_label, "Observed range", "Records"],
-                labels=True,
-            ),
-        ).add_to(map_view)
     else:
         st.warning(
             "District boundary service is unavailable, so the map is showing observation locations where coordinates exist."
         )
+        fallback_markers = []
         try:
             map_points = api_client.get_priority_data()
             if isinstance(map_points, pd.DataFrame) and not map_points.empty:
@@ -215,23 +184,28 @@ def _render_comparison_map(
                     if coords is None:
                         continue
                     range_label = record["Range"]
-                    folium.CircleMarker(
-                        location=[float(coords["Lat"]), float(coords["Lon"])],
-                        radius=10,
-                        color=RANGE_COLORS.get(range_label, RANGE_COLORS["Not comparable"]),
-                        fill=True,
-                        fill_color=RANGE_COLORS.get(range_label, RANGE_COLORS["Not comparable"]),
-                        fill_opacity=0.8,
-                        tooltip=(
-                            f"{html.escape(str(record['District']))}: "
-                            f"{record['Value']:,.1f} {html.escape(unit)} · {html.escape(range_label)}"
-                        ),
-                    ).add_to(map_view)
+                    district = str(record["District"])
+                    fallback_markers.append({
+                        "lat": float(coords["Lat"]),
+                        "lng": float(coords["Lon"]),
+                        "title": f"{district}: {record['Value']:,.1f} {unit}",
+                        "color": RANGE_COLORS.get(range_label, RANGE_COLORS["Not comparable"]),
+                        "details": [
+                            {"label": "District", "value": district},
+                            {"label": metric_label, "value": f"{record['Value']:,.1f} {unit}"},
+                            {"label": "Observed range", "value": range_label},
+                        ],
+                    })
         except Exception:
             logger.exception("Unable to render fallback district observation markers")
 
-    add_map_layer_control(map_view)
-    st_folium(map_view, key=key, height=540, width="stretch", returned_objects=[])
+    render_google_map(
+        key=key,
+        satellite_default=satellite_default,
+        markers=fallback_markers if not enriched_boundaries else None,
+        geojson=enriched_boundaries,
+        fit_bounds=bool(enriched_boundaries),
+    )
 
     legend_items = "".join(
         f"<span style='display:inline-flex;align-items:center;gap:6px;margin:0 14px 6px 0;'>"
@@ -335,13 +309,17 @@ def render_segment() -> None:
     map_col, summary_col = st.columns([1.55, 1], gap="large")
     with map_col:
         st.subheader("Observed values by district")
-        st.caption("Switch between street and satellite imagery using the map layers control at the upper right.")
+        st.caption(
+            "Use the map controls to switch between road and Google satellite imagery, or toggle the RSA overlay. "
+            "Zoom in to explore districts, sectors, cells, and villages. "
+            f"{RSA_ORTHOMOSAIC_NOTE}"
+        )
         _render_comparison_map(
             summary,
             selected_metric_label,
             metric_unit,
             key="segmentation_observation_map",
-            satellite_default=False,
+            satellite_default=True,
         )
 
     with summary_col:

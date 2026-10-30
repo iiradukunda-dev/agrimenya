@@ -210,13 +210,17 @@ def render_navbar(show_sidebar: bool = False) -> None:
           justify-content: center !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button {
-          width: 2.5rem !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: flex-start !important;
+          position: relative !important;
+          width: auto !important;
+          min-width: 5.4rem !important;
           height: 2.5rem !important;
-          min-width: 2.5rem !important;
           min-height: 2.5rem !important;
-          padding: 0 !important;
+          padding: 0 0.75rem 0 2.55rem !important;
           border: 0 !important;
-          border-radius: 50% !important;
+          border-radius: 9999px !important;
           background: rgba(2, 132, 199, 0.09) !important;
           color: #0284c7 !important;
           font-size: 1.45rem !important;
@@ -237,12 +241,26 @@ def render_navbar(show_sidebar: bool = False) -> None:
         }
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button::before {
           content: "" !important;
+          position: absolute !important;
+          left: 0.85rem !important;
+          top: 50% !important;
           display: block !important;
           width: 18px !important;
           height: 2px !important;
+          transform: translateY(-50%) !important;
           border-radius: 999px !important;
           background: currentColor !important;
           box-shadow: 0 6px 0 currentColor, 0 -6px 0 currentColor !important;
+        }
+        .st-key-ag_mobile_navbar [data-testid="stPopover"] button::after {
+          content: "More" !important;
+          display: inline-block !important;
+          color: currentColor !important;
+          font-family: 'Plus Jakarta Sans', sans-serif !important;
+          font-size: 0.9rem !important;
+          font-weight: 650 !important;
+          line-height: 1 !important;
+          pointer-events: none !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stIconMaterial"],
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button svg {
@@ -251,15 +269,37 @@ def render_navbar(show_sidebar: bool = False) -> None:
         .st-key-ag_mobile_navbar [data-testid="stPopoverButton"] > div > div[aria-hidden="true"] {
           display: none !important;
         }
-        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] {
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] {
           width: min(19rem, calc(100vw - 2rem)) !important;
           max-width: calc(100vw - 2rem) !important;
           max-height: calc(100dvh - 7rem) !important;
           overflow-y: auto !important;
         }
-        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] {
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink"],
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] {
           min-height: 2.75rem !important;
           padding: 0.65rem 0.85rem !important;
+          background: transparent !important;
+          background-color: transparent !important;
+          border: none !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+        }
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover,
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink"]:hover,
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]:hover,
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink"][aria-current="page"],
+        .st-key-ag_mobile_navbar [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"][aria-current="page"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink"][aria-current="page"],
+        body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"][aria-current="page"] {
+          background: transparent !important;
+          background-color: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
         }
       }
 
@@ -454,7 +494,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
       [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stPopover"] button,
       [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover button,
       [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) .stPopover > button,
-      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:not(.ag-nav-active):not(#ag-nav-install-btn):not([aria-current="page"]),
+      [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) button:not([data-testid="stPopoverButton"]):not(.ag-nav-active):not(#ag-nav-install-btn):not([aria-current="page"]),
       [data-testid="stHorizontalBlock"]:has(.st-key-lang_cycle_btn) [data-testid="stBaseButton-secondary"]:not(#ag-nav-install-btn) {
         background: transparent !important;
         background-color: transparent !important;
@@ -486,16 +526,6 @@ def render_navbar(show_sidebar: bool = False) -> None:
       .st-key-ag_navbar [data-testid="stPopover"] button:hover::after {
         background: #ffffff !important;
         box-shadow: 0 6px 0 #ffffff, 0 -6px 0 #ffffff !important;
-      }
-      .st-key-ag_navbar [data-testid="stPopover"] button p,
-      .st-key-ag_navbar [data-testid="stPopover"] button span,
-      .st-key-ag_navbar [data-testid="stPopover"] button * {
-        font-size: 0 !important;
-        color: transparent !important;
-        width: 0 !important;
-        height: 0 !important;
-        margin: 0 !important;
-        overflow: hidden !important;
       }
       @media (max-width: 840px) {
         .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button,
@@ -1017,6 +1047,110 @@ def render_navbar(show_sidebar: bool = False) -> None:
       .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button:not(#ag-nav-install-btn):hover::before {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='2' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'%3E%3C/path%3E%3C/svg%3E") !important;
       }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 2.35rem !important;
+        min-width: 2.35rem !important;
+        max-width: 2.35rem !important;
+        min-height: 2.35rem !important;
+        padding: 0 !important;
+        flex: 0 0 2.35rem !important;
+        border: 1px solid rgba(2, 132, 199, 0.24) !important;
+        border-radius: 9999px !important;
+        background: rgba(2, 132, 199, 0.08) !important;
+        color: #0a1f26 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.88rem !important;
+        font-weight: 600 !important;
+        box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button {
+        background: rgba(2, 132, 199, 0.1) !important;
+        background-color: rgba(2, 132, 199, 0.1) !important;
+        border: 1px solid rgba(2, 132, 199, 0.28) !important;
+        color: #0a1f26 !important;
+      }
+      html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button:hover {
+        background: #0284c7 !important;
+        background-color: #0284c7 !important;
+        border-color: #0284c7 !important;
+        color: #ffffff !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover {
+        border-color: #0284c7 !important;
+        background: #0284c7 !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.24) !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div > div {
+        display: inline-flex !important;
+        align-items: center !important;
+        width: auto !important;
+        min-width: max-content !important;
+        max-width: none !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button p {
+        display: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover p,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button:hover [data-testid="stIconMaterial"] {
+        color: #ffffff !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div > div:first-child,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button > div > div:first-child span,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button [data-testid="stMarkdownContainer"] {
+        width: auto !important;
+        min-width: max-content !important;
+        height: auto !important;
+        max-height: none !important;
+        max-width: none !important;
+        overflow: visible !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button [data-testid="stIconMaterial"] {
+        display: inline-block !important;
+        width: 1.35rem !important;
+        height: 1.35rem !important;
+        color: #0284c7 !important;
+        font-size: 1.35rem !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 2.35rem !important;
+        min-width: 2.35rem !important;
+        max-width: 2.35rem !important;
+        height: 2.35rem !important;
+        min-height: 2.35rem !important;
+        padding: 0 !important;
+        flex: 0 0 2.35rem !important;
+        position: relative !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button::before {
+        content: "" !important;
+        display: block !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        width: 18px !important;
+        min-width: 18px !important;
+        height: 18px !important;
+        transform: translate(-50%, -50%) !important;
+        background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20'/%3E%3C/svg%3E") !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: none !important;
+      }
       </style>
     """
     if show_sidebar:
@@ -1054,7 +1188,11 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 with c_decide:
                     st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
                 with c_more:
-                    with st.popover(t("nav.more", "More"), width="stretch"):
+                    with st.popover(
+                        " ",
+                        help=t("nav.more", "More"),
+                        width="stretch",
+                    ):
                         st.divider()
                         st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
                         st.page_link("pages/8_Planning.py", label=t("nav.planning", "Seasonal planning"))

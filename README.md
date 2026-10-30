@@ -52,6 +52,11 @@ cd agrimenya
 
 Create `backend/.env` from `backend/.env.example` and set at minimum the
 Supabase settings (`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`).
+For interactive Google satellite maps, create a root `.env` from `.env.example`
+and set `GOOGLE_MAPS_API_KEY`. Restrict this browser key to the Maps JavaScript
+API and the application's allowed HTTP referrers; enable billing in Google
+Cloud. Map boundaries load from NISR census mapping as you zoom from districts
+to sectors, cells, and villages. Never commit the populated `.env` file.
 
 ### Option A: Run from the repository root (recommended)
 
@@ -60,6 +65,8 @@ and the Streamlit frontend on port 8501. The frontend automatically connects
 to the backend using the internal Docker network (`http://backend:8000`).
 
 ```powershell
+Copy-Item .env.example .env
+# Edit .env and set GOOGLE_MAPS_API_KEY
 Copy-Item backend\.env.example backend\.env
 # Edit backend/.env and set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY
 docker compose up --build
@@ -256,7 +263,7 @@ frontend/
 │   ├── cards.py             # KPI cards with SVG sparklines, forecast cards, empty states
 │   ├── charts.py            # Responsive Plotly charts (bar, donut, area)
 │   ├── badges.py            # Priority & status indicators with pulsing dots
-│   ├── maps.py              # Interactive Folium map with Rwanda district centroids
+│   ├── maps.py              # Interactive Google Maps satellite maps and Rwanda overlays
 │   └── errors.py            # Error boundaries & sanitized failure screens
 └── utils/
     ├── theme.py             # Dynamic CSS tokens, light/dark themes, card elevation

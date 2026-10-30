@@ -8,7 +8,10 @@ def test_navbar_css_has_no_black_background_on_buttons():
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
-    mock_st.columns.return_value = [MagicMock() for _ in range(8)]
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
     with patch("components.navbar.st", mock_st), \
          patch("components.navbar.render_floating_ai_widget"), \
          patch("components.navbar.render_pwa_support"), \
@@ -56,7 +59,10 @@ def test_navbar_active_tab_is_sky_blue():
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
-    mock_st.columns.return_value = [MagicMock() for _ in range(8)]
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
     with patch("components.navbar.st", mock_st), \
          patch("components.navbar.render_floating_ai_widget"), \
          patch("components.navbar.render_pwa_support"), \
@@ -65,9 +71,96 @@ def test_navbar_active_tab_is_sky_blue():
         render_navbar()
 
         css_found = "".join([str(call[0][0]) for call in mock_st.markdown.call_args_list if "<style>" in str(call[0][0])])
-        assert "#e0f2fe" in css_found
+        assert "border: 2px solid #0875d1" in css_found
         assert "#0284c7" in css_found
         assert "#0369a1" in css_found
+
+
+def test_mobile_menu_links_have_no_background_boxes():
+    """Verify mobile popover links render without individual background boxes."""
+    from components.navbar import render_navbar
+
+    mock_st = MagicMock()
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
+    with patch("components.navbar.st", mock_st), \
+         patch("components.navbar.render_floating_ai_widget"), \
+         patch("components.navbar.render_pwa_support"), \
+         patch("components.navbar.render_language_selector"):
+        render_navbar()
+
+        css_found = "".join(
+            str(call[0][0])
+            for call in mock_st.markdown.call_args_list
+            if "<style>" in str(call[0][0])
+        )
+
+        assert '[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]' in css_found
+        assert 'body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"])' in css_found
+        assert "background: transparent !important" in css_found
+
+
+def test_desktop_dropdown_and_language_icons_remain_visible():
+    """Keep the icon-only desktop menu and globe visible inside navbar columns."""
+    from components.navbar import render_navbar
+
+    mock_st = MagicMock()
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
+    with patch("components.navbar.st", mock_st), \
+         patch("components.navbar.render_floating_ai_widget"), \
+         patch("components.navbar.render_pwa_support"), \
+         patch("components.navbar.render_language_selector"):
+        render_navbar()
+
+    css_found = "".join(
+        str(call[0][0])
+        for call in mock_st.markdown.call_args_list
+        if "<style>" in str(call[0][0])
+    )
+    desktop_popover_call = mock_st.popover.call_args_list[0]
+    assert desktop_popover_call.args[0] == " "
+    assert desktop_popover_call.kwargs["help"] == "More"
+    assert '[data-testid="stPopover"] button p' in css_found
+    assert "min-width: 2.35rem !important" in css_found
+    assert "position: absolute !important" in css_found
+    assert "background: rgba(2, 132, 199, 0.08) !important" in css_found
+    assert "border: 1px solid rgba(2, 132, 199, 0.24) !important" in css_found
+    assert "display: none !important;" in css_found
+    assert "font-size: 1.35rem !important" in css_found
+    assert "button [data-testid=\"stMarkdownContainer\"]" in css_found
+    assert 'html body [data-testid="stAppViewContainer"] .st-key-ag_desktop_navbar' in css_found
+    assert 'button:not([data-testid="stPopoverButton"])' in css_found
+    assert '.st-key-ag_navbar [data-testid="stPopover"] button * {' not in css_found
+
+
+def test_mobile_menu_button_shows_more_label():
+    """Keep the hamburger menu identifiable as the More menu on small screens."""
+    from components.navbar import render_navbar
+
+    mock_st = MagicMock()
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
+    with patch("components.navbar.st", mock_st), \
+         patch("components.navbar.render_floating_ai_widget"), \
+         patch("components.navbar.render_pwa_support"), \
+         patch("components.navbar.render_language_selector"):
+        render_navbar()
+
+    css_found = "".join(
+        str(call[0][0])
+        for call in mock_st.markdown.call_args_list
+        if "<style>" in str(call[0][0])
+    )
+    assert '.st-key-ag_mobile_navbar [data-testid="stPopover"] button::after' in css_found
+    assert 'content: "More" !important' in css_found
+    assert "min-width: 5.4rem !important" in css_found
 
 
 def test_user_session_and_page_access_control():

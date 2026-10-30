@@ -27,6 +27,7 @@ services:
     environment:
       - API_BASE_URL=http://backend:8000
       - BACKEND_URL=http://backend:8000
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY:-}
     volumes:
       - ./frontend:/app
     depends_on:

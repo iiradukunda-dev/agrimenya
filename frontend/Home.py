@@ -19,7 +19,68 @@ load_theme()
 render_navbar()
 
 
+def _render_home_feedback_link() -> None:
+    st.markdown(
+        """
+        <style>
+          .st-key-home_feedback_link {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 0.5rem 0 1.5rem;
+          }
+          .st-key-home_feedback_link [data-testid="stPageLink"] {
+            display: flex !important;
+            justify-content: center !important;
+            width: 100% !important;
+          }
+          .st-key-home_feedback_link [data-testid="stPageLink-NavLink"] {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.45rem !important;
+            min-height: 2.65rem !important;
+            padding: 0.55rem 1rem !important;
+            border: 1px solid #d5e2e7 !important;
+            border-radius: 999px !important;
+            background: #ffffff !important;
+            color: #315d70 !important;
+            font-size: 0.9rem !important;
+            font-weight: 650 !important;
+            text-decoration: none !important;
+            box-shadow: 0 2px 7px rgba(16, 42, 52, 0.06) !important;
+            margin: 0 auto !important;
+            transition: border-color 160ms ease, color 160ms ease,
+                        background-color 160ms ease, transform 160ms ease !important;
+          }
+          .st-key-home_feedback_link [data-testid="stPageLink-NavLink"]:hover {
+            border-color: #1682bb !important;
+            background: #f3f9fc !important;
+            color: #126c9b !important;
+            transform: translateY(-1px) !important;
+          }
+          .st-key-home_feedback_link [data-testid="stPageLink-NavLink"]:focus-visible {
+            outline: 3px solid rgba(22, 130, 187, 0.3) !important;
+            outline-offset: 2px !important;
+          }
+        </style>
+        <p style="margin:0;text-align:center;color:var(--ag-text-muted);font-size:0.9rem;">
+          Help us improve agrimenya
+        </p>
+        """,
+        unsafe_allow_html=True,
+    )
+    with st.container(key="home_feedback_link"):
+        st.page_link(
+            "pages/11_Contact.py",
+            label=t("home.send_feedback", "Send feedback"),
+            icon=":material/feedback:",
+        )
+
+
 def main():
+    _render_home_feedback_link()
+
     # Animated command-center hero section
     render_home_hero()
 
@@ -177,56 +238,6 @@ def main():
                     f'<p style="color:#52645a;font-size:0.88rem;line-height:1.55;margin:0;">{desc}</p>'
                 )
                 st.markdown(step_html, unsafe_allow_html=True)
-
-    st.markdown(
-        '<div style="margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--ag-border);text-align:center;">'
-        '<p style="margin:0 0 0.25rem;color:var(--ag-text-muted);font-size:0.9rem;">Help us improve agrimenya</p>'
-        '</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        """
-        <style>
-          .st-key-home_feedback_link { display: flex; justify-content: center; }
-          .st-key-home_feedback_link a {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 0.45rem !important;
-            min-height: 2.65rem !important;
-            padding: 0.55rem 1rem !important;
-            border: 1px solid #d5e2e7 !important;
-            border-radius: 999px !important;
-            background: #ffffff !important;
-            color: #315d70 !important;
-            font-size: 0.9rem !important;
-            font-weight: 650 !important;
-            text-decoration: none !important;
-            box-shadow: 0 2px 7px rgba(16, 42, 52, 0.06) !important;
-            transition: border-color 160ms ease, color 160ms ease,
-                        background-color 160ms ease, transform 160ms ease !important;
-          }
-          .st-key-home_feedback_link a:hover {
-            border-color: #1682bb !important;
-            background: #f3f9fc !important;
-            color: #126c9b !important;
-            transform: translateY(-1px) !important;
-          }
-          .st-key-home_feedback_link a:focus-visible {
-            outline: 3px solid rgba(22, 130, 187, 0.3) !important;
-            outline-offset: 2px !important;
-          }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-    with st.container(key="home_feedback_link"):
-        st.page_link(
-            "pages/11_Contact.py",
-            label=t("home.send_feedback", "Send feedback"),
-            icon=":material/feedback:",
-        )
-
 
 if __name__ == "__main__":
     with error_boundary("Home"):
