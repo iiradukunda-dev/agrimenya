@@ -181,6 +181,14 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "nav.data_guide": "Data guide",
         "nav.community": "Farmer community",
         "nav.about": "About agrimenya",
+        "nav.planning_short": "season-plan",
+        "nav.comms_short": "field-alerts",
+        "nav.segmentation_short": "zone-seg",
+        "nav.ai_assistant_short": "AI-assist",
+        "nav.admin_short": "admin",
+        "nav.data_guide_short": "data-guide",
+        "nav.community_short": "community",
+        "nav.about_short": "about",
         "nav.contact": "Feedback & support",
         "nav.offline_hub": "Offline Field Hub",
         "nav.install_app": "Install agrimenya App",
@@ -518,6 +526,14 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "nav.data_guide": "Igitabo cy'Amakuru",
         "nav.community": "Umuryango w'Abahinzi",
         "nav.about": "Ibyerekeye agrimenya",
+        "nav.planning_short": "igihembwe",
+        "nav.comms_short": "integuza",
+        "nav.segmentation_short": "zone-seg",
+        "nav.ai_assistant_short": "AI-help",
+        "nav.admin_short": "ubuyobozi",
+        "nav.data_guide_short": "amakuru",
+        "nav.community_short": "abahinzi",
+        "nav.about_short": "ibyerekeye",
         "nav.contact": "Ibitekerezo n'Ubufasha",
         "nav.offline_hub": "Amakuru adakeneye interineti",
         "nav.install_app": "Kwinjiza porogaramu ya agrimenya",
@@ -834,6 +850,14 @@ FALLBACK_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "nav.data_guide": "Guide des données",
         "nav.community": "Communauté des agriculteurs",
         "nav.about": "À propos d'agrimenya",
+        "nav.planning_short": "plan-saison",
+        "nav.comms_short": "alertes",
+        "nav.segmentation_short": "zone-seg",
+        "nav.ai_assistant_short": "assistant-IA",
+        "nav.admin_short": "admin",
+        "nav.data_guide_short": "guide-données",
+        "nav.community_short": "communauté",
+        "nav.about_short": "à-propos",
         "nav.contact": "Retours et assistance",
         "nav.offline_hub": "Centre Hors-Ligne",
         "nav.install_app": "Installer l'application agrimenya",
@@ -1116,10 +1140,10 @@ def render_language_selector(sidebar: bool = True, button_key: str = "lang_cycle
                 background: rgba(2, 132, 199, 0.08) !important;
                 border: 1px solid rgba(2, 132, 199, 0.16) !important;
                 border-radius: 999px !important;
-                width: 2.3rem !important;
-                height: 2.3rem !important;
-                min-width: 2.3rem !important;
-                min-height: 2.3rem !important;
+                width: 2.35rem !important;
+                height: 2.35rem !important;
+                min-width: 2.35rem !important;
+                min-height: 2.35rem !important;
                 padding: 0 !important;
                 display: inline-flex !important;
                 align-items: center !important;
@@ -1144,10 +1168,10 @@ def render_language_selector(sidebar: bool = True, button_key: str = "lang_cycle
             @media (max-width: 840px) {
                 .st-key-lang_cycle_btn > button,
                 .st-key-lang_cycle_mobile_btn > button {
-                    width: 2.1rem !important;
-                    height: 2.1rem !important;
-                    min-width: 2.1rem !important;
-                    min-height: 2.1rem !important;
+                    width: 42px !important;
+                    height: 42px !important;
+                    min-width: 42px !important;
+                    min-height: 42px !important;
                 }
             }
             </style>

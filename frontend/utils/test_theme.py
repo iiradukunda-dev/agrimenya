@@ -55,18 +55,19 @@ class TestTheme(unittest.TestCase):
         self.assertIn(".st-key-detect_disease_submit button", css)
         self.assertIn('content: "→"', css)
         self.assertIn("linear-gradient(110deg, #1596f4 0%, #0561ce 100%)", css)
-
-    @patch("utils.theme.st")
-    def test_disease_action_buttons_use_triage_style(self, mock_st):
-        mock_st.session_state = {"ag_theme_mode": "light"}
-        load_theme()
-
-        css = mock_st.html.call_args[0][0]
-        self.assertIn(".st-key-disease_triage_button button", css)
-        self.assertIn(".st-key-detect_disease_button button", css)
-        self.assertIn(".st-key-detect_disease_submit button", css)
-        self.assertIn('content: "→"', css)
-        self.assertIn("linear-gradient(110deg, #1596f4 0%, #0561ce 100%)", css)
+        self.assertIn('button[kind="primary"]', css)
+        self.assertIn("color: #ffffff !important;", css)
+        self.assertIn("linear-gradient(135deg, #0369a1 0%, #0284c7 100%)", css)
+        self.assertIn("@keyframes ag-button-shake", css)
+        self.assertIn("animation: ag-button-shake 320ms ease-in-out !important;", css)
+        self.assertIn('[data-testid="stAppViewContainer"] button:active', css)
+        self.assertIn('[data-testid="stAppViewContainer"] a:active', css)
+        self.assertIn("animation: none !important;", css)
+        self.assertIn("border-radius: 9999px !important;", css)
+        self.assertIn('[data-testid="stFormSubmitButton"] button[kind="primary"]', css)
+        self.assertIn("animation: none !important;", css)
+        self.assertIn("border-radius: 9999px !important;", css)
+        self.assertIn('[data-testid="stFormSubmitButton"] button[kind="primary"]', css)
 
 
 if __name__ == "__main__":

@@ -1165,13 +1165,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
         overflow: visible !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPopover"] button [data-testid="stIconMaterial"] {
-        display: inline-block !important;
-        width: 1.35rem !important;
-        height: 1.35rem !important;
-        color: #0284c7 !important;
-        font-size: 1.35rem !important;
-        opacity: 1 !important;
-        visibility: visible !important;
+        display: none !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn button {
         display: inline-flex !important;

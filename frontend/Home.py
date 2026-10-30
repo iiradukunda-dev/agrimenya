@@ -71,6 +71,12 @@ def main():
         )
 
 
+def main():
+    # Animated command-center hero section
+    render_home_hero()
+
+    _render_home_feedback_link()
+
 if __name__ == "__main__":
     with error_boundary("Home"):
         main()
