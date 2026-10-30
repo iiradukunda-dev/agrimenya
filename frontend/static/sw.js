@@ -1,5 +1,5 @@
 // agrimenya Progressive Web App Service Worker
-const CACHE_NAME = 'agrimenya-pwa-v3';
+const CACHE_NAME = 'agrimenya-pwa-v4';
 
 const PRECACHE_ASSETS = [
   '/offline.html',
@@ -73,12 +73,13 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 2. Static files (images, css, js, fonts): Stale-While-Revalidate
+  const isVideo = /\.(mp4|webm|mov)$/i.test(url.pathname);
   const isStatic =
     url.pathname.startsWith('/app/static/') ||
     url.pathname.startsWith('/static/') ||
-    /\.(png|jpg|jpeg|svg|webp|mp4|css|js|woff2|woff|ttf|ico)$/i.test(url.pathname);
+    /\.(png|jpg|jpeg|svg|webp|css|js|woff2|woff|ttf|ico)$/i.test(url.pathname);
 
-  if (isStatic) {
+  if (isStatic && !isVideo) {
     event.respondWith(
       caches.match(req).then((cached) => {
         const fetchPromise = fetch(req)

@@ -46,6 +46,8 @@ def test_service_worker_structure():
     assert "offline.html" in content
     assert "skipWaiting()" in content
     assert "caches.match('/offline.html')" in content
+    assert "const isVideo = /\\.(mp4|webm|mov)$/i.test(url.pathname);" in content
+    assert "if (isStatic && !isVideo)" in content
     assert "DATA_CACHE" not in content
     assert "const cached = await caches.match(req)" not in content
 
@@ -64,6 +66,8 @@ def test_pwa_gateway_serves_root_worker_and_manifest_with_required_headers():
     assert "types { application/manifest+json json; }" in content
     assert "default_type application/manifest+json;" in content
     assert "location = /offline.html" in content
+    assert "location /assets/" in content
+    assert "alias /usr/share/nginx/html-assets/;" in content
     assert "proxy_set_header Upgrade $http_upgrade;" in content
     assert "proxy_set_header Connection $connection_upgrade;" in content
 

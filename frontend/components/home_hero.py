@@ -1,12 +1,14 @@
 """Welcoming home page introduction for agrimenya."""
+from urllib.parse import quote
+
 import streamlit as st
 import streamlit.components.v1 as components
 from utils.i18n import t
 
 
-def _ensure_landing_video() -> str:
-    """Legacy helper maintained for backward compatibility."""
-    return ""
+def _landing_video_url() -> str:
+    """Return the gateway URL for the landing-page background video."""
+    return f"/assets/{quote('landing video.mp4')}"
 
 
 def render_home_hero() -> None:
@@ -26,6 +28,7 @@ def render_home_hero() -> None:
     pill_priority = t("hero.pill.priority", "Explore zones and local context")
     pill_window = t("hero.pill.window", "Review crop and seasonal information")
     pill_ai = t("hero.pill.ai", "Make a plan and share it with your team")
+    landing_video_url = _landing_video_url()
 
     st.html("""
     <style>
@@ -478,16 +481,78 @@ def render_home_hero() -> None:
       </section>
 
       <script>
-        (function cleanupVideoBackground() {{
+        (function setupLandingVideoBackground() {{
           try {{
             const parentDoc = window.parent.document;
             if (!parentDoc) return;
-            const video = parentDoc.getElementById('ag-landing-fullpage-video');
-            if (video) video.remove();
-            const overlay = parentDoc.getElementById('ag-landing-fullpage-overlay');
-            if (overlay) overlay.remove();
+            if (parentDoc.defaultView.__agrimenyaLandingVideoCleanup) {{
+              parentDoc.defaultView.__agrimenyaLandingVideoCleanup();
+            }}
+
+            const videoLayer = parentDoc.createElement('div');
+            videoLayer.id = 'ag-landing-video-layer';
+            videoLayer.innerHTML = `
+              <video id="ag-landing-fullpage-video" autoplay muted loop playsinline
+                     preload="metadata" aria-hidden="true">
+                <source src="{landing_video_url}" type="video/mp4">
+              </video>
+              <div id="ag-landing-fullpage-overlay"></div>
+            `;
+
+            const style = parentDoc.createElement('style');
+            style.id = 'ag-landing-video-style';
+            style.textContent = `
+              html, body, [data-testid="stApp"], [data-testid="stAppViewContainer"],
+              [data-testid="stMain"], [data-testid="stMainBlockContainer"], main, .main {{
+                background: transparent !important;
+              }}
+              #ag-landing-video-layer {{
+                position: fixed;
+                inset: 0;
+                z-index: 0;
+                overflow: hidden;
+                pointer-events: none;
+              }}
+              #ag-landing-fullpage-video {{
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0.42;
+              }}
+              #ag-landing-fullpage-overlay {{
+                position: absolute;
+                inset: 0;
+                background: rgba(248, 250, 252, 0.64);
+              }}
+              [data-testid="stApp"] {{
+                position: relative;
+                z-index: 1;
+              }}
+              @media (prefers-reduced-motion: reduce) {{
+                #ag-landing-fullpage-video {{ display: none; }}
+                #ag-landing-video-layer {{
+                  background: url("/assets/hero_bg.jpg") center / cover no-repeat;
+                }}
+              }}
+            `;
+            parentDoc.head.appendChild(style);
+            parentDoc.body.prepend(videoLayer);
+
+            const initialUrl = parentDoc.defaultView.location.href;
+            const cleanup = () => {{
+              parentDoc.getElementById('ag-landing-video-layer')?.remove();
+              parentDoc.getElementById('ag-landing-video-style')?.remove();
+              parentDoc.defaultView.clearInterval(cleanupTimer);
+              delete parentDoc.defaultView.__agrimenyaLandingVideoCleanup;
+            }};
+            const cleanupTimer = parentDoc.defaultView.setInterval(() => {{
+              if (parentDoc.defaultView.location.href !== initialUrl) cleanup();
+            }}, 500);
+            parentDoc.defaultView.__agrimenyaLandingVideoCleanup = cleanup;
           }} catch (err) {{
-            console.debug('Video cleanup note:', err);
+            console.error('Unable to set up the landing-page video background:', err);
           }}
         }})();
       </script>
@@ -496,4 +561,3 @@ def render_home_hero() -> None:
     """
 
     components.html(hero_html, height=420)
-
