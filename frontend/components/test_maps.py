@@ -1,23 +1,12 @@
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
-import pytest
-
-folium = pytest.importorskip("folium")
 
 from components import maps
 
 
-def _tile_layer_names(map_view):
-    return {
-        child.layer_name
-        for child in map_view._children.values()
-        if isinstance(child, folium.raster_layers.TileLayer)
-    }
-
-
-def test_priority_map_uses_shared_layers_and_keeps_marker_selection():
-    points = pd.DataFrame([{
+def _priority_data():
+    return pd.DataFrame([{
         "id": "zone-1",
         "Lat": -1.94,
         "Lon": 29.87,
@@ -26,21 +15,40 @@ def test_priority_map_uses_shared_layers_and_keeps_marker_selection():
         "Priority": "High",
         "Production_MT": 12.5,
     }])
+
+
+def test_priority_map_uses_google_component_and_keeps_marker_selection(monkeypatch):
+    monkeypatch.setenv("GOOGLE_MAPS_API_KEY", "test-google-maps-key")
+    component = MagicMock(return_value={"zone_id": "zone-1"})
+
+    with patch.object(maps, "_google_map_component", component), \
+         patch.object(maps, "st", MagicMock()):
+        selected_id = maps.render_priority_map(_priority_data(), key="test_priority_map")
+
+    assert selected_id == "zone-1"
+    args = component.call_args.kwargs
+    assert args["map_type"] == "satellite"
+    assert args["key"] == "test_priority_map"
+    assert args["markers"][0]["id"] == "zone-1"
+    assert args["markers"][0]["color"] == maps.PRIORITY_COLORS["High"]
+    assert args["rsa_tiles"] == maps.RSA_ORTHOMOSAIC_TILES
+
+
+def test_google_map_reports_missing_api_key(monkeypatch):
+    monkeypatch.delenv("GOOGLE_MAPS_API_KEY", raising=False)
     streamlit_mock = MagicMock()
 
     with patch.object(maps, "st", streamlit_mock), \
-         patch.object(maps, "st_folium", return_value={"last_object_clicked": {"lat": -1.94, "lng": 29.87}}) as render_map:
-        selected_id = maps.render_priority_map(points, key="test_priority_map")
+         patch.object(maps, "_google_map_component") as component:
+        result = maps.render_priority_map(_priority_data(), key="missing_key_map")
 
-    assert selected_id == "zone-1"
-    map_view = render_map.call_args.args[0]
-    assert _tile_layer_names(map_view) == {"Street", "Satellite", "RSA orthomosaic"}
-    assert any(isinstance(child, folium.map.LayerControl) for child in map_view._children.values())
-    assert any(isinstance(child, folium.CircleMarker) for child in map_view._children.values())
-    assert render_map.call_args.kwargs["height"] == 540
+    assert result is None
+    component.assert_not_called()
+    streamlit_mock.warning.assert_called_once()
+    assert "GOOGLE_MAPS_API_KEY" in streamlit_mock.warning.call_args.args[0]
 
 
-def test_segmentation_map_uses_shared_layers_and_district_interactions():
+def test_segmentation_map_passes_enriched_boundaries_to_google_component():
     from views import segment
 
     summary = pd.DataFrame([{
@@ -69,17 +77,34 @@ def test_segmentation_map_uses_shared_layers_and_district_interactions():
 
     with patch.object(segment, "_load_district_boundaries", return_value=boundaries), \
          patch.object(segment, "st", MagicMock()), \
-         patch.object(segment, "st_folium") as render_map:
+         patch.object(segment, "render_google_map") as render_map:
         segment._render_comparison_map(
             summary,
             "Yield",
             "kg/ha",
             key="test_segmentation_map",
-            satellite_default=False,
+            satellite_default=True,
         )
 
-    map_view = render_map.call_args.args[0]
-    assert _tile_layer_names(map_view) == {"Street", "Satellite", "RSA orthomosaic"}
-    assert any(isinstance(child, folium.map.LayerControl) for child in map_view._children.values())
-    assert any(isinstance(child, folium.features.GeoJson) for child in map_view._children.values())
-    assert render_map.call_args.kwargs["returned_objects"] == []
+    args = render_map.call_args.kwargs
+    feature = args["geojson"]["features"][0]
+    assert args["key"] == "test_segmentation_map"
+    assert args["satellite_default"] is True
+    assert args["fit_bounds"] is True
+    assert args["markers"] is None
+    assert feature["properties"]["metric_value"] == "3,200.0 kg/ha"
+    assert feature["properties"]["style_color"] == segment.RANGE_COLORS["Upper observed range"]
+    assert feature["properties"]["has_observations"] is True
+
+
+def test_google_map_component_uses_maps_javascript_api_and_click_events():
+    component_path = maps.Path(__file__).parent / "google_map_component"
+    html = (component_path / "index.html").read_text(encoding="utf-8")
+    script = (component_path / "google_map.js").read_text(encoding="utf-8")
+
+    assert 'type: "streamlit:componentReady"' in script
+    assert 'type: "streamlit:setComponentValue"' in script
+    assert "maps.googleapis.com/maps/api/js" in script
+    assert 'mapTypeIds: ["roadmap", "satellite"]' in script
+    assert 'name: "Rwanda Space Agency orthomosaic"' in script
+    assert 'aria-label="Interactive Google map"' in html
