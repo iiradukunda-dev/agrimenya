@@ -83,6 +83,7 @@ def login_card_header(
     icon: str = "",
     accent_color: str = "#0284c7",
     title_color: str = "#104b3b",
+    title_font_size: str = "1.45rem",
     subtitle_color: str = "#60766f",
     subtitle_font_size: str = "0.88rem",
     text_align: str = "left",
@@ -128,7 +129,7 @@ def login_card_header(
         <h2 style="
             margin: 0.2rem 0 0.35rem 0 !important;
             font-family: 'Plus Jakarta Sans', sans-serif !important;
-            font-size: 1.45rem !important;
+            font-size: {title_font_size} !important;
             font-weight: 800 !important;
             color: {title_color} !important;
             letter-spacing: -0.025em !important;

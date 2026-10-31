@@ -883,6 +883,85 @@ def render_community() -> None:
             unsafe_allow_html=True,
         )
         with centralized_login_container(max_width=620):
+            st.markdown(
+                """
+                <style>
+                body:has(.st-key-ag_centralized_login_col) .st-key-ag_desktop_navbar,
+                body:has(.st-key-ag_centralized_login_col) .st-key-ag_mobile_navbar,
+                body:has(.st-key-ag_centralized_login_col) .ag-nav-rule {
+                    display: none !important;
+                }
+                body:has(.st-key-ag_centralized_login_col) .block-container,
+                body:has(.st-key-ag_centralized_login_col) [data-testid="stMainBlockContainer"] {
+                    padding-top: 0.15rem !important;
+                    padding-bottom: 0 !important;
+                }
+                .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col {
+                    box-sizing: border-box !important;
+                    width: min(100%, 360px) !important;
+                    max-width: 360px !important;
+                    margin: 0.1rem auto 0 !important;
+                    padding: 0.65rem 0.8rem !important;
+                }
+                .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col [data-testid="stVerticalBlockBorderWrapper"] {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    border: 0 !important;
+                    background: transparent !important;
+                    box-shadow: none !important;
+                }
+                .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col [data-testid="stVerticalBlock"] {
+                    gap: 0.35rem !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stMarkdownContainer"] div:has(> .ag-login-icon-box) {
+                    display: none !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stMarkdownContainer"] div[style*="display:flex"][style*="align-items:center"] {
+                    gap: 0.45rem !important;
+                    margin: 0.3rem 0 !important;
+                    font-size: 0.72rem !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stTabs"] {
+                    gap: 0 !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stTabPanel"] {
+                    padding: 0.3rem 0 0 !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stForm"] [data-testid="stVerticalBlock"] {
+                    gap: 0.35rem !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stTextInput"] input {
+                    min-height: 1.75rem !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stFormSubmitButton"] button {
+                    min-height: 1.9rem !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stMarkdownContainer"] div[style*="Administrator or agronomist?"] {
+                    margin-top: 0.2rem !important;
+                    font-size: 0.62rem !important;
+                }
+                @media (max-height: 600px) {
+                    .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col {
+                        margin-top: 0 !important;
+                        padding: 0.4rem 0.7rem !important;
+                    }
+                    .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col [data-testid="stVerticalBlock"] {
+                        gap: 0.2rem !important;
+                    }
+                    .st-key-ag_centralized_login_col [data-testid="stTextInput"] input {
+                        min-height: 1.55rem !important;
+                    }
+                    .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a,
+                    .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stFormSubmitButton"] button {
+                        min-height: 1.7rem !important;
+                    }
+                }
+                </style>
+                """,
+                unsafe_allow_html=True,
+            )
             sprout_icon = """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M7 20h10"/>
                 <path d="M10 20c0-4 1-6 2-10"/>
@@ -897,6 +976,7 @@ def render_community() -> None:
                 icon=sprout_icon,
                 accent_color="#10b981",
                 title_color="#14264a",
+                title_font_size="1.35rem",
                 subtitle_color="#405477",
                 subtitle_font_size="0.72rem",
                 text_align="center",

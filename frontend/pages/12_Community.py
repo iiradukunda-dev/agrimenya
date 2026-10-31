@@ -15,4 +15,5 @@ setup_system_timezone()
 load_theme()
 render_navbar()
 render_community()
-render_footer()
+if st.session_state.get("community_access_token"):
+    render_footer()
