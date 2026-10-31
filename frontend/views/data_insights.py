@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from components.charts import get_plotly_layout
+from components.charts import build_3d_scatter, get_plotly_layout
 
 
 NUMERIC_COLUMNS = [
@@ -232,6 +232,7 @@ def render_visualization_builder(frame: pd.DataFrame) -> None:
     dimensions = [column for column in CATEGORICAL_COLUMNS if column in frame and frame[column].nunique(dropna=True) > 1]
     measures = [column for column in NUMERIC_COLUMNS if column in frame and frame[column].notna().any()]
 
+    has_3d_dimensions = False
     if chart_type == "Histogram":
         if not measures:
             st.info("The filtered records have no numeric values to plot.")
@@ -242,13 +243,39 @@ def render_visualization_builder(frame: pd.DataFrame) -> None:
         if len(measures) < 2:
             st.info("A scatter plot needs two numeric measures with values in the filtered data.")
             return
-        controls = st.columns(3)
+        controls = st.columns(4)
         x_measure = controls[0].selectbox("X-axis", measures, index=0, key="insights_scatter_x")
         y_options = [column for column in measures if column != x_measure]
         y_measure = controls[1].selectbox("Y-axis", y_options, key="insights_scatter_y")
-        color = controls[2].selectbox("Group", ["None", *dimensions], key="insights_scatter_color")
-        fig = px.scatter(frame.dropna(subset=[x_measure, y_measure]), x=x_measure, y=y_measure,
-                         color=None if color == "None" else color, hover_data=[column for column in ("District", "Crop", "Season") if column in frame])
+        z_options = [column for column in measures if column not in {x_measure, y_measure}]
+        z_selection = controls[2].selectbox(
+            "Z-axis (optional)",
+            ["None", *z_options],
+            index=1 if z_options else 0,
+            key="insights_scatter_z",
+        )
+        color = controls[3].selectbox("Group", ["None", *dimensions], key="insights_scatter_color")
+        z_measure = None if z_selection == "None" else z_selection
+        selected = frame.dropna(subset=[x_measure, y_measure] + ([z_measure] if z_measure else []))
+        if z_measure:
+            fig = build_3d_scatter(
+                selected,
+                x=x_measure,
+                y=y_measure,
+                z=z_measure,
+                color=None if color == "None" else color,
+                hover_data=[column for column in ("District", "Crop", "Season") if column in frame],
+                height=460,
+            )
+            has_3d_dimensions = True
+        else:
+            fig = px.scatter(
+                selected,
+                x=x_measure,
+                y=y_measure,
+                color=None if color == "None" else color,
+                hover_data=[column for column in ("District", "Crop", "Season") if column in frame],
+            )
     else:
         if not dimensions:
             st.info("Choose a category with at least two values to compare.")
@@ -274,7 +301,23 @@ def render_visualization_builder(frame: pd.DataFrame) -> None:
         if chart_type in {"Pie", "Donut"} and group_column:
             st.info("Remove the group breakdown to keep this chart readable.")
             return
-        if chart_type == "Bar":
+        if group_column and chart_type in {"Bar", "Line", "Area"}:
+            fig = build_3d_scatter(
+                grouped,
+                x=category,
+                y=group_column,
+                z="Value",
+                color=group_column,
+                title=measure_label,
+                labels={
+                    category: category,
+                    group_column: group_column,
+                    "Value": measure_label,
+                },
+                height=460,
+            )
+            has_3d_dimensions = True
+        elif chart_type == "Bar":
             fig = px.bar(grouped, x=category, y="Value", color=group_column, barmode="group", labels={"Value": measure_label}, color_discrete_sequence=px.colors.qualitative.Safe)
         elif chart_type == "Line":
             fig = px.line(grouped, x=category, y="Value", color=group_column, markers=True, labels={"Value": measure_label}, color_discrete_sequence=px.colors.qualitative.Safe)
@@ -284,7 +327,8 @@ def render_visualization_builder(frame: pd.DataFrame) -> None:
             fig = px.pie(grouped, names=category, values="Value", hole=0.48 if chart_type == "Donut" else 0,
                          color_discrete_sequence=px.colors.qualitative.Safe)
 
-    fig.update_layout(**get_plotly_layout(), height=420, transition_duration=250)
+    if not has_3d_dimensions:
+        fig.update_layout(**get_plotly_layout(), height=420, transition_duration=250)
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": True, "scrollZoom": False}, key="insights_custom_chart")
     st.download_button("Download filtered chart data (CSV)", frame.to_csv(index=False).encode("utf-8"),
                        "agrimenya_filtered_chart_data.csv", "text/csv", key="download_chart_data")
@@ -410,4 +454,3 @@ def render_settings(frame: pd.DataFrame) -> None:
                 "Missing": [int(frame[column].isna().sum()) for column in frame.columns],
             })
             st.dataframe(dictionary, width="stretch", hide_index=True)
-

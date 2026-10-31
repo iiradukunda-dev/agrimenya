@@ -60,6 +60,69 @@ def get_plotly_layout() -> dict:
     )
 
 
+def get_3d_scene_layout(x_title: str, y_title: str, z_title: str) -> dict:
+    """Return theme-aware axis styling for charts with three real dimensions."""
+    is_dark = get_current_theme() == "dark"
+    text_color = "#f8fafc" if is_dark else "#1e293b"
+    grid_color = "rgba(255, 255, 255, 0.12)" if is_dark else "rgba(15, 23, 42, 0.12)"
+    axis_style = {
+        "backgroundcolor": "rgba(0,0,0,0)",
+        "gridcolor": grid_color,
+        "linecolor": grid_color,
+        "showbackground": False,
+        "tickfont": {"color": text_color},
+        "zerolinecolor": grid_color,
+    }
+    return {
+        "bgcolor": "rgba(0,0,0,0)",
+        "xaxis": {**axis_style, "title": {"text": x_title, "font": {"color": text_color}}},
+        "yaxis": {**axis_style, "title": {"text": y_title, "font": {"color": text_color}}},
+        "zaxis": {**axis_style, "title": {"text": z_title, "font": {"color": text_color}}},
+        "aspectmode": "auto",
+        "camera": {"eye": {"x": 1.55, "y": 1.55, "z": 1.15}},
+    }
+
+
+def build_3d_scatter(
+    data,
+    *,
+    x: str,
+    y: str,
+    z: str,
+    color: str | None = None,
+    color_discrete_map: dict | None = None,
+    title: str | None = None,
+    labels: dict | None = None,
+    hover_data: list[str] | None = None,
+    height: int = 440,
+):
+    """Build a consistently styled 3D scatter plot from independent data dimensions."""
+    fig = px.scatter_3d(
+        data,
+        x=x,
+        y=y,
+        z=z,
+        color=color,
+        color_discrete_map=color_discrete_map,
+        title=title,
+        labels=labels,
+        hover_data=hover_data,
+    )
+    labels = labels or {}
+    fig.update_layout(
+        **get_plotly_layout(),
+        height=height,
+        scene=get_3d_scene_layout(
+            labels.get(x, x),
+            labels.get(y, y),
+            labels.get(z, z),
+        ),
+        legend_title_text=labels.get(color, color) if color else None,
+    )
+    fig.update_traces(marker={"size": 5, "opacity": 0.85})
+    return fig
+
+
 def render_yield_chart(df) -> None:
     """
     Renders grouped estimated production by district and priority.
@@ -81,32 +144,52 @@ def render_yield_chart(df) -> None:
 
     grouped = df.groupby(group_cols, as_index=False)[y_col].mean()
 
-    fig = px.bar(
-        grouped,
-        x="District" if "District" in grouped.columns else group_cols[0],
-        y=y_col,
-        color="Priority" if "Priority" in grouped.columns else None,
-        color_discrete_map=PRIORITY_COLORS,
-        title=t("seg.chart_title", default="Production by District & Priority"),
-        barmode="group",
-    )
+    if "District" in grouped.columns and "Priority" in grouped.columns:
+        fig = build_3d_scatter(
+            grouped,
+            x="District",
+            y="Priority",
+            z=y_col,
+            color="Priority",
+            color_discrete_map=PRIORITY_COLORS,
+            title=t("seg.chart_title", default="Production by District & Priority"),
+            labels={y_col: "Production (MT)" if y_col == "Production_MT" else "Yield (MT/ha)"},
+            height=460,
+        )
+    else:
+        fig = px.bar(
+            grouped,
+            x="District" if "District" in grouped.columns else group_cols[0],
+            y=y_col,
+            color="Priority" if "Priority" in grouped.columns else None,
+            color_discrete_map=PRIORITY_COLORS,
+            title=t("seg.chart_title", default="Production by District & Priority"),
+            barmode="group",
+        )
 
-    layout = get_plotly_layout()
-    fig.update_layout(**layout)
-    fig.update_xaxes(
-        gridcolor="rgba(150, 150, 150, 0.1)",
-        linecolor="rgba(150, 150, 150, 0.2)",
-        tickangle=-35,
-    )
-    fig.update_yaxes(
-        title="Production (MT)" if y_col == "Production_MT" else "Yield (MT/ha)",
-        gridcolor="rgba(150, 150, 150, 0.1)",
-        linecolor="rgba(150, 150, 150, 0.2)",
-    )
-    fig.update_traces(
-        marker_cornerradius=4,
-        hovertemplate="<b>%{x}</b><br>Production: %{y:.1f} MT<extra></extra>",
-    )
+    has_3d_dimensions = "District" in grouped.columns and "Priority" in grouped.columns
+    if not has_3d_dimensions:
+        layout = get_plotly_layout()
+        fig.update_layout(**layout)
+        fig.update_xaxes(
+            gridcolor="rgba(150, 150, 150, 0.1)",
+            linecolor="rgba(150, 150, 150, 0.2)",
+            tickangle=-35,
+        )
+        fig.update_yaxes(
+            title="Production (MT)" if y_col == "Production_MT" else "Yield (MT/ha)",
+            gridcolor="rgba(150, 150, 150, 0.1)",
+            linecolor="rgba(150, 150, 150, 0.2)",
+        )
+    if has_3d_dimensions:
+        fig.update_traces(
+            hovertemplate="<b>%{x}</b><br>%{y}: %{z:.1f}<extra></extra>",
+        )
+    else:
+        fig.update_traces(
+            marker_cornerradius=4,
+            hovertemplate="<b>%{x}</b><br>Production: %{y:.1f} MT<extra></extra>",
+        )
 
     st.plotly_chart(fig, width="stretch")
 
@@ -302,17 +385,34 @@ def render_dashboard_chart(df) -> None:
     if chart_data.empty:
         st.info(t("dashboard.chart.empty", "There is no data for these filters yet."))
         return
-    if chart_type == "Bar":
+    has_3d_dimensions = bool(series_column)
+    if has_3d_dimensions:
+        fig = build_3d_scatter(
+            chart_data,
+            x=x_column,
+            y=series_column,
+            z="value",
+            color=series_column,
+            title=metric_title,
+            labels={
+                x_column: dimension_labels.get(x_column, x_column),
+                series_column: dimension_labels.get(series_column, series_column),
+                "value": metric_title,
+            },
+            height=460,
+        )
+    elif chart_type == "Bar":
         fig = px.bar(chart_data, x=x_column, y="value", color=series_column, barmode="group")
     elif chart_type == "Line":
         fig = px.line(chart_data, x=x_column, y="value", color=series_column, markers=True)
     else:
         fig = px.scatter(chart_data, x=x_column, y="value", color=series_column)
 
-    fig.update_layout(**get_plotly_layout(), height=420, xaxis_title=dimension_labels.get(x_column, x_column), yaxis_title=metric_title)
-    fig.update_xaxes(gridcolor="rgba(150, 150, 150, 0.1)", linecolor="rgba(150, 150, 150, 0.2)")
-    fig.update_yaxes(gridcolor="rgba(150, 150, 150, 0.1)", linecolor="rgba(150, 150, 150, 0.2)", rangemode="tozero")
-    fig.update_traces(hovertemplate=f"<b>%{{x}}</b><br>{metric_title}: %{{y:,.2f}}<extra></extra>")
+    if not has_3d_dimensions:
+        fig.update_layout(**get_plotly_layout(), height=420, xaxis_title=dimension_labels.get(x_column, x_column), yaxis_title=metric_title)
+        fig.update_xaxes(gridcolor="rgba(150, 150, 150, 0.1)", linecolor="rgba(150, 150, 150, 0.2)")
+        fig.update_yaxes(gridcolor="rgba(150, 150, 150, 0.1)", linecolor="rgba(150, 150, 150, 0.2)", rangemode="tozero")
+        fig.update_traces(hovertemplate=f"<b>%{{x}}</b><br>{metric_title}: %{{y:,.2f}}<extra></extra>")
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="dashboard_explorer_chart")
 
 
@@ -341,28 +441,19 @@ def render_zone_portfolio_chart(zones: list[dict]) -> None:
     counts = frame.groupby(["District", "Priority"]).size().rename("Zones").reset_index()
     counts = counts.sort_values("Zones", ascending=True)
 
-    fig = px.bar(
+    fig = build_3d_scatter(
         counts,
-        x="Zones",
-        y="District",
+        x="District",
+        y="Priority",
+        z="Zones",
         color="Priority",
-        orientation="h",
-        barmode="stack",
-        category_orders={"Priority": priority_order},
         color_discrete_map=PRIORITY_COLORS,
         title="Zone portfolio by district",
-        hover_data={"Zones": True, "Priority": True, "District": True},
+        labels={"Zones": "Registered zones"},
+        hover_data=["District", "Priority", "Zones"],
+        height=max(360, min(520, 34 * counts["District"].nunique() + 120)),
     )
-    fig.update_layout(
-        **get_plotly_layout(),
-        height=max(320, min(520, 34 * counts["District"].nunique() + 120)),
-        xaxis_title="Registered zones",
-        yaxis_title="",
-        legend_title_text="Priority",
-    )
-    fig.update_xaxes(dtick=1, rangemode="tozero", gridcolor="rgba(150, 150, 150, 0.1)")
-    fig.update_yaxes(automargin=True)
-    fig.update_traces(hovertemplate="<b>%{y}</b><br>%{fullData.name}: %{x} zones<extra></extra>")
+    fig.update_traces(hovertemplate="<b>%{x}</b><br>%{y}: %{z} zones<extra></extra>")
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="zone_portfolio_chart")
 
 
@@ -418,6 +509,27 @@ def render_segment_distribution_chart(frame, metric_column: str, metric_label: s
     chart_data = chart_data.dropna(subset=[metric_column])
     if chart_data.empty:
         st.info("No matching observations include a value for this measure.")
+        return
+
+    category_columns = [
+        column for column in ("District", "Crop", "Season", "Sector", "Cell")
+        if column in chart_data and chart_data[column].nunique(dropna=True) > 1
+    ]
+    if len(category_columns) >= 2:
+        x_column, y_column = category_columns[:2]
+        color_column = category_columns[2] if len(category_columns) > 2 else None
+        fig = build_3d_scatter(
+            chart_data,
+            x=x_column,
+            y=y_column,
+            z=metric_column,
+            color=color_column,
+            title=f"Observed {metric_label.casefold()} by {x_column} and {y_column}",
+            labels={metric_column: f"{metric_label} ({unit})"},
+            hover_data=category_columns[2:],
+            height=440,
+        )
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="segment_record_distribution")
         return
 
     district_count = chart_data["District"].nunique(dropna=True) if "District" in chart_data else 0
