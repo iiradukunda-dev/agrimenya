@@ -8,13 +8,6 @@ from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
 
 
-DEFAULT_USER = {
-    "name": "Extension Officer",
-    "role": "Agronomist",
-    "email": "officer@rab.gov.rw",
-    "avatar": "EO",
-}
-
 PUBLIC_PAGES = {
     "Home.py", "dashboard.py", "3_Dashboard.py", "9_Communication.py",
     "12_Community.py", "1_About.py", "",
@@ -73,47 +66,8 @@ def check_page_access() -> bool:
     if not current_page or current_page in PUBLIC_PAGES or "test" in current_page:
         return True
 
-    # User is unauthenticated and attempting to view a restricted page
-    st.markdown("""
-    <div style="
-        max-width: 580px;
-        margin: 2.5rem auto 1.5rem;
-        padding: 2.25rem 2rem;
-        background: #ffffff;
-        border-radius: 20px;
-        border: 1.5px solid rgba(2, 132, 199, 0.25);
-        border-top: 4px solid #0284c7;
-        box-shadow: 0 16px 40px rgba(2, 132, 199, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
-        text-align: center;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    ">
-        <div style="
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 1.2rem;
-            border-radius: 50%;
-            background: #e0f2fe;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0284c7;
-        ">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-        </div>
-        <h2 style="color: #0f172a; font-size: 1.45rem; font-weight: 800; margin-bottom: 0.4rem;">Access Restricted</h2>
-        <p style="color: #475569; font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem;">
-            This page is reserved for authenticated agricultural officers. Unauthenticated access is limited to <strong>Home</strong>, <strong>Overview</strong>, <strong>Updates</strong>, and <strong>About</strong>.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    if st.button("Sign In as Extension Officer", key="auth_restricted_gate_btn", type="primary", use_container_width=True):
-        st.session_state["authenticated"] = True
-        st.session_state["user_profile"] = dict(DEFAULT_USER)
-        st.rerun()
-    st.page_link("Home.py", label="Return to Home", use_container_width=True)
-
-    st.stop()
+    # Redirect unauthenticated visitors instead of rendering a separate gate page.
+    st.switch_page("Home.py")
     return False
 
 
