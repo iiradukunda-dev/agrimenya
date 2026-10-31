@@ -15,11 +15,10 @@ except ImportError:
 
 # Priority zone color palette - matches the design system semantic colors
 PRIORITY_COLORS = {
-    "High":   "#DC2626",
+    "High": "#DC2626",
     "Medium": "#D97706",
-    "Low":    "#059669",
+    "Low": "#059669",
 }
-
 
 RSA_ORTHOMOSAIC_TILES = (
     "https://portal.space.gov.rw/server/rest/services/Hosted/Ortho_Orthomosaic/"
@@ -93,8 +92,10 @@ def render_google_location_map(
     key: str,
     center: dict[str, float],
     zoom: int,
+    markers: list[dict] | None = None,
+    height: int = 580,
 ) -> dict | None:
-    """Render NISR boundaries on Google satellite imagery when a key is configured."""
+    """Render NISR boundaries and optional markers on Google satellite imagery."""
     api_key = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
     if not api_key:
         return None
@@ -104,11 +105,27 @@ def render_google_location_map(
         center=center,
         zoom=zoom,
         map_type="satellite",
+        markers=markers or [],
+        geojson=None,
+        fit_bounds=False,
+        rsa_tiles=RSA_ORTHOMOSAIC_TILES,
         boundary_levels=ADMIN_BOUNDARY_LEVELS,
         boundaries_url=NISR_BOUNDARIES_URL,
-        height=580,
+        boundary_attribution="Administrative boundaries © NISR, Rwanda Census Mapping 2022",
+        height=height,
         key=key,
         default=None,
+    )
+
+
+def render_google_map(*, key: str, markers: list[dict], height: int = 540):
+    """Render priority markers with NISR boundaries on the shared Google map."""
+    return render_google_location_map(
+        key=key,
+        center={"lat": -1.9403, "lng": 29.8739},
+        zoom=8,
+        markers=markers,
+        height=height,
     )
 
 
@@ -175,24 +192,12 @@ def add_rsa_orthomosaic_layer(map_view) -> None:
 
 
 def render_priority_map(df, *, key: str = "priority_map") -> str | None:
-    """
-    Renders a Folium map with priority zone markers.
-    Each marker shows district, crop, and yield on hover.
-    Uses the standard OpenStreetMap tile service so the map works
-    without a provider-specific API key.
-    """
-    if folium is None or st_folium is None:
-        st.info("The interactive map is unavailable because its optional map components could not be loaded.")
-        return None
-
+    """Render priority markers and return the selected zone ID."""
     if df is None or not hasattr(df, "empty") or not hasattr(df, "iterrows"):
         st.info("Map data is not available in a usable format.")
         return None
 
-    m = create_rwanda_map()
-
-    add_rsa_orthomosaic_layer(m)
-
+    markers = []
     if not df.empty:
         for _, row in df.iterrows():
             try:
@@ -203,41 +208,76 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
             if not (math.isfinite(latitude) and math.isfinite(longitude)):
                 continue
 
-            color = PRIORITY_COLORS.get(row.get("Priority"), "#6B7280")
+            priority = str(row.get("Priority", "N/A"))
             production_value = row.get("Production_MT")
             try:
                 production_number = float(production_value)
                 production_text = f"{production_number:,.1f}" if math.isfinite(production_number) else "N/A"
             except (TypeError, ValueError):
                 production_text = "N/A"
-            district = html.escape(str(row.get("District", "Unknown")))
-            crop = html.escape(str(row.get("Crop", "N/A")))
-            priority = html.escape(str(row.get("Priority", "N/A")))
-            popup_html = (
-                f"<div style='font-family: Outfit, sans-serif; font-size: 13px; line-height: 1.5;'>"
-                f"<strong style='color: #1B3A2D;'>{district}</strong><br/>"
-                f"Crop: {crop}<br/>"
-                f"Estimated production: {production_text} MT<br/>"
-                f"Priority: <span style='color: {color}; font-weight: 600;'>"
-                f"{priority}</span>"
-                f"</div>"
-            )
+            district = str(row.get("District", "Unknown"))
+            crop = str(row.get("Crop", "N/A"))
+            priority = str(row.get("Priority", "N/A"))
+            markers.append({
+                "id": str(row.get("id", "")),
+                "lat": latitude,
+                "lng": longitude,
+                "title": f"{district} | {crop} | {priority}",
+                "color": PRIORITY_COLORS.get(priority, "#6B7280"),
+                "details": [
+                    {"label": "District", "value": district},
+                    {"label": "Crop", "value": crop},
+                    {"label": "Estimated production", "value": f"{production_text} MT"},
+                    {"label": "Priority", "value": priority},
+                ],
+            })
 
-            folium.CircleMarker(
-                location=[latitude, longitude],
-                radius=10,
-                popup=folium.Popup(popup_html, max_width=220),
-                tooltip=f"{district} | {crop} | {priority}",
-                color=color,
-                fill=True,
-                fillColor=color,
-                fillOpacity=0.65,
-                weight=2,
-                opacity=0.85,
-            ).add_to(m)
+    st.caption("Red: High priority | Amber: Medium | Green: Low | Gray: not assessed. Click a point to select its zone.")
+    if google_maps_configured():
+        st.caption(
+            "Use the map controls to switch between Google satellite, road, and optional RSA imagery. "
+            f"{RSA_ORTHOMOSAIC_NOTE}"
+        )
+        selected = render_google_map(key=key, markers=markers)
+        if isinstance(selected, dict) and selected.get("zone_id") is not None:
+            return str(selected["zone_id"])
+        return None
+
+    if folium is None or st_folium is None:
+        st.info("The interactive map is unavailable because its optional map components could not be loaded.")
+        return None
+
+    m = create_rwanda_map()
+    add_rsa_orthomosaic_layer(m)
+    for marker in markers:
+        district = html.escape(marker["details"][0]["value"])
+        crop = html.escape(marker["details"][1]["value"])
+        production = html.escape(marker["details"][2]["value"])
+        priority = html.escape(marker["details"][3]["value"])
+        color = PRIORITY_COLORS.get(priority, "#6B7280")
+        popup_html = (
+            f"<div style='font-family: Outfit, sans-serif; font-size: 13px; line-height: 1.5;'>"
+            f"<strong style='color: #1B3A2D;'>{district}</strong><br/>"
+            f"Crop: {crop}<br/>"
+            f"Estimated production: {production}<br/>"
+            f"Priority: <span style='color: {color}; font-weight: 600;'>"
+            f"{priority}</span>"
+            f"</div>"
+        )
+        folium.CircleMarker(
+            location=[marker["lat"], marker["lng"]],
+            radius=10,
+            popup=folium.Popup(popup_html, max_width=220),
+            tooltip=marker["title"],
+            color=color,
+            fill=True,
+            fillColor=color,
+            fillOpacity=0.65,
+            weight=2,
+            opacity=0.85,
+        ).add_to(m)
 
     add_map_layer_control(m)
-    st.caption("Red: High priority | Amber: Medium | Green: Low | Gray: not assessed. Click a point to select its zone.")
     st.caption(
         f"Use the layer control to switch between street, satellite, and RSA imagery. {RSA_ORTHOMOSAIC_NOTE}"
     )
@@ -269,5 +309,4 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
             nearest_distance = distance
             nearest_id = row.get("id")
 
-    # A marker click reports the marker coordinates. Ignore plain map clicks.
     return str(nearest_id) if nearest_id is not None and nearest_distance <= 0.0001 else None
