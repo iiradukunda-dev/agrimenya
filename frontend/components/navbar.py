@@ -118,25 +118,12 @@ def check_page_access() -> bool:
 
 
 def _render_api_warmup() -> None:
+    """Start the backend warm-up without adding a blocking banner to the page."""
     future = st.session_state.get("api_warmup_future")
     if future is not None and not isinstance(future, Future):
         return
     if future is None:
-        future = start_api_warmup()
-        st.session_state["api_warmup_future"] = future
-
-    if future.done():
-        if future.result():
-            return
-        st.warning(
-            "The backend is not responding yet. It may be starting after an idle period."
-        )
-    else:
-        st.info("Connecting to the backend in the background; startup may take a minute.")
-
-    if st.button("Retry backend connection", key="api_warmup_retry") is True:
         st.session_state["api_warmup_future"] = start_api_warmup()
-        st.info("Backend connection retry started.")
 
 
 def render_navbar(show_sidebar: bool = False) -> None:
@@ -1400,7 +1387,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 with c_about:
                     st.page_link("pages/1_About.py", label=t("nav.about", "About"))
                 with c_more:
-                    st.page_link("pages/12_Community.py", label=t("nav.farmer_login", "Sign up / Login"))
+                    st.page_link(
+                        "pages/12_Community.py",
+                        label=" ",
+                        icon=":material/account_circle:",
+                        help=t("nav.farmer_login", "Farmer sign up or login"),
+                    )
                 with c_sep:
                     st.empty()
 
@@ -1431,7 +1423,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 else:
                     st.page_link("pages/9_Communication.py", label=t("nav.updates", "Updates"))
                     st.page_link("pages/1_About.py", label=t("nav.about", "About"))
-                    st.page_link("pages/12_Community.py", label=t("nav.farmer_login", "Sign up / Login"))
+                    st.page_link(
+                        "pages/12_Community.py",
+                        label=" ",
+                        icon=":material/account_circle:",
+                        help=t("nav.farmer_login", "Farmer sign up or login"),
+                    )
         with mobile_language_col:
             render_language_selector(sidebar=False, button_key="lang_cycle_mobile_btn")
 
