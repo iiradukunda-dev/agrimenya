@@ -294,7 +294,7 @@ def test_logged_out_navbar_keeps_account_icon_visible_without_hover_effects():
     mock_st = MagicMock()
     mock_st.columns.side_effect = [
         [MagicMock() for _ in range(7)],
-        [MagicMock() for _ in range(2)],
+        [MagicMock() for _ in range(3)],
     ]
     with patch("components.navbar.st", mock_st), \
          patch("components.navbar.is_authenticated", return_value=False), \
@@ -320,5 +320,10 @@ def test_logged_out_navbar_keeps_account_icon_visible_without_hover_effects():
     assert 'a[href*="12_Community"] [data-testid="stIconMaterial"]' in css
     assert '[data-testid="stPageLink-NavLink"]:not(:has(a[href*="12_Community"]))' in css
     assert '.st-key-ag_mobile_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"])' in css
+    assert ".st-key-ag_mobile_account [data-testid=\"stPageLink-NavLink\"]" in css
+    assert any(
+        call.kwargs.get("key") == "ag_mobile_account"
+        for call in mock_st.container.call_args_list
+    )
     assert 'a[href*="12_Community"]:hover' in css
     assert "transform: none !important" in css
