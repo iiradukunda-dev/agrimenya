@@ -486,7 +486,7 @@ def render_community() -> None:
                 box-sizing: border-box !important;
                 display: flex !important;
                 align-items: center !important;
-                justify-content: space-between !important;
+                justify-content: center !important;
                 gap: 0.5rem !important;
                 min-height: 2rem !important;
                 padding: 0.25rem 0.55rem !important;
@@ -497,19 +497,6 @@ def render_community() -> None:
                 font-size: 0.55rem !important;
                 font-weight: 600 !important;
                 box-shadow: none !important;
-            }
-            .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a::before {
-                content: "G";
-                font: 700 0.95rem/1 Arial, sans-serif;
-                background: conic-gradient(#4285f4 0 25%, #34a853 25% 50%, #fbbc05 50% 75%, #ea4335 75%);
-                background-clip: text;
-                -webkit-background-clip: text;
-                color: transparent;
-            }
-            .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a::after {
-                content: "→";
-                color: #64748b;
-                font-size: 0.7rem;
             }
             .st-key-ag_centralized_login_col [data-testid="stMarkdownContainer"] div[style*="display:flex"][style*="align-items:center"] {
                 gap: 0.5rem !important;
@@ -543,18 +530,6 @@ def render_community() -> None:
                 border-bottom: 1px solid #328ff0 !important;
                 background: #ffffff !important;
                 box-shadow: 0 2px 6px rgba(50, 143, 240, 0.12) !important;
-            }
-            .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tab"][data-key="0"]::before {
-                content: "♙";
-                margin-right: 0.25rem;
-                color: #718198;
-                font-size: 0.65rem;
-            }
-            .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tab"][data-key="1"]::before {
-                content: "♧";
-                margin-right: 0.25rem;
-                color: #718198;
-                font-size: 0.65rem;
             }
             .st-key-ag_centralized_login_col [data-testid="stWidgetLabel"] p {
                 color: #172338 !important;
@@ -618,11 +593,6 @@ def render_community() -> None:
                 font-weight: 700 !important;
                 box-shadow: 0 6px 16px rgba(50, 143, 240, 0.18) !important;
             }
-            .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stFormSubmitButton"] button::before {
-                content: "→";
-                margin-right: 0.4rem;
-                font-size: 0.75rem;
-            }
             .st-key-ag_centralized_login_col [data-testid="stPopover"] button {
                 display: flex !important;
                 align-items: center !important;
@@ -642,15 +612,6 @@ def render_community() -> None:
             .st-key-ag_centralized_login_col [data-testid="stPopover"] button [data-testid="stIconMaterial"] {
                 display: none !important;
             }
-            .st-key-ag_centralized_login_col [data-testid="stPopover"] button::after {
-                content: "⊕";
-                color: #328ff0;
-                margin-left: 0.25rem;
-                padding: 0 0.15rem;
-                background: #ffffff;
-                font-size: 0.65rem;
-                font-weight: 500;
-            }
             .st-key-ag_centralized_login_col [data-testid="stPopover"] button p {
                 padding: 0 0.25rem !important;
                 background: #ffffff !important;
@@ -665,17 +626,6 @@ def render_community() -> None:
                 border-radius: 8px !important;
                 background: #ffffff !important;
                 color: #34445a !important;
-            }
-            .st-key-community_verification_resend_popover [data-testid="stPopover"] button::before {
-                content: "♢";
-                color: #718198;
-                margin-right: 0.4rem;
-            }
-            .st-key-community_verification_resend_popover [data-testid="stPopover"] button::after {
-                content: "→";
-                margin-left: auto;
-                background: transparent;
-                color: #718198;
             }
             .st-key-community_verification_resend_popover [data-testid="stPopover"] button p {
                 margin-right: auto !important;
@@ -722,18 +672,6 @@ def render_community() -> None:
                 font-size: 0.72rem !important;
                 font-weight: 600 !important;
             }
-            .st-key-community_login_email [data-testid="stWidgetLabel"] p::before,
-            .st-key-community_register_email [data-testid="stWidgetLabel"] p::before {
-                content: "✉";
-                margin-right: 0.45rem;
-                color: #14264a;
-            }
-            .st-key-community_login_password [data-testid="stWidgetLabel"] p::before,
-            .st-key-community_register_password [data-testid="stWidgetLabel"] p::before {
-                content: "▣";
-                margin-right: 0.45rem;
-                color: #14264a;
-            }
             .st-key-ag_centralized_login_col [data-testid="stTextInput"] input {
                 min-height: 1.9rem !important;
                 padding: 0.25rem 0.7rem !important;
@@ -756,11 +694,6 @@ def render_community() -> None:
                 color: #14264a !important;
                 font-size: 0.72rem !important;
                 font-weight: 650 !important;
-            }
-            .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a::after {
-                content: "›" !important;
-                font-size: 1.15rem !important;
-                color: #14264a !important;
             }
             .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tablist"] {
                 gap: 0 !important;
@@ -810,11 +743,6 @@ def render_community() -> None:
                 font-weight: 700 !important;
                 box-shadow: 0 5px 12px rgba(8, 117, 209, 0.2) !important;
             }
-            .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stFormSubmitButton"] button::before {
-                content: "↪" !important;
-                margin-right: 0.35rem !important;
-                font-size: 0.9rem !important;
-            }
             .st-key-community_login_password [data-testid="stTextInput"] button,
             .st-key-community_register_password [data-testid="stTextInput"] button {
                 min-width: 2.7rem !important;
@@ -847,17 +775,6 @@ def render_community() -> None:
                 background: #ffffff !important;
                 color: #14264a !important;
                 font-size: 0.68rem !important;
-            }
-            .st-key-community_verification_resend_popover [data-testid="stPopover"] button::before {
-                content: "↻" !important;
-                margin-right: 0.45rem !important;
-                color: #14264a !important;
-            }
-            .st-key-community_verification_resend_popover [data-testid="stPopover"] button::after {
-                content: "›" !important;
-                margin-left: auto !important;
-                color: #14264a !important;
-                background: transparent !important;
             }
             .st-key-ag_centralized_login_col [data-testid="stMarkdownContainer"] div[style*="Administrator or agronomist?"] {
                 margin-top: 0.35rem !important;

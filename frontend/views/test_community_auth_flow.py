@@ -129,3 +129,16 @@ def test_google_sign_in_starts_on_the_frontend_origin(
     assert "@media (max-height: 900px)" in login_css
     assert "min-height: 1.45rem !important" in login_css
     assert "border: 1px solid #e1e7ef !important" in login_css
+    assert not any(
+        icon in login_css
+        for icon in (
+            'content: "G"',
+            'content: "♙"',
+            'content: "♧"',
+            'content: "✉"',
+            'content: "▣"',
+            'content: "⊕"',
+            'content: "↻"',
+            'content: "›"',
+        )
+    )
