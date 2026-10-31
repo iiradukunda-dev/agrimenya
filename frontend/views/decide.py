@@ -358,6 +358,11 @@ def render_decide():
                     )
                 all_evidence = api_client.get_evidence_ranking(crop=selected_crop)
                 seasons = _available_ranking_seasons(all_evidence)
+                if isinstance(all_evidence, dict) and all_evidence.get("offline_fallback"):
+                    st.warning(
+                        "The live API is unavailable. Showing bundled historical NISR SAS data; "
+                        "field-specific assessments and saved actions need the live service."
+                    )
                 season_key = "rank_season_select"
                 if st.session_state.get(season_key) not in seasons:
                     st.session_state.pop(season_key, None)

@@ -43,7 +43,10 @@ def render_ai_assistant() -> None:
         # ═════════════════════════════════════════════════════════════
         with chat_tab:
             # Optional zone context selector
-            zones = api_client.get_zones()
+            with st.spinner(
+                "Connecting to the zone service. A free Render instance may take up to a minute to wake..."
+            ):
+                zones = api_client.get_zones()
             zone_labels = [
                 f"{z.get('district', 'Unknown district')} / {z.get('sector') or z.get('cell') or z.get('id')}"
                 for z in zones
@@ -137,7 +140,10 @@ def render_ai_assistant() -> None:
             render_icon_subheader("assets/brain.svg", t("ai.disease_title", "Crop Disease Detection"))
             st.markdown(t("ai.disease_desc", "Describe symptoms and optionally upload a photo to identify potential crop diseases."))
 
-            zones = api_client.get_zones()
+            with st.spinner(
+                "Connecting to the zone service. A free Render instance may take up to a minute to wake..."
+            ):
+                zones = api_client.get_zones()
             disease_zone_options = {
                 f"{z.get('district', 'Unknown district')} / {z.get('sector') or z.get('cell') or z.get('id')}": z
                 for z in zones

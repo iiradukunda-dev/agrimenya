@@ -273,7 +273,10 @@ def render_zones() -> None:
         if st.session_state.pop("work_record_saved", False):
             st.success("Worker-days record saved.")
 
-        zones = api_client.get_zones()
+        with st.spinner(
+            "Loading zones. The free data service may take up to a minute to wake after inactivity..."
+        ):
+            zones = api_client.get_zones()
 
         # ── Action & Filter Header ──────────────────────────────────────────
         c_search, c_crop, c_prio, c_add = st.columns([2.5, 1.5, 1.2, 1.3])
@@ -298,7 +301,15 @@ def render_zones() -> None:
 
         if not filtered:
             if st.session_state.get("zones_api_unavailable"):
-                st.error("Could not load agricultural zones from the backend.")
+                st.error(
+                    "The live zone service is still unavailable. Historical NISR comparisons remain "
+                    "available under Decisions; zone-specific actions need the live service."
+                )
+                st.page_link(
+                    "pages/6_Decision_Making.py",
+                    label="Open historical NISR comparisons",
+                    icon=":material/insights:",
+                )
                 if st.button("Retry loading zones", key="retry_zones_load"):
                     api_client.clear_zones_cache()
                     st.session_state.pop("zones_api_unavailable", None)

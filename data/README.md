@@ -15,6 +15,12 @@ Key files include:
 - `external/` — external weather data used in offline experiments.
 - `eval/` — evaluation outputs and quality checks.
 
+The normalized NISR yield CSV is also bundled at
+[`../frontend/data/nisr_official_yields_2022_2026.csv`](../frontend/data/nisr_official_yields_2022_2026.csv)
+so district evidence and crop comparisons remain available if the live API is
+temporarily unreachable. Keep that frontend copy synchronized with the
+canonical backend dataset.
+
 The runtime API reads active yield observations from Supabase; the offline
 files are not a substitute for importing and validating production data. Check
 the dataset source, access terms, and preparation notes before reusing data.

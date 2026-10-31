@@ -4,8 +4,10 @@ Extended API client methods for agrimenya frontend.
 Covers all backend modules documented in the frontend handoff:
 - Decision, Segmentation, Alignment, Chat/AI, Planning, Communication, Live Data, Admin.
 """
+import csv
 import logging
 import time
+from pathlib import Path
 from typing import Any
 from urllib.parse import quote, urlencode, urlparse
 
@@ -17,6 +19,11 @@ from . import mock_data
 
 logger = logging.getLogger(__name__)
 ADMIN_SESSION_SECONDS = 30 * 60
+_BUNDLED_NISR_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "data"
+    / "nisr_official_yields_2022_2026.csv"
+)
 
 
 class _ZoneDataUnavailable(RuntimeError):
@@ -128,18 +135,145 @@ def _user_headers() -> dict[str, str]:
 
 # ── Internal helpers ─────────────────────────────────────────────────
 
-def _get_api(path: str, timeout: int = 10, params: dict[str, Any] | None = None) -> dict[str, Any] | list[Any] | None:
-    """GET request to the FastAPI backend, returns parsed JSON or None."""
+def _get_api(
+    path: str,
+    timeout: int = 10,
+    params: dict[str, Any] | None = None,
+    *,
+    retry_on_transient: bool = True,
+) -> dict[str, Any] | list[Any] | None:
+    """GET from the API, retrying transient failures long enough for Render cold starts."""
     url = f"{API_BASE_URL}{path}"
     if params:
         url = f"{url}?{urlencode({k: v for k, v in params.items() if v is not None}, doseq=True)}"
+    attempts = 2 if retry_on_transient else 1
+    for attempt in range(attempts):
+        attempt_timeout = max(timeout, 60) if attempt else timeout
+        try:
+            resp = requests.get(url, headers=_user_headers(), timeout=attempt_timeout)
+            resp.raise_for_status()
+            return resp.json()
+        except (requests.Timeout, requests.ConnectionError, requests.HTTPError) as exc:
+            status_code = (
+                exc.response.status_code
+                if isinstance(exc, requests.HTTPError) and exc.response
+                else None
+            )
+            transient = (
+                isinstance(exc, (requests.Timeout, requests.ConnectionError))
+                or status_code in {429, 502, 503, 504}
+            )
+            if transient and attempt + 1 < attempts:
+                logger.warning("Transient API GET %s failure; retrying: %s", url, exc)
+                time.sleep(0.5)
+                continue
+            logger.error("API GET %s failed: %s", url, exc)
+            return None
+        except (requests.RequestException, ValueError) as exc:
+            logger.error("API GET %s failed: %s", url, exc)
+            return None
+    return None
+
+
+@st.cache_data(ttl=86400, show_spinner=False)
+def _get_bundled_official_yields() -> list[dict[str, Any]]:
+    """Read the frontend-bundled NISR file so historical evidence survives API outages."""
     try:
-        resp = requests.get(url, headers=_user_headers(), timeout=timeout)
-        resp.raise_for_status()
-        return resp.json()
-    except Exception as e:
-        logger.error("API GET %s failed: %s", url, e)
+        with _BUNDLED_NISR_PATH.open(newline="", encoding="utf-8-sig") as stream:
+            rows = []
+            for record in csv.DictReader(stream):
+                district = record.get("district", "").strip()
+                crop = record.get("crop", "").strip()
+                season = record.get("season", "").strip()
+                rows.append({
+                    "id": "|".join((district, crop, season)),
+                    "district": district,
+                    "zones": {"district": district},
+                    "crop": crop,
+                    "season": season,
+                    "yield_actual": record.get("yield_kg_ha"),
+                    "production_mt": record.get("production_mt"),
+                    "area_cultivated": record.get("cultivated_area_ha"),
+                    "harvested_area_ha": record.get("harvested_area_ha"),
+                    "data_source": "official_nisr_sas",
+                })
+            return rows
+    except OSError:
+        logger.exception("Bundled frontend NISR dataset is unavailable: %s", _BUNDLED_NISR_PATH)
+        return []
+
+
+def _aggregate_nisr_yield(rows: list[dict[str, Any]]) -> float | None:
+    production = 0.0
+    harvested_area = 0.0
+    for row in rows:
+        try:
+            production_mt = float(row.get("production_mt"))
+            area_ha = float(row.get("harvested_area_ha"))
+        except (TypeError, ValueError):
+            continue
+        if production_mt >= 0 and area_ha > 0:
+            production += production_mt * 1000
+            harvested_area += area_ha
+    if harvested_area:
+        return round(production / harvested_area, 1)
+
+    values = []
+    for row in rows:
+        try:
+            value = float(row.get("yield_actual"))
+        except (TypeError, ValueError):
+            continue
+        if value > 0:
+            values.append(value)
+    return round(sum(values) / len(values), 1) if values else None
+
+
+def _offline_evidence_ranking(crop: str, season: str | None = None) -> dict[str, Any] | None:
+    rows = [
+        row for row in _get_bundled_official_yields()
+        if str(row.get("crop", "")).casefold() == crop.casefold()
+    ]
+    if not rows:
         return None
+
+    seasons = sorted({str(row["season"]) for row in rows if row.get("season")}, reverse=True)
+    selected = [row for row in rows if not season or row.get("season") == season]
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for row in selected:
+        if row.get("district"):
+            grouped.setdefault(str(row["district"]), []).append(row)
+
+    reference = _aggregate_nisr_yield(selected)
+    ranking = []
+    for district, district_rows in grouped.items():
+        value = _aggregate_nisr_yield(district_rows)
+        if value is None:
+            continue
+        ranking.append({
+            "district": district,
+            "yield_kg_ha": value,
+            "observation_count": len(district_rows),
+            "seasons": sorted({str(row["season"]) for row in district_rows if row.get("season")}),
+            "sources": ["Bundled official NISR SAS history"],
+        })
+    ranking.sort(key=lambda row: row["yield_kg_ha"], reverse=True)
+    for position, row in enumerate(ranking, start=1):
+        row["rank"] = position
+
+    return {
+        "crop": crop,
+        "requested_season": season or "All available seasons",
+        "available_seasons": seasons,
+        "national_reference_kg_ha": reference,
+        "districts_with_evidence": len(ranking),
+        "rows": ranking,
+        "interpretation": (
+            "Bundled official NISR SAS historical district observations; they do not "
+            "predict a farm outcome or explain causes. Live API data is currently unavailable."
+        ),
+        "offline_fallback": True,
+    }
 
 
 def _post_api(path: str, payload: dict | None = None, timeout: int = 15, params: dict[str, Any] | None = None) -> dict[str, Any] | None:
@@ -277,11 +411,11 @@ def get_priority_data() -> Any:
 
 @st.cache_data(ttl=300, show_spinner=False)
 def _get_zones_cached() -> list[dict[str, Any]]:
-    data = _get_api("/segmentation/zones", timeout=30)
+    data = _get_api("/segmentation/zones", timeout=15)
     if data is None or not isinstance(data, list):
         raise _ZoneDataUnavailable("The zones endpoint did not return a valid response.")
 
-    map_resp = _get_api("/segmentation/map-data", timeout=30)
+    map_resp = _get_api("/segmentation/map-data", timeout=15)
     map_rows = map_resp if isinstance(map_resp, list) else []
     map_by_id = {
         str(row.get("id")): row
@@ -351,16 +485,30 @@ def get_agri_metrics() -> list[dict[str, Any]]:
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_official_yields() -> list[dict[str, Any]]:
-    """Return bundled district-level NISR yield observations across available seasons."""
-    data = _get_api("/segmentation/official-yields", timeout=20)
-    return data if isinstance(data, list) else []
+    """Return the NISR dataset bundled with the frontend, independent of API uptime."""
+    data = _get_bundled_official_yields()
+    if data:
+        return data
+    response = _get_api("/segmentation/official-yields", timeout=2, retry_on_transient=False)
+    return response if isinstance(response, list) else []
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_districts() -> list[dict[str, Any]]:
     """Return the canonical district directory used by maps and weather views."""
-    data = _get_api("/segmentation/districts")
-    return data if isinstance(data, list) else []
+    data = _get_api(
+        "/segmentation/districts", timeout=2, retry_on_transient=False
+    )
+    if isinstance(data, list):
+        return data
+    return [
+        {"district": district}
+        for district in sorted({
+            str(row.get("district", "")).strip()
+            for row in _get_bundled_official_yields()
+            if row.get("district")
+        })
+    ]
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -384,8 +532,37 @@ def get_district_ranking(crop: str, season: str | None = None) -> list[dict[str,
     params = {"crop": crop}
     if season:
         params["season"] = season
-    data = _get_api("/decision/district-ranking", params=params)
-    return data if isinstance(data, list) else []
+    data = _get_api(
+        "/decision/district-ranking",
+        params=params,
+        timeout=2,
+        retry_on_transient=False,
+    )
+    if isinstance(data, list):
+        return data
+    evidence = _offline_evidence_ranking(crop, season)
+    if not evidence:
+        return []
+    reference = evidence["national_reference_kg_ha"]
+    return [
+        {
+            "district": row["district"],
+            "yield_per_ha": row["yield_kg_ha"],
+            "benchmark_yield_per_ha": reference,
+            "yield_gap_kg_ha": round(max(0.0, reference - row["yield_kg_ha"]), 1)
+            if reference is not None else None,
+            "yield_index": round(row["yield_kg_ha"] / reference, 4)
+            if reference else None,
+            "observation_count": row["observation_count"],
+            "seasons": row["seasons"],
+            "sources": row["sources"],
+            "rank": row["rank"],
+            "cultivated_area_ha": None,
+            "potential_gain_mt": None,
+            "data_source": "Bundled official NISR SAS history",
+        }
+        for row in evidence["rows"]
+    ]
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -394,8 +571,13 @@ def get_evidence_ranking(crop: str, season: str | None = None) -> dict[str, Any]
     params = {"crop": crop}
     if season:
         params["season"] = season
-    data = _get_api("/decision/evidence-ranking", params=params)
-    return data if isinstance(data, dict) else None
+    data = _get_api(
+        "/decision/evidence-ranking",
+        params=params,
+        timeout=2,
+        retry_on_transient=False,
+    )
+    return data if isinstance(data, dict) else _offline_evidence_ranking(crop, season)
 
 
 def get_disease_risk(zone_id: str, crop: str, symptoms: str, image_description: str | None = None) -> dict[str, Any] | None:
@@ -460,8 +642,14 @@ def get_crops() -> list[str]:
     """Returns available crops from the decision module."""
     if USE_MOCK_DATA:
         return mock_data.CROPS
-    data = _get_api("/decision/crops")
-    return data if isinstance(data, list) else []
+    data = _get_api("/decision/crops", timeout=2, retry_on_transient=False)
+    if isinstance(data, list):
+        return data
+    return sorted({
+        str(row.get("crop", "")).strip()
+        for row in _get_bundled_official_yields()
+        if row.get("crop")
+    }, key=str.casefold)
 
 
 def predict_yield(payload: dict[str, Any]) -> dict[str, Any] | None:

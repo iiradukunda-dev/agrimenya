@@ -2,8 +2,10 @@
 Unit tests for extended API client methods covering Decision, Planification, and Communication.
 Uses standard library unittest for portability across container runtimes and test runners.
 """
+from pathlib import Path
 import unittest
 from unittest.mock import MagicMock, patch
+import requests
 from utils import api_client
 
 
@@ -66,16 +68,37 @@ class TestApiClientExtended(unittest.TestCase):
         mock_get.assert_not_called()
 
     @patch("utils.api_client._get_api")
-    def test_get_official_yields_uses_historical_segmentation_endpoint(self, mock_get):
+    def test_get_official_yields_uses_api_when_bundled_copy_is_unavailable(self, mock_get):
         rows = [{"crop": "Maize", "season": "2022 Season A", "yield_actual": "1200"}]
         mock_get.return_value = rows
-        api_client.get_official_yields.clear()
+        with patch.object(api_client, "_get_bundled_official_yields", return_value=[]):
+            api_client.get_official_yields.clear()
+            result = api_client.get_official_yields()
 
-        result = api_client.get_official_yields()
+        api_client.get_official_yields.clear()
 
         self.assertEqual(result, rows)
-        mock_get.assert_called_once_with("/segmentation/official-yields", timeout=20)
-        api_client.get_official_yields.clear()
+        mock_get.assert_called_once_with(
+            "/segmentation/official-yields", timeout=2, retry_on_transient=False
+        )
+
+    def test_bundled_nisr_yields_are_available_without_api(self):
+        source = (
+            Path(__file__).resolve().parents[2]
+            / "backend"
+            / "data"
+            / "nisr_official_yields_2022_2026.csv"
+        )
+        frontend_copy = api_client._BUNDLED_NISR_PATH
+        self.assertEqual(source.read_bytes(), frontend_copy.read_bytes())
+
+        api_client._get_bundled_official_yields.clear()
+        rows = api_client.get_official_yields()
+        self.assertGreater(len(rows), 6000)
+        self.assertIn("Musanze", {row["district"] for row in rows})
+        self.assertIn("Maize", {row["crop"] for row in rows})
+        self.assertEqual(rows[0]["data_source"], "official_nisr_sas")
+        api_client._get_bundled_official_yields.clear()
 
     @patch("utils.api_client._get_api")
     def test_get_districts_uses_canonical_backend_directory(self, mock_get):
@@ -86,7 +109,9 @@ class TestApiClientExtended(unittest.TestCase):
         result = api_client.get_districts()
 
         self.assertEqual(result, districts)
-        mock_get.assert_called_once_with("/segmentation/districts")
+        mock_get.assert_called_once_with(
+            "/segmentation/districts", timeout=2, retry_on_transient=False
+        )
         api_client.get_districts.clear()
 
     def test_decision_crops_do_not_show_mock_choices_when_backend_is_unavailable(self):
@@ -95,19 +120,47 @@ class TestApiClientExtended(unittest.TestCase):
         ):
             api_client.get_crops.clear()
             try:
-                self.assertEqual(api_client.get_crops(), [])
+                crops = api_client.get_crops()
+                self.assertIn("Maize", crops)
+                self.assertGreater(len(crops), 0)
             finally:
                 api_client.get_crops.clear()
 
-    def test_district_ranking_does_not_replace_api_failure_with_mock_results(self):
+    def test_nisr_evidence_ranking_remains_available_when_api_is_unavailable(self):
         with patch.object(api_client, "USE_MOCK_DATA", False), patch.object(
             api_client, "_get_api", return_value=None
         ):
+            api_client.get_evidence_ranking.clear()
             api_client.get_district_ranking.clear()
             try:
-                self.assertEqual(api_client.get_district_ranking("Maize"), [])
+                evidence = api_client.get_evidence_ranking("Maize")
+                rankings = api_client.get_district_ranking("Maize")
+                self.assertTrue(evidence["offline_fallback"])
+                self.assertGreater(evidence["districts_with_evidence"], 0)
+                self.assertEqual(rankings[0]["rank"], 1)
+                self.assertEqual(
+                    rankings[0]["data_source"],
+                    "Bundled official NISR SAS history",
+                )
             finally:
+                api_client.get_evidence_ranking.clear()
                 api_client.get_district_ranking.clear()
+
+    @patch("utils.api_client.time.sleep")
+    @patch("utils.api_client.requests.get")
+    def test_transient_api_failure_retries_with_cold_start_timeout(
+        self, mock_get, _mock_sleep
+    ):
+        response = MagicMock()
+        response.json.return_value = {"status": "ok"}
+        response.raise_for_status = MagicMock()
+        mock_get.side_effect = [requests.Timeout("Render cold start"), response]
+
+        self.assertEqual(api_client._get_api("/health", timeout=10), {"status": "ok"})
+        self.assertEqual(
+            [call.kwargs["timeout"] for call in mock_get.call_args_list],
+            [10, 60],
+        )
 
     def test_recommendations_use_backend_saved_assessments_and_action_guidance(self):
         rows = [{
