@@ -125,7 +125,8 @@ if IS_DEVELOPMENT:
 
 @app.get("/health")
 def health_check():
-    return {"status": "alive"}
+    """Fast, dependency-free liveness check for Render and the frontend."""
+    return {"status": "ok"}
 
 
 @app.get("/health/live")

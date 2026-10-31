@@ -26,7 +26,8 @@ _BUNDLED_NISR_PATH = (
     / "nisr_official_yields_2022_2026.csv"
 )
 _API_WARMUP_EXECUTOR = ThreadPoolExecutor(max_workers=8)
-_TRANSIENT_API_STATUSES = {429, 502, 503, 504}
+_TRANSIENT_API_STATUSES = {502, 503, 504}
+_RETRY_BACKOFF_SECONDS = (2, 4, 8, 10, 10, 10, 10)
 
 
 class _ZoneDataUnavailable(RuntimeError):
@@ -150,55 +151,53 @@ def request_api(
     show_retry_status: bool = True,
     **kwargs: Any,
 ) -> requests.Response:
-    """Make a bounded, shared request to the configured backend."""
+    """Make a shared backend request with Render cold-start recovery."""
     method = method.upper()
-    retryable_method = method == "GET"
-    attempts = (3 if retry_on_transient else 1) if retryable_method else 2
+    attempts = 8 if retry_on_transient else 1
     api_base_url = API_BASE_URL.rstrip("/")
     url = (
         path
-        if path.startswith(f"{api_base_url}/")
+        if path.startswith(("http://", "https://"))
         else f"{api_base_url}/{path.lstrip('/')}"
     )
     request_headers = {**_user_headers(), **(headers or {})}
-    retry_notice = None
+    retry_status = None
 
     for attempt in range(attempts):
-        attempt_timeout = timeout if attempt == 0 else max(timeout, 60)
+        request_timeout = timeout if isinstance(timeout, tuple) else (10, 30)
         try:
             if method == "GET":
-                response = requests.get(
-                    url, headers=request_headers, timeout=attempt_timeout, **kwargs
-                )
+                response = requests.get(url, headers=request_headers, timeout=request_timeout, **kwargs)
             elif method in {"POST", "PUT", "PATCH", "DELETE"}:
-                requester = getattr(requests, method.lower())
-                response = requester(
-                    url, headers=request_headers, timeout=attempt_timeout, **kwargs
+                response = getattr(requests, method.lower())(
+                    url, headers=request_headers, timeout=request_timeout, **kwargs
                 )
             else:
                 response = requests.request(
-                    method,
-                    url,
-                    headers=request_headers,
-                    timeout=attempt_timeout,
-                    **kwargs,
+                    method, url, headers=request_headers, timeout=request_timeout, **kwargs
                 )
             response.raise_for_status()
-            if retry_notice is not None:
-                retry_notice.empty()
+            if retry_status is not None:
+                retry_status.update(label="Backend connection ready", state="complete")
             return response
         except requests.HTTPError as exc:
             status_code = exc.response.status_code if exc.response is not None else None
-            should_retry = retryable_method and status_code in _TRANSIENT_API_STATUSES
+            should_retry = method == "GET" and status_code in _TRANSIENT_API_STATUSES
             if not should_retry or attempt + 1 >= attempts:
-                if retry_notice is not None:
-                    retry_notice.empty()
+                if retry_status is not None:
+                    retry_status.update(label="Backend request failed", state="error")
                 raise
-        except (requests.Timeout, requests.ConnectionError) as exc:
-            should_retry = retryable_method or isinstance(exc, requests.ConnectTimeout)
+        except requests.ConnectionError:
+            should_retry = method in {"GET", "POST"}
             if not should_retry or attempt + 1 >= attempts:
-                if retry_notice is not None:
-                    retry_notice.empty()
+                if retry_status is not None:
+                    retry_status.update(label="Backend request failed", state="error")
+                raise
+        except requests.Timeout:
+            should_retry = method == "GET"
+            if not should_retry or attempt + 1 >= attempts:
+                if retry_status is not None:
+                    retry_status.update(label="Backend request failed", state="error")
                 raise
 
         logger.warning(
@@ -209,13 +208,17 @@ def request_api(
             attempts,
         )
         if show_retry_status:
-            if retry_notice is None:
-                retry_notice = st.empty()
-            retry_notice.info(
-                f"The backend may be waking up. Retrying connection "
-                f"({attempt + 2}/{attempts})..."
+            if retry_status is None:
+                retry_status = st.status(
+                    "Waking up the server, this can take up to a minute...",
+                    expanded=True,
+                )
+            retry_status.update(
+                label=("Waking up the server, this can take up to a minute... "
+                       f"Attempt {attempt + 2}/{attempts}"),
+                state="running",
             )
-        time.sleep(1 if attempt == 0 else 3)
+        time.sleep(_RETRY_BACKOFF_SECONDS[min(attempt, len(_RETRY_BACKOFF_SECONDS) - 1)])
 
     raise RuntimeError(f"API request {method} {path} exhausted its retry attempts")
 
@@ -233,7 +236,7 @@ def warm_api_connection() -> bool:
         logger.warning("Background API warm-up failed: %s", type(exc).__name__)
         return False
     try:
-        return response.json().get("status") == "alive"
+        return response.json().get("status") == "ok"
     except (ValueError, AttributeError):
         logger.warning("Background API warm-up returned an invalid health response")
         return False

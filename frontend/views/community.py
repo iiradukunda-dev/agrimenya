@@ -315,6 +315,12 @@ def _clear_community_session(*, expired: bool = False) -> None:
 
 
 def _error_message(exc: requests.RequestException, language: str = "en") -> str:
+    if exc.response is None:
+        if isinstance(exc, requests.Timeout):
+            return "The server is still starting up. Please try again in a moment."
+        return "Cannot reach the server. Check the backend connection and try again."
+    if exc.response.status_code >= 500:
+        return "The server returned an error. Please try again."
     if exc.response is not None:
         try:
             detail = exc.response.json().get("detail")
@@ -336,7 +342,13 @@ def _error_message(exc: requests.RequestException, language: str = "en") -> str:
                     return " ".join(messages)
         except (ValueError, AttributeError):
             pass
-    return "The community service could not complete that request. Check the backend connection."
+    return "The server could not complete that request. Please try again."
+
+
+def _show_request_error(exc: requests.RequestException, language: str, key: str) -> None:
+    st.error(_error_message(exc, language))
+    if st.button("Retry", key=key, use_container_width=True):
+        st.rerun()
 
 
 @error_boundary("Farmer Community")
@@ -720,14 +732,20 @@ def render_community() -> None:
                 with st.form("community_sign_in"):
                     email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_login_email")
                     password = st.text_input(c["password"], type="password", placeholder="••••••••••••", key="community_login_password")
-                    submit = st.form_submit_button(c["signin"], type="primary", use_container_width=True)
+                    submit = st.form_submit_button(
+                        c["signin"], type="primary", use_container_width=True,
+                        disabled=st.session_state.get("community_login_running", False),
+                    )
                 if submit:
+                    st.session_state["community_login_running"] = True
                     try:
                         response = _request("POST", "/community/login", payload={"email": email, "password": password})
                         _store_community_session(response)
                         st.rerun()
                     except requests.RequestException as exc:
-                        st.error(_error_message(exc, language))
+                        _show_request_error(exc, language, "community_login_retry")
+                    finally:
+                        st.session_state["community_login_running"] = False
 
                 with st.popover(c["forgot_password"], use_container_width=True, key="community_forgot_password_popover"):
                     with st.form("community_password_forgot_form"):

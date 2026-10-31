@@ -129,7 +129,7 @@ services:
     plan: free
     healthCheckPath: /_stcore/health
     envVars:
-      - key: API_BASE_URL
+      - key: BACKEND_URL
         value: https://agrimenya-api-20261030.onrender.com
       - key: API_HOST
         fromService:
