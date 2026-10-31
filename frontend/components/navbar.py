@@ -582,8 +582,8 @@ def render_navbar(show_sidebar: bool = False) -> None:
 
       /* Popover Dropdown Styling */
       @keyframes ag-popover-enter {
-        from { opacity: 0; transform: translateY(-6px) scale(0.985); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       div[data-testid="stPopoverBody"] {
         max-height: 520px !important;
@@ -594,7 +594,6 @@ def render_navbar(show_sidebar: bool = False) -> None:
         backdrop-filter: blur(14px) !important;
         -webkit-backdrop-filter: blur(14px) !important;
         padding: 0.55rem 0.5rem !important;
-        transform-origin: top right !important;
         animation: ag-popover-enter 180ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"],
@@ -1355,7 +1354,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                     with st.popover(
                         " ",
                         help=t("nav.more", "More"),
-                        width="stretch",
+                        width="content",
                     ):
                         st.divider()
                         st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
