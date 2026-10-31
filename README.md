@@ -95,14 +95,29 @@ git clone --branch develop https://github.com/iiradukunda-dev/agrimenya.git
 cd agrimenya
 ```
 
-Fill `backend/.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the
-project you are authorized to use. To see the same live records as Team A, both
-teams need access to the same Supabase project; exchange its credentials
-through an approved secure channel, never by committing `.env` to GitHub. Apply
-migrations `0001` through `0018` if they are not already applied. Set
-`JWT_SECRET` to a private random value of at least 32 characters for community
-sessions. Then start both
-services:
+## Running with Docker Compose
+
+Create `backend/.env` from `backend/.env.example` and set at minimum the
+Supabase settings (`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`).
+To see the same live records as another team, both teams need access to the
+same Supabase project; exchange credentials through an approved secure channel,
+never by committing `.env` to GitHub. Apply migrations `0001` through `0018` if
+they are not already applied. Set `JWT_SECRET` to a private random value of at
+least 32 characters for community sessions.
+
+For interactive Google satellite maps, create a root `.env` from `.env.example`
+and set `GOOGLE_MAPS_API_KEY`. Restrict this browser key to the Maps JavaScript
+API and the application's allowed HTTP referrers; enable billing in Google
+Cloud. Map boundaries load from NISR census mapping as you zoom from districts
+to sectors, cells, and villages. Never commit the populated `.env` file.
+
+### Option A: Run from the repository root (recommended)
+
+Running Compose from the root starts the FastAPI backend on port 8000 and the
+Streamlit frontend behind a same-origin Nginx PWA gateway on port 8501. The
+gateway serves the root-scoped manifest, service worker, and offline hub, and
+passes Streamlit HTTP and WebSocket traffic through. The frontend connects to
+the backend using the internal Docker network (`http://backend:8000`).
 
 ```powershell
 Copy-Item .env.example .env
@@ -307,6 +322,25 @@ backups as described in
 For the Meta account, app, webhook, and test-to-live setup sequence, see
 [`backend/docs/whatsapp_meta_cloud_api_setup.md`](backend/docs/whatsapp_meta_cloud_api_setup.md).
 
+## Offline and PWA support
+
+Agri-Menya includes a Progressive Web App service worker located in
+`frontend/static/sw.js` and an offline fallback hub at
+`frontend/static/offline.html`. Use the Docker Compose gateway on port 8501;
+opening Streamlit directly on port 8501 bypasses the root-scoped worker routes.
+Install from a secure HTTPS deployment (or `localhost` for local testing):
+
+- Windows: use Install in Microsoft Edge or Chrome.
+- Android: use Install app in Chrome.
+- iPhone/iPad: in Safari, tap Share, then Add to Home Screen.
+
+The worker caches the standalone offline hub, icons, and manifest. Offline field
+notes saved in that hub remain on the device; live Streamlit dashboards and
+backend-backed operations still require a network connection. public deployment
+must terminate TLS at an HTTPS reverse proxy and forward traffic to the Compose
+gateway while preserving the original `X-Forwarded-Proto` header. Test the
+installed experience on physical iOS and Android devices before release.
+
 ## Validation and tests
 
 ### Backend test suite
@@ -400,3 +434,7 @@ Every backend service and endpoint is exposed through an interactive UI workflow
 - **Decision Engine (`/decision`):** Priority recommendations, field risk signal integration, agronomic disease risk evaluation, district yield gap benchmarking vs. national reference targets, Plotly comparison charts with CSV export, and ML model diagnostics & provenance display (XGBoost R²=0.83, MAE=214 kg/ha, split metrics, feature list, and known limitations).
 - **Planification & Milestones (`/planification`):** Custom execution roadmaps, milestone action status updates (`planned`, `in_progress`, `completed`, `blocked`), milestone audit history trail, attached resource costing, one-click plan email dispatch via SMTP (`/communication/share/{plan_id}/send`), and rapid emergency disease response plan generator.
 - **Communication Hub (`/communication`):** Real-time community alerts feed with severity filtering, broadcast field alert form with SMTP email distribution, multi-channel notification dispatch across SMS (Twilio), WhatsApp Cloud API, and Email, plus embedded WhatsApp contact registry and consent management.
+
+## Copyright
+
+© 2026 agrimenya. All rights reserved.

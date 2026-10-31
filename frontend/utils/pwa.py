@@ -103,7 +103,7 @@ def render_pwa_support() -> None:
         if (!manifest) {
           manifest = parentDoc.createElement('link');
           manifest.rel = 'manifest';
-          manifest.href = '/app/static/manifest.json';
+          manifest.href = '/manifest.json';
           parentDoc.head.appendChild(manifest);
         }
 
@@ -289,24 +289,11 @@ def render_pwa_support() -> None:
           parentDoc.head.appendChild(styleEl);
         }
 
-        // 5. Register Service Worker with fallback
+        // 5. Register the root-scoped worker served by the PWA gateway.
         if ('serviceWorker' in window.parent.navigator) {
-          const swUrl = '/sw.js';
-          const fallbackSwUrl = '/app/static/sw.js';
-
-          window.parent.navigator.serviceWorker.register(swUrl, { scope: '/' })
-            .then(reg => {
-              console.log('[PWA] ServiceWorker registered with scope:', reg.scope);
-            })
-            .catch(err => {
-              window.parent.navigator.serviceWorker.register(fallbackSwUrl)
-                .then(reg => {
-                  console.log('[PWA] Fallback ServiceWorker registered with scope:', reg.scope);
-                })
-                .catch(fallbackErr => {
-                  console.warn('[PWA] ServiceWorker registration notice:', fallbackErr);
-                });
-            });
+          window.parent.navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => console.log('[PWA] ServiceWorker registered with scope:', reg.scope))
+            .catch(err => console.error('[PWA] ServiceWorker registration failed:', err));
         }
 
         // 6. CUSTOMIZED DESIGNED NETWORK LOST (OFFLINE) SCREEN

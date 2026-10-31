@@ -1,12 +1,8 @@
 """Welcoming home page introduction for agrimenya."""
+
 import streamlit as st
 import streamlit.components.v1 as components
 from utils.i18n import t
-
-
-def _ensure_landing_video() -> str:
-    """Legacy helper maintained for backward compatibility."""
-    return ""
 
 
 def render_home_hero() -> None:
@@ -477,23 +473,8 @@ def render_home_hero() -> None:
         </div>
       </section>
 
-      <script>
-        (function cleanupVideoBackground() {{
-          try {{
-            const parentDoc = window.parent.document;
-            if (!parentDoc) return;
-            const video = parentDoc.getElementById('ag-landing-fullpage-video');
-            if (video) video.remove();
-            const overlay = parentDoc.getElementById('ag-landing-fullpage-overlay');
-            if (overlay) overlay.remove();
-          }} catch (err) {{
-            console.debug('Video cleanup note:', err);
-          }}
-        }})();
-      </script>
     </body>
     </html>
     """
 
     components.html(hero_html, height=420)
-

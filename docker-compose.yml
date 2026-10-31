@@ -22,8 +22,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "8501:8501"
     environment:
       - API_BASE_URL=http://backend:8000
       - BACKEND_URL=http://backend:8000
@@ -32,4 +30,15 @@ services:
       - ./frontend:/app
     depends_on:
       - backend
+    restart: unless-stopped
+
+  pwa-gateway:
+    image: nginx:stable-alpine
+    ports:
+      - "8501:80"
+    volumes:
+      - ./frontend/pwa-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./frontend/static:/usr/share/nginx/html:ro
+    depends_on:
+      - frontend
     restart: unless-stopped

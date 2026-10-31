@@ -16,6 +16,8 @@ def test_pwa_manifest_validity():
     assert "agrimenya" in data.get("name", "")
     assert data.get("display") == "standalone"
     assert data.get("start_url") in ("/", "/?source=pwa")
+    assert data.get("scope") == "/"
+    assert "standalone" in data.get("display_override", [])
     assert data.get("theme_color") == "#05303f"
     assert data.get("background_color") == "#021824"
 
@@ -25,6 +27,8 @@ def test_pwa_manifest_validity():
     sizes = [icon.get("sizes") for icon in icons]
     assert "192x192" in sizes
     assert "512x512" in sizes
+    assert any(icon.get("purpose") == "maskable" for icon in icons)
+    assert any(icon.get("sizes") == "180x180" for icon in icons)
 
 
 def test_service_worker_structure():
@@ -41,6 +45,27 @@ def test_service_worker_structure():
     assert "addEventListener('fetch'" in content
     assert "offline.html" in content
     assert "skipWaiting()" in content
+    assert "caches.match('/offline.html')" in content
+    assert "DATA_CACHE" not in content
+    assert "const cached = await caches.match(req)" not in content
+
+
+def test_pwa_gateway_serves_root_worker_and_manifest_with_required_headers():
+    frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    config_path = os.path.join(frontend_dir, "pwa-proxy.conf")
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "location = /sw.js" in content
+    assert "Service-Worker-Allowed \"/\"" in content
+    assert "default_type application/javascript;" in content
+    assert "location = /manifest.json" in content
+    assert "types { application/manifest+json json; }" in content
+    assert "default_type application/manifest+json;" in content
+    assert "location = /offline.html" in content
+    assert "proxy_set_header Upgrade $http_upgrade;" in content
+    assert "proxy_set_header Connection $connection_upgrade;" in content
 
 
 def test_offline_hub_page():
@@ -118,6 +143,9 @@ def test_same_tab_enforcement_in_pwa_script():
     assert "enforceStrictSameTabNavigation" in script
     assert "sameTabOpen" in script
     assert "target = '_self'" in script
+    assert "register('/sw.js', { scope: '/' })" in script
+    assert "fallbackSwUrl" not in script
+    assert "manifest.href = '/manifest.json'" in script
 
 
 def test_ai_widget_rendering_and_positioning():
@@ -139,5 +167,6 @@ def test_ai_widget_rendering_and_positioning():
     assert "fab.target = '_self'" in md
     assert "/AI_Assistant" in md
     assert "wireFabClick" in md
-
-
+    assert "background: #ffffff !important;" in md
+    assert "color: #0284c7 !important;" in md
+    assert "background: #041622 !important;" not in md
