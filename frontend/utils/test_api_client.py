@@ -146,6 +146,99 @@ class TestApiClientExtended(unittest.TestCase):
                 api_client.get_evidence_ranking.clear()
                 api_client.get_district_ranking.clear()
 
+    def test_offline_nisr_advisor_returns_historical_district_evidence(self):
+        rows = [
+            {
+                "crop": "Maize",
+                "district": "Huye",
+                "season": "2024 Season A",
+                "production_mt": "1.2",
+                "harvested_area_ha": "1",
+                "yield_actual": "1200",
+            },
+            {
+                "crop": "Maize",
+                "district": "Musanze",
+                "season": "2024 Season A",
+                "production_mt": "2",
+                "harvested_area_ha": "1",
+                "yield_actual": "2000",
+            },
+        ]
+        with patch.object(api_client, "_get_bundled_official_yields", return_value=rows):
+            response = api_client.get_offline_nisr_advisor_response(
+                "What is the historical yield?",
+                "Maize",
+                district="Huye",
+                season="2024 Season A",
+            )
+
+        self.assertIn("1,200.0 kg/ha", response["answer"])
+        self.assertIn("ranks 2 of 2 districts", response["answer"])
+        self.assertEqual(response["source"], "offline_nisr")
+        self.assertTrue(response["offline_fallback"])
+        self.assertIn("a farm or zone assessment", response["answer"])
+
+    def test_offline_nisr_advisor_has_no_answer_for_unavailable_crop(self):
+        with patch.object(api_client, "_get_bundled_official_yields", return_value=[]):
+            self.assertIsNone(
+                api_client.get_offline_nisr_advisor_response(
+                    "What should I do?", "Unknown crop"
+                )
+            )
+
+    def test_ai_zone_lookup_can_return_without_cold_start_retry(self):
+        api_client.clear_zones_cache()
+        with patch.object(api_client, "USE_MOCK_DATA", False), patch.object(
+            api_client, "_get_api", return_value=None
+        ) as get_api:
+            try:
+                zones = api_client.get_zones(
+                    timeout=3,
+                    retry_on_transient=False,
+                    include_map=False,
+                )
+                self.assertEqual(zones, [])
+                get_api.assert_called_once_with(
+                    "/segmentation/zones",
+                    timeout=3,
+                    retry_on_transient=False,
+                )
+            finally:
+                api_client.clear_zones_cache()
+
+    def test_ai_zone_lookup_skips_map_data(self):
+        zone = {"id": "zone-1", "district": "Huye"}
+        api_client.clear_zones_cache()
+        with patch.object(api_client, "USE_MOCK_DATA", False), patch.object(
+            api_client, "_get_api", return_value=[zone]
+        ) as get_api:
+            try:
+                zones = api_client.get_zones(
+                    timeout=3,
+                    retry_on_transient=False,
+                    include_map=False,
+                )
+                self.assertEqual(zones[0]["name"], "Huye")
+                get_api.assert_called_once_with(
+                    "/segmentation/zones",
+                    timeout=3,
+                    retry_on_transient=False,
+                )
+            finally:
+                api_client.clear_zones_cache()
+
+    @patch("utils.api_client._get_api")
+    def test_api_liveness_check_does_not_retry(self, mock_get):
+        mock_get.return_value = {"status": "alive"}
+
+        self.assertTrue(api_client.is_api_available(timeout=2))
+        mock_get.assert_called_once_with(
+            "/health/live",
+            timeout=2,
+            retry_on_transient=False,
+        )
+
     @patch("utils.api_client.time.sleep")
     @patch("utils.api_client.requests.get")
     def test_transient_api_failure_retries_with_cold_start_timeout(

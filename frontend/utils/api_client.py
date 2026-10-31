@@ -410,12 +410,27 @@ def get_priority_data() -> Any:
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def _get_zones_cached() -> list[dict[str, Any]]:
-    data = _get_api("/segmentation/zones", timeout=15)
+def _get_zones_cached(
+    timeout: int = 15,
+    retry_on_transient: bool = True,
+    include_map: bool = True,
+) -> list[dict[str, Any]]:
+    data = _get_api(
+        "/segmentation/zones",
+        timeout=timeout,
+        retry_on_transient=retry_on_transient,
+    )
     if data is None or not isinstance(data, list):
         raise _ZoneDataUnavailable("The zones endpoint did not return a valid response.")
 
-    map_resp = _get_api("/segmentation/map-data", timeout=15)
+    map_resp = (
+        _get_api(
+            "/segmentation/map-data",
+            timeout=timeout,
+            retry_on_transient=retry_on_transient,
+        )
+        if include_map else None
+    )
     map_rows = map_resp if isinstance(map_resp, list) else []
     map_by_id = {
         str(row.get("id")): row
@@ -442,12 +457,21 @@ def clear_zones_cache() -> None:
     _get_zones_cached.clear()
 
 
-def get_zones() -> list[dict[str, Any]]:
+def get_zones(
+    *,
+    timeout: int = 15,
+    retry_on_transient: bool = True,
+    include_map: bool = True,
+) -> list[dict[str, Any]]:
     """Return zones, without caching a temporary backend failure as empty data."""
     if USE_MOCK_DATA:
         return mock_data.generate_mock_zones()
     try:
-        zones = _get_zones_cached()
+        zones = _get_zones_cached(
+            timeout=timeout,
+            retry_on_transient=retry_on_transient,
+            include_map=include_map,
+        )
     except _ZoneDataUnavailable:
         logger.error("Could not load zones from the backend.")
         st.session_state["zones_api_unavailable"] = True
@@ -578,6 +602,126 @@ def get_evidence_ranking(crop: str, season: str | None = None) -> dict[str, Any]
         retry_on_transient=False,
     )
     return data if isinstance(data, dict) else _offline_evidence_ranking(crop, season)
+
+
+def get_offline_nisr_crops() -> list[str]:
+    """Return crop choices from the bundled NISR dataset without contacting the API."""
+    return sorted({
+        str(row.get("crop", "")).strip()
+        for row in _get_bundled_official_yields()
+        if row.get("crop")
+    }, key=str.casefold)
+
+
+def get_offline_nisr_seasons(crop: str) -> list[str]:
+    """Return seasons present for a crop in the bundled NISR dataset."""
+    return sorted({
+        str(row.get("season", "")).strip()
+        for row in _get_bundled_official_yields()
+        if str(row.get("crop", "")).casefold() == crop.casefold()
+        and row.get("season")
+    }, reverse=True)
+
+
+def get_offline_nisr_districts(
+    crop: str,
+    season: str | None = None,
+) -> list[str]:
+    """Return districts with historical NISR yield evidence for the selected crop."""
+    evidence = _offline_evidence_ranking(crop, season)
+    return [str(row["district"]) for row in evidence["rows"]] if evidence else []
+
+
+def is_api_available(timeout: int = 2) -> bool:
+    """Check API liveness once without waiting through a Render cold-start retry."""
+    data = _get_api(
+        "/health/live",
+        timeout=timeout,
+        retry_on_transient=False,
+    )
+    return isinstance(data, dict) and data.get("status") == "alive"
+
+
+def get_offline_nisr_advisor_response(
+    question: str,
+    crop: str,
+    district: str | None = None,
+    season: str | None = None,
+) -> dict[str, Any] | None:
+    """Summarize bundled NISR yield evidence when the live advisor is unavailable."""
+    if not question.strip():
+        return None
+    evidence = _offline_evidence_ranking(crop, season)
+    if not evidence or not evidence["rows"]:
+        return None
+
+    district_row = next(
+        (
+            row for row in evidence["rows"]
+            if district and str(row["district"]).casefold() == district.casefold()
+        ),
+        None,
+    )
+    national_reference = evidence["national_reference_kg_ha"]
+    selected_season = season or "all available seasons"
+    answer_intro = (
+        "I couldn't generate an AI answer to your question while the API is unavailable. "
+    )
+    if district_row:
+        answer = (
+            f"{answer_intro}NISR historical records for {crop} report an average yield of "
+            f"{district_row['yield_kg_ha']:,.1f} kg/ha for {district} in "
+            f"{selected_season}. "
+            f"This district ranks {district_row['rank']} of {evidence['districts_with_evidence']} "
+            "districts with records for the selected crop and season."
+        )
+    else:
+        top_districts = ", ".join(
+            f"{row['district']} ({row['yield_kg_ha']:,.1f} kg/ha)"
+            for row in evidence["rows"][:3]
+        )
+        district_note = (
+            f"No NISR observation matches {district} for this crop and season. "
+            if district else ""
+        )
+        answer = (
+            f"{answer_intro}{district_note}NISR historical records for {crop} have a national reference yield of "
+            f"{national_reference:,.1f} kg/ha for {selected_season}."
+            if national_reference is not None
+            else (
+                f"{answer_intro}{district_note}NISR historical records are available for {crop} "
+                f"for {selected_season}."
+            )
+        )
+        if top_districts:
+            answer += f" Highest recorded district yields include {top_districts}."
+
+    answer += (
+        " This is historical district-level evidence, not an AI-generated answer, "
+        "a farm or zone assessment, or a personalized action recommendation. "
+        "Live zone-specific advice requires the API."
+    )
+    return {
+        "answer": answer,
+        "answer_type": "record_grounded",
+        "source": "offline_nisr",
+        "evidence_scope": (
+            f"NISR district-level crop yield observations for {crop}, {selected_season}."
+        ),
+        "evidence_sources": [
+            "Bundled NISR Seasonal Agricultural Survey historical dataset (2022–2026)"
+        ],
+        "evidence_source_details": [{
+            "title": "NISR Seasonal Agricultural Survey historical dataset",
+            "publisher": "National Institute of Statistics of Rwanda",
+            "coverage": "Rwanda district-level crop yields, 2022–2026",
+            "limitations": (
+                "Historical district observations only; not farm-level or zone-specific "
+                "evidence and not a causal explanation or forecast."
+            ),
+        }],
+        "offline_fallback": True,
+    }
 
 
 def get_disease_risk(zone_id: str, crop: str, symptoms: str, image_description: str | None = None) -> dict[str, Any] | None:

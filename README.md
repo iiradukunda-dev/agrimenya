@@ -35,6 +35,10 @@ and decision support. The live application uses a Streamlit frontend, a FastAPI
 backend, and Supabase for application records; see
 [`backend/docs/frontend_backend_handoff.md`](backend/docs/frontend_backend_handoff.md)
 for the API integration details.
+If the API is unavailable, the AI Assistant can still show historical NISR
+district-yield context from the bundled dataset. This offline fallback is not an
+AI-generated answer, disease diagnosis, or zone-specific action; those require
+the live API.
 
 The repository already includes the README, application scripts, and project
 datasets. Data inventory and source notes are in [`data/README.md`](data/README.md).

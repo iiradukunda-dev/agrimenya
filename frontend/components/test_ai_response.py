@@ -39,3 +39,15 @@ def test_general_guidance_and_empty_answer_are_not_presented_as_grounded():
     mock_st.info.assert_called_once()
     assert mock_st.warning.call_count == 1
     mock_st.error.assert_called_once()
+
+
+def test_offline_nisr_response_is_labeled_as_historical_not_ai_advice():
+    with patch("components.ai_response.st", MagicMock()) as mock_st:
+        render_advisor_response({
+            "answer": "Historical district yields are available.",
+            "answer_type": "record_grounded",
+            "source": "offline_nisr",
+        })
+
+    mock_st.info.assert_called_once()
+    mock_st.markdown.assert_any_call("Historical district yields are available.")

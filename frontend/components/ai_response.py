@@ -12,7 +12,12 @@ def render_advisor_response(response: dict[str, Any]) -> None:
     elif answer_type == "insufficient_evidence":
         st.warning("The available records do not support a specific conclusion for this question.")
 
-    if response.get("source") == "grounded-context":
+    if response.get("source") == "offline_nisr":
+        st.info(
+            "Live AI is unavailable. This is a local summary of historical NISR yield data, "
+            "not a generated answer or a zone-specific recommendation."
+        )
+    elif response.get("source") == "grounded-context":
         st.warning(
             "The AI provider did not return a generated answer. This response uses the "
             "backend's available zone context; check provider configuration if you expect AI-generated advice."
