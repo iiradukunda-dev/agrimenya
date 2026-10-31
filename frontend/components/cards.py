@@ -707,7 +707,7 @@ def render_weather_forecast_grid(forecast_list: list[dict]) -> None:
         </div>
         """)
     grid_html = f'<div class="ag-weather-row">{"".join(cards_html)}</div>'
-    st.markdown(grid_html, unsafe_allow_html=True)
+    st.html(grid_html)
 
 
 def render_empty_state(title: str, message: str, icon_svg: str = "") -> None:

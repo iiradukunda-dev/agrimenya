@@ -52,15 +52,15 @@ class TestCards(unittest.TestCase):
         self.assertIn("3,200 kg/ha", html_rendered)
         self.assertIn("NISR Target Benchmark", html_rendered)
 
-    @patch("components.cards.st")
-    def test_render_weather_forecast_grid(self, mock_st):
+    @patch("components.cards.st.html")
+    def test_render_weather_forecast_grid(self, render_html):
         forecasts = [
             {"date": "2026-10-27", "temperature_max_c": 26, "temperature_min_c": 16, "precipitation_probability_pct": 20, "precipitation_sum_mm": 1.2},
             {"date": "2026-10-28", "temperature_max_c": 24, "temperature_min_c": 15, "precipitation_probability_pct": 70, "precipitation_sum_mm": 12.4},
         ]
         render_weather_forecast_grid(forecasts)
-        self.assertTrue(mock_st.markdown.called)
-        rendered = mock_st.markdown.call_args[0][0]
+        render_html.assert_called_once()
+        rendered = render_html.call_args.args[0]
         self.assertIn("ag-weather-row", rendered)
         self.assertIn("26° / 16°", rendered)
 
@@ -89,4 +89,3 @@ class TestCards(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
