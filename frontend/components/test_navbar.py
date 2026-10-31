@@ -126,8 +126,8 @@ def test_navbar_account_and_language_controls_match_the_visual_layout():
     assert any(call.args[0] == "Menu" for call in mock_st.popover.call_args_list)
 
 
-def test_mobile_menu_button_shows_more_label():
-    """Keep the hamburger menu identifiable as the More menu on small screens."""
+def test_mobile_menu_button_shows_only_the_hamburger():
+    """Keep the mobile menu control compact with no extra label."""
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
@@ -146,10 +146,9 @@ def test_mobile_menu_button_shows_more_label():
         for call in mock_st.markdown.call_args_list
         if "<style>" in str(call[0][0])
     )
-    assert '.st-key-ag_mobile_navbar [data-testid="stPopover"] button::after' in css_found
-    assert 'content: "More" !important' in css_found
-    assert "min-width: 5.4rem !important" in css_found
-
+    assert '.st-key-ag_mobile_navbar [data-testid="stPopover"] button::after' not in css_found
+    assert "min-width: 2.5rem !important" in css_found
+    assert "left: 50% !important" in css_found
 
 def test_mobile_menu_links_have_no_background_boxes():
     """Verify mobile popover links render without individual background boxes."""

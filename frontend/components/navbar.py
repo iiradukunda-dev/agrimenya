@@ -185,13 +185,13 @@ def render_navbar(show_sidebar: bool = False) -> None:
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button {
           display: inline-flex !important;
           align-items: center !important;
-          justify-content: flex-start !important;
+          justify-content: center !important;
           position: relative !important;
-          width: auto !important;
-          min-width: 5.4rem !important;
+          width: 2.5rem !important;
+          min-width: 2.5rem !important;
           height: 2.5rem !important;
           min-height: 2.5rem !important;
-          padding: 0 0.75rem 0 2.55rem !important;
+          padding: 0 !important;
           border: 0 !important;
           border-radius: 9999px !important;
           background: rgba(2, 132, 199, 0.09) !important;
@@ -215,25 +215,15 @@ def render_navbar(show_sidebar: bool = False) -> None:
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button::before {
           content: "" !important;
           position: absolute !important;
-          left: 0.85rem !important;
+          left: 50% !important;
           top: 50% !important;
           display: block !important;
           width: 18px !important;
           height: 2px !important;
-          transform: translateY(-50%) !important;
+          transform: translate(-50%, -50%) !important;
           border-radius: 999px !important;
           background: currentColor !important;
           box-shadow: 0 6px 0 currentColor, 0 -6px 0 currentColor !important;
-        }
-        .st-key-ag_mobile_navbar [data-testid="stPopover"] button::after {
-          content: "More" !important;
-          display: inline-block !important;
-          color: currentColor !important;
-          font-family: 'Plus Jakarta Sans', sans-serif !important;
-          font-size: 0.9rem !important;
-          font-weight: 650 !important;
-          line-height: 1 !important;
-          pointer-events: none !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stIconMaterial"] {
           display: none !important;
