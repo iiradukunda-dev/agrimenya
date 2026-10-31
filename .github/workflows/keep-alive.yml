@@ -1,9 +1,11 @@
 name: Render API keep-alive
 
 on:
+  push:
+    branches:
+      - dev
   schedule:
     - cron: "*/10 * * * *"
-    - cron: "23 3 * * *"
   workflow_dispatch:
 
 permissions:
@@ -15,7 +17,6 @@ concurrency:
 
 jobs:
   keep-alive:
-    if: github.event_name != 'schedule' || github.event.schedule == '*/10 * * * *'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -28,8 +29,6 @@ jobs:
         run: |
           set -euo pipefail
           : "${BACKEND_URL:?Set the BACKEND_URL GitHub Actions secret}"
-          : "${RENDER_API_KEY:?Set the RENDER_API_KEY GitHub Actions secret}"
-          : "${RENDER_SERVICE_ID:?Set the RENDER_SERVICE_ID GitHub Actions secret}"
 
           base_url="${BACKEND_URL%/}"
           health_url="${base_url}/health"
@@ -57,39 +56,15 @@ jobs:
             exit 0
           fi
 
-          echo "Health failed six times; requesting a Render service restart."
-          curl --fail-with-body --silent --show-error --request POST \
-            --header "Authorization: Bearer ${RENDER_API_KEY}" \
-            "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/restart"
-          echo
-          sleep 30
-          check_health 6
-
-  deep-health:
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '23 3 * * *')
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      BACKEND_URL: ${{ secrets.BACKEND_URL }}
-    steps:
-      - name: Check database connectivity
-        shell: bash
-        run: |
-          set -euo pipefail
-          : "${BACKEND_URL:?Set the BACKEND_URL GitHub Actions secret}"
-
-          deep_url="${BACKEND_URL%/}/health/deep"
-          for attempt in 1 2 3; do
-            status="$(curl --silent --show-error --output /dev/null \
-              --write-out '%{http_code}' --max-time 90 "$deep_url" || true)"
-            if [[ "$status" == "200" ]]; then
-              echo "Deep database health check succeeded."
-              exit 0
-            fi
-            echo "Deep health attempt ${attempt}/3 returned ${status:-no response}."
-            if [[ "$attempt" -lt 3 ]]; then
-              sleep 20
-            fi
-          done
-          echo "Deep database health check failed after three attempts."
-          exit 1
+          if [[ -n "${RENDER_API_KEY:-}" && -n "${RENDER_SERVICE_ID:-}" ]]; then
+            echo "Health failed six times; requesting a Render service restart."
+            curl --fail-with-body --silent --show-error --request POST \
+              --header "Authorization: Bearer ${RENDER_API_KEY}" \
+              "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/restart"
+            echo "Restart requested; waiting for the replacement instance."
+            sleep 30
+            check_health 6
+          else
+            echo "Health failed six times; Render restart secrets are not configured."
+            exit 1
+          fi
