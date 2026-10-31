@@ -457,10 +457,6 @@ def render_community() -> None:
                 max-width: 340px !important;
                 margin: 0.35rem auto 1rem !important;
                 padding: 0.75rem 0.9rem !important;
-                border: 1px solid #e1e7ef !important;
-                border-radius: 10px !important;
-                background: #ffffff !important;
-                box-shadow: 0 4px 16px rgba(27, 57, 91, 0.05) !important;
             }
             .st-key-ag_centralized_login_col [data-testid="stVerticalBlock"] {
                 gap: 0.4rem !important;
@@ -707,20 +703,16 @@ def render_community() -> None:
                 width: min(100%, 360px) !important;
                 max-width: 360px !important;
                 padding: 0.9rem 1rem !important;
-                border: 1px solid #c9dcfb !important;
-                border-radius: 16px !important;
-                background: rgba(255, 255, 255, 0.97) !important;
-                box-shadow: 0 8px 22px rgba(38, 91, 158, 0.12) !important;
             }
             .st-key-ag_centralized_login_col [data-testid="stVerticalBlockBorderWrapper"] {
                 width: 100% !important;
                 max-width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                border: 0 !important;
-                border-radius: 0 !important;
-                background: transparent !important;
-                box-shadow: none !important;
+                border: 1px solid #e1e7ef !important;
+                border-radius: 10px !important;
+                background: #ffffff !important;
+                box-shadow: 0 4px 16px rgba(27, 57, 91, 0.05) !important;
             }
             .st-key-ag_centralized_login_col [data-testid="stVerticalBlock"] {
                 gap: 0.55rem !important;
@@ -904,6 +896,10 @@ def render_community() -> None:
                     height: auto !important;
                     margin: 0 auto !important;
                     padding: 0.45rem 0.8rem !important;
+                    border: 0 !important;
+                    border-radius: 0 !important;
+                    background: transparent !important;
+                    box-shadow: none !important;
                     justify-content: flex-start !important;
                 }
                 .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col [data-testid="stVerticalBlockBorderWrapper"] {
