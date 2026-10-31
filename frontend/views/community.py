@@ -700,6 +700,188 @@ def render_community() -> None:
             """,
             unsafe_allow_html=True,
         )
+        st.markdown(
+            """
+            <style>
+            .st-key-ag_centralized_login_col {
+                width: min(100%, 360px) !important;
+                max-width: 360px !important;
+                padding: 0.9rem 1rem !important;
+                border: 1px solid #c9dcfb !important;
+                border-radius: 16px !important;
+                background: rgba(255, 255, 255, 0.97) !important;
+                box-shadow: 0 8px 22px rgba(38, 91, 158, 0.12) !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stVerticalBlockBorderWrapper"] {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stVerticalBlock"] {
+                gap: 0.55rem !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stWidgetLabel"] p {
+                color: #14264a !important;
+                font-size: 0.72rem !important;
+                font-weight: 600 !important;
+            }
+            .st-key-community_login_email [data-testid="stWidgetLabel"] p::before,
+            .st-key-community_register_email [data-testid="stWidgetLabel"] p::before {
+                content: "✉";
+                margin-right: 0.45rem;
+                color: #14264a;
+            }
+            .st-key-community_login_password [data-testid="stWidgetLabel"] p::before,
+            .st-key-community_register_password [data-testid="stWidgetLabel"] p::before {
+                content: "▣";
+                margin-right: 0.45rem;
+                color: #14264a;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTextInput"] input {
+                min-height: 1.9rem !important;
+                padding: 0.25rem 0.7rem !important;
+                border: 1px solid #c9dcfb !important;
+                border-radius: 999px !important;
+                background: #ffffff !important;
+                color: #253247 !important;
+                font-size: 0.72rem !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTextInput"] input:focus {
+                border-color: #328ff0 !important;
+                box-shadow: 0 0 0 2px rgba(50, 143, 240, 0.12) !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a {
+                min-height: 2rem !important;
+                padding: 0.3rem 0.7rem !important;
+                border: 1px solid #b9d3fb !important;
+                border-radius: 999px !important;
+                background: #ffffff !important;
+                color: #14264a !important;
+                font-size: 0.72rem !important;
+                font-weight: 650 !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a::after {
+                content: "›" !important;
+                font-size: 1.15rem !important;
+                color: #14264a !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tablist"] {
+                gap: 0 !important;
+                padding: 0.12rem !important;
+                border: 0 !important;
+                border-radius: 999px !important;
+                background: #edf3fc !important;
+                box-shadow: 0 2px 6px rgba(38, 91, 158, 0.08) !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tab"] {
+                flex: 1 1 50% !important;
+                justify-content: center !important;
+                min-height: 2rem !important;
+                padding: 0.3rem 0.45rem !important;
+                border: 0 !important;
+                border-radius: 999px !important;
+                background: transparent !important;
+                color: #14264a !important;
+                font-size: 0.72rem !important;
+                font-weight: 600 !important;
+                box-shadow: none !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tab"]::after {
+                display: none !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tab"][aria-selected="true"] {
+                border: 0 !important;
+                background: linear-gradient(135deg, #3394ff, #0875d1) !important;
+                color: #ffffff !important;
+                box-shadow: 0 3px 8px rgba(8, 117, 209, 0.2) !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tab"][aria-selected="true"] * {
+                color: #ffffff !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stForm"] {
+                padding: 0 !important;
+                border: 0 !important;
+                background: transparent !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stFormSubmitButton"] button {
+                min-height: 2.05rem !important;
+                border: 0 !important;
+                border-radius: 999px !important;
+                background: linear-gradient(135deg, #3394ff, #0875d1) !important;
+                color: #ffffff !important;
+                font-size: 0.74rem !important;
+                font-weight: 700 !important;
+                box-shadow: 0 5px 12px rgba(8, 117, 209, 0.2) !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stFormSubmitButton"] button::before {
+                content: "↪" !important;
+                margin-right: 0.35rem !important;
+                font-size: 0.9rem !important;
+            }
+            .st-key-community_login_password [data-testid="stTextInput"] button,
+            .st-key-community_register_password [data-testid="stTextInput"] button {
+                min-width: 2.7rem !important;
+                padding: 0 0.3rem !important;
+            }
+            .st-key-community_login_password [data-testid="stTextInput"] button::after,
+            .st-key-community_register_password [data-testid="stTextInput"] button::after {
+                font-size: 0.62rem !important;
+            }
+            .st-key-community_forgot_password_popover [data-testid="stPopover"] button {
+                min-height: 1.55rem !important;
+                margin-top: 0 !important;
+                padding: 0.15rem 0.4rem !important;
+                border: 0 !important;
+                border-radius: 999px !important;
+                background: transparent !important;
+                color: #0875d1 !important;
+                font-size: 0.7rem !important;
+                box-shadow: none !important;
+            }
+            .st-key-community_forgot_password_popover [data-testid="stPopover"] button::after {
+                display: none !important;
+            }
+            .st-key-community_verification_resend_popover [data-testid="stPopover"] button {
+                min-height: 1.95rem !important;
+                margin-top: 0.1rem !important;
+                padding: 0.25rem 0.65rem !important;
+                border: 1px solid #b9d3fb !important;
+                border-radius: 999px !important;
+                background: #ffffff !important;
+                color: #14264a !important;
+                font-size: 0.68rem !important;
+            }
+            .st-key-community_verification_resend_popover [data-testid="stPopover"] button::before {
+                content: "↻" !important;
+                margin-right: 0.45rem !important;
+                color: #14264a !important;
+            }
+            .st-key-community_verification_resend_popover [data-testid="stPopover"] button::after {
+                content: "›" !important;
+                margin-left: auto !important;
+                color: #14264a !important;
+                background: transparent !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stMarkdownContainer"] div[style*="Administrator or agronomist?"] {
+                margin-top: 0.35rem !important;
+                color: #14264a !important;
+                font-size: 0.62rem !important;
+            }
+            @media (max-width: 700px) {
+                .st-key-ag_centralized_login_col {
+                    width: min(100%, 360px) !important;
+                    padding: 0.8rem 0.85rem !important;
+                }
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
         with centralized_login_container(max_width=620):
             sprout_icon = """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M7 20h10"/>
@@ -714,6 +896,10 @@ def render_community() -> None:
                 badge_text=badge_title,
                 icon=sprout_icon,
                 accent_color="#10b981",
+                title_color="#14264a",
+                subtitle_color="#405477",
+                subtitle_font_size="0.72rem",
+                text_align="center",
             )
             if _google_sign_in_enabled():
                 st.link_button(

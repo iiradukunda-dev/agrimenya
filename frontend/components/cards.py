@@ -82,6 +82,10 @@ def login_card_header(
     badge_text: str = "SECURITY PROTOCOL",
     icon: str = "",
     accent_color: str = "#0284c7",
+    title_color: str = "#104b3b",
+    subtitle_color: str = "#60766f",
+    subtitle_font_size: str = "0.88rem",
+    text_align: str = "left",
 ) -> None:
     """Render an executive header for authentication and login cards."""
     default_icon = f"""<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="{accent_color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -92,7 +96,7 @@ def login_card_header(
     icon_markup = icon if icon else default_icon
 
     html = f"""
-    <div style="text-align: left; margin-bottom: 0.5rem;">
+    <div style="text-align: {text_align}; margin-bottom: 0.5rem;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
             <div class="ag-icon-badge ag-login-icon-box">{icon_markup}</div>
             <span style="
@@ -126,16 +130,18 @@ def login_card_header(
             font-family: 'Plus Jakarta Sans', sans-serif !important;
             font-size: 1.45rem !important;
             font-weight: 800 !important;
-            color: #104b3b !important;
+            color: {title_color} !important;
             letter-spacing: -0.025em !important;
             text-shadow: none !important;
+            text-align: {text_align} !important;
         ">{title}</h2>
         <p style="
-            color: #60766f !important;
-            font-size: 0.88rem !important;
+            color: {subtitle_color} !important;
+            font-size: {subtitle_font_size} !important;
             line-height: 1.55 !important;
             margin: 0 0 0.65rem 0 !important;
             text-shadow: none !important;
+            text-align: {text_align} !important;
         ">{subtitle}</p>
         <div style="
             height: 1px;

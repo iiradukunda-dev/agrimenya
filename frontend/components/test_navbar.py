@@ -175,7 +175,7 @@ def test_mobile_menu_links_have_no_background_boxes():
         assert '[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"]' in css_found
         assert 'body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"])' in css_found
         assert "background: transparent !important" in css_found
-        assert "width: min(16rem, calc(100vw - 2rem)) !important" in css_found
+        assert "width: min(14rem, calc(100vw - 2rem)) !important" in css_found
         assert "background: #f4f8fa !important" not in css_found
         assert "div[data-testid=\"stPopoverBody\"] [data-testid=\"stPageLink-NavLink\"]:hover" in css_found
 
@@ -221,6 +221,8 @@ def test_desktop_menu_hides_default_expand_icon_and_language_icon_remains_visibl
     assert ".st-key-ag_mobile_navbar .st-key-lang_cycle_mobile_btn button" in css_found
     assert "height: 42px !important" in css_found
     assert "height: 2.35rem !important" in css_found
+    assert "body:has(.st-key-ag_desktop_navbar [data-testid=\"stPopover\"] button[aria-expanded=\"true\"]) [data-testid=\"stPopoverBody\"]" in css_found
+    assert "width: min(14rem, calc(100vw - 2rem)) !important" in css_found
     assert 'button:not([data-testid="stPopoverButton"])' in css_found
     assert '.st-key-ag_navbar [data-testid="stPopover"] button * {' not in css_found
 

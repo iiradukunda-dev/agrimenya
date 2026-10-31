@@ -244,9 +244,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
         }
         .st-key-ag_mobile_navbar [data-testid="stPopoverBody"],
         body:has(.st-key-ag_mobile_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] {
-          width: min(16rem, calc(100vw - 2rem)) !important;
+          width: min(14rem, calc(100vw - 2rem)) !important;
           min-width: 0 !important;
-          max-width: min(16rem, calc(100vw - 2rem)) !important;
+          max-width: min(14rem, calc(100vw - 2rem)) !important;
           max-height: calc(100dvh - 7rem) !important;
           box-sizing: border-box !important;
           overflow-y: auto !important;
@@ -658,6 +658,14 @@ def render_navbar(show_sidebar: bool = False) -> None:
       @media (prefers-reduced-motion: reduce) {
         div[data-testid="stPopoverBody"] {
           animation: none !important;
+        }
+      }
+      @media (min-width: 841px) {
+        body:has(.st-key-ag_desktop_navbar [data-testid="stPopover"] button[aria-expanded="true"]) [data-testid="stPopoverBody"] {
+          width: min(14rem, calc(100vw - 2rem)) !important;
+          min-width: 0 !important;
+          max-width: min(14rem, calc(100vw - 2rem)) !important;
+          box-sizing: border-box !important;
         }
       }
 

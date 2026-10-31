@@ -114,3 +114,11 @@ def test_google_sign_in_starts_on_the_frontend_origin(
         "/community/auth/google",
         use_container_width=True,
     )
+    login_css = "".join(
+        str(call.args[0])
+        for call in mock_st.markdown.call_args_list
+        if "<style>" in str(call.args[0])
+    )
+    assert "width: min(100%, 360px) !important" in login_css
+    assert "border-radius: 999px !important" in login_css
+    assert "background: linear-gradient(135deg, #3394ff, #0875d1) !important" in login_css
