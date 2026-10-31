@@ -235,7 +235,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
           line-height: 1 !important;
           pointer-events: none !important;
         }
-        .st-key-ag_mobile_navbar [data-testid="stIconMaterial"],
+        .st-key-ag_mobile_navbar [data-testid="stIconMaterial"] {
+          display: none !important;
+        }
         .st-key-ag_mobile_navbar [data-testid="stPopover"] button svg {
           display: none !important;
         }
@@ -670,9 +672,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
       }
 
       /* Hide any unwanted nested icons in links */
-      [data-testid="stPageLink-NavLink"] span[data-testid="stIconMaterial"],
-      [data-testid="stPageLink-NavLink"] svg:not([class*="custom"]),
-      [data-testid="stPageLink-NavLink"] i {
+      [data-testid="stPageLink-NavLink"]:not(:has(a[href*="12_Community"])) span[data-testid="stIconMaterial"],
+      [data-testid="stPageLink-NavLink"]:not(:has(a[href*="12_Community"])) svg:not([class*="custom"]),
+      [data-testid="stPageLink-NavLink"]:not(:has(a[href*="12_Community"])) i {
         display: none !important;
       }
 
@@ -1348,6 +1350,15 @@ def render_navbar(show_sidebar: bool = False) -> None:
       .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] svg,
       .st-key-ag_mobile_navbar a[href*="12_Community"] [data-testid="stIconMaterial"],
       .st-key-ag_mobile_navbar a[href*="12_Community"] svg {
+        display: inline-flex !important;
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: #64748b !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"]) [data-testid="stIconMaterial"],
+      .st-key-ag_mobile_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"]) [data-testid="stIconMaterial"] {
         display: inline-flex !important;
         width: 1.25rem !important;
         height: 1.25rem !important;

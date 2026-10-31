@@ -114,6 +114,8 @@ def test_google_sign_in_starts_on_the_frontend_origin(
         "/community/auth/google",
         use_container_width=True,
     )
+    mock_header.assert_called_once()
+    assert mock_header.call_args.kwargs["subtitle"] == "Sign in to your account to continue."
     login_css = "".join(
         str(call.args[0])
         for call in mock_st.markdown.call_args_list

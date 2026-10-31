@@ -900,7 +900,7 @@ def render_community() -> None:
             badge_title = "GROWER NETWORK" if language == "en" else "UMURYANGO W'ABAHINZI" if language == "rw" else "RÉSEAU AGRICOLE"
             login_card_header(
                 title="Welcome back" if language == "en" else c["title"],
-                subtitle=("Sign in to your account to continue with agrimenya." if language == "en" else c["intro"]),
+                subtitle=("Sign in to your account to continue." if language == "en" else c["intro"]),
                 badge_text=badge_title,
                 icon=sprout_icon,
                 accent_color="#10b981",

@@ -319,5 +319,7 @@ def test_logged_out_navbar_keeps_account_icon_visible_without_hover_effects():
     assert account_links
     assert all(call.kwargs.get("icon") == ":material/account_circle:" for call in account_links)
     assert 'a[href*="12_Community"] [data-testid="stIconMaterial"]' in css
+    assert '[data-testid="stPageLink-NavLink"]:not(:has(a[href*="12_Community"]))' in css
+    assert '.st-key-ag_mobile_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"])' in css
     assert 'a[href*="12_Community"]:hover' in css
     assert "transform: none !important" in css
