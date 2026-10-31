@@ -1,8 +1,9 @@
 """
 Dashboard view - high-level operational overview.
 
-Surfaces executive KPIs, multi-dimensional Plotly charts, global
-cross-filtering, live weather and climate links, recommendations, and exports.
+Surfaces executive KPIs with sparklines, interactive Folium maps,
+multi-dimensional Plotly charts, global cross-filtering, live Open-Meteo
+weather forecasts, actionable recommendations, and data exports.
 """
 import io
 import logging
@@ -16,7 +17,6 @@ import streamlit as st
 
 from components.alerts import render_alert
 from components.badges import priority_badge, status_badge
-from components.browser_weather import render_browser_weather
 from components.cards import (
     render_empty_state,
     render_kpi_card,
@@ -27,7 +27,8 @@ from components.charts import (
 )
 from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader
-from components.navbar import render_page_header
+from components.maps import render_priority_map
+from components.navbar import is_authenticated, render_page_header
 from utils import api_client
 from utils.i18n import t
 from views.data_insights import (
@@ -56,6 +57,7 @@ def _metric_number(value, suffix: str = "", grouped: bool = False) -> str:
 @error_boundary("Dashboard")
 def render_dashboard() -> None:
     try:
+        public_view = not is_authenticated()
         priority_df = api_client.get_priority_data()
         if not isinstance(priority_df, pd.DataFrame):
             priority_df = pd.DataFrame()
@@ -83,6 +85,10 @@ def render_dashboard() -> None:
                 (t("dashboard.title", "Dashboard"), None),
             ],
         )
+        if public_view:
+            st.info(
+                "You are viewing the public overview. Sign in as a farmer to unlock the full workspace, planning tools, and field actions."
+            )
 
         # ── 2. Data Fetching ──────────────────────────────────────────
         df = priority_df
@@ -234,90 +240,43 @@ def render_dashboard() -> None:
 
         st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
 
-        # ── 5. Live District Weather & Climate ─────────────────────────
-        with st.container(border=True):
-            render_icon_subheader("assets/compass.svg", "Live weather and climate")
+        # ── 5. Spatial Priority Map + Analytics ───────────────────────
+        map_col = st.container()
 
-            try:
-                district_catalog = api_client.get_districts() or []
-            except Exception:
-                logger.exception("Unable to load canonical districts for the weather view")
-                district_catalog = []
-            districts = sorted({
-                str(item.get("district", "")).strip()
-                for item in district_catalog
-                if isinstance(item, dict) and item.get("district")
-            })
-            if not districts:
-                try:
-                    weather_zones = api_client.get_zones() or []
-                except Exception:
-                    logger.exception("Unable to load registered weather locations")
-                    weather_zones = []
-                districts = sorted({
-                    str(zone.get("district", "")).strip()
-                    for zone in weather_zones
-                    if isinstance(zone, dict) and zone.get("district")
-                })
-
-            if not districts:
-                st.warning("No district locations are available for the weather view.")
-            else:
-                default_district = (
-                    selected_district
-                    if selected_district != all_districts_label and selected_district in districts
-                    else districts[0]
-                )
-                w_c1, w_c2 = st.columns([3, 1])
-                with w_c1:
-                    active_weather_district = st.selectbox(
-                        t("dashboard.weather.district_select", "District weather"),
-                        districts,
-                        index=districts.index(default_district),
-                        key="dash_weather_district_select",
-                    )
-                with w_c2:
-                    st.write("")
-                    if st.button(t("dashboard.weather.refresh_btn", "Refresh weather"), use_container_width=True):
-                        api_client.get_weather.clear()
-                        st.rerun()
+        with map_col:
+            with st.container(border=True):
+                render_icon_subheader("assets/map.svg", t("dashboard.section.priority_map", "Interactive Priority Map"))
 
                 try:
-                    with st.spinner(f"Loading live weather for {active_weather_district}..."):
-                        weather = api_client.get_weather(active_weather_district)
+                    clicked_zone_id = render_priority_map(filtered_df, key="dashboard_priority_map")
                 except Exception:
-                    logger.exception("Unable to load weather for %s", active_weather_district)
-                    weather = None
+                    logger.exception("Unable to render dashboard priority map")
+                    clicked_zone_id = None
+                    st.warning("The priority map could not be loaded. The rest of the dashboard is still available.")
 
-                if isinstance(weather, dict) and weather.get("temperature_c") is not None:
-                    temp_val = weather.get("temperature_c")
-                    hum_val = weather.get("humidity_pct")
-                    rain_val = weather.get("rainfall_mm")
-                    wind_val = weather.get("wind_kph")
+                if clicked_zone_id:
+                    st.session_state["selected_zone_id"] = clicked_zone_id
+                    st.session_state["segment_zone_select"] = clicked_zone_id
 
-                    w_metric1, w_metric2, w_metric3, w_metric4 = st.columns(4)
-                    w_metric1.metric("Temperature", f"{temp_val:.1f} °C")
-                    w_metric2.metric("Relative Humidity", f"{hum_val:.0f}%" if hum_val is not None else "Not available")
-                    w_metric3.metric("Precipitation", f"{rain_val:.1f} mm" if rain_val is not None else "Not available")
-                    w_metric4.metric("Wind Speed", f"{wind_val:.1f} km/h" if wind_val is not None else "Not available")
-                    forecast_data = weather.get("forecast") or []
-                    if forecast_data:
-                        render_weather_forecast_grid(forecast_data)
-                    st.caption(
-                        f"Live conditions: {weather.get('source') or 'source unavailable'} · "
-                        f"Updated: {weather.get('updated_at') or 'time not reported'}"
+                selected_zone_id = st.session_state.get("selected_zone_id")
+                if selected_zone_id and not filtered_df.empty and "id" in filtered_df.columns:
+                    selected_row = next(
+                        (row for row in filtered_df.to_dict("records") if str(row.get("id")) == str(selected_zone_id)),
+                        None,
                     )
-                else:
-                    coordinates = api_client.RWANDA_DISTRICT_COORDS.get(active_weather_district.casefold())
-                    if coordinates:
-                        st.caption("Loading live weather directly from Open-Meteo…")
-                        render_browser_weather(active_weather_district, coordinates)
-                    else:
-                        st.warning(f"Weather coordinates are unavailable for {active_weather_district}.")
-                st.markdown(
-                    "For official national climate notices and reports, visit "
-                    "[Meteo Rwanda](https://www.meteorwanda.gov.rw/climate-warning)."
-                )
+                    if selected_row:
+                        st.info(
+                            f"**Selected Zone:** {selected_row.get('District', 'Unknown')} | "
+                            f"Crop: **{selected_row.get('Crop', 'Unspecified')}** | "
+                            f"Priority: **{selected_row.get('Priority', 'Unassessed')}**"
+                        )
+                        c_act1, c_act2 = st.columns(2)
+                        with c_act1:
+                            if st.button("Inspect Zone Details →", use_container_width=True, key="dash_open_zone"):
+                                st.switch_page("pages/4_Zones.py")
+                        with c_act2:
+                            if st.button("Create Seasonal Plan →", use_container_width=True, key="dash_open_plan"):
+                                st.switch_page("pages/8_Planning.py")
 
         # One configurable chart replaces the separate dashboard graphs.
         with st.container(border=True):
@@ -342,6 +301,62 @@ def render_dashboard() -> None:
                         st.success(f"**{title}.** {text}")
                     else:
                         st.info(f"**{title}.** {text}")
+
+        # ── 7. Live Micro-Climate & Weather Station ────────────────────
+        with st.container(border=True):
+            render_icon_subheader("assets/compass.svg", t("dashboard.weather.live_title", "Live Micro-Climate Station"))
+
+            try:
+                weather_zones = api_client.get_zones() or []
+            except Exception:
+                logger.exception("Unable to load weather station list")
+                weather_zones = []
+            districts = sorted({
+                str(zone.get("district", "")).strip()
+                for zone in weather_zones
+                if isinstance(zone, dict) and zone.get("district")
+            })
+            default_district = selected_district if selected_district != all_districts_label and selected_district in districts else (districts[0] if districts else "Gasabo")
+
+            w_c1, w_c2 = st.columns([3, 1])
+            with w_c1:
+                active_weather_district = st.selectbox(
+                    t("dashboard.weather.district_select", "Observation District"),
+                    districts or ["Gasabo", "Musanze", "Huye", "Nyagatare"],
+                    index=(districts.index(default_district) if default_district in districts else 0),
+                    key="dash_weather_district_select",
+                )
+            with w_c2:
+                st.write("")
+                if st.button(t("dashboard.weather.refresh_btn", "Refresh Weather"), use_container_width=True):
+                    api_client.get_weather.clear()
+                    st.rerun()
+
+            try:
+                with st.spinner(f"Checking live telemetry for {active_weather_district}..."):
+                    weather = api_client.get_weather(active_weather_district)
+            except Exception:
+                logger.exception("Unable to load weather for %s", active_weather_district)
+                weather = None
+
+            if isinstance(weather, dict) and weather:
+                w_metric1, w_metric2, w_metric3, w_metric4 = st.columns(4)
+                w_metric1.metric("Temperature", f"{weather.get('temperature_c', 'N/A')} °C")
+                w_metric2.metric("Relative Humidity", f"{weather.get('humidity_pct', 'N/A')}%")
+                w_metric3.metric("Precipitation", f"{weather.get('rainfall_mm', 'N/A')} mm")
+                w_metric4.metric("Wind Speed", f"{weather.get('wind_kph', 'N/A')} km/h")
+
+                # Visual 6-day meteorological cards
+                forecast_data = weather.get("forecast") or []
+                if forecast_data:
+                    render_weather_forecast_grid(forecast_data)
+                st.caption(f"Telemetry Source: Open-Meteo High-Resolution Telemetry | Observed: {weather.get('updated_at') or 'Live snapshot'}")
+            else:
+                st.warning("Weather telemetry currently unavailable for this station.")
+
+        if public_view:
+            st.info("Sign in from Farmer login to access recommendations, planning, exports, and the remaining tools.")
+            return
 
         # ── 8. Priority Recommendations & Quick Action Hub ─────────────
         act_col, alert_col = st.columns([3, 2], gap="medium")

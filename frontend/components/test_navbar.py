@@ -132,7 +132,7 @@ def test_mobile_menu_button_shows_more_label():
 
 
 def test_user_session_and_page_access_control():
-    """Verify user session defaults to signed-in and unauthenticated access is gated."""
+    """Verify anonymous visitors get the public dashboard and restricted pages stay gated."""
     from components.navbar import init_user_session, is_authenticated, check_page_access
 
     session = {}
@@ -140,11 +140,11 @@ def test_user_session_and_page_access_control():
     mock_st.session_state = session
 
     with patch("components.navbar.st", mock_st):
-        # 1. Default session should be authenticated
+        # 1. New sessions remain anonymous until a real login succeeds.
         init_user_session()
-        assert session["authenticated"] is True
-        assert session["user_profile"]["name"] == "Extension Officer"
-        assert is_authenticated() is True
+        assert session["authenticated"] is False
+        assert session["user_profile"] == {}
+        assert is_authenticated() is False
 
         # 2. Public pages (Home.py, 3_Dashboard.py) allowed when unauthenticated
         session["authenticated"] = False
@@ -152,6 +152,12 @@ def test_user_session_and_page_access_control():
             assert check_page_access() is True
 
         with patch("components.navbar.get_current_page_file", return_value="3_Dashboard.py"):
+            assert check_page_access() is True
+
+        with patch("components.navbar.get_current_page_file", return_value="dashboard.py"):
+            assert check_page_access() is True
+
+        with patch("components.navbar.get_current_page_file", return_value="12_Community.py"):
             assert check_page_access() is True
 
         # 3. Restricted page (e.g. 4_Zones.py) stopped when unauthenticated
