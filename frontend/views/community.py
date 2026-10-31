@@ -566,20 +566,6 @@ def render_community() -> None:
             .st-key-community_register_password [data-testid="stTextInput"] button span[data-testid="stIconMaterial"] {
                 font-size: 0.65rem !important;
             }
-            .st-key-community_login_password [data-testid="stTextInput"] button[aria-label="Show password"]::after,
-            .st-key-community_register_password [data-testid="stTextInput"] button[aria-label="Show password"]::after {
-                content: "Show";
-                color: #64748b;
-                font-size: 0.5rem;
-                font-weight: 500;
-            }
-            .st-key-community_login_password [data-testid="stTextInput"] button[aria-label="Hide password"]::after,
-            .st-key-community_register_password [data-testid="stTextInput"] button[aria-label="Hide password"]::after {
-                content: "Hide";
-                color: #64748b;
-                font-size: 0.5rem;
-                font-weight: 500;
-            }
             .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stFormSubmitButton"] button {
                 display: flex !important;
                 align-items: center !important;
@@ -682,8 +668,9 @@ def render_community() -> None:
                 font-size: 0.72rem !important;
             }
             .st-key-ag_centralized_login_col [data-testid="stTextInput"] input:focus {
-                border-color: #328ff0 !important;
-                box-shadow: 0 0 0 2px rgba(50, 143, 240, 0.12) !important;
+                border-color: #c9dcfb !important;
+                outline: none !important;
+                box-shadow: none !important;
             }
             .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a {
                 min-height: 2rem !important;
@@ -694,6 +681,14 @@ def render_community() -> None:
                 color: #14264a !important;
                 font-size: 0.72rem !important;
                 font-weight: 650 !important;
+            }
+            .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a::before {
+                content: "G";
+                font: 700 0.95rem/1 Arial, sans-serif;
+                background: conic-gradient(#4285f4 0 25%, #34a853 25% 50%, #fbbc05 50% 75%, #ea4335 75%);
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
             }
             .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tablist"] {
                 gap: 0 !important;
