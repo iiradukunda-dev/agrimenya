@@ -375,7 +375,7 @@ def render_community() -> None:
                 )
                 _store_community_session(response)
                 st.query_params.pop("community_google_code", None)
-                st.rerun()
+                st.switch_page("Home.py")
             except requests.RequestException as exc:
                 st.query_params.pop("community_google_code", None)
                 st.error(_error_message(exc, language))
@@ -741,7 +741,7 @@ def render_community() -> None:
                     try:
                         response = _request("POST", "/community/login", payload={"email": email, "password": password})
                         _store_community_session(response)
-                        st.rerun()
+                        st.switch_page("Home.py")
                     except requests.RequestException as exc:
                         _show_request_error(exc, language, "community_login_retry")
                     finally:
@@ -806,7 +806,7 @@ def render_community() -> None:
                             st.link_button(c["verify_dev_link"], response["development_verification_url"])
                         if response.get("access_token"):
                             _store_community_session(response)
-                            st.rerun()
+                            st.switch_page("Home.py")
                     except requests.RequestException as exc:
                         st.error(_error_message(exc, language))
 
