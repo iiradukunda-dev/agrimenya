@@ -56,6 +56,51 @@ app.include_router(admin_auth.router)
 app.include_router(community.router)
 app.include_router(live_data.router)
 
+from fastapi import Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "detail": exc.detail,
+            "status_code": exc.status_code,
+            "error": True,
+        },
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": jsonable_encoder(exc.errors()),
+            "status_code": 422,
+            "error": True,
+            "message": "Validation error in request payload or parameters.",
+        },
+    )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    import logging
+    logging.getLogger(__name__).exception("Unhandled exception processing %s %s: %s", request.method, request.url.path, exc)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "An internal server error occurred.",
+            "status_code": 500,
+            "error": True,
+        },
+    )
+
 
 @app.middleware("http")
 async def add_security_headers(request, call_next):
@@ -80,20 +125,93 @@ if IS_DEVELOPMENT:
 
 @app.get("/health")
 def health_check():
-        return {"status": "ok"}
-    
+    """Fast, dependency-free liveness check for Render and the frontend."""
+    return {"status": "ok"}
+
+
 @app.get("/health/live")
 def liveness_check():
     return {"status": "alive"}
 
 
+def _system_health_status() -> dict:
+    database_status = "unavailable"
+    bundled_baseline = Path(__file__).resolve().parent.parent / "data" / "nisr_official_yields_2022_2026.csv"
+    has_baseline_rows = bundled_baseline.is_file() and bundled_baseline.stat().st_size > 0
+    try:
+        from app.core.supabase_client import get_supabase
+
+        sb = get_supabase()
+        sb.table("zones").select("id").limit(1).execute()
+        database_status = "ok"
+        has_baseline_rows = has_baseline_rows or bool(sb.table("agri_metrics").select("id").limit(1).execute().data)
+        try:
+            has_baseline_rows = has_baseline_rows or bool(
+                sb.table("nisr_yield_records").select("id").limit(1).execute().data
+            )
+        except Exception:
+            # Migration 0007 is optional until the NISR import workflow is enabled.
+            pass
+    except Exception:
+        logging.getLogger(__name__).exception("Health check database probe failed")
+        pass
+
+    return {
+        "status": "ok" if database_status == "ok" else "degraded",
+        "env": settings.APP_ENV,
+        "database_status": database_status,
+        "model_present": False,
+        "model_version": None,
+        "baselines_present": has_baseline_rows,
+        "yield_source": ("database observations with official NISR SAS historical fallback"
+                         if database_status == "ok" and has_baseline_rows else
+                         "official NISR SAS historical fallback; database unavailable"
+                         if has_baseline_rows else "unavailable"),
+        "baselines_overall_average": None,
+    }
+
+
+@app.get("/health/status")
+def system_health_status():
+    return _system_health_status()
+
+
+@app.get("/health/deep")
+def deep_health_check():
+    import psycopg
+
+    if not settings.SUPABASE_DB_URL:
+        logging.getLogger(__name__).warning("Deep health database probe is not configured")
+        return JSONResponse(
+            status_code=503,
+            content={"status": "unhealthy", "database": "unreachable"},
+        )
+
+    try:
+        with psycopg.connect(
+            settings.SUPABASE_DB_URL,
+            connect_timeout=5,
+            options="-c statement_timeout=5000",
+        ) as connection:
+            connection.execute("SELECT 1").fetchone()
+    except psycopg.Error as exc:
+        logging.getLogger(__name__).warning(
+            "Deep health database probe failed: %s", type(exc).__name__
+        )
+        return JSONResponse(
+            status_code=503,
+            content={"status": "unhealthy", "database": "unreachable"},
+        )
+    return {"status": "healthy", "database": "reachable"}
+
+
 @app.get("/health/ready")
 def readiness_check():
     from fastapi import HTTPException
-    state = health_check()
+    state = _system_health_status()
     if state["database_status"] != "ok" or not state["baselines_present"]:
         raise HTTPException(status_code=503, detail={"status": "not_ready", **state})
-    return {"status": "ready", **state}
+    return {**state, "status": "ready"}
 
 
 @app.get("/")
