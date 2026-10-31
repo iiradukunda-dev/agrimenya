@@ -15,16 +15,19 @@ DEFAULT_USER = {
     "avatar": "EO",
 }
 
-PUBLIC_PAGES = {"Home.py", "3_Dashboard.py", "9_Communication.py", "1_About.py", ""}
+PUBLIC_PAGES = {
+    "Home.py", "dashboard.py", "3_Dashboard.py", "9_Communication.py",
+    "12_Community.py", "1_About.py", "",
+}
 
 
 def init_user_session() -> None:
-    """Initialize session state so the app always defaults to signed in and White & Sky Blue theme."""
+    """Initialize an anonymous session until a real farmer/admin login succeeds."""
     try:
         if "authenticated" not in st.session_state:
-            st.session_state["authenticated"] = True
+            st.session_state["authenticated"] = False
         if "user_profile" not in st.session_state:
-            st.session_state["user_profile"] = dict(DEFAULT_USER)
+            st.session_state["user_profile"] = {}
         st.session_state["ag_theme_mode"] = "light"
     except Exception:
         pass
@@ -34,7 +37,11 @@ def is_authenticated() -> bool:
     """Check if the current session is authenticated."""
     init_user_session()
     try:
-        return bool(st.session_state.get("authenticated", True))
+        return bool(
+            st.session_state.get("authenticated", False)
+            or st.session_state.get("community_access_token")
+            or st.session_state.get("admin_access_token")
+        )
     except Exception:
         return True
 
@@ -1347,7 +1354,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
             with c_home:
                 st.page_link("Home.py", label=t("nav.home", "Home"))
             with c_overview:
-                st.page_link("pages/3_Dashboard.py", label=t("nav.overview", "Overview"))
+                st.page_link("pages/dashboard.py", label=t("nav.overview", "Overview"))
 
             if auth:
                 with c_zones:
@@ -1393,7 +1400,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 with c_about:
                     st.page_link("pages/1_About.py", label=t("nav.about", "About"))
                 with c_more:
-                    st.empty()
+                    st.page_link("pages/12_Community.py", label=t("nav.farmer_login", "Farmer login"))
                 with c_sep:
                     st.empty()
 
@@ -1405,7 +1412,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
         with mobile_menu_col:
             with st.popover("☰", help="Open navigation menu", width="content"):
                 st.page_link("Home.py", label=t("nav.home", "Home"))
-                st.page_link("pages/3_Dashboard.py", label=t("nav.overview", "Overview"))
+                st.page_link("pages/dashboard.py", label=t("nav.overview", "Overview"))
                 if auth:
                     st.page_link("pages/4_Zones.py", label=t("nav.zones", "Zones"))
                     st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
@@ -1424,6 +1431,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 else:
                     st.page_link("pages/9_Communication.py", label=t("nav.updates", "Updates"))
                     st.page_link("pages/1_About.py", label=t("nav.about", "About"))
+                    st.page_link("pages/12_Community.py", label=t("nav.farmer_login", "Farmer login"))
         with mobile_language_col:
             render_language_selector(sidebar=False, button_key="lang_cycle_mobile_btn")
 

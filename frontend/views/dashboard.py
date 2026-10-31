@@ -28,7 +28,7 @@ from components.charts import (
 from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader
 from components.maps import render_priority_map
-from components.navbar import render_page_header
+from components.navbar import is_authenticated, render_page_header
 from utils import api_client
 from utils.i18n import t
 from views.data_insights import (
@@ -57,6 +57,7 @@ def _metric_number(value, suffix: str = "", grouped: bool = False) -> str:
 @error_boundary("Dashboard")
 def render_dashboard() -> None:
     try:
+        public_view = not is_authenticated()
         priority_df = api_client.get_priority_data()
         if not isinstance(priority_df, pd.DataFrame):
             priority_df = pd.DataFrame()
@@ -84,6 +85,10 @@ def render_dashboard() -> None:
                 (t("dashboard.title", "Dashboard"), None),
             ],
         )
+        if public_view:
+            st.info(
+                "You are viewing the public overview. Sign in as a farmer to unlock the full workspace, planning tools, and field actions."
+            )
 
         # ── 2. Data Fetching ──────────────────────────────────────────
         df = priority_df
@@ -348,6 +353,10 @@ def render_dashboard() -> None:
                 st.caption(f"Telemetry Source: Open-Meteo High-Resolution Telemetry | Observed: {weather.get('updated_at') or 'Live snapshot'}")
             else:
                 st.warning("Weather telemetry currently unavailable for this station.")
+
+        if public_view:
+            st.info("Sign in from Farmer login to access recommendations, planning, exports, and the remaining tools.")
+            return
 
         # ── 8. Priority Recommendations & Quick Action Hub ─────────────
         act_col, alert_col = st.columns([3, 2], gap="medium")
