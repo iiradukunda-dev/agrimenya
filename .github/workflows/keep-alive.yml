@@ -1,0 +1,70 @@
+name: Render API keep-alive
+
+on:
+  push:
+    branches:
+      - dev
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-api-keep-alive
+  cancel-in-progress: false
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BACKEND_URL: ${{ secrets.BACKEND_URL }}
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+    steps:
+      - name: Check health and restart if unavailable
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${BACKEND_URL:?Set the BACKEND_URL GitHub Actions secret}"
+
+          base_url="${BACKEND_URL%/}"
+          health_url="${base_url}/health"
+
+          check_health() {
+            local max_attempts="$1"
+            local attempt
+            local status
+            for attempt in $(seq 1 "$max_attempts"); do
+              status="$(curl --silent --show-error --output /dev/null \
+                --write-out '%{http_code}' --max-time 60 "$health_url" || true)"
+              if [[ "$status" == "200" ]]; then
+                echo "Backend health check succeeded on attempt ${attempt}/${max_attempts}."
+                return 0
+              fi
+              echo "Health attempt ${attempt}/${max_attempts} returned ${status:-no response}."
+              if [[ "$attempt" -lt "$max_attempts" ]]; then
+                sleep 20
+              fi
+            done
+            return 1
+          }
+
+          if check_health 6; then
+            exit 0
+          fi
+
+          if [[ -n "${RENDER_API_KEY:-}" && -n "${RENDER_SERVICE_ID:-}" ]]; then
+            echo "Health failed six times; requesting a Render service restart."
+            curl --fail-with-body --silent --show-error --request POST \
+              --header "Authorization: Bearer ${RENDER_API_KEY}" \
+              "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/restart"
+            echo "Restart requested; waiting for the replacement instance."
+            sleep 30
+            check_health 6
+          else
+            echo "Health failed six times; Render restart secrets are not configured."
+            exit 1
+          fi

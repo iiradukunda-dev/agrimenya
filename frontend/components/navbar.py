@@ -1348,7 +1348,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 )
             else:
                 c_home, c_overview, c_updates, c_about, c_more, c_sep, c_lang = st.columns(
-                    [1.15, 1.1, 1.2, 1.0, 0.25, 0.02, 0.45], vertical_alignment="center"
+                    [1.15, 1.1, 1.2, 1.15, 1.35, 0.02, 0.45], vertical_alignment="center"
                 )
 
             with c_home:
@@ -1400,7 +1400,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 with c_about:
                     st.page_link("pages/1_About.py", label=t("nav.about", "About"))
                 with c_more:
-                    st.page_link("pages/12_Community.py", label=t("nav.farmer_login", "Farmer login"))
+                    st.page_link("pages/12_Community.py", label=t("nav.farmer_login", "Sign up / Login"))
                 with c_sep:
                     st.empty()
 
@@ -1431,7 +1431,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 else:
                     st.page_link("pages/9_Communication.py", label=t("nav.updates", "Updates"))
                     st.page_link("pages/1_About.py", label=t("nav.about", "About"))
-                    st.page_link("pages/12_Community.py", label=t("nav.farmer_login", "Farmer login"))
+                    st.page_link("pages/12_Community.py", label=t("nav.farmer_login", "Sign up / Login"))
         with mobile_language_col:
             render_language_selector(sidebar=False, button_key="lang_cycle_mobile_btn")
 
