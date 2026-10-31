@@ -29,20 +29,20 @@ class TestTheme(unittest.TestCase):
         self.assertEqual(mock_st.session_state["ag_theme_mode"], "light")
 
     @patch("utils.theme.st")
-    def test_load_theme_light_and_dark(self, mock_st):
-        # Light mode
+    def test_load_theme_keeps_the_light_palette(self, mock_st):
         mock_st.session_state = {"ag_theme_mode": "light"}
         load_theme()
         self.assertTrue(mock_st.html.called)
         light_css = mock_st.html.call_args[0][0]
         self.assertIn("--ag-primary: #0284c7;", light_css)
         self.assertIn("--ag-bg-base: #f8fafc;", light_css)
+        self.assertEqual(mock_st.session_state["ag_theme_mode"], "light")
 
-        # Dark mode
         mock_st.session_state = {"ag_theme_mode": "dark"}
         load_theme()
-        dark_css = mock_st.html.call_args[0][0]
-        self.assertIn("--ag-bg-base: #09111c;", dark_css)
+        forced_light_css = mock_st.html.call_args[0][0]
+        self.assertIn("--ag-bg-base: #f8fafc;", forced_light_css)
+        self.assertEqual(mock_st.session_state["ag_theme_mode"], "light")
 
     @patch("utils.theme.st")
     def test_disease_action_buttons_use_triage_style(self, mock_st):

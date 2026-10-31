@@ -86,20 +86,25 @@ def create_google_community_account(email: str, display_name: str, subject: str)
     return result.data[0]
 
 
-def create_community_oauth_login_code(account_id: str, code_hash: str, expires_at: str) -> None:
+def create_community_oauth_login_code(
+    account_id: str, code_hash: str, browser_binding_hash: str, expires_at: str,
+) -> None:
     client = get_supabase()
     client.table("community_oauth_login_codes").delete().lt(
         "expires_at", datetime.now(timezone.utc).isoformat()
     ).execute()
     client.table("community_oauth_login_codes").insert({
-        "account_id": account_id, "code_hash": code_hash, "expires_at": expires_at,
+        "account_id": account_id, "code_hash": code_hash,
+        "browser_binding_hash": browser_binding_hash, "expires_at": expires_at,
     }).execute()
 
 
-def consume_community_oauth_login_code(code_hash: str) -> str | None:
+def consume_community_oauth_login_code(code_hash: str, browser_binding_hash: str) -> str | None:
     result = get_supabase().table("community_oauth_login_codes").update({
         "consumed_at": datetime.now(timezone.utc).isoformat(),
-    }).eq("code_hash", code_hash).is_("consumed_at", "null").gt(
+    }).eq("code_hash", code_hash).eq(
+        "browser_binding_hash", browser_binding_hash
+    ).is_("consumed_at", "null").gt(
         "expires_at", datetime.now(timezone.utc).isoformat()
     ).select("account_id").execute()
     if not result.data:

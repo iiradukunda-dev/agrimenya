@@ -39,7 +39,14 @@ def _unconfirmed(crop: str | None, note: str) -> dict:
     }
 
 
-def _groq_triage(crop: str, symptoms: str, *, image_bytes: bytes | None, language: str) -> dict | None:
+def _groq_triage(
+    crop: str,
+    symptoms: str,
+    *,
+    image_description: str | None,
+    image_bytes: bytes | None,
+    language: str,
+) -> dict | None:
     if not settings.GROQ_API_KEY:
         return None
     if image_bytes and len(image_bytes) > MAX_PROVIDER_IMAGE_BYTES:
@@ -62,7 +69,12 @@ def _groq_triage(crop: str, symptoms: str, *, image_bytes: bytes | None, languag
         "urgency (routine|soon|urgent|unclear), and limitations (one short sentence). Use urgency=urgent only when "
         "the photo/reports show rapid spread or substantial crop loss needing same-day local expert review."
     )
-    user_text = f"Crop reported by user: {crop[:50]}. Symptoms reported: {symptoms[:1000] or 'None provided'}. Analyze only this case."
+    user_text = (
+        f"Crop reported by user: {crop[:50]}. "
+        f"Symptoms reported: {symptoms[:1000] or 'None provided'}. "
+        "Additional farmer-provided field/photo notes (not independently verified): "
+        f"{(image_description or '').strip()[:1000] or 'None provided'}. Analyze only this case."
+    )
     if image_bytes:
         image_data = "data:image/jpeg;base64," + base64.b64encode(image_bytes).decode("ascii")
         content = [
@@ -147,7 +159,13 @@ def detect_crop_disease(
 
     # Prefer the multimodal assistant: the local classifier only returns a
     # class label and cannot explain the image or give actionable triage.
-    result = _groq_triage(crop_name, symptoms_text, image_bytes=image_bytes, language=language)
+    result = _groq_triage(
+        crop_name,
+        symptoms_text,
+        image_description=image_description,
+        image_bytes=image_bytes,
+        language=language,
+    )
     if result:
         return result
 

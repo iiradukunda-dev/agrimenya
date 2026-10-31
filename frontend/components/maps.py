@@ -6,9 +6,18 @@ from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
 
+try:
+    import folium
+except ImportError:
+    folium = None
+
 
 _google_map_component = components.declare_component(
     "agrimenya_google_map",
+    path=str(Path(__file__).parent / "google_map_component"),
+)
+_google_location_map = components.declare_component(
+    "agrimenya_google_location_map",
     path=str(Path(__file__).parent / "google_map_component"),
 )
 
@@ -28,6 +37,14 @@ RSA_ORTHOMOSAIC_NOTE = (
 )
 NISR_BOUNDARIES_URL = (
     "https://gis-server.statistics.gov.rw/server/rest/services/Hosted"
+)
+ESRI_SATELLITE_TILES = (
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/"
+    "MapServer/tile/{z}/{y}/{x}"
+)
+ESRI_BOUNDARIES_TILES = (
+    "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/"
+    "World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
 )
 ADMIN_BOUNDARY_LEVELS = [
     {
@@ -67,6 +84,84 @@ ADMIN_BOUNDARY_LEVELS = [
         "max_allowable_offset": 0.00005,
     },
 ]
+
+
+def google_maps_configured() -> bool:
+    """Return whether the optional Google Maps frontend key is configured."""
+    return bool(os.getenv("GOOGLE_MAPS_API_KEY", "").strip())
+
+
+def render_google_location_map(
+    *,
+    key: str,
+    center: dict[str, float],
+    zoom: int,
+) -> dict | None:
+    """Render the NISR boundary explorer on Google satellite imagery."""
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
+    if not api_key:
+        return None
+
+    return _google_location_map(
+        api_key=api_key,
+        center=center,
+        zoom=zoom,
+        map_type="satellite",
+        boundary_levels=ADMIN_BOUNDARY_LEVELS,
+        boundaries_url=NISR_BOUNDARIES_URL,
+        height=580,
+        key=key,
+        default=None,
+    )
+
+
+def create_rwanda_map(*, satellite_default: bool = False, hybrid: bool = True):
+    """Create the shared Rwanda basemap used by district and location explorers."""
+    if folium is None:
+        return None
+
+    map_view = folium.Map(
+        location=[-1.9403, 29.8739],
+        zoom_start=8,
+        max_zoom=23,
+        tiles=None,
+        control_scale=True,
+        zoom_control=True,
+        prefer_canvas=True,
+    )
+    folium.TileLayer(
+        tiles=ESRI_SATELLITE_TILES,
+        attr="Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics",
+        name="Satellite (Clear Earth)",
+        overlay=False,
+        control=True,
+        show=satellite_default,
+        max_zoom=22,
+        max_native_zoom=19,
+    ).add_to(map_view)
+    folium.TileLayer(
+        "OpenStreetMap",
+        name="Street Map",
+        overlay=False,
+        control=True,
+        show=not satellite_default,
+    ).add_to(map_view)
+    if hybrid:
+        folium.TileLayer(
+            tiles=ESRI_BOUNDARIES_TILES,
+            attr="Labels & Boundaries © Esri",
+            name="Roads & Place Labels",
+            overlay=True,
+            control=True,
+            show=satellite_default,
+        ).add_to(map_view)
+    return map_view
+
+
+def add_map_layer_control(map_view) -> None:
+    """Add the standard layer selector after the map layers are registered."""
+    if folium is not None and map_view is not None:
+        folium.LayerControl(collapsed=True, position="topright").add_to(map_view)
 
 
 def render_google_map(
@@ -131,9 +226,9 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
                 production_text = f"{production_number:,.1f}" if math.isfinite(production_number) else "N/A"
             except (TypeError, ValueError):
                 production_text = "N/A"
-
             district = str(row.get("District", "Unknown"))
             crop = str(row.get("Crop", "N/A"))
+            priority = str(row.get("Priority", "N/A"))
             markers.append({
                 "id": str(row.get("id", "")),
                 "lat": latitude,

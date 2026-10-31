@@ -62,6 +62,7 @@ def fetch_weather(district: str | None = None, latitude: float | None = None, lo
             "longitude": lon,
             "current": "temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m",
             "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum",
+            "wind_speed_unit": "kmh",
             "forecast_days": 5,
             "timezone": "auto",
         }

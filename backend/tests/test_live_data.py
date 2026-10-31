@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from app.services.field_report_service import get_field_risk_summary, submit_field_report
 from app.services.freshness_service import data_freshness_score
@@ -11,6 +11,32 @@ def test_fetch_weather_unknown_district_is_unavailable_without_network():
     assert weather["district"] == "Not a Rwanda district"
     assert weather["source"] == "unavailable"
     assert weather["rainfall_mm"] is None
+
+
+def test_fetch_weather_requests_wind_speed_in_kilometers_per_hour():
+    response = MagicMock()
+    response.json.return_value = {
+        "current": {
+            "temperature_2m": 22.0,
+            "relative_humidity_2m": 65,
+            "precipitation": 0.0,
+            "wind_speed_10m": 12.5,
+            "time": "2026-10-30T12:00",
+        },
+        "daily": {
+            "time": ["2026-10-30"],
+            "temperature_2m_max": [25.0],
+            "temperature_2m_min": [17.0],
+            "precipitation_probability_max": [50],
+            "precipitation_sum": [2.0],
+        },
+    }
+
+    with patch("app.services.weather_service.httpx.get", return_value=response) as get_weather:
+        weather = fetch_weather(district="Bugesera")
+
+    assert weather["wind_kph"] == 12.5
+    assert get_weather.call_args.kwargs["params"]["wind_speed_unit"] == "kmh"
 
 
 def test_submit_field_report_and_risk_summary():

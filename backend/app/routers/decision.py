@@ -219,8 +219,13 @@ def disease_risk(zone_id: UUID, crop: str, symptoms: str, image_description: str
         "zone_id": zone_id,
         "crop": assessment["crop"],
         "predicted_disease": assessment["predicted_disease"],
+        "plant_identification": assessment.get("plant_identification", "Not confirmed"),
         "confidence": assessment["confidence"],
         "risk_level": assessment["risk_level"],
+        "urgency": assessment.get("urgency", "unclear"),
+        "observations": assessment.get("observations", []),
+        "possible_causes": assessment.get("possible_causes", []),
         "recommended_actions": assessment["recommended_actions"],
+        "source": assessment.get("source", "unavailable"),
         "interpretation_note": assessment.get("interpretation_note"),
     }

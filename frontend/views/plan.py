@@ -270,6 +270,13 @@ def render_plan() -> None:
             st.info("No active agricultural zones available.")
             return
 
+        pending_zone_id = st.session_state.pop("planning_pending_zone_id", None)
+        if pending_zone_id:
+            for label, zone in zone_options.items():
+                if str(zone.get("id")) == str(pending_zone_id):
+                    st.session_state["planning_zone_select"] = label
+                    break
+
         c_zone, c_draft, c_custom, c_cost = st.columns([2.5, 1.3, 1.2, 1.2])
         with c_zone:
             selected_label = st.selectbox(

@@ -344,14 +344,23 @@ def render_community() -> None:
     # 1. Process Google OAuth callback query parameters
     google_code = st.query_params.get("community_google_code")
     if google_code:
-        try:
-            response = _request("POST", "/community/auth/google/exchange", payload={"code": google_code})
-            _store_community_session(response)
+        browser_binding = st.context.cookies.get("community_google_handoff", "")
+        if not browser_binding:
             st.query_params.pop("community_google_code", None)
-            st.rerun()
-        except requests.RequestException as exc:
-            st.query_params.pop("community_google_code", None)
-            st.error(_error_message(exc, language))
+            st.error(c["google_error_expired"])
+        else:
+            try:
+                response = _request(
+                    "POST",
+                    "/community/auth/google/exchange",
+                    payload={"code": google_code, "browser_binding": browser_binding},
+                )
+                _store_community_session(response)
+                st.query_params.pop("community_google_code", None)
+                st.rerun()
+            except requests.RequestException as exc:
+                st.query_params.pop("community_google_code", None)
+                st.error(_error_message(exc, language))
 
     google_error = st.query_params.get("community_google_error")
     if google_error:
@@ -360,14 +369,16 @@ def render_community() -> None:
         st.query_params.pop("community_google_error", None)
 
     # 2. Process Email Verification query parameters
-    verify_token = st.query_params.get("verify_token")
+    verify_token = st.query_params.get("community_verify_token") or st.query_params.get("verify_token")
     if verify_token:
         try:
-            _request("POST", "/community/verify", payload={"token": verify_token})
+            _request("POST", "/community/email/verify", payload={"token": verify_token})
             st.session_state["community_email_verified"] = True
+            st.query_params.pop("community_verify_token", None)
             st.query_params.pop("verify_token", None)
             st.rerun()
         except requests.RequestException as exc:
+            st.query_params.pop("community_verify_token", None)
             st.query_params.pop("verify_token", None)
             st.error(_error_message(exc, language))
 
@@ -375,7 +386,7 @@ def render_community() -> None:
         st.success(c["verify_success"])
 
     # 3. Process Password Reset query parameters
-    reset_token = st.query_params.get("reset_token")
+    reset_token = st.query_params.get("community_reset_token") or st.query_params.get("reset_token")
     if reset_token:
         from components.cards import centralized_login_container, login_card_header, security_trust_footer
         with centralized_login_container():
@@ -437,7 +448,7 @@ def render_community() -> None:
             if _google_sign_in_enabled():
                 st.link_button(
                     c["google_signin"],
-                    f"{API_BASE_URL}/community/auth/google",
+                    "/community/auth/google",
                     use_container_width=True,
                 )
                 st.caption(c["google_new_account_note"])

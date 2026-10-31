@@ -48,9 +48,10 @@ def test_google_map_reports_missing_api_key(monkeypatch):
     assert "GOOGLE_MAPS_API_KEY" in streamlit_mock.warning.call_args.args[0]
 
 
-def test_segmentation_map_passes_enriched_boundaries_to_google_component():
+def test_segmentation_map_passes_enriched_boundaries_to_google_component(monkeypatch):
     from views import segment
 
+    monkeypatch.setenv("GOOGLE_MAPS_API_KEY", "test-google-maps-key")
     summary = pd.DataFrame([{
         "District": "Kigali",
         "Value": 3200,

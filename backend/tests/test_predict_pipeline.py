@@ -1,5 +1,6 @@
 from app.ml import predict
 from app.db import crud
+from app.routers import segmentation
 
 
 def test_predict_returns_tuple():
@@ -9,6 +10,77 @@ def test_predict_returns_tuple():
     assert isinstance(total, float)
     assert conf is None or 0.0 <= conf <= 1.0
     assert isinstance(ver, str)
+
+
+def test_official_yield_observations_include_historical_seasons_and_filter(monkeypatch):
+    rows = [
+        {
+            "district": "Huye",
+            "crop": "Maize",
+            "season": "2022 Season A",
+            "yield_kg_ha": "1200",
+            "production_mt": "45",
+            "cultivated_area_ha": "37.5",
+            "harvested_area_ha": "36.0",
+        },
+        {
+            "district": "Huye",
+            "crop": "Maize",
+            "season": "2022 Season B",
+            "yield_kg_ha": "1400",
+            "production_mt": "50",
+            "cultivated_area_ha": "40",
+            "harvested_area_ha": "39",
+        },
+        {
+            "district": "Rubavu",
+            "crop": "Beans",
+            "season": "2022 Season A",
+            "yield_kg_ha": "900",
+            "production_mt": "20",
+            "cultivated_area_ha": "22",
+            "harvested_area_ha": "21",
+        },
+    ]
+    monkeypatch.setattr(predict, "_load_official_evidence", lambda: rows)
+
+    observations = predict.official_yield_observations(crop="maize", season="2022 season a")
+
+    assert len(observations) == 1
+    assert observations[0]["id"] == "Huye|Maize|2022 Season A"
+    assert observations[0]["zones"] == {"district": "Huye"}
+    assert observations[0]["yield_actual"] == "1200"
+    assert observations[0]["data_source"] == "official_nisr_sas"
+
+
+def test_official_yield_observations_cover_bundled_seasons():
+    observations = predict.official_yield_observations()
+
+    seasons = {row["season"] for row in observations}
+    assert "2022 Season A" in seasons
+    assert "2026 Season B" in seasons
+    assert len(seasons) == 14
+
+
+def test_official_yields_route_passes_optional_filters(monkeypatch):
+    captured = {}
+
+    def fake_observations(**filters):
+        captured.update(filters)
+        return [{"district": "Huye", "season": "2022 Season A"}]
+
+    monkeypatch.setattr(segmentation, "official_yield_observations", fake_observations)
+
+    result = segmentation.browse_official_yields(
+        district="Huye", crop="Maize", season="2022 Season A",
+    )
+
+    assert captured == {
+        "district": "Huye",
+        "crop": "Maize",
+        "season": "2022 Season A",
+    }
+    assert result == [{"district": "Huye", "season": "2022 Season A"}]
 
 
 def test_season_specific_baselines_differ(monkeypatch):

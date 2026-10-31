@@ -4,6 +4,7 @@ from app.core.auth import require_community_or_admin
 from app.models.zone import ZoneCreate
 from app.db import crud
 from app.db.rwanda_districts import RWANDA_DISTRICTS
+from app.ml.predict import official_yield_observations
 
 router = APIRouter(prefix="/segmentation", tags=["Segmentation"])
 
@@ -12,6 +13,14 @@ router = APIRouter(prefix="/segmentation", tags=["Segmentation"])
 def list_districts():
     """Return the canonical Rwanda district list for coverage and zone entry."""
     return RWANDA_DISTRICTS
+
+
+@router.get("/official-yields")
+def browse_official_yields(
+    district: str | None = None, crop: str | None = None, season: str | None = None,
+):
+    """Browse the bundled NISR district-level observations from 2022 onward."""
+    return official_yield_observations(district=district, crop=crop, season=season)
 
 
 @router.get("/zones")

@@ -8,6 +8,7 @@ import threading
 import time
 from collections import deque
 from email.message import EmailMessage
+from email.utils import parseaddr
 from typing import Any
 from uuid import UUID
 
@@ -20,6 +21,11 @@ from app.core.auth import require_admin, require_user
 from app.core.audit import audit_admin_action
 from app.db import crud
 from app.models.alert import AlertCreate
+from app.services.email_delivery import (
+    email_delivery_configuration_issue,
+    email_delivery_configured,
+    send_email_message,
+)
 
 router = APIRouter(prefix="/communication", tags=["Communication"])
 logger = logging.getLogger(__name__)
@@ -193,8 +199,11 @@ def _send_email(message: str, email: str | None, subject: str = "Agri-Menya fiel
     target_email = email or settings.DEFAULT_NOTIFICATION_EMAIL
     if not target_email:
         return {"status": "skipped", "reason": "No email provided"}
-    if not settings.SMTP_HOST or not settings.EMAIL_FROM:
-        return {"status": "unavailable", "provider": "smtp", "channel": "email", "reason": "SMTP is not configured"}
+    if not email_delivery_configured():
+        return {
+            "status": "unavailable", "provider": settings.EMAIL_PROVIDER, "channel": "email",
+            "reason": "Email delivery is not configured",
+        }
 
     email_message = EmailMessage()
     email_message["Subject"] = subject
@@ -202,8 +211,11 @@ def _send_email(message: str, email: str | None, subject: str = "Agri-Menya fiel
     email_message["To"] = target_email
     email_message.set_content(message)
     try:
-        _deliver_smtp(email_message)
-        return {"status": "sent", "provider": "smtp", "channel": "email"}
+        result = send_email_message(email_message, recipient=target_email)
+        return {
+            "status": "sent", "provider": result["provider"], "channel": "email",
+            "message_id": result["message_id"],
+        }
     except smtplib.SMTPAuthenticationError as exc:
         logger.exception("SMTP notification failed")
         return {
@@ -223,10 +235,10 @@ def _send_email(message: str, email: str | None, subject: str = "Agri-Menya fiel
             "reason": f"Could not connect to the SMTP service ({type(exc).__name__}). Check host, port, TLS, and outbound access.",
         }
     except Exception as exc:
-        logger.exception("SMTP notification failed")
+        logger.exception("Email notification failed")
         return {
-            "status": "failed", "provider": "smtp", "channel": "email",
-            "reason": f"SMTP send failed ({type(exc).__name__}). Check backend logs for details.",
+            "status": "failed", "provider": settings.EMAIL_PROVIDER, "channel": "email",
+            "reason": f"Email send failed ({type(exc).__name__}). Check backend logs for details.",
         }
 
 
@@ -272,15 +284,10 @@ def _broadcast_alert_email(alert: dict[str, Any], zone: dict[str, Any] | None) -
     total = len(recipients)
     if not total:
         return {"status": "no_recipients", "recipients": 0, "sent": 0, "failed": 0}
-    if not settings.SMTP_HOST or not settings.EMAIL_FROM:
+    if not email_delivery_configured():
         return {
             "status": "unavailable", "recipients": total, "sent": 0, "failed": total,
-            "reason": "Configure SMTP_HOST and EMAIL_FROM to deliver alert email.",
-        }
-    if bool(settings.SMTP_USER) != bool(settings.SMTP_PASSWORD):
-        return {
-            "status": "unavailable", "recipients": total, "sent": 0, "failed": total,
-            "reason": "Configure both SMTP_USER and SMTP_PASSWORD, or leave both empty.",
+            "reason": "Configure email delivery to send community alerts.",
         }
 
     zone_label = " / ".join(str(value).replace("\r", " ").replace("\n", " ") for value in (
@@ -299,6 +306,21 @@ def _broadcast_alert_email(alert: dict[str, Any], zone: dict[str, Any] | None) -
 
     sent = 0
     failed = 0
+    if settings.EMAIL_PROVIDER == "resend":
+        for recipient in recipients:
+            email_message = EmailMessage()
+            email_message["Subject"] = f"[Agri-Menya] {alert.get('severity', 'Info')} field alert"
+            email_message["To"] = recipient
+            email_message.set_content(message_body)
+            try:
+                send_email_message(email_message, recipient=recipient, timeout=20)
+                sent += 1
+            except Exception as exc:
+                logger.warning("Community alert email failed (%s)", type(exc).__name__)
+                failed += 1
+        delivery_status = "sent" if sent == total else "partial" if sent else "failed"
+        return {"status": delivery_status, "recipients": total, "sent": sent, "failed": failed}
+
     try:
         client_factory = smtplib.SMTP_SSL if settings.SMTP_USE_SSL else smtplib.SMTP
         with client_factory(settings.SMTP_HOST, settings.SMTP_PORT, timeout=20) as smtp:
@@ -350,9 +372,13 @@ def notify(payload: NotificationRequest, request: Request, _: dict = Depends(req
 
 @router.get("/email-status")
 def email_status(_: dict = Depends(require_user)) -> dict[str, Any]:
-    """Expose safe SMTP readiness flags for the authenticated communication UI."""
+    """Expose safe email readiness flags for the authenticated communication UI."""
     auth_pair_valid = bool(settings.SMTP_USER) == bool(settings.SMTP_PASSWORD)
-    smtp_configured = bool(settings.SMTP_HOST and settings.EMAIL_FROM and auth_pair_valid)
+    gmail_smtp = settings.SMTP_HOST.casefold().rstrip(".") == "smtp.gmail.com"
+    sender_address = parseaddr(settings.EMAIL_FROM)[1].strip().casefold()
+    smtp_username = settings.SMTP_USER.strip().casefold() if settings.SMTP_USER else sender_address
+    gmail_sender_matches_login = not gmail_smtp or sender_address == smtp_username
+    email_configured = email_delivery_configured()
     if settings.SMTP_USE_SSL:
         transport = "implicit TLS"
     elif settings.SMTP_STARTTLS:
@@ -360,11 +386,16 @@ def email_status(_: dict = Depends(require_user)) -> dict[str, Any]:
     else:
         transport = "unencrypted"
     return {
-        "ready": smtp_configured,
-        "smtp_configured": bool(settings.SMTP_HOST),
+        "ready": email_configured,
+        "provider": settings.EMAIL_PROVIDER,
+        "email_api_configured": bool(settings.RESEND_API_KEY) if settings.EMAIL_PROVIDER == "resend" else False,
+        "smtp_configured": settings.EMAIL_PROVIDER == "smtp" and bool(settings.SMTP_HOST),
         "sender_configured": bool(settings.EMAIL_FROM),
         "authentication_configured": bool(settings.SMTP_USER and settings.SMTP_PASSWORD),
         "authentication_pair_valid": auth_pair_valid,
+        "gmail_smtp": gmail_smtp,
+        "gmail_sender_matches_login": gmail_sender_matches_login,
+        "configuration_issue": email_delivery_configuration_issue(),
         "default_recipient_configured": bool(settings.DEFAULT_NOTIFICATION_EMAIL),
         "port": settings.SMTP_PORT,
         "transport": transport,
@@ -375,10 +406,10 @@ def email_status(_: dict = Depends(require_user)) -> dict[str, Any]:
 def submit_contact_message(payload: ContactMessageRequest, request: Request, _: dict = Depends(require_user)):
     """Deliver the contact form to the configured support inbox."""
     _limit_client_requests(request)
-    if not settings.SMTP_HOST or not settings.EMAIL_FROM or not settings.DEFAULT_NOTIFICATION_EMAIL:
+    if not email_delivery_configured() or not settings.DEFAULT_NOTIFICATION_EMAIL:
         raise HTTPException(
             status_code=503,
-            detail="Contact email is unavailable: configure SMTP_HOST, EMAIL_FROM, and DEFAULT_NOTIFICATION_EMAIL.",
+            detail="Contact email is unavailable: configure email delivery, EMAIL_FROM, and DEFAULT_NOTIFICATION_EMAIL.",
         )
 
     email_message = EmailMessage()
@@ -391,7 +422,7 @@ def submit_contact_message(payload: ContactMessageRequest, request: Request, _: 
     )
 
     try:
-        _deliver_smtp(email_message)
+        send_email_message(email_message, recipient=settings.DEFAULT_NOTIFICATION_EMAIL)
     except Exception as exc:
         raise HTTPException(status_code=502, detail="Contact email could not be delivered.") from exc
 
@@ -504,7 +535,7 @@ def send_shareable_plan(plan_id: UUID, payload: PlanShareRequest, request: Reque
     plan = crud.get_plan(plan_id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
-    if not settings.SMTP_HOST or not settings.EMAIL_FROM:
+    if not email_delivery_configured():
         raise HTTPException(status_code=503, detail="Email delivery is not configured on the backend")
 
     zone_id = plan.get("zone_id")

@@ -2,12 +2,12 @@
 import hashlib
 import hmac
 import secrets
-import smtplib
 from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
 from urllib.parse import urlparse
 
 from app.core.config import settings
+from app.services.email_delivery import send_email_message
 
 
 def hash_password(password: str) -> str:
@@ -49,11 +49,8 @@ def send_reset_email(email: str, display_name: str, token: str) -> None:
         and reset_url.hostname in {"localhost", "127.0.0.1"}
     )
     secure_url = reset_url.scheme == "https" and bool(reset_url.netloc)
-    if (not settings.SMTP_HOST or not settings.EMAIL_FROM or
-            not (secure_url or local_development_url)):
+    if not settings.EMAIL_FROM or not (secure_url or local_development_url):
         raise RuntimeError("Administrator password recovery email is not configured")
-    if bool(settings.SMTP_USER) != bool(settings.SMTP_PASSWORD):
-        raise RuntimeError("SMTP_USER and SMTP_PASSWORD must be configured together")
     url = settings.ADMIN_PASSWORD_RESET_URL.rstrip("/") + "?reset_token=" + token
     message = EmailMessage()
     message["Subject"] = "Reset your Agri-Menya administrator password"
@@ -64,17 +61,11 @@ def send_reset_email(email: str, display_name: str, token: str) -> None:
         f"It expires in 30 minutes and can only be used once.\n\n{url}\n\n"
         "If you did not request this change, you can ignore this message."
     )
-    client_factory = smtplib.SMTP_SSL if settings.SMTP_USE_SSL else smtplib.SMTP
-    with client_factory(settings.SMTP_HOST, settings.SMTP_PORT, timeout=15) as smtp:
-        if settings.SMTP_STARTTLS and not settings.SMTP_USE_SSL:
-            smtp.starttls()
-        if settings.SMTP_USER and settings.SMTP_PASSWORD:
-            smtp.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-        smtp.send_message(message)
+    send_email_message(message, recipient=email)
 
 
 def send_community_reset_email(email: str, display_name: str, token: str) -> None:
-    """Send a one-time community password link through the configured SMTP provider."""
+    """Send a one-time community password link through the configured mail provider."""
     reset_url = urlparse(settings.COMMUNITY_PASSWORD_RESET_URL)
     local_development_url = (
         settings.APP_ENV in {"development", "test"}
@@ -82,10 +73,8 @@ def send_community_reset_email(email: str, display_name: str, token: str) -> Non
         and reset_url.hostname in {"localhost", "127.0.0.1"}
     )
     secure_url = reset_url.scheme == "https" and bool(reset_url.netloc)
-    if not settings.SMTP_HOST or not settings.EMAIL_FROM or not (secure_url or local_development_url):
+    if not settings.EMAIL_FROM or not (secure_url or local_development_url):
         raise RuntimeError("Community password recovery email is not configured")
-    if bool(settings.SMTP_USER) != bool(settings.SMTP_PASSWORD):
-        raise RuntimeError("SMTP_USER and SMTP_PASSWORD must be configured together")
 
     separator = "&" if "?" in settings.COMMUNITY_PASSWORD_RESET_URL else "?"
     url = settings.COMMUNITY_PASSWORD_RESET_URL.rstrip("?") + separator + "community_reset_token=" + token
@@ -98,13 +87,7 @@ def send_community_reset_email(email: str, display_name: str, token: str) -> Non
         f"It expires in 30 minutes and can only be used once.\n\n{url}\n\n"
         "If you did not request this change, you can ignore this message."
     )
-    client_factory = smtplib.SMTP_SSL if settings.SMTP_USE_SSL else smtplib.SMTP
-    with client_factory(settings.SMTP_HOST, settings.SMTP_PORT, timeout=15) as smtp:
-        if settings.SMTP_STARTTLS and not settings.SMTP_USE_SSL:
-            smtp.starttls()
-        if settings.SMTP_USER and settings.SMTP_PASSWORD:
-            smtp.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-        smtp.send_message(message)
+    send_email_message(message, recipient=email)
 
 
 def send_community_verification_email(email: str, display_name: str, token: str) -> None:
@@ -116,10 +99,8 @@ def send_community_verification_email(email: str, display_name: str, token: str)
         and reset_url.hostname in {"localhost", "127.0.0.1"}
     )
     secure_url = reset_url.scheme == "https" and bool(reset_url.netloc)
-    if not settings.SMTP_HOST or not settings.EMAIL_FROM or not (secure_url or local_development_url):
+    if not settings.EMAIL_FROM or not (secure_url or local_development_url):
         raise RuntimeError("Community email verification is not configured")
-    if bool(settings.SMTP_USER) != bool(settings.SMTP_PASSWORD):
-        raise RuntimeError("SMTP_USER and SMTP_PASSWORD must be configured together")
     separator = "&" if "?" in settings.COMMUNITY_PASSWORD_RESET_URL else "?"
     url = (settings.COMMUNITY_PASSWORD_RESET_URL.rstrip("?") + separator
            + "community_verify_token=" + token)
@@ -131,10 +112,4 @@ def send_community_verification_email(email: str, display_name: str, token: str)
         f"Hello {display_name},\n\nVerify your Agri-Menya community account using this one-time link. "
         f"It expires in 24 hours.\n\n{url}\n\nIf you did not create this account, ignore this message."
     )
-    client_factory = smtplib.SMTP_SSL if settings.SMTP_USE_SSL else smtplib.SMTP
-    with client_factory(settings.SMTP_HOST, settings.SMTP_PORT, timeout=15) as smtp:
-        if settings.SMTP_STARTTLS and not settings.SMTP_USE_SSL:
-            smtp.starttls()
-        if settings.SMTP_USER and settings.SMTP_PASSWORD:
-            smtp.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-        smtp.send_message(message)
+    send_email_message(message, recipient=email)

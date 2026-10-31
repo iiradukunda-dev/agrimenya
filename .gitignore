@@ -7,6 +7,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.log
+.pytest_cache/
+**/.pytest_tmp/
 .venv/
 venv/
 ENV/
@@ -46,3 +49,4 @@ static/*
 !static/sw.js
 !static/offline.html
 !static/*.png
+backend/data/nisr_microdata_review/

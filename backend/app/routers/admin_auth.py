@@ -3,18 +3,21 @@ from collections import defaultdict, deque
 import logging
 import re
 import secrets
+import smtplib
 import threading
 import time
 from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+import httpx
 from pydantic import BaseModel, Field, field_validator
 
 from app.core.auth import create_token, require_role
 from app.core.audit import audit_admin_action
 from app.core.config import settings
 from app.db import crud
+from app.services.email_delivery import email_delivery_configured
 from app.services.admin_auth import (
     hash_password, hash_reset_token, new_reset_token, send_reset_email, verify_password,
 )
@@ -98,9 +101,31 @@ def _issue_reset(account: dict[str, Any]) -> None:
     crud.create_admin_password_reset_token(str(account["id"]), token_hash, expires_at)
     try:
         send_reset_email(account["email"], account["display_name"], token)
+    except smtplib.SMTPAuthenticationError as exc:
+        logger.exception("Administrator recovery email SMTP authentication failed")
+        if settings.SMTP_HOST.casefold().rstrip(".") == "smtp.gmail.com":
+            detail = "Gmail rejected SMTP authentication. Set SMTP_USER to the sending Gmail address and SMTP_PASSWORD to a Gmail App Password (not the regular account password)."
+        else:
+            detail = f"SMTP authentication was rejected (code {exc.smtp_code}). Check SMTP_USER and SMTP_PASSWORD."
+        raise HTTPException(status_code=503, detail=detail) from exc
+    except smtplib.SMTPDataError as exc:
+        logger.exception("Administrator recovery email sender was rejected")
+        detail = (
+            "Gmail rejected the sender. Ensure EMAIL_FROM matches the authenticated Gmail address."
+            if settings.SMTP_HOST.casefold().rstrip(".") == "smtp.gmail.com"
+            else f"SMTP rejected the message (code {exc.smtp_code}). Check sender authorization."
+        )
+        raise HTTPException(status_code=503, detail=detail) from exc
+    except httpx.HTTPStatusError as exc:
+        logger.exception("Administrator recovery email provider rejected the request")
+        if settings.EMAIL_PROVIDER == "resend" and exc.response.status_code in {401, 403}:
+            detail = "Resend rejected the API key or sender. Check the backend RESEND_API_KEY and verify that EMAIL_FROM uses your Resend-verified domain."
+        else:
+            detail = f"The email provider rejected the request (HTTP {exc.response.status_code}). Check the backend mail configuration and provider logs."
+        raise HTTPException(status_code=503, detail=detail) from exc
     except Exception:
         logger.exception("Administrator recovery email delivery failed")
-        raise HTTPException(status_code=503, detail="Password recovery email could not be sent. Contact the system operator.")
+        raise HTTPException(status_code=503, detail="Password recovery email could not be sent. Check the email provider configuration and backend logs.")
 
 
 @router.post("/login")
@@ -177,8 +202,8 @@ def create_account(
     email = str(payload.email).lower()
     if crud.get_admin_account_by_email(email):
         raise HTTPException(status_code=409, detail="An administrator account already uses that email")
-    if not settings.SMTP_HOST or not settings.EMAIL_FROM or not settings.ADMIN_PASSWORD_RESET_URL:
-        raise HTTPException(status_code=503, detail="Configure SMTP and ADMIN_PASSWORD_RESET_URL before inviting administrators")
+    if not email_delivery_configured() or not settings.ADMIN_PASSWORD_RESET_URL:
+        raise HTTPException(status_code=503, detail="Configure email delivery and ADMIN_PASSWORD_RESET_URL before inviting administrators")
     try:
         account = crud.create_admin_account(email, payload.display_name.strip(), hash_password(secrets.token_urlsafe(32)))
     except Exception as exc:
@@ -192,7 +217,7 @@ def create_account(
     except HTTPException as exc:
         raise HTTPException(
             status_code=503,
-            detail="The account was created, but the invitation email could not be delivered. Fix SMTP, then use Forgot Password to send the setup link.",
+            detail=f"The account was created, but the invitation email could not be delivered: {exc.detail} Use Forgot Password after correcting the mail settings.",
         ) from exc
     return {"id": str(account["id"]), "email": account["email"], "message": "Invitation and password setup link sent."}
 

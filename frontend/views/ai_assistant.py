@@ -7,6 +7,7 @@ import logging
 
 import requests
 import streamlit as st
+from components.ai_response import render_advisor_response
 from components.badges import priority_badge
 from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader, render_icon_title
@@ -18,9 +19,9 @@ logger = logging.getLogger(__name__)
 
 
 def _init_chat_state() -> None:
-    """Initialize session state for chat history."""
-    if "ai_messages" not in st.session_state:
-        st.session_state.ai_messages = []
+    """Initialize session state for zone-scoped chat history."""
+    if "ai_messages_by_zone" not in st.session_state:
+        st.session_state.ai_messages_by_zone = {}
 
 
 @error_boundary("AI Assistant")
@@ -34,6 +35,13 @@ def render_ai_assistant() -> None:
 
         _init_chat_state()
 
+        with st.spinner("Checking for live zone data..."):
+            zones = api_client.get_zones(
+                timeout=3,
+                retry_on_transient=False,
+                include_map=False,
+            )
+
         # ── Layout: Chat + Disease Detection ─────────────────────────
         chat_tab, disease_tab = st.tabs([t("ai.tab.advisor", "AI Advisor"), t("ai.tab.disease", "Disease Detection")])
 
@@ -41,56 +49,148 @@ def render_ai_assistant() -> None:
         # TAB 1: AI Chat
         # ═════════════════════════════════════════════════════════════
         with chat_tab:
-            # Optional zone context selector
-            zones = api_client.get_zones()
-            zone_labels = [
-                f"{z.get('district', 'Unknown district')} / {z.get('sector') or z.get('cell') or z.get('id')}"
-                for z in zones
-            ]
-            zone_by_label = dict(zip(zone_labels, zones))
-            selected_zone_label = st.selectbox(t("ai.zone_ctx", "Zone context"), zone_labels, key="ai_zone_ctx") if zone_labels else None
-            selected_zone = zone_by_label.get(selected_zone_label) if selected_zone_label else None
-            selected_zone_id = selected_zone.get("id") if selected_zone else None
+            crop_options = api_client.get_offline_nisr_crops() or CROPS
+            selected_zone = None
+            selected_zone_id = None
+            offline_district = None
 
-            # Display conversation history
-            for msg in st.session_state.ai_messages:
+            if zones:
+                zone_labels = [
+                    f"{z.get('district', 'Unknown district')} / {z.get('sector') or z.get('cell') or z.get('id')}"
+                    for z in zones
+                ]
+                zone_by_label = dict(zip(zone_labels, zones))
+                selected_zone_label = st.selectbox(
+                    t("ai.zone_ctx", "Zone context"), zone_labels, key="ai_zone_ctx"
+                )
+                selected_zone = zone_by_label.get(selected_zone_label)
+                selected_zone_id = selected_zone.get("id") if selected_zone else None
+                crop_selection = st.selectbox(
+                    "Crop context",
+                    ["No specific crop", *crop_options],
+                    key="ai_crop_ctx",
+                )
+                selected_crop = None if crop_selection == "No specific crop" else crop_selection
+            else:
+                fallback_notice = (
+                    "The live API is unavailable."
+                    if st.session_state.get("zones_api_unavailable")
+                    else "No saved live zone is available."
+                )
+                st.info(
+                    f"{fallback_notice} You can still ask about historical NISR "
+                    "crop yields; zone-specific actions and AI-generated answers need the API."
+                )
+                selected_crop = st.selectbox(
+                    "NISR crop", crop_options, key="ai_crop_ctx_offline"
+                ) if crop_options else None
+                offline_district_options = (
+                    ["All districts", *api_client.get_offline_nisr_districts(selected_crop)]
+                    if selected_crop else ["All districts"]
+                )
+                district_selection = st.selectbox(
+                    "NISR district",
+                    offline_district_options,
+                    key=f"ai_district_ctx_offline_{selected_crop}",
+                )
+                offline_district = (
+                    None if district_selection == "All districts" else district_selection
+                )
+
+            selected_season = None
+            if selected_crop:
+                seasons = api_client.get_offline_nisr_seasons(selected_crop)
+                if seasons:
+                    season_options = ["All available seasons", *seasons]
+                    selected_season = st.selectbox(
+                        "Season context",
+                        season_options,
+                        key=(
+                            f"ai_season_ctx_zone_{selected_crop}"
+                            if selected_zone_id
+                            else f"ai_season_ctx_offline_{selected_crop}"
+                        ),
+                    )
+                    if selected_season == "All available seasons":
+                        selected_season = None
+
+            conversation_key = "|".join(
+                (
+                    str(selected_zone_id or offline_district or "nisr"),
+                    str(selected_crop or ""),
+                    str(selected_season or ""),
+                )
+            )
+            messages = st.session_state.ai_messages_by_zone.setdefault(conversation_key, [])
+            for msg in messages:
                 with st.chat_message(msg["role"]):
-                    st.markdown(msg["content"])
+                    if msg["role"] == "assistant" and isinstance(msg.get("response"), dict):
+                        render_advisor_response(msg["response"])
+                    else:
+                        st.markdown(msg["content"])
 
             # Chat input
-            prompt = st.chat_input(t("ai.placeholder", "Ask about a zone, crop, or recommendation...")) if selected_zone_id else None
-            if not selected_zone_id:
-                st.info("Select or create an agricultural zone to start asking questions with grounded soil and yield data.")
+            prompt = st.chat_input(
+                t("ai.placeholder", "Ask about a zone, crop, or recommendation...")
+            )
             if prompt:
-                # Add user message
-                st.session_state.ai_messages.append({"role": "user", "content": prompt})
-                with st.chat_message("user"):
-                    st.markdown(prompt)
+                if len(prompt) > 500:
+                    st.warning("Please keep each question to 500 characters or fewer.")
+                else:
+                    history = [
+                        {"role": msg["role"], "content": str(msg["content"])[:500]}
+                        for msg in messages[-8:]
+                        if msg.get("role") in {"user", "assistant"}
+                    ]
+                    messages.append({"role": "user", "content": prompt})
+                    with st.chat_message("user"):
+                        st.markdown(prompt)
 
-                # Get AI response
-                with st.chat_message("assistant"):
-                    with st.spinner("Thinking..."):
-                        response = api_client.chat(prompt, zone_id=selected_zone_id)
-
-                    if response:
-                        answer = response.get("answer", "I could not generate a response.")
-                        if response.get("source") == "grounded-context":
-                            st.warning(
-                                "The chat is connected to the backend, but the AI provider did not return a generated answer. "
-                                "Showing the zone data available to the assistant. Check the backend LLM key, model access, and provider credits."
+                    with st.chat_message("assistant"):
+                        response = None
+                        if selected_zone_id:
+                            if api_client.is_api_available():
+                                with st.spinner("Thinking..."):
+                                    response = api_client.chat(
+                                        prompt,
+                                        zone_id=selected_zone_id,
+                                        history=history,
+                                        crop=selected_crop,
+                                        season=selected_season,
+                                    )
+                        if not (isinstance(response, dict) and response.get("answer")):
+                            fallback_crop = selected_crop or (
+                                selected_zone.get("crop") if selected_zone else None
                             )
-                        st.markdown(answer)
-                        st.caption(f"Source: {response.get('source', 'unknown')}")
-                    else:
-                        answer = "The API could not answer this request. Check the backend connection and try again."
-                        st.error(answer)
+                            if fallback_crop:
+                                response = api_client.get_offline_nisr_advisor_response(
+                                    prompt,
+                                    fallback_crop,
+                                    district=(
+                                        offline_district
+                                        or (selected_zone.get("district") if selected_zone else None)
+                                    ),
+                                    season=selected_season,
+                                )
 
-                    st.session_state.ai_messages.append({"role": "assistant", "content": answer})
+                        if isinstance(response, dict) and response.get("answer"):
+                            render_advisor_response(response)
+                            messages.append({
+                                "role": "assistant",
+                                "content": str(response["answer"]),
+                                "response": response,
+                            })
+                        else:
+                            st.warning(
+                                "No NISR historical yield records are available for this crop "
+                                "selection. Choose a crop with bundled NISR data or reconnect "
+                                "to the API for live AI advice."
+                            )
 
             # Clear chat button
-            if st.session_state.ai_messages:
+            if messages:
                 if st.button(t("ai.clear_chat", "Clear conversation"), icon=":material/delete:"):
-                    st.session_state.ai_messages = []
+                    st.session_state.ai_messages_by_zone[conversation_key] = []
                     st.rerun()
 
         # ═════════════════════════════════════════════════════════════
@@ -100,13 +200,15 @@ def render_ai_assistant() -> None:
             render_icon_subheader("assets/brain.svg", t("ai.disease_title", "Crop Disease Detection"))
             st.markdown(t("ai.disease_desc", "Describe symptoms and optionally upload a photo to identify potential crop diseases."))
 
-            zones = api_client.get_zones()
             disease_zone_options = {
                 f"{z.get('district', 'Unknown district')} / {z.get('sector') or z.get('cell') or z.get('id')}": z
                 for z in zones
             }
             if not disease_zone_options:
-                st.info("Create or load a zone before running disease detection.")
+                st.info(
+                    "Disease detection requires the live API and a saved zone. "
+                    "NISR yield history cannot diagnose crop diseases."
+                )
                 return
 
             with st.form("disease_detection_form"):
@@ -129,7 +231,7 @@ def render_ai_assistant() -> None:
                     st.markdown(f"**{t('ai.upload_photo', 'Upload a photo (optional)')}**")
                     image_file = st.file_uploader(
                         "Upload crop image",
-                        type=["jpg", "jpeg", "png"],
+                        type=["jpg", "jpeg", "png", "webp"],
                         key="disease_image",
                         label_visibility="collapsed",
                     )
@@ -143,7 +245,7 @@ def render_ai_assistant() -> None:
                     key="detect_disease_submit",
                 )
 
-            if submitted and symptoms:
+            if submitted and (symptoms.strip() or image_file):
                 with st.spinner("Analyzing symptoms..."):
                     if image_file:
                         result = api_client.disease_detect_upload(crop, symptoms, disease_zone_id, image_file)
@@ -153,28 +255,41 @@ def render_ai_assistant() -> None:
                 if result:
                     st.divider()
                     render_icon_subheader("assets/brain.svg", t("ai.detection_result", "Detection Result"))
-                    if image_file and result.get("source") != "vision-cnn":
-                        st.warning(
-                            "The image model is not trained yet. This result is based on the symptoms you entered, not visual image analysis."
-                        )
-                    else:
-                        st.caption(f"Analysis source: {result.get('source', 'symptom-model')}")
+                    st.warning(
+                        "Preliminary triage only—not a confirmed diagnosis. Verify the signs with an RAB or district agronomist before treatment."
+                    )
+                    st.caption(f"Analysis source: {result.get('source', 'unavailable')}")
 
                     result_cols = st.columns(2, gap="medium")
                     with result_cols[0]:
                         with st.container(border=True):
-                            st.markdown(f"**{t('ai.probable_disease', 'Probable Disease')}**")
+                            st.markdown("**Possible issue (preliminary)**")
                             st.markdown(f"### {result.get('predicted_disease', 'Unknown')}")
-                            confidence = result.get("confidence", 0)
-                            conf_str = f"{confidence:.0%}" if isinstance(confidence, float) else f"{confidence}"
-                            st.caption(f"Model Confidence: **{conf_str}**")
+                            st.caption(f"Crop identification: {result.get('plant_identification', 'Not confirmed')}")
 
                     with result_cols[1]:
                         with st.container(border=True):
-                            st.markdown(f"**{t('ai.risk_assess', 'Risk Assessment')}**")
+                            st.markdown("**Urgency and risk**")
                             risk = result.get("risk_level", "Unknown")
-                            priority_badge(risk if risk in ("High", "Medium", "Low") else "Not assessed")
-                            st.caption(f"Diagnostic Engine: {result.get('source', 'symptom-model')}")
+                            if risk in ("High", "Medium", "Low"):
+                                priority_badge(risk)
+                            else:
+                                st.caption(f"Risk level: {risk or 'Unknown'}")
+                            st.caption(f"Urgency: {str(result.get('urgency') or 'unclear').replace('_', ' ').title()}")
+
+                    observations = result.get("observations", [])
+                    if observations:
+                        st.markdown("**Reported or observed signs**")
+                        for item in observations:
+                            st.markdown(f"- {item}")
+
+                    causes = result.get("possible_causes", [])
+                    if causes:
+                        st.markdown("**Other possible causes to check**")
+                        for item in causes:
+                            st.markdown(f"- {item}")
+                    if result.get("interpretation_note"):
+                        st.caption(str(result["interpretation_note"]))
 
                     # Recommended actions
                     actions = result.get("recommended_actions", result.get("actions", []))
@@ -198,8 +313,8 @@ def render_ai_assistant() -> None:
                 elif submitted:
                     st.warning("Could not detect disease. Please check backend connectivity.")
 
-            elif submitted and not symptoms:
-                st.error("Please describe the symptoms before submitting.")
+            elif submitted and not symptoms.strip() and not image_file:
+                st.error("Describe the symptoms or upload a crop photo before submitting.")
 
     except requests.exceptions.RequestException as e:
         logger.error("Network error in AI assistant: %s", e)

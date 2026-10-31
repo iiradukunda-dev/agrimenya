@@ -1,46 +1,69 @@
 # Backend handoff for frontend integration
 
-This branch contains the backend changes from `feature/ci-logging-debug`, based on the locally available `origin/develop` commit. It is intended to let frontend work proceed against the updated API without taking the frontend files from the conflicted feature branch.
+This note summarizes the API contracts available in this repository. The
+running API's OpenAPI document at `/docs` is the source of truth for request
+and response fields.
 
-## What changed
+## API groups
 
-- Added the NISR official yield history, provenance and evaluation artifacts, yield intervals, explanations, and district priority evidence.
-- Added paginated zone and agricultural metric retrieval and zone identity safeguards. Use the paginated endpoints for large result sets; do not reproduce backend duplicate-resolution logic in the UI.
-- Expanded decision evidence, AI assistant context, planning/resource calculations, community posts and field observations, admin access, and communication workflows.
-- Added WhatsApp Cloud API webhook, opt-in/consent, templates, delivery, and admin APIs. The default provider is `mock`; live sending requires deliberate configuration and approved Meta assets/templates.
-- Added database migrations `0002` through `0013` alongside the existing `0001` migration. Apply them in order in an environment that has not already applied them; check the migration ledger first to avoid reapplying schema changes.
-
-## Main API groups
-
-The FastAPI app mounts these route groups (OpenAPI is available at `/docs` when the API is running):
-
-| Purpose | Prefix | Useful routes |
+| Purpose | Prefix | Examples |
 | --- | --- | --- |
-| Decision evidence | `/decision` | `GET /crops`, `GET /evidence-ranking`, `GET /district-ranking`, `POST /predict`, `GET /recommendations/{zone_id}` |
-| Segmentation and retrieval | `/segmentation` | `GET /districts`, `GET /zones/page`, `GET /zones/summary`, `GET /agri-metrics/page`, `GET /crop-comparison/{district}` |
-| Planning | `/planification` | `GET /resources/{zone_id}`, `POST /roadmap`, `GET /plans/{zone_id}` |
-| Assistant and crop health | `/chat` | `POST /`, `POST /disease-detect`, `POST /disease-detect-upload` |
-| Community | `/community` | register/login, `GET/POST /posts`, comments, field reports, moderation |
-| Communication and WhatsApp | `/communication`, `/webhooks` | contact/alerts, WhatsApp status/info, consent/subscriptions, delivery, `GET/POST /webhooks/whatsapp` |
-| Admin | `/auth/admin`, `/admin` | admin login/account and protected operational endpoints |
+| Decision evidence | `/decision` | Crops, evidence ranking, district ranking, predictions, recommendations |
+| Segmentation and retrieval | `/segmentation` | Districts, paginated zones and agricultural metrics, zone summaries, crop comparisons |
+| Planning | `/planification` | Zone resources, roadmaps, saved plans |
+| Assistant and crop health | `/chat` | Assistant, disease triage, uploaded-photo triage |
+| Community | `/community` | Accounts, posts, comments, field reports, moderation |
+| Communication and WhatsApp | `/communication`, `/webhooks` | Contacts, alerts, WhatsApp status, consent, delivery, webhook |
+| Administration | `/auth/admin`, `/admin` | Admin authentication and protected operational routes |
+| Live data | `/live-data` | Live-data and freshness status |
 
-Use the route schemas in `/docs` as the source of truth for request/response fields. Keep the UI's area, crop, and season context aligned with the IDs and filters returned by the API; display missing evidence as unavailable rather than substituting mock values.
+Use the route schemas in `/docs` to confirm exact names, parameters, and fields.
+Use paginated endpoints for large zone and metric collections, and preserve
+their pagination metadata and filters. Keep area, crop, and season context
+aligned with API IDs and filters.
 
-## Frontend integration notes
+The Decision page obtains crop options from `GET /decision/crops`, available
+seasons from `GET /decision/evidence-ranking?crop=...`, and district comparisons
+from `/decision/district-ranking`. A field assessment sends the selected
+`zone_id`, `crop`, and backend-listed `season` to `POST /decision/predict`;
+`area_cultivated` is optional and is sent only when the user requests a total
+output estimate. This POST requires the configured user API credential. After
+an assessment, the UI loads field guidance from
+`GET /decision/recommendations/{zone_id}`. Saved assessment actions are
+available from `/decision/priority-ranking?include_recommendations=true`.
+Show unavailable evidence as unavailable rather than generating substitute
+crops, seasons, rankings, or model/provenance claims.
 
-1. Configure the frontend API base URL to the backend URL for the current environment. Confirm `/health` and `/docs` load before diagnosing page-level failures.
-2. Use `GET /segmentation/zones/page` and `GET /segmentation/agri-metrics/page` for tables. Preserve the returned pagination metadata and filters rather than loading an unbounded list.
-3. For decision-making, get available crops/evidence from `/decision`; treat the returned historical NISR comparison as district-level evidence, not a farm forecast or causal claim.
-4. For planning, send the selected zone and actual user-entered quantities to `/planification`; label estimates and unavailable input data clearly. Do not display guessed/default costs as verified local prices.
-5. For community-authenticated routes, retain and send the community login token as the API specifies. Admin routes use the admin authentication flow. Avoid storing credentials or API secrets in frontend code.
-6. The WhatsApp UI should report the backend's current mode/status. `WHATSAPP_MODE=mock` does not send real messages. Live mode needs server-side Meta credentials, webhook configuration, approved templates where required, and recorded recipient opt-in.
+## Data and evidence handling
 
-## Configuration and rollout status
+- Display missing values as unavailable; do not substitute guessed or mock
+  values as verified observations.
+- NISR yield comparisons are historical district-level evidence, not farm
+  forecasts or causal claims.
+- Planning estimates depend on user-provided quantities. Label estimates and
+  unavailable costs clearly.
+- Satellite imagery is visual context only; it is not field-level crop,
+  condition, or suitability evidence. See
+  [satellite and community notes](./satellite_and_community.md).
 
-- Backend variable names and safe defaults are documented in [`../.env.example`](../.env.example). Never commit a populated `.env` or expose Meta/Groq/JWT secrets to the browser.
-- Migrations, model data, and runtime configuration are included in this branch; deployment still needs the target environment's database migration run and secrets configured.
-- This is a code handoff, not a claim that the remote deployment or every route has been smoke-tested. Validate the API and migrations in the target environment before relying on live data or sending messages.
+## Authentication and communication
 
-## Branch scope
+- Community routes use the community token and session rules documented by
+  the API. Admin routes use the separate admin authentication flow.
+- Never store backend credentials in frontend code or expose them to the
+  browser.
+- The default WhatsApp mode is `mock` and does not send messages. Live delivery
+  requires backend-only Meta credentials, webhook configuration, approved
+  templates where required, and recipient opt-in.
+- Google Community OAuth configuration and same-origin Render behavior are
+  documented in [production deployment](./production_deployment.md).
 
-This branch changes files under `backend/` plus this note. Frontend files are intentionally left for the frontend owner to reconcile and integrate against these API contracts. The existing feature PR remains separate and may still show conflicts.
+## Deployment and migrations
+
+The deployment configuration and required environment variables are documented
+in [production deployment](./production_deployment.md). Apply only migrations
+that are not already recorded by the target database, in numeric order through
+the latest migration present in `backend/app/db/migrations/`; do not rerun
+schema changes against an already-migrated database. A code handoff is not
+confirmation that the deployed API, database migrations, or every route has
+been smoke-tested.

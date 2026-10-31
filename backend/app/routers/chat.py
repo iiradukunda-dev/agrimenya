@@ -71,6 +71,11 @@ def chat(request: ChatRequest, http_request: Request, _: dict = Depends(require_
         request.zone_id, request.question, request.crop, request.season,
         [turn.model_dump() for turn in request.history], include_sources=True,
     )
+    evidence_gap = "The available records do not support a specific conclusion for this question."
+    if not evidence_sources and answer.casefold().startswith(evidence_gap.casefold()):
+        guidance = answer[len(evidence_gap):].lstrip(" \n:-")
+        if guidance:
+            answer = f"General guidance: {guidance}"
     answer_type = (
         "general_guidance" if answer.casefold().startswith("general guidance:") else
         "record_grounded" if evidence_sources else "insufficient_evidence"

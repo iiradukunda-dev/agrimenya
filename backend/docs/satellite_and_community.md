@@ -2,18 +2,29 @@
 
 ## Rwanda Space Agency map services
 
-The application currently does not show a satellite imagery overlay. The
-publicly reachable Rwanda Space Agency ArcGIS cached map service previously
-reviewed was an orthomosaic cache with a small extent near Kigali and no capture
-date in its layer summary. That is insufficient for reliable nationwide,
-seasonal crop monitoring, so it was removed from the farmer/planner map rather
-than presented as useful coverage. The app does not derive crop health,
-moisture, planting dates, or yield from satellite imagery.
+The segmentation location explorer displays Esri World Imagery by default.
+When the frontend has a referrer-restricted `GOOGLE_MAPS_API_KEY`, it uses
+Google Maps satellite imagery and loads NISR 2022 district, sector, cell, and
+village boundaries as the user zooms. Without that optional key, the existing
+Esri/Folium map remains available. The comparison map and other views retain
+their existing map behavior.
 
-Before adding imagery again, obtain a documented national/seasonal source with
-capture dates, licensing and attribution, suitable resolution, cloud/quality
-masks, and a validated method tied to crop and field boundaries. Treat any
-future imagery as dated evidence with provenance, not as a decorative layer or
+The public Rwanda Space Agency ArcGIS orthomosaic cache is an optional visual
+overlay in the existing Folium map. Its mapped footprint is limited near Kigali
+and its capture date is not available in its layer summary. Neither this cache
+nor the base satellite imagery provides nationwide, seasonal crop monitoring.
+The application does not derive crop health, moisture, planting dates, field
+boundaries, suitability, or yield from satellite imagery.
+
+Google Maps JavaScript API and billing must be enabled for the key. Configure
+the key only on the frontend service and restrict it to the deployed frontend
+HTTP referrer and required Maps API. It is a browser-visible map key, not a
+backend secret; do not reuse a privileged server key.
+
+Before using imagery as farming evidence, obtain a documented national/seasonal
+source with capture dates, licensing and attribution, suitable resolution,
+cloud/quality masks, and a validated method tied to crop and field boundaries.
+Treat imagery as dated evidence with provenance, not as a decorative layer or
 an automatic diagnosis. Contact the [Rwanda Space Agency](https://www.space.gov.rw/contact)
 to confirm current access and terms.
 

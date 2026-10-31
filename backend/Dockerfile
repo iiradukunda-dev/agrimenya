@@ -26,9 +26,9 @@ RUN groupadd --system app \
 
 USER app
 
-EXPOSE 8000
+EXPOSE 10000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-    CMD ["python", "-c", "import json,urllib.request; r=urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=4); d=json.load(r); raise SystemExit(0 if d.get('status') == 'ready' else 1)"]
+    CMD ["python", "-c", "import json,os,urllib.request; p=os.getenv('PORT','8000'); r=urllib.request.urlopen(f'http://127.0.0.1:{p}/health/ready', timeout=4); d=json.load(r); raise SystemExit(0 if d.get('status') == 'ready' else 1)"]
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

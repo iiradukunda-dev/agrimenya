@@ -24,6 +24,7 @@ from app.db import crud
 from app.services.admin_auth import (
     hash_password, send_community_reset_email, send_community_verification_email, verify_password,
 )
+from app.services.email_delivery import email_delivery_configured
 
 router = APIRouter(prefix="/community", tags=["Farmer Community"])
 logger = logging.getLogger(__name__)
@@ -139,6 +140,7 @@ class CommunityResendVerification(BaseModel):
 
 class CommunityGoogleCode(BaseModel):
     code: str = Field(min_length=32, max_length=256)
+    browser_binding: str = Field(min_length=32, max_length=128)
 
 
 def _google_oauth_enabled() -> bool:
@@ -168,7 +170,9 @@ def _google_username(email: str) -> str:
     return base if len(base) >= 3 else "farmer"
 
 
-def _google_frontend_redirect(*, code: str | None = None, error: str | None = None) -> RedirectResponse:
+def _google_frontend_redirect(
+    *, code: str | None = None, error: str | None = None, keep_handoff_cookie: bool = False,
+) -> RedirectResponse:
     parameters = {}
     if code:
         parameters["community_google_code"] = code
@@ -177,10 +181,18 @@ def _google_frontend_redirect(*, code: str | None = None, error: str | None = No
     target = settings.COMMUNITY_GOOGLE_CALLBACK_URL
     separator = "&" if "?" in target else "?"
     response = RedirectResponse(f"{target}{separator}{urlencode(parameters)}", status_code=303)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Referrer-Policy"] = "no-referrer"
     secure = settings.APP_ENV == "production"
     for cookie_name in ("community_google_state", "community_google_verifier", "community_google_nonce"):
         response.delete_cookie(cookie_name, path="/community/auth/google/callback", secure=secure,
                                httponly=True, samesite="lax")
+    if not keep_handoff_cookie:
+        response.delete_cookie(
+            "community_google_handoff", path="/",
+            domain=settings.COMMUNITY_GOOGLE_HANDOFF_COOKIE_DOMAIN or None,
+            secure=secure, httponly=True, samesite="lax",
+        )
     return response
 
 
@@ -203,6 +215,7 @@ def community_google_start():
     state = secrets.token_urlsafe(32)
     nonce = secrets.token_urlsafe(32)
     verifier = secrets.token_urlsafe(48)
+    handoff_binding = secrets.token_urlsafe(32)
     challenge = base64.urlsafe_b64encode(
         hashlib.sha256(verifier.encode("ascii")).digest()
     ).decode("ascii").rstrip("=")
@@ -224,6 +237,11 @@ def community_google_start():
                         ("community_google_nonce", nonce)):
         response.set_cookie(name, value, max_age=600, httponly=True, secure=secure,
                             samesite="lax", path="/community/auth/google/callback")
+    response.set_cookie(
+        "community_google_handoff", handoff_binding, max_age=120, httponly=True,
+        secure=secure, samesite="lax", path="/",
+        domain=settings.COMMUNITY_GOOGLE_HANDOFF_COOKIE_DOMAIN or None,
+    )
     return response
 
 
@@ -236,9 +254,10 @@ def community_google_callback(request: Request, code: str | None = None,
     expected_state = request.cookies.get("community_google_state", "")
     verifier = request.cookies.get("community_google_verifier", "")
     expected_nonce = request.cookies.get("community_google_nonce", "")
+    handoff_binding = request.cookies.get("community_google_handoff", "")
     if not code or not state or not expected_state or not secrets.compare_digest(state, expected_state):
         return _google_frontend_redirect(error="invalid_state")
-    if not verifier or not expected_nonce:
+    if not verifier or not expected_nonce or not handoff_binding:
         return _google_frontend_redirect(error="expired")
 
     try:
@@ -260,6 +279,7 @@ def community_google_callback(request: Request, code: str | None = None,
             google_tokens.get("id_token", ""),
             google.auth.transport.requests.Request(),
             audience=settings.GOOGLE_OAUTH_CLIENT_ID,
+            clock_skew_in_seconds=5,
         )
         if not secrets.compare_digest(str(google_claims.get("nonce", "")), expected_nonce):
             return _google_frontend_redirect(error="invalid_identity")
@@ -318,9 +338,10 @@ def community_google_callback(request: Request, code: str | None = None,
             return _google_frontend_redirect(error="account_unavailable")
         oauth_code = secrets.token_urlsafe(32)
         code_hash = hashlib.sha256(oauth_code.encode("ascii")).hexdigest()
+        binding_hash = hashlib.sha256(handoff_binding.encode("ascii")).hexdigest()
         expires_at = (datetime.now(timezone.utc) + timedelta(minutes=2)).isoformat()
-        crud.create_community_oauth_login_code(str(account["id"]), code_hash, expires_at)
-        return _google_frontend_redirect(code=oauth_code)
+        crud.create_community_oauth_login_code(str(account["id"]), code_hash, binding_hash, expires_at)
+        return _google_frontend_redirect(code=oauth_code, keep_handoff_cookie=True)
     except HTTPException:
         raise
     except Exception:
@@ -335,7 +356,8 @@ def community_google_exchange(payload: CommunityGoogleCode, request: Request):
     _rate_limit(_login_attempts, f"google-exchange:{ip}", 10)
     code_hash = hashlib.sha256(payload.code.encode("utf-8")).hexdigest()
     try:
-        account_id = crud.consume_community_oauth_login_code(code_hash)
+        binding_hash = hashlib.sha256(payload.browser_binding.encode("utf-8")).hexdigest()
+        account_id = crud.consume_community_oauth_login_code(code_hash, binding_hash)
         account = crud.get_community_account_by_id(account_id) if account_id else None
     except Exception as exc:
         logger.exception("Google Community sign-in code exchange failed")
@@ -356,8 +378,8 @@ def _send_verification(account: dict) -> dict:
     response = {"message": "Check your email for a verification link. You can request another link if it does not arrive."}
     reset_host = (urlparse(settings.COMMUNITY_PASSWORD_RESET_URL).hostname or "").casefold()
     local_development = settings.APP_ENV in {"development", "test"} and reset_host in {"localhost", "127.0.0.1"}
-    smtp_ready = bool(settings.SMTP_HOST and settings.EMAIL_FROM) and (bool(settings.SMTP_USER) == bool(settings.SMTP_PASSWORD))
-    if smtp_ready:
+    email_ready = email_delivery_configured()
+    if email_ready:
         try:
             send_community_verification_email(account["email"], account["display_name"], token)
             if local_development:
@@ -365,7 +387,7 @@ def _send_verification(account: dict) -> dict:
         except Exception:
             if not local_development:
                 raise
-            logger.exception("Development SMTP delivery failed; returning local verification link")
+            logger.exception("Development email delivery failed; returning local verification link")
             response["development_email_status"] = "failed"
     elif local_development:
         response["development_email_status"] = "not_configured"
@@ -543,9 +565,7 @@ def community_forgot_password(payload: CommunityForgotPassword, request: Request
         settings.APP_ENV in {"development", "test"}
         and reset_host in {"localhost", "127.0.0.1"}
     )
-    smtp_ready = bool(settings.SMTP_HOST and settings.EMAIL_FROM) and (
-        bool(settings.SMTP_USER) == bool(settings.SMTP_PASSWORD)
-    )
+    email_ready = email_delivery_configured()
     try:
         account = crud.get_community_account_by_email(payload.email)
         if account and account.get("is_active"):
@@ -560,7 +580,7 @@ def community_forgot_password(payload: CommunityForgotPassword, request: Request
                     settings.COMMUNITY_PASSWORD_RESET_URL.rstrip("?") + separator
                     + urlencode({"community_reset_token": token})
                 )
-            if smtp_ready:
+            if email_ready:
                 send_community_reset_email(account["email"], account["display_name"], token)
                 if local_development:
                     response["development_email_status"] = "accepted"

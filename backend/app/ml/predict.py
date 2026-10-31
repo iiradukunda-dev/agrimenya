@@ -262,6 +262,37 @@ def _load_official_evidence() -> list[dict]:
     return _official_evidence_cache
 
 
+def official_yield_observations(
+    *, crop: str | None = None, season: str | None = None, district: str | None = None,
+) -> list[dict]:
+    """Return bundled district-level NISR yield observations for filtering and comparison."""
+    rows = _load_official_evidence()
+    crop_key = crop.strip().casefold() if crop else None
+    season_key = season.strip().casefold() if season else None
+    district_key = district.strip().casefold() if district else None
+    observations = []
+    for row in rows:
+        if crop_key and str(row.get("crop", "")).strip().casefold() != crop_key:
+            continue
+        if season_key and str(row.get("season", "")).strip().casefold() != season_key:
+            continue
+        if district_key and str(row.get("district", "")).strip().casefold() != district_key:
+            continue
+        observations.append({
+            "id": "|".join(str(row.get(field, "")).strip() for field in ("district", "crop", "season")),
+            "district": row.get("district"),
+            "zones": {"district": row.get("district")},
+            "crop": row.get("crop"),
+            "season": row.get("season"),
+            "yield_actual": row.get("yield_kg_ha"),
+            "production_mt": row.get("production_mt"),
+            "area_cultivated": row.get("cultivated_area_ha"),
+            "harvested_area_ha": row.get("harvested_area_ha"),
+            "data_source": "official_nisr_sas",
+        })
+    return observations
+
+
 def _evidence_key(row: dict) -> tuple[str, str, str]:
     season = str(row.get("season", ""))
     code = _season_code(season)
