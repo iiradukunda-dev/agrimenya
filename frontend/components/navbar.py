@@ -581,19 +581,27 @@ def render_navbar(show_sidebar: bool = False) -> None:
       }
 
       /* Popover Dropdown Styling */
+      @keyframes ag-popover-enter {
+        from { opacity: 0; transform: translateY(-6px) scale(0.985); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
       div[data-testid="stPopoverBody"] {
         max-height: 520px !important;
-        border-radius: 16px !important;
+        border-radius: 14px !important;
         border: none !important;
-        background: #ffffff !important;
-        box-shadow: 0 16px 40px rgba(4, 31, 38, 0.14), 0 4px 12px rgba(2, 132, 199, 0.08) !important;
-        padding: 0.75rem 0.65rem !important;
+        background: rgba(255, 255, 255, 0.68) !important;
+        box-shadow: 0 8px 24px rgba(4, 31, 38, 0.08) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        padding: 0.55rem 0.5rem !important;
+        transform-origin: top right !important;
+        animation: ag-popover-enter 180ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
       }
       div[data-testid="stPopoverBody"] [data-testid="stPageLink"],
       div[data-testid="stPopoverBody"] [data-testid="stPageLink-NavLink"] {
-        min-height: 2.2rem !important;
-        padding: 0.4rem 0.85rem !important;
-        margin: 0.15rem 0 !important;
+        min-height: 2rem !important;
+        padding: 0.35rem 0.75rem !important;
+        margin: 0.1rem 0 !important;
         background: transparent !important;
         background-color: transparent !important;
         border: none !important;
@@ -625,6 +633,33 @@ def render_navbar(show_sidebar: bool = False) -> None:
         font-weight: 700 !important;
         font-size: 0.72rem !important;
         letter-spacing: 0.06em !important;
+      }
+      div[data-testid="stPopoverBody"] .ag-nav-action {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.45rem !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 0.4rem 0.75rem !important;
+        margin: 0.1rem 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        color: #0a1f26 !important;
+        font: 600 0.86rem 'Plus Jakarta Sans', sans-serif !important;
+        text-decoration: none !important;
+        box-shadow: none !important;
+        cursor: pointer !important;
+        transition: color 160ms ease, opacity 160ms ease !important;
+      }
+      div[data-testid="stPopoverBody"] .ag-nav-action:hover {
+        color: #0284c7 !important;
+        opacity: 0.82 !important;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        div[data-testid="stPopoverBody"] {
+          animation: none !important;
+        }
       }
 
       /* Hide any unwanted nested icons in links */
@@ -1324,10 +1359,10 @@ def render_navbar(show_sidebar: bool = False) -> None:
                     ):
                         st.divider()
                         st.caption(t("nav.operations_tools", "OPERATIONS & TOOLS"))
-                        st.page_link("pages/8_Planning.py", label=t("nav.planning_short", "season-plan"))
-                        st.page_link("pages/9_Communication.py", label=t("nav.comms_short", "field-alerts"))
-                        st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation_short", "zone-seg"))
-                        st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant_short", "AI-assist"))
+                        st.page_link("pages/8_Planning.py", label=t("nav.planning_short", "Plan"))
+                        st.page_link("pages/9_Communication.py", label=t("nav.comms_short", "Alert"))
+                        st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation_short", "Segment"))
+                        st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant_short", "Ask AI"))
                         st.divider()
                         st.caption(t("nav.platform_community", "PLATFORM & COMMUNITY"))
                         st.page_link("pages/10_Admin.py", label=t("nav.admin_short", "admin"))
@@ -1335,11 +1370,11 @@ def render_navbar(show_sidebar: bool = False) -> None:
                         st.page_link("pages/12_Community.py", label=t("nav.community_short", "community"))
                         st.page_link("pages/1_About.py", label=t("nav.about_short", "about"))
                         st.markdown(
-                            f'<a href="/app/static/offline.html" target="_self" style="text-decoration:none;display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;border-radius:8px;font-size:0.85rem;font-weight:600;color:#0284c7;background:rgba(2,132,199,0.08);border:1px solid rgba(2,132,199,0.22);margin-top:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> {t("nav.offline_hub", "Offline Field Hub")}</a>',
+                            f'<a class="ag-nav-action" href="/app/static/offline.html" target="_self">{t("nav.offline_hub", "Offline mode")}</a>',
                             unsafe_allow_html=True,
                         )
                         st.markdown(
-                            f'<button id="ag-nav-install-btn" onclick="if(window.parent&&window.parent.__agrimenya_trigger_install){{window.parent.__agrimenya_trigger_install();}}else{{const b=window.parent.document.getElementById(\'ag-pwa-install-badge\');if(b){{b.click();}}}}" style="width:100%;text-align:left;border:none;background:linear-gradient(135deg,#031d28 0%,#063143 100%);color:#ffffff;border:1.5px solid rgba(56,189,248,0.55);border-radius:8px;padding:0.45rem 0.75rem;margin-top:0.35rem;display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:0.85rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,0.35);transition:all 0.2s;"><img src="/app/static/ai_assistant_bulb.png" alt="logo" style="width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(56,189,248,0.9));"> <span style="color:#ffffff;">{t("nav.install_app", "Install agrimenya App")}</span></button>',
+                            f'<button class="ag-nav-action" id="ag-nav-install-btn" onclick="if(window.parent&&window.parent.__agrimenya_trigger_install){{window.parent.__agrimenya_trigger_install();}}else{{const b=window.parent.document.getElementById(\'ag-pwa-install-badge\');if(b){{b.click();}}}}">{t("nav.install_app", "Install")}</button>',
                             unsafe_allow_html=True,
                         )
                         st.divider()
@@ -1377,10 +1412,10 @@ def render_navbar(show_sidebar: bool = False) -> None:
                     st.page_link("pages/4_Zones.py", label=t("nav.zones", "Zones"))
                     st.page_link("pages/6_Decision_Making.py", label=t("nav.decisions", "Decisions"))
                     st.divider()
-                    st.page_link("pages/8_Planning.py", label=t("nav.planning_short", "season-plan"))
-                    st.page_link("pages/9_Communication.py", label=t("nav.comms_short", "field-alerts"))
-                    st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation_short", "zone-seg"))
-                    st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant_short", "AI-assist"))
+                    st.page_link("pages/8_Planning.py", label=t("nav.planning_short", "Plan"))
+                    st.page_link("pages/9_Communication.py", label=t("nav.comms_short", "Alert"))
+                    st.page_link("pages/5_Segmentation.py", label=t("nav.segmentation_short", "Segment"))
+                    st.page_link("pages/7_AI_Assistant.py", label=t("nav.ai_assistant_short", "Ask AI"))
                     st.page_link("pages/10_Admin.py", label=t("nav.admin_short", "admin"))
                     st.page_link("pages/99_Showcase.py", label=t("nav.data_guide_short", "data-guide"))
                     st.page_link("pages/12_Community.py", label=t("nav.community_short", "community"))
