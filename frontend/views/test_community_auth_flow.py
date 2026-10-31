@@ -124,4 +124,7 @@ def test_google_sign_in_starts_on_the_frontend_origin(
     assert "background: linear-gradient(135deg, #3394ff, #0875d1) !important" in login_css
     assert "body:has(.st-key-ag_centralized_login_col) .st-key-ag_desktop_navbar" in login_css
     assert "body:has(.st-key-ag_centralized_login_col) .st-key-ag_mobile_navbar" in login_css
-    assert "@media (max-height: 600px)" in login_css
+    assert "justify-content: flex-start !important" in login_css
+    assert "margin: 0 auto !important" in login_css
+    assert "@media (max-height: 900px)" in login_css
+    assert "min-height: 1.45rem !important" in login_css

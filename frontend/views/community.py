@@ -900,8 +900,11 @@ def render_community() -> None:
                     box-sizing: border-box !important;
                     width: min(100%, 360px) !important;
                     max-width: 360px !important;
-                    margin: 0.1rem auto 0 !important;
-                    padding: 0.65rem 0.8rem !important;
+                    min-height: 0 !important;
+                    height: auto !important;
+                    margin: 0 auto !important;
+                    padding: 0.45rem 0.8rem !important;
+                    justify-content: flex-start !important;
                 }
                 .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col [data-testid="stVerticalBlockBorderWrapper"] {
                     width: 100% !important;
@@ -913,7 +916,7 @@ def render_community() -> None:
                     box-shadow: none !important;
                 }
                 .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col [data-testid="stVerticalBlock"] {
-                    gap: 0.35rem !important;
+                    gap: 0.22rem !important;
                 }
                 .st-key-ag_centralized_login_col [data-testid="stMarkdownContainer"] div:has(> .ag-login-icon-box) {
                     display: none !important;
@@ -927,35 +930,53 @@ def render_community() -> None:
                     gap: 0 !important;
                 }
                 .st-key-ag_centralized_login_col [data-testid="stTabPanel"] {
-                    padding: 0.3rem 0 0 !important;
+                    padding: 0.1rem 0 0 !important;
                 }
                 .st-key-ag_centralized_login_col [data-testid="stForm"] [data-testid="stVerticalBlock"] {
-                    gap: 0.35rem !important;
+                    gap: 0.18rem !important;
                 }
                 .st-key-ag_centralized_login_col [data-testid="stTextInput"] input {
-                    min-height: 1.75rem !important;
+                    min-height: 1.55rem !important;
+                    padding-top: 0.15rem !important;
+                    padding-bottom: 0.15rem !important;
                 }
                 .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stFormSubmitButton"] button {
-                    min-height: 1.9rem !important;
+                    min-height: 1.7rem !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a {
+                    min-height: 1.75rem !important;
+                    padding-top: 0.15rem !important;
+                    padding-bottom: 0.15rem !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tab"] {
+                    min-height: 1.7rem !important;
+                    padding-top: 0.15rem !important;
+                    padding-bottom: 0.15rem !important;
+                }
+                .st-key-ag_centralized_login_col [data-testid="stPopover"] button {
+                    min-height: 1.45rem !important;
+                    margin-top: 0 !important;
                 }
                 .st-key-ag_centralized_login_col [data-testid="stMarkdownContainer"] div[style*="Administrator or agronomist?"] {
-                    margin-top: 0.2rem !important;
+                    margin-top: 0 !important;
                     font-size: 0.62rem !important;
                 }
-                @media (max-height: 600px) {
+                @media (max-height: 900px) {
                     .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col {
-                        margin-top: 0 !important;
-                        padding: 0.4rem 0.7rem !important;
+                        padding: 0.35rem 0.7rem !important;
                     }
                     .st-key-ag_centralized_login_col.st-key-ag_centralized_login_col [data-testid="stVerticalBlock"] {
-                        gap: 0.2rem !important;
+                        gap: 0.16rem !important;
                     }
                     .st-key-ag_centralized_login_col [data-testid="stTextInput"] input {
-                        min-height: 1.55rem !important;
+                        min-height: 1.45rem !important;
                     }
                     .st-key-ag_centralized_login_col [data-testid="stLinkButton"] a,
                     .st-key-ag_centralized_login_col [data-testid="stTabPanel"] [data-testid="stFormSubmitButton"] button {
-                        min-height: 1.7rem !important;
+                        min-height: 1.55rem !important;
+                    }
+                    .st-key-ag_centralized_login_col [data-testid="stTabs"] [role="tab"] {
+                        min-height: 1.5rem !important;
                     }
                 }
                 </style>
@@ -976,7 +997,7 @@ def render_community() -> None:
                 icon=sprout_icon,
                 accent_color="#10b981",
                 title_color="#14264a",
-                title_font_size="1.35rem",
+                title_font_size="1.1rem",
                 subtitle_color="#405477",
                 subtitle_font_size="0.72rem",
                 text_align="center",

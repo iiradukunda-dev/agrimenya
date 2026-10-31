@@ -287,3 +287,37 @@ def test_user_session_and_page_access_control():
             mock_st.switch_page.assert_called_once_with("Home.py")
             mock_st.markdown.assert_not_called()
             mock_st.button.assert_not_called()
+
+
+def test_logged_out_navbar_keeps_account_icon_visible_without_hover_effects():
+    from components.navbar import render_navbar
+
+    mock_st = MagicMock()
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
+    with patch("components.navbar.st", mock_st), \
+         patch("components.navbar.is_authenticated", return_value=False), \
+         patch("components.navbar.init_user_session"), \
+         patch("components.navbar.check_page_access"), \
+         patch("components.navbar._render_api_warmup"), \
+         patch("components.navbar.render_floating_ai_widget"), \
+         patch("components.navbar.render_pwa_support"), \
+         patch("components.navbar.render_language_selector"):
+        render_navbar()
+
+    css = "".join(
+        str(call.args[0])
+        for call in mock_st.markdown.call_args_list
+        if "<style>" in str(call.args[0])
+    )
+    account_links = [
+        call for call in mock_st.page_link.call_args_list
+        if call.args and call.args[0] == "pages/12_Community.py"
+    ]
+    assert account_links
+    assert all(call.kwargs.get("icon") == ":material/account_circle:" for call in account_links)
+    assert 'a[href*="12_Community"] [data-testid="stIconMaterial"]' in css
+    assert 'a[href*="12_Community"]:hover' in css
+    assert "transform: none !important" in css

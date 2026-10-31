@@ -1322,6 +1322,44 @@ def render_navbar(show_sidebar: bool = False) -> None:
         filter: none !important;
         transition: none !important;
       }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] {
+        box-sizing: border-box !important;
+        width: 2.35rem !important;
+        min-width: 2.35rem !important;
+        height: 2.35rem !important;
+        min-height: 2.35rem !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 50% !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]:hover,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"]):hover {
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: inherit !important;
+        filter: none !important;
+        transform: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] [data-testid="stIconMaterial"],
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] svg,
+      .st-key-ag_mobile_navbar a[href*="12_Community"] [data-testid="stIconMaterial"],
+      .st-key-ag_mobile_navbar a[href*="12_Community"] svg {
+        display: inline-flex !important;
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: #64748b !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]:hover [data-testid="stIconMaterial"],
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]:hover svg {
+        color: #64748b !important;
+        fill: currentColor !important;
+      }
       </style>
     """
     if show_sidebar:
