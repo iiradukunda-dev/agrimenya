@@ -7,6 +7,7 @@ Covers all backend modules documented in the frontend handoff:
 import csv
 import logging
 import time
+from concurrent.futures import Future, ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote, urlencode, urlparse
@@ -24,6 +25,8 @@ _BUNDLED_NISR_PATH = (
     / "data"
     / "nisr_official_yields_2022_2026.csv"
 )
+_API_WARMUP_EXECUTOR = ThreadPoolExecutor(max_workers=8)
+_TRANSIENT_API_STATUSES = {429, 502, 503, 504}
 
 
 class _ZoneDataUnavailable(RuntimeError):
@@ -38,9 +41,11 @@ def _authenticate_admin_session(widget_key: str) -> None:
         st.session_state["admin_login_error"] = "Enter both your administrator email and password."
         return
     try:
-        response = requests.post(
-            f"{API_BASE_URL}/auth/admin/login",
-            json={"email": email, "password": password}, timeout=15,
+        response = request_api(
+            "POST",
+            "/auth/admin/login",
+            json={"email": email, "password": password},
+            timeout=15,
         )
         response.raise_for_status()
         result = response.json()
@@ -99,7 +104,7 @@ def reset_admin_password(token: str, new_password: str) -> dict[str, Any] | None
 
 def _request_public_admin_auth(path: str, payload: dict[str, str]) -> dict[str, Any] | None:
     try:
-        response = requests.post(f"{API_BASE_URL}{path}", json=payload, timeout=15)
+        response = request_api("POST", path, json=payload, timeout=15)
         response.raise_for_status()
         errors = dict(st.session_state.get("admin_api_errors", {}))
         errors.pop(path, None)
@@ -135,6 +140,110 @@ def _user_headers() -> dict[str, str]:
 
 # ── Internal helpers ─────────────────────────────────────────────────
 
+def request_api(
+    method: str,
+    path: str,
+    *,
+    timeout: int = 10,
+    headers: dict[str, str] | None = None,
+    retry_on_transient: bool = True,
+    show_retry_status: bool = True,
+    **kwargs: Any,
+) -> requests.Response:
+    """Make a bounded, shared request to the configured backend."""
+    method = method.upper()
+    retryable_method = method == "GET"
+    attempts = (3 if retry_on_transient else 1) if retryable_method else 2
+    api_base_url = API_BASE_URL.rstrip("/")
+    url = (
+        path
+        if path.startswith(f"{api_base_url}/")
+        else f"{api_base_url}/{path.lstrip('/')}"
+    )
+    request_headers = {**_user_headers(), **(headers or {})}
+    retry_notice = None
+
+    for attempt in range(attempts):
+        attempt_timeout = timeout if attempt == 0 else max(timeout, 60)
+        try:
+            if method == "GET":
+                response = requests.get(
+                    url, headers=request_headers, timeout=attempt_timeout, **kwargs
+                )
+            elif method in {"POST", "PUT", "PATCH", "DELETE"}:
+                requester = getattr(requests, method.lower())
+                response = requester(
+                    url, headers=request_headers, timeout=attempt_timeout, **kwargs
+                )
+            else:
+                response = requests.request(
+                    method,
+                    url,
+                    headers=request_headers,
+                    timeout=attempt_timeout,
+                    **kwargs,
+                )
+            response.raise_for_status()
+            if retry_notice is not None:
+                retry_notice.empty()
+            return response
+        except requests.HTTPError as exc:
+            status_code = exc.response.status_code if exc.response is not None else None
+            should_retry = retryable_method and status_code in _TRANSIENT_API_STATUSES
+            if not should_retry or attempt + 1 >= attempts:
+                if retry_notice is not None:
+                    retry_notice.empty()
+                raise
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            should_retry = retryable_method or isinstance(exc, requests.ConnectTimeout)
+            if not should_retry or attempt + 1 >= attempts:
+                if retry_notice is not None:
+                    retry_notice.empty()
+                raise
+
+        logger.warning(
+            "Transient API %s failure for %s; retrying attempt %s/%s",
+            method,
+            path,
+            attempt + 2,
+            attempts,
+        )
+        if show_retry_status:
+            if retry_notice is None:
+                retry_notice = st.empty()
+            retry_notice.info(
+                f"The backend may be waking up. Retrying connection "
+                f"({attempt + 2}/{attempts})..."
+            )
+        time.sleep(1 if attempt == 0 else 3)
+
+    raise RuntimeError(f"API request {method} {path} exhausted its retry attempts")
+
+
+def warm_api_connection() -> bool:
+    """Warm the API without blocking a Streamlit page render."""
+    try:
+        response = request_api(
+            "GET",
+            "/health",
+            timeout=10,
+            show_retry_status=False,
+        )
+    except requests.RequestException as exc:
+        logger.warning("Background API warm-up failed: %s", type(exc).__name__)
+        return False
+    try:
+        return response.json().get("status") == "alive"
+    except (ValueError, AttributeError):
+        logger.warning("Background API warm-up returned an invalid health response")
+        return False
+
+
+def start_api_warmup() -> Future[bool]:
+    """Schedule an API warm-up on a shared worker thread."""
+    return _API_WARMUP_EXECUTOR.submit(warm_api_connection)
+
+
 def _get_api(
     path: str,
     timeout: int = 10,
@@ -142,37 +251,19 @@ def _get_api(
     *,
     retry_on_transient: bool = True,
 ) -> dict[str, Any] | list[Any] | None:
-    """GET from the API, retrying transient failures long enough for Render cold starts."""
-    url = f"{API_BASE_URL}{path}"
-    if params:
-        url = f"{url}?{urlencode({k: v for k, v in params.items() if v is not None}, doseq=True)}"
-    attempts = 2 if retry_on_transient else 1
-    for attempt in range(attempts):
-        attempt_timeout = max(timeout, 60) if attempt else timeout
-        try:
-            resp = requests.get(url, headers=_user_headers(), timeout=attempt_timeout)
-            resp.raise_for_status()
-            return resp.json()
-        except (requests.Timeout, requests.ConnectionError, requests.HTTPError) as exc:
-            status_code = (
-                exc.response.status_code
-                if isinstance(exc, requests.HTTPError) and exc.response
-                else None
-            )
-            transient = (
-                isinstance(exc, (requests.Timeout, requests.ConnectionError))
-                or status_code in {429, 502, 503, 504}
-            )
-            if transient and attempt + 1 < attempts:
-                logger.warning("Transient API GET %s failure; retrying: %s", url, exc)
-                time.sleep(0.5)
-                continue
-            logger.error("API GET %s failed: %s", url, exc)
-            return None
-        except (requests.RequestException, ValueError) as exc:
-            logger.error("API GET %s failed: %s", url, exc)
-            return None
-    return None
+    """GET from the backend, retrying transient failures for Render cold starts."""
+    try:
+        response = request_api(
+            "GET",
+            path,
+            timeout=timeout,
+            params=params,
+            retry_on_transient=retry_on_transient,
+        )
+        return response.json()
+    except (requests.RequestException, ValueError) as exc:
+        logger.error("API GET %s failed: %s", path, exc)
+        return None
 
 
 @st.cache_data(ttl=86400, show_spinner=False)
@@ -282,7 +373,13 @@ def _post_api(path: str, payload: dict | None = None, timeout: int = 15, params:
     if params:
         url = f"{url}?{urlencode({k: v for k, v in params.items() if v is not None}, doseq=True)}"
     try:
-        resp = requests.post(url, json=payload or {}, headers=_user_headers(), timeout=timeout)
+        resp = request_api(
+            "POST",
+            path,
+            json=payload or {},
+            timeout=timeout,
+            params=params,
+        )
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
@@ -293,7 +390,7 @@ def _post_api(path: str, payload: dict | None = None, timeout: int = 15, params:
 def _put_api(path: str, payload: dict[str, Any], timeout: int = 15) -> dict[str, Any] | None:
     """PUT request to the API using the configured user credential."""
     try:
-        resp = requests.put(f"{API_BASE_URL}{path}", json=payload, headers=_user_headers(), timeout=timeout)
+        resp = request_api("PUT", path, json=payload, timeout=timeout)
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
@@ -305,7 +402,7 @@ def _patch_api(path: str, payload: dict[str, Any] | None = None, timeout: int = 
     """PATCH request to the FastAPI backend, returns parsed JSON or None."""
     url = f"{API_BASE_URL}{path}"
     try:
-        resp = requests.patch(url, json=payload or {}, headers=_user_headers(), timeout=timeout)
+        resp = request_api("PATCH", path, json=payload or {}, timeout=timeout)
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
@@ -318,7 +415,9 @@ def _post_api_file(path: str, files: dict, data: dict | None = None, timeout: in
     """POST multipart/form-data to the FastAPI backend."""
     url = f"{API_BASE_URL}{path}"
     try:
-        resp = requests.post(url, files=files, data=data or {}, headers=_user_headers(), timeout=timeout)
+        resp = request_api(
+            "POST", path, files=files, data=data or {}, timeout=timeout
+        )
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
@@ -343,7 +442,7 @@ def get_kpis() -> dict[str, Any]:
         return {"total_zones": len(zones), "baseline_yield_kg_ha": None, "active_alerts": None}
     zones = get_zones()
     alerts = get_alerts()
-    data = _get_api("/health")
+    data = _get_api("/health/status")
     return {
         "total_zones": len(zones),
         "baseline_yield_kg_ha": data.get("baselines_overall_average") if isinstance(data, dict) else None,
@@ -990,7 +1089,6 @@ def send_alert(message: str, zone_id: str, severity: str, crop: str | None = Non
     if USE_MOCK_DATA:
         return None
 
-    url = f"{API_BASE_URL}/communication/alerts"
     payload = {
         "zone_id": zone_id,
         "message": message,
@@ -1004,12 +1102,14 @@ def send_alert(message: str, zone_id: str, severity: str, crop: str | None = Non
 
     try:
         headers = _admin_headers() if admin_session_authenticated() else _user_headers()
-        resp = requests.post(url, json=payload, headers=headers, timeout=15)
+        resp = request_api(
+            "POST", "/communication/alerts", json=payload, headers=headers, timeout=15
+        )
         resp.raise_for_status()
         get_alerts.clear()
         return resp.json()
     except Exception as e:
-        logger.error("Error sending alert to %s: %s", url, e)
+        logger.error("Error sending alert: %s", e)
         return None
 
 
@@ -1458,8 +1558,9 @@ def upload_nisr_release(filename: str, content: bytes, source_release: str, seas
         st.session_state["admin_api_errors"] = errors
         return None
     try:
-        response = requests.post(
-            f"{API_BASE_URL}{path}",
+        response = request_api(
+            "POST",
+            path,
             files={"file": (filename, content, "text/csv")},
             data={"source_release": source_release, "season": season},
             headers=_admin_headers(),
@@ -1486,8 +1587,8 @@ def upload_nisr_release(filename: str, content: bytes, source_release: str, seas
 
 
 def get_health() -> dict[str, Any] | None:
-    """GET /health: system health check."""
-    data = _get_api("/health")
+    """GET /health/status: detailed system health check."""
+    data = _get_api("/health/status")
     return data if isinstance(data, dict) else None
 
 
@@ -1499,9 +1600,9 @@ def _request_admin(method: str, path: str, payload: dict[str, Any] | None = None
         st.session_state["admin_api_errors"] = errors
         return None
     try:
-        response = requests.request(
+        response = request_api(
             method,
-            f"{API_BASE_URL}{path}",
+            path,
             json=payload,
             headers=_admin_headers(),
             timeout=timeout,

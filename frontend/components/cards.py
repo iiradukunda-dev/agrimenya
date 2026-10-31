@@ -5,6 +5,7 @@ from typing import Any
 
 import requests
 import streamlit as st
+from utils.api_client import request_api
 
 
 def pillar_card(
@@ -457,7 +458,7 @@ def render_centralized_login_card(
                 accent_color="#10b981",
             )
             try:
-                g_status = requests.get(f"{api_base_url}/community/auth/google/status", timeout=2)
+                g_status = request_api("GET", "/community/auth/google/status", timeout=2)
                 if g_status.status_code == 200 and g_status.json().get("enabled"):
                     st.link_button(
                         "Sign in or register with Google",
@@ -477,7 +478,7 @@ def render_centralized_login_card(
                     comm_sub = st.form_submit_button("Sign In →", type="primary", use_container_width=True)
                 if comm_sub:
                     try:
-                        resp = requests.post(f"{api_base_url}/community/login", json={"email": comm_email, "password": comm_pw}, timeout=15)
+                        resp = request_api("POST", "/community/login", json={"email": comm_email, "password": comm_pw}, timeout=15)
                         resp.raise_for_status()
                         res_data = resp.json()
                         st.session_state["community_access_token"] = res_data["access_token"]
@@ -496,8 +497,9 @@ def render_centralized_login_card(
                         st.error("Password must contain at least 12 characters.")
                     else:
                         try:
-                            resp = requests.post(
-                                f"{api_base_url}/community/register",
+                            resp = request_api(
+                                "POST",
+                                "/community/register",
                                 json={"display_name": reg_name.strip(), "email": reg_email.strip(), "password": reg_pw},
                                 timeout=15,
                             )
@@ -550,7 +552,7 @@ def render_centralized_login_card(
                             st.error(api_client.get_admin_api_error("/auth/admin/password/forgot") or "Could not request password reset.")
             with tab_comm:
                 try:
-                    g_status = requests.get(f"{api_base_url}/community/auth/google/status", timeout=2)
+                    g_status = request_api("GET", "/community/auth/google/status", timeout=2)
                     if g_status.status_code == 200 and g_status.json().get("enabled"):
                         st.link_button(
                             "Sign in or register with Google",
@@ -570,7 +572,7 @@ def render_centralized_login_card(
                         c_sub = st.form_submit_button("Sign In to Community →", type="primary", use_container_width=True)
                     if c_sub:
                         try:
-                            resp = requests.post(f"{api_base_url}/community/login", json={"email": c_email, "password": c_pw}, timeout=15)
+                            resp = request_api("POST", "/community/login", json={"email": c_email, "password": c_pw}, timeout=15)
                             resp.raise_for_status()
                             res_data = resp.json()
                             st.session_state["community_access_token"] = res_data["access_token"]
@@ -589,8 +591,9 @@ def render_centralized_login_card(
                             st.error("Password must contain at least 12 characters.")
                         else:
                             try:
-                                resp = requests.post(
-                                    f"{api_base_url}/community/register",
+                                resp = request_api(
+                                    "POST",
+                                    "/community/register",
                                     json={"display_name": r_name.strip(), "email": r_email.strip(), "password": r_pw},
                                     timeout=15,
                                 )

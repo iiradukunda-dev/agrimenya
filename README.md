@@ -188,6 +188,45 @@ frontend image excludes local environments, secrets, logs, and editor files;
 the backend build also excludes `.env` and offline datasets. Compose requires
 the backend `.env` file to exist before startup.
 
+### Render Free-tier health checks and keep-alive
+
+The backend exposes a fast, database-independent `GET /health` liveness check,
+`GET /health/status` for the Admin dashboard's detailed database and baseline
+status, and `GET /health/deep` for a bounded PostgreSQL `SELECT 1`. Configure
+the backend-only `SUPABASE_DB_URL` secret in Render with the Supabase PostgreSQL
+connection string; it is used only by the deep check and is not included in
+health responses.
+
+The GitHub Actions workflow at
+[`keep-alive.yml`](.github/workflows/keep-alive.yml) checks the API every ten
+minutes. After six failed liveness attempts it calls Render's service restart
+API, then checks health again. A separate daily run checks `/health/deep`.
+GitHub Actions secrets required by the workflow:
+
+- `BACKEND_URL`: backend base URL, such as `https://agrimenya-api-20261030.onrender.com`.
+- `RENDER_API_KEY`: a Render API key with permission to restart the backend service.
+- `RENDER_SERVICE_ID`: the backend service ID shown in its Render dashboard.
+
+The schedule runs only when this workflow is on the repository's default
+branch. Use **Actions → Render API keep-alive → Run workflow** to test it
+manually, or merge the workflow to the default branch to enable the schedule.
+Never put these credentials in the workflow file or repository variables.
+
+**This is a best-effort workaround, not an always-on guarantee.** Render Free
+services can sleep after 15 minutes without inbound traffic, restart at any
+time, and have a shared 750 free instance-hours/month workspace allowance.
+Pinging the API every ten minutes keeps that service active and can consume
+roughly 720 instance-hours/month by itself; the frontend is a separate Free
+service and can still sleep. Scheduled jobs can be delayed or missed, and
+Render can suspend services when the monthly allowance is exhausted. This
+workflow cannot guarantee uninterrupted service. Render Starter or higher is
+needed to avoid Free-tier idle spin-down; it does not prevent every possible
+outage or restart.
+
+For a new Blueprint deployment, Render prompts for environment values marked
+`sync: false` in [`render.yaml`](render.yaml). Enter credentials in Render
+only; generated `USER_API_KEY` and `JWT_SECRET` values are managed by Render.
+
 ## Local development without Docker
 
 Create `backend/.env` from `backend/.env.example`, then set `SUPABASE_URL` and
@@ -248,9 +287,9 @@ used as NISR baselines. Check
 the migration comments and `backend/docs/` before applying these changes to a
 production database.
 
-After startup, check `http://localhost:8000/health`. For prediction readiness,
-the database needs yield observations; the health endpoint reports whether
-they are present.
+After startup, check `http://localhost:8000/health` for API liveness and
+`http://localhost:8000/health/status` for database and baseline details.
+Prediction readiness depends on the available yield observations.
 
 ## Administrator access and recovery
 

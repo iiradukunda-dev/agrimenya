@@ -7,7 +7,9 @@ import requests
 import streamlit as st
 from components.errors import error_boundary
 from utils.config import API_BASE_URL
+from utils.api_client import request_api
 from utils.i18n import get_current_language
+
 
 COPY = {
     "en": {
@@ -158,7 +160,7 @@ COPY = {
 
 @st.cache_data(ttl=600, show_spinner=False)
 def _district_zones() -> list[dict]:
-    response = requests.get(f"{API_BASE_URL}/segmentation/zones", timeout=8)
+    response = request_api("GET", "/segmentation/zones", timeout=8)
     response.raise_for_status()
     return response.json()
 
@@ -213,7 +215,8 @@ def _field_reports(token: str, language: str) -> None:
                             st.error(str(exc) or c["valid_photo"])
                     if photo is None or files:
                         try:
-                            response = requests.post(
+                            response = request_api(
+                                "POST",
                                 f"{API_BASE_URL}/community/field-reports",
                                 data={"zone_id": zone["id"], "crop": crop.strip(), "observed_on": observed_on.isoformat(),
                                       "symptoms": symptoms.strip(), "notes": notes.strip()},
@@ -225,7 +228,7 @@ def _field_reports(token: str, language: str) -> None:
                         except requests.RequestException as exc:
                             st.error(_error_message(exc, language))
     try:
-        response = requests.get(f"{API_BASE_URL}/community/field-reports?limit=10", headers={"Authorization": f"Bearer {token}"}, timeout=10)
+        response = request_api("GET", f"{API_BASE_URL}/community/field-reports?limit=10", headers={"Authorization": f"Bearer {token}"}, timeout=10)
         response.raise_for_status()
         reports = response.json()
     except requests.RequestException as exc:
@@ -253,7 +256,8 @@ def _field_reports(token: str, language: str) -> None:
                     st.warning(c["observation_delete_confirm"])
                     if st.button(c["delete_observation"], key=f"delete_field_report_{report.get('id')}", type="primary"):
                         try:
-                            response = requests.delete(
+                            response = request_api(
+                                "DELETE",
                                 f"{API_BASE_URL}/community/field-reports/{report['id']}",
                                 headers={"Authorization": f"Bearer {token}"}, timeout=20,
                             )
@@ -267,7 +271,7 @@ def _field_reports(token: str, language: str) -> None:
 def _request(method: str, path: str, *, payload: dict | None = None):
     token = st.session_state.get("community_access_token", "")
     headers = {"Authorization": f"Bearer {token}"} if token else {}
-    response = requests.request(
+    response = request_api(
         method, f"{API_BASE_URL}{path}", json=payload, headers=headers, timeout=20
     )
     response.raise_for_status()
@@ -277,7 +281,7 @@ def _request(method: str, path: str, *, payload: dict | None = None):
 @st.cache_data(ttl=60, show_spinner=False)
 def _google_sign_in_enabled() -> bool:
     try:
-        response = requests.get(f"{API_BASE_URL}/community/auth/google/status", timeout=5)
+        response = request_api("GET", "/community/auth/google/status", timeout=5)
         response.raise_for_status()
         return bool(response.json().get("enabled"))
     except requests.RequestException:
@@ -809,7 +813,9 @@ def render_community() -> None:
 
     # WhatsApp Bot Access Banner
     try:
-        whatsapp_info = requests.get(f"{API_BASE_URL}/communication/whatsapp-info", timeout=5)
+        whatsapp_info = request_api(
+            "GET", "/communication/whatsapp-info", timeout=5
+        )
         if whatsapp_info.status_code == 200:
             wa_data = whatsapp_info.json()
             if wa_data.get("enabled"):
@@ -875,7 +881,7 @@ def render_community() -> None:
         comments_by_post = {}
         if posts:
             try:
-                response = requests.get(
+                response = request_api(
                     f"{API_BASE_URL}/community/comments",
                     params=[("post_ids", str(post["id"])) for post in posts if post.get("id")],
                     headers={"Authorization": f"Bearer {st.session_state['community_access_token']}"},

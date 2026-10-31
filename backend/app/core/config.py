@@ -22,6 +22,7 @@ def _env_bool(name: str, default: bool = False) -> bool:
 
 class Settings:
     SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
+    SUPABASE_DB_URL: str = os.getenv("SUPABASE_DB_URL", "")
     SUPABASE_SERVICE_ROLE_KEY: str = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
     SUPABASE_KEY: str = SUPABASE_SERVICE_ROLE_KEY or os.getenv("SUPABASE_KEY", "")
     ALLOWED_ORIGINS: list[str] = [

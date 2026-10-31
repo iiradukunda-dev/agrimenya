@@ -249,10 +249,11 @@ class TestApiClientExtended(unittest.TestCase):
             retry_on_transient=False,
         )
 
+    @patch("utils.api_client.st.empty")
     @patch("utils.api_client.time.sleep")
     @patch("utils.api_client.requests.get")
     def test_transient_api_failure_retries_with_cold_start_timeout(
-        self, mock_get, _mock_sleep
+        self, mock_get, _mock_sleep, _mock_empty
     ):
         response = MagicMock()
         response.json.return_value = {"status": "ok"}
@@ -263,6 +264,105 @@ class TestApiClientExtended(unittest.TestCase):
         self.assertEqual(
             [call.kwargs["timeout"] for call in mock_get.call_args_list],
             [10, 60],
+        )
+
+    @patch("utils.api_client.st.empty")
+    @patch("utils.api_client.time.sleep")
+    @patch("utils.api_client.requests.get")
+    def test_api_get_recovers_after_two_transient_failures(
+        self, mock_get, _mock_sleep, mock_empty
+    ):
+        response = MagicMock()
+        response.json.return_value = {"status": "alive"}
+        response.raise_for_status = MagicMock()
+        mock_get.side_effect = [
+            requests.Timeout("first cold-start attempt"),
+            requests.ConnectionError("second cold-start attempt"),
+            response,
+        ]
+
+        self.assertEqual(api_client._get_api("/health"), {"status": "alive"})
+        self.assertEqual(mock_get.call_count, 3)
+        self.assertEqual(
+            [call.kwargs["timeout"] for call in mock_get.call_args_list],
+            [10, 60, 60],
+        )
+        self.assertEqual(mock_empty.return_value.info.call_count, 2)
+
+    @patch("utils.api_client.requests.get")
+    def test_api_get_does_not_retry_client_errors(self, mock_get):
+        response = MagicMock()
+        response.status_code = 400
+        response.raise_for_status.side_effect = requests.HTTPError(
+            "Bad request", response=response
+        )
+        mock_get.return_value = response
+
+        self.assertIsNone(api_client._get_api("/health"))
+        mock_get.assert_called_once()
+
+    @patch("utils.api_client.st.empty")
+    @patch("utils.api_client.time.sleep")
+    @patch("utils.api_client.requests.get")
+    def test_api_get_retries_transient_server_status(
+        self, mock_get, _mock_sleep, _mock_empty
+    ):
+        unavailable = MagicMock()
+        unavailable.status_code = 503
+        unavailable.raise_for_status.side_effect = requests.HTTPError(
+            "Service unavailable", response=unavailable
+        )
+        healthy = MagicMock()
+        healthy.json.return_value = {"status": "alive"}
+        healthy.raise_for_status = MagicMock()
+        mock_get.side_effect = [unavailable, healthy]
+
+        self.assertEqual(api_client._get_api("/health"), {"status": "alive"})
+        self.assertEqual(mock_get.call_count, 2)
+
+    @patch("utils.api_client.time.sleep")
+    @patch("utils.api_client.requests.post")
+    def test_post_retries_only_when_connection_times_out_before_response(
+        self, mock_post, _mock_sleep
+    ):
+        response = MagicMock()
+        response.json.return_value = {"status": "created"}
+        response.raise_for_status = MagicMock()
+        mock_post.side_effect = [requests.ConnectTimeout("connect timed out"), response]
+
+        result = api_client.request_api("POST", "/community/posts", json={"body": "test"})
+
+        self.assertEqual(result.json(), {"status": "created"})
+        self.assertEqual(mock_post.call_count, 2)
+
+    @patch("utils.api_client.requests.post")
+    def test_non_idempotent_post_is_not_retried_after_read_timeout(self, mock_post):
+        mock_post.side_effect = requests.ReadTimeout("response timed out")
+
+        with self.assertRaises(requests.ReadTimeout):
+            api_client.request_api("POST", "/community/posts", json={"body": "test"})
+
+        mock_post.assert_called_once()
+
+    @patch("utils.api_client._get_api")
+    def test_detailed_health_uses_status_endpoint(self, mock_get):
+        mock_get.return_value = {"database_status": "ok"}
+
+        self.assertEqual(api_client.get_health(), {"database_status": "ok"})
+        mock_get.assert_called_once_with("/health/status")
+
+    @patch("utils.api_client.request_api")
+    def test_background_warmup_uses_lightweight_health_endpoint(self, mock_request):
+        response = MagicMock()
+        response.json.return_value = {"status": "alive"}
+        mock_request.return_value = response
+
+        self.assertTrue(api_client.warm_api_connection())
+        mock_request.assert_called_once_with(
+            "GET",
+            "/health",
+            timeout=10,
+            show_retry_status=False,
         )
 
     def test_recommendations_use_backend_saved_assessments_and_action_guidance(self):

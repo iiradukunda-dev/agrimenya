@@ -7,7 +7,7 @@ Audit performed 23 October 2026 against the running development API and the file
 - The API returned 1,246 `agri_metrics` rows. Each row matched `backend/data/agri_menya_real_data.csv` on district, crop, season, yield, production, and cultivated area: 1,246 of 1,246 exact matches.
 - The local source CSV has 1,253 rows. Its seven blank-yield rows are intentionally skipped by `backend/scripts/seed_real_data.py`.
 - The seed script describes this file as an extraction of Rwanda Seasonal Agricultural Survey (SAS) 2026 Season A/B data. This verifies the live values against the project’s declared seed source; it does not independently re-audit the original NISR report extraction.
-- Predictions use an observational district/crop baseline from database evidence, supplemented by bundled official NISR SAS history when no matching database row exists. `/health` reported `model_present: false`; there is no trained ML model serving predictions.
+- Predictions use an observational district/crop baseline from database evidence, supplemented by bundled official NISR SAS history when no matching database row exists. `/health/status` reports `model_present: false`; there is no trained ML model serving predictions.
 - The current `predictions` table retains crop, season, model version, priority, and output, but not evidence source, period, or scope. For older saved predictions, the exact evidence mix cannot be reconstructed from the saved prediction row alone. The zone UI labels this limitation. A new prediction response reports source details when available.
 
 ## Zone registry and maps

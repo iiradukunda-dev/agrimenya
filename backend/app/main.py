@@ -125,6 +125,15 @@ if IS_DEVELOPMENT:
 
 @app.get("/health")
 def health_check():
+    return {"status": "alive"}
+
+
+@app.get("/health/live")
+def liveness_check():
+    return {"status": "alive"}
+
+
+def _system_health_status() -> dict:
     database_status = "unavailable"
     bundled_baseline = Path(__file__).resolve().parent.parent / "data" / "nisr_official_yields_2022_2026.csv"
     has_baseline_rows = bundled_baseline.is_file() and bundled_baseline.stat().st_size > 0
@@ -161,15 +170,44 @@ def health_check():
     }
 
 
-@app.get("/health/live")
-def liveness_check():
-    return {"status": "alive"}
+@app.get("/health/status")
+def system_health_status():
+    return _system_health_status()
+
+
+@app.get("/health/deep")
+def deep_health_check():
+    import psycopg
+
+    if not settings.SUPABASE_DB_URL:
+        logging.getLogger(__name__).warning("Deep health database probe is not configured")
+        return JSONResponse(
+            status_code=503,
+            content={"status": "unhealthy", "database": "unreachable"},
+        )
+
+    try:
+        with psycopg.connect(
+            settings.SUPABASE_DB_URL,
+            connect_timeout=5,
+            options="-c statement_timeout=5000",
+        ) as connection:
+            connection.execute("SELECT 1").fetchone()
+    except psycopg.Error as exc:
+        logging.getLogger(__name__).warning(
+            "Deep health database probe failed: %s", type(exc).__name__
+        )
+        return JSONResponse(
+            status_code=503,
+            content={"status": "unhealthy", "database": "unreachable"},
+        )
+    return {"status": "healthy", "database": "reachable"}
 
 
 @app.get("/health/ready")
 def readiness_check():
     from fastapi import HTTPException
-    state = health_check()
+    state = _system_health_status()
     if state["database_status"] != "ok" or not state["baselines_present"]:
         raise HTTPException(status_code=503, detail={"status": "not_ready", **state})
     return {**state, "status": "ready"}

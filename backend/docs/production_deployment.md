@@ -45,11 +45,14 @@ requiring a custom domain or a cookie shared across `onrender.com` hostnames.
 
 The root `render.yaml` defines two free Docker web services in Frankfurt. From
 the Render Dashboard, choose **New > Blueprint**, connect this repository, and
-select the deployment branch. The Blueprint will prompt for backend-only
-Supabase and Resend credentials, sender identity, and Google OAuth credentials.
-Enter secrets directly in Render; they are not stored in `render.yaml`. Render
-generates separate `USER_API_KEY` and `JWT_SECRET` values and securely references
-the user API key from the frontend service.
+select the deployment branch. The Blueprint declares the production environment
+variable names and prompts for values marked `sync: false`, including the
+backend-only Supabase and Resend credentials, sender identity, and optional
+Google OAuth credentials. Enter credentials directly in Render; they are not
+stored in `render.yaml`. Render generates separate `USER_API_KEY` and
+`JWT_SECRET` values and securely references the user API key from the frontend
+service. Set `SUPABASE_DB_URL` to the Supabase PostgreSQL connection string for
+the daily deep database check.
 
 Render's API web service uses the default `PORT=10000`; the API image listens on
 Render's `PORT` and falls back to port 8000 for local Docker Compose.
@@ -71,8 +74,26 @@ verification, password recovery, and Supabase writes after deployment. Keep
 configured and tested. The API service remains publicly addressable on its
 Render URL, so retain its authentication and API-key protections.
 
-Render's free web services can spin down when idle, so the first request after
-inactivity may take longer; this setup does not remove that free-tier limitation.
+The backend Render health check uses `GET /health`, a fast liveness endpoint
+that does not depend on Supabase. `GET /health/status` retains the detailed
+database and baseline information displayed in Admin. `GET /health/deep` runs
+a bounded `SELECT 1` using `SUPABASE_DB_URL` and returns only a generic failure
+body if PostgreSQL is unreachable.
+
+The GitHub Actions workflow `.github/workflows/keep-alive.yml` pings `/health`
+every ten minutes, requests a Render restart after six failed attempts, and
+checks `/health/deep` daily. Configure the GitHub Actions secrets
+`BACKEND_URL`, `RENDER_API_KEY`, and `RENDER_SERVICE_ID`. GitHub scheduled
+workflows run from the repository's default branch; use workflow dispatch for
+testing before merging there.
+
+This is best-effort monitoring, not guaranteed uptime. Render Free services can
+sleep after 15 idle minutes, restart at any time, and share a 750
+instance-hours/month workspace allowance. Keeping the API warm can use about
+720 hours/month, while the separate frontend may still sleep; delayed or missed
+scheduled runs and exhausted free hours can still make the app unavailable.
+Render Starter or higher avoids Free-tier idle spin-down, but does not prevent
+every outage or restart.
 
 ## Start with the production Compose stack
 
@@ -99,7 +120,7 @@ docker compose --env-file .env.production -f docker-compose.production.yml up --
 docker compose --env-file .env.production -f docker-compose.production.yml ps
 ```
 
-Use the API hostname in the health check, for example `https://api.example.org/health`. The response should report `status: ok` and `database_status: ok`. Also open `https://app.example.org` in a browser and confirm the app loads. API documentation, OpenAPI, and the debug log route are disabled in production. Route writes and AI operations require the user key; admin routes require a named administrator session.
+Use the API hostname for liveness, for example `https://api.example.org/health`, and confirm `status: alive`. Then check `https://api.example.org/health/status` for `database_status: ok`. Also open `https://app.example.org` in a browser and confirm the app loads. API documentation, OpenAPI, and the debug log route are disabled in production. Route writes and AI operations require the user key; admin routes require a named administrator session.
 
 After startup, verify a controlled email-verification and password-reset
 message reaches its recipient, complete a fresh Google sign-in if enabled,

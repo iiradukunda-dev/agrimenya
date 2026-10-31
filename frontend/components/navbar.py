@@ -1,7 +1,9 @@
 """Unified centered floating pill navigation tailored to the agrimenya theme."""
+from concurrent.futures import Future
 import inspect
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
+from utils.api_client import start_api_warmup
 from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
 
@@ -108,8 +110,31 @@ def check_page_access() -> bool:
     return False
 
 
+def _render_api_warmup() -> None:
+    future = st.session_state.get("api_warmup_future")
+    if future is not None and not isinstance(future, Future):
+        return
+    if future is None:
+        future = start_api_warmup()
+        st.session_state["api_warmup_future"] = future
+
+    if future.done():
+        if future.result():
+            return
+        st.warning(
+            "The backend is not responding yet. It may be starting after an idle period."
+        )
+    else:
+        st.info("Connecting to the backend in the background; startup may take a minute.")
+
+    if st.button("Retry backend connection", key="api_warmup_retry") is True:
+        st.session_state["api_warmup_future"] = start_api_warmup()
+        st.info("Backend connection retry started.")
+
+
 def render_navbar(show_sidebar: bool = False) -> None:
     """Render the unified centered floating pill navigation styled with agrimenya theme tokens."""
+    _render_api_warmup()
     style = """
       <style>
       @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
