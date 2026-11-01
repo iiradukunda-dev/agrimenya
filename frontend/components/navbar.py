@@ -1356,30 +1356,6 @@ def render_navbar(show_sidebar: bool = False) -> None:
         opacity: 1 !important;
         color: #64748b !important;
       }
-      .st-key-ag_mobile_account [data-testid="stPageLink-NavLink"],
-      .st-key-ag_mobile_account [data-testid="stPageLink"] a {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 2.5rem !important;
-        min-width: 2.5rem !important;
-        height: 2.5rem !important;
-        min-height: 2.5rem !important;
-        padding: 0 !important;
-        border: 0 !important;
-        border-radius: 50% !important;
-        background: rgba(2, 132, 199, 0.09) !important;
-        box-shadow: none !important;
-      }
-      .st-key-ag_mobile_account [data-testid="stPageLink-NavLink"] [data-testid="stIconMaterial"],
-      .st-key-ag_mobile_account [data-testid="stPageLink"] [data-testid="stIconMaterial"] {
-        display: inline-flex !important;
-        width: 1.25rem !important;
-        height: 1.25rem !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        color: #64748b !important;
-      }
       .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]:hover [data-testid="stIconMaterial"],
       .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]:hover svg {
         color: #64748b !important;
@@ -1473,13 +1449,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 render_language_selector(sidebar=False)
 
     with st.container(key="ag_mobile_navbar"):
-        if auth:
-            mobile_menu_col, mobile_language_col = st.columns([1, 1], vertical_alignment="center")
-            mobile_account_col = None
-        else:
-            mobile_menu_col, mobile_account_col, mobile_language_col = st.columns(
-                [1, 1, 1], vertical_alignment="center"
-            )
+        mobile_menu_col, mobile_language_col = st.columns([1, 1], vertical_alignment="center")
         with mobile_menu_col:
             with st.popover("☰", help="Open navigation menu", width="content"):
                 st.page_link("Home.py", label=t("nav.home", "Home"))
@@ -1502,15 +1472,6 @@ def render_navbar(show_sidebar: bool = False) -> None:
                 else:
                     st.page_link("pages/9_Communication.py", label=t("nav.updates", "Updates"))
                     st.page_link("pages/1_About.py", label=t("nav.about", "About"))
-                    st.page_link(
-                        "pages/12_Community.py",
-                        label=" ",
-                        icon=":material/account_circle:",
-                        help=t("nav.farmer_login", "Farmer sign up or login"),
-                    )
-        if mobile_account_col is not None:
-            with mobile_account_col:
-                with st.container(key="ag_mobile_account"):
                     st.page_link(
                         "pages/12_Community.py",
                         label=" ",
