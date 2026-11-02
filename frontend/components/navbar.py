@@ -735,8 +735,8 @@ def render_navbar(show_sidebar: bool = False) -> None:
         align-items: center !important;
         justify-content: center !important;
       }
-      .st-key-ag_navbar [data-testid="column"]:has(.st-key-lang_cycle_btn) [data-testid="stVerticalBlock"],
-      .st-key-ag_mobile_navbar [data-testid="column"]:has(.st-key-lang_cycle_mobile_btn) [data-testid="stVerticalBlock"] {
+      .st-key-ag_navbar [data-testid="stColumn"]:has(.st-key-lang_cycle_btn) [data-testid="stVerticalBlock"],
+      .st-key-ag_mobile_navbar [data-testid="stColumn"]:has(.st-key-lang_cycle_mobile_btn) [data-testid="stVerticalBlock"] {
         justify-content: center !important;
       }
       .st-key-ag_mobile_navbar .st-key-lang_cycle_mobile_btn,
