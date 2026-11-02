@@ -1,6 +1,8 @@
 from contextlib import nullcontext
 from unittest.mock import MagicMock, patch
 
+import requests
+
 import views.community as community
 
 
@@ -10,6 +12,23 @@ def _mock_streamlit(query_params: dict) -> MagicMock:
     mock_st.query_params = query_params
     mock_st.button.return_value = False
     return mock_st
+
+
+def test_google_sign_in_status_retries_after_transient_api_failure():
+    response = MagicMock()
+    response.json.return_value = {"enabled": True}
+    community._google_sign_in_status.clear()
+    with patch.object(
+        community,
+        "request_api",
+        side_effect=[requests.Timeout(), response],
+    ) as request:
+        try:
+            assert community._google_sign_in_enabled() is False
+            assert community._google_sign_in_enabled() is True
+            assert request.call_count == 2
+        finally:
+            community._google_sign_in_status.clear()
 
 
 @patch("views.community.get_current_language", return_value="en")

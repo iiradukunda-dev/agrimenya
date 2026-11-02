@@ -279,11 +279,15 @@ def _request(method: str, path: str, *, payload: dict | None = None):
 
 
 @st.cache_data(ttl=60, show_spinner=False)
+def _google_sign_in_status() -> bool:
+    response = request_api("GET", "/community/auth/google/status", timeout=5)
+    response.raise_for_status()
+    return bool(response.json().get("enabled"))
+
+
 def _google_sign_in_enabled() -> bool:
     try:
-        response = request_api("GET", "/community/auth/google/status", timeout=5)
-        response.raise_for_status()
-        return bool(response.json().get("enabled"))
+        return _google_sign_in_status()
     except requests.RequestException:
         return False
 
