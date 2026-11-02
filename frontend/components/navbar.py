@@ -662,9 +662,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
       }
 
       /* Hide any unwanted nested icons in links */
-      [data-testid="stPageLink-NavLink"]:not(:has(a[href*="12_Community"])) span[data-testid="stIconMaterial"],
-      [data-testid="stPageLink-NavLink"]:not(:has(a[href*="12_Community"])) svg:not([class*="custom"]),
-      [data-testid="stPageLink-NavLink"]:not(:has(a[href*="12_Community"])) i {
+      [data-testid="stPageLink-NavLink"]:not(:has(a[href*="Community"])) span[data-testid="stIconMaterial"],
+      [data-testid="stPageLink-NavLink"]:not(:has(a[href*="Community"])) svg:not([class*="custom"]),
+      [data-testid="stPageLink-NavLink"]:not(:has(a[href*="Community"])) i {
         display: none !important;
       }
 
@@ -1314,7 +1314,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
         filter: none !important;
         transition: none !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] {
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="Community"] {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -1330,7 +1330,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
         box-shadow: none !important;
         transform: none !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]::before {
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="Community"]::before {
         content: "" !important;
         display: block !important;
         width: 1.35rem !important;
@@ -1341,12 +1341,12 @@ def render_navbar(show_sidebar: bool = False) -> None:
         opacity: 1 !important;
         pointer-events: none !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] [data-testid="stIconMaterial"],
-      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] svg {
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="Community"] [data-testid="stIconMaterial"],
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="Community"] svg {
         display: none !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]:hover,
-      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"]):hover {
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="Community"]:hover,
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Community"]):hover {
         border: 0 !important;
         background: transparent !important;
         box-shadow: none !important;
@@ -1354,10 +1354,10 @@ def render_navbar(show_sidebar: bool = False) -> None:
         filter: none !important;
         transform: none !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] [data-testid="stIconMaterial"],
-      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] svg,
-      .st-key-ag_mobile_navbar a[href*="12_Community"] [data-testid="stIconMaterial"],
-      .st-key-ag_mobile_navbar a[href*="12_Community"] svg {
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="Community"] [data-testid="stIconMaterial"],
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="Community"] svg,
+      .st-key-ag_mobile_navbar a[href*="Community"] [data-testid="stIconMaterial"],
+      .st-key-ag_mobile_navbar a[href*="Community"] svg {
         display: inline-flex !important;
         width: 1.25rem !important;
         height: 1.25rem !important;
@@ -1365,8 +1365,8 @@ def render_navbar(show_sidebar: bool = False) -> None:
         opacity: 1 !important;
         color: #64748b !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"]) [data-testid="stIconMaterial"],
-      .st-key-ag_mobile_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"]) [data-testid="stIconMaterial"] {
+      .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Community"]) [data-testid="stIconMaterial"],
+      .st-key-ag_mobile_navbar [data-testid="stPageLink"]:has(a[href*="Community"]) [data-testid="stIconMaterial"] {
         display: inline-flex !important;
         width: 1.25rem !important;
         height: 1.25rem !important;
@@ -1374,8 +1374,8 @@ def render_navbar(show_sidebar: bool = False) -> None:
         opacity: 1 !important;
         color: #64748b !important;
       }
-      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]:hover [data-testid="stIconMaterial"],
-      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]:hover svg {
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="Community"]:hover [data-testid="stIconMaterial"],
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="Community"]:hover svg {
         color: #64748b !important;
         fill: currentColor !important;
       }
