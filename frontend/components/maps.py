@@ -1,9 +1,11 @@
 """Shared interactive Folium map components for Rwanda agricultural views."""
 import html
+import logging
 import math
 import os
 from pathlib import Path
 
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
 try:
@@ -23,6 +25,10 @@ PRIORITY_COLORS = {
 RSA_ORTHOMOSAIC_TILES = (
     "https://portal.space.gov.rw/server/rest/services/Hosted/Ortho_Orthomosaic/"
     "MapServer/tile/{z}/{y}/{x}"
+)
+DISTRICT_BOUNDARIES_URL = (
+    "https://gis-server.statistics.gov.rw/server/rest/services/Hosted/"
+    "District_Boundary_2022/FeatureServer/0/query"
 )
 NISR_BOUNDARIES_URL = "https://gis-server.statistics.gov.rw/server/rest/services/Hosted"
 ADMIN_BOUNDARY_LEVELS = [
@@ -80,6 +86,7 @@ ESRI_BOUNDARIES_TILES = (
     "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/"
     "World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
 )
+logger = logging.getLogger(__name__)
 
 
 def google_maps_configured() -> bool:
@@ -191,6 +198,27 @@ def add_rsa_orthomosaic_layer(map_view) -> None:
     ).add_to(map_view)
 
 
+@st.cache_data(ttl=86400, show_spinner=False)
+def _load_priority_district_boundaries() -> dict | None:
+    """Load NISR's district outlines for the dashboard priority map."""
+    response = requests.get(
+        DISTRICT_BOUNDARIES_URL,
+        params={
+            "where": "1=1",
+            "outFields": "district,province",
+            "returnGeometry": "true",
+            "outSR": "4326",
+            "f": "geojson",
+        },
+        timeout=20,
+    )
+    response.raise_for_status()
+    payload = response.json()
+    if not isinstance(payload, dict) or payload.get("type") != "FeatureCollection":
+        raise ValueError("NISR returned invalid district boundary data")
+    return payload
+
+
 def render_priority_map(df, *, key: str = "priority_map") -> str | None:
     """Render priority markers and return the selected zone ID."""
     if df is None or not hasattr(df, "empty") or not hasattr(df, "iterrows"):
@@ -247,8 +275,39 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
         st.info("The interactive map is unavailable because its optional map components could not be loaded.")
         return None
 
-    m = create_rwanda_map()
+    m = create_rwanda_map(satellite_default=True, hybrid=True)
     add_rsa_orthomosaic_layer(m)
+    try:
+        boundaries = _load_priority_district_boundaries()
+    except (requests.RequestException, ValueError):
+        logger.exception("Unable to load district boundaries for the dashboard priority map")
+        boundaries = None
+        st.warning("District boundaries are temporarily unavailable; showing zone locations without outlines.")
+
+    if boundaries:
+        folium.GeoJson(
+            boundaries,
+            name="District boundaries",
+            style_function=lambda _: {
+                "color": "#f8fafc",
+                "weight": 1.8,
+                "fillColor": "#0284c7",
+                "fillOpacity": 0.14,
+            },
+            highlight_function=lambda _: {
+                "color": "#facc15",
+                "weight": 3.5,
+                "fillOpacity": 0.35,
+            },
+            tooltip=folium.GeoJsonTooltip(
+                fields=["district"],
+                aliases=["District:"],
+                labels=True,
+                sticky=True,
+            ),
+        ).add_to(m)
+        folium.FitBounds([[-2.85, 28.85], [-1.0, 30.9]]).add_to(m)
+
     for marker in markers:
         district = html.escape(marker["details"][0]["value"])
         crop = html.escape(marker["details"][1]["value"])
@@ -279,7 +338,9 @@ def render_priority_map(df, *, key: str = "priority_map") -> str | None:
 
     add_map_layer_control(m)
     st.caption(
-        f"Use the layer control to switch between street, satellite, and RSA imagery. {RSA_ORTHOMOSAIC_NOTE}"
+        "Satellite imagery and NISR 2022 district boundaries provide geographic context. "
+        "Use the layer control to switch basemaps or enable RSA imagery. "
+        f"{RSA_ORTHOMOSAIC_NOTE}"
     )
     click = st_folium(
         m,

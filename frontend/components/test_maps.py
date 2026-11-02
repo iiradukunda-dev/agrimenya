@@ -7,6 +7,13 @@ folium = pytest.importorskip("folium")
 
 from components import maps
 
+EXPECTED_MAP_LAYERS = {
+    "Street Map",
+    "Satellite (Clear Earth)",
+    "Roads & Place Labels",
+    "RSA orthomosaic",
+}
+
 
 def _tile_layer_names(map_view):
     return {
@@ -27,17 +34,72 @@ def test_priority_map_uses_shared_layers_and_keeps_marker_selection():
         "Production_MT": 12.5,
     }])
     streamlit_mock = MagicMock()
+    boundaries = {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "properties": {"district": "Kigali", "province": "Kigali City"},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [29.8, -1.9],
+                    [29.9, -1.9],
+                    [29.9, -2.0],
+                    [29.8, -2.0],
+                    [29.8, -1.9],
+                ]],
+            },
+        }],
+    }
 
     with patch.object(maps, "st", streamlit_mock), \
+         patch.object(maps, "google_maps_configured", return_value=False), \
+         patch.object(maps, "_load_priority_district_boundaries", return_value=boundaries), \
          patch.object(maps, "st_folium", return_value={"last_object_clicked": {"lat": -1.94, "lng": 29.87}}) as render_map:
         selected_id = maps.render_priority_map(points, key="test_priority_map")
 
     assert selected_id == "zone-1"
     map_view = render_map.call_args.args[0]
-    assert _tile_layer_names(map_view) == {"Street", "Satellite", "RSA orthomosaic"}
+    assert EXPECTED_MAP_LAYERS <= _tile_layer_names(map_view)
     assert any(isinstance(child, folium.map.LayerControl) for child in map_view._children.values())
     assert any(isinstance(child, folium.CircleMarker) for child in map_view._children.values())
+    assert any(
+        isinstance(child, folium.features.GeoJson) and child.layer_name == "District boundaries"
+        for child in map_view._children.values()
+    )
+    tile_layers = [
+        child for child in map_view._children.values()
+        if isinstance(child, folium.raster_layers.TileLayer)
+    ]
+    assert next(layer for layer in tile_layers if layer.layer_name == "Satellite (Clear Earth)").show
+    assert not next(layer for layer in tile_layers if layer.layer_name == "Street Map").show
     assert render_map.call_args.kwargs["height"] == 540
+
+
+def test_priority_map_uses_google_markers_when_configured():
+    points = pd.DataFrame([{
+        "id": "zone-1",
+        "Lat": -1.94,
+        "Lon": 29.87,
+        "District": "Kigali",
+        "Crop": "Maize",
+        "Priority": "High",
+        "Production_MT": 12.5,
+    }])
+    render_map = MagicMock(return_value={"zone_id": "zone-1"})
+
+    with patch.object(maps, "st", MagicMock()), \
+         patch.object(maps, "google_maps_configured", return_value=True), \
+         patch.object(maps, "render_google_map", render_map):
+        selected_id = maps.render_priority_map(points, key="test_google_priority_map")
+
+    assert selected_id == "zone-1"
+    marker = render_map.call_args.kwargs["markers"][0]
+    assert marker["id"] == "zone-1"
+    assert marker["lat"] == -1.94
+    assert marker["lng"] == 29.87
+    assert marker["color"] == maps.PRIORITY_COLORS["High"]
+    assert marker["details"][2] == {"label": "Estimated production", "value": "12.5 MT"}
 
 
 def test_segmentation_map_uses_shared_layers_and_district_interactions():
@@ -79,7 +141,7 @@ def test_segmentation_map_uses_shared_layers_and_district_interactions():
         )
 
     map_view = render_map.call_args.args[0]
-    assert _tile_layer_names(map_view) == {"Street", "Satellite", "RSA orthomosaic"}
+    assert EXPECTED_MAP_LAYERS <= _tile_layer_names(map_view)
     assert any(isinstance(child, folium.map.LayerControl) for child in map_view._children.values())
     assert any(isinstance(child, folium.features.GeoJson) for child in map_view._children.values())
     assert render_map.call_args.kwargs["returned_objects"] == []
