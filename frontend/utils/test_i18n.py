@@ -80,6 +80,12 @@ def test_compact_navbar_labels_are_translated():
             assert FALLBACK_TRANSLATIONS[lang].get(key)
 
 
+def test_navbar_about_label_omits_product_name():
+    assert FALLBACK_TRANSLATIONS["en"]["nav.about"] == "About"
+    assert FALLBACK_TRANSLATIONS["rw"]["nav.about"] == "Ibyerekeye"
+    assert FALLBACK_TRANSLATIONS["fr"]["nav.about"] == "À propos"
+
+
 def test_all_pages_translation_keys_exist():
     """Verify that all main application pages have corresponding translation keys."""
     page_keys = [
@@ -136,4 +142,3 @@ def test_dynamic_language_switching_across_all_pages():
 
     # Reset to English
     set_language("en")
-
