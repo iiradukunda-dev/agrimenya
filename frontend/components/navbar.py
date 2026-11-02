@@ -729,6 +729,10 @@ def render_navbar(show_sidebar: bool = False) -> None:
         margin: 0 !important;
         padding: 0 !important;
       }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar .st-key-lang_cycle_btn {
+        position: relative !important;
+        top: 8px !important;
+      }
       .st-key-ag_navbar [data-testid="column"]:has(.st-key-lang_cycle_btn),
       .st-key-ag_mobile_navbar [data-testid="column"]:has(.st-key-lang_cycle_mobile_btn) {
         align-self: center !important;
