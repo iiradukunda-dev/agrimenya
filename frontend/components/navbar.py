@@ -1315,6 +1315,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
         transition: none !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         box-sizing: border-box !important;
         width: 2.35rem !important;
         min-width: 2.35rem !important;
@@ -1326,6 +1329,21 @@ def render_navbar(show_sidebar: bool = False) -> None:
         background: transparent !important;
         box-shadow: none !important;
         transform: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]::before {
+        content: "" !important;
+        display: block !important;
+        width: 1.35rem !important;
+        height: 1.35rem !important;
+        flex: 0 0 1.35rem !important;
+        background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364758b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='8' r='3.2'/%3E%3Cpath d='M5.5 20a6.5 6.5 0 0 1 13 0'/%3E%3C/svg%3E") !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: none !important;
+      }
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] [data-testid="stIconMaterial"],
+      .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"] svg {
+        display: none !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar a[href*="12_Community"]:hover,
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"]):hover {
