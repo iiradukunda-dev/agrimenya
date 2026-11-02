@@ -1352,9 +1352,9 @@ def render_navbar(show_sidebar: bool = False) -> None:
       .st-key-ag_mobile_navbar a[href*="Community"] [data-testid="stIconMaterial"],
       .st-key-ag_mobile_navbar a[href*="Community"] svg {
         display: inline-flex !important;
-        width: 1.55rem !important;
-        height: 1.55rem !important;
-        font-size: 1.55rem !important;
+        width: 2.25rem !important;
+        height: 2.25rem !important;
+        font-size: 2.25rem !important;
         line-height: 1 !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -1365,15 +1365,15 @@ def render_navbar(show_sidebar: bool = False) -> None:
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        width: 1.55rem !important;
-        height: 1.55rem !important;
+        width: 2.25rem !important;
+        height: 2.25rem !important;
       }
       .st-key-ag_desktop_navbar .st-key-ag_navbar [data-testid="stPageLink"]:has(a[href*="Community"]) [data-testid="stIconMaterial"],
       .st-key-ag_mobile_navbar [data-testid="stPageLink"]:has(a[href*="Community"]) [data-testid="stIconMaterial"] {
         display: inline-flex !important;
-        width: 1.55rem !important;
-        height: 1.55rem !important;
-        font-size: 1.55rem !important;
+        width: 2.25rem !important;
+        height: 2.25rem !important;
+        font-size: 2.25rem !important;
         line-height: 1 !important;
         visibility: visible !important;
         opacity: 1 !important;
