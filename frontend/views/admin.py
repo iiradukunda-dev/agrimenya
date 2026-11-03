@@ -18,6 +18,15 @@ from utils.i18n import t
 logger = logging.getLogger(__name__)
 
 
+def _community_report_target_id(report: dict[str, Any], target_kind: str) -> Any:
+    target_id_field = {
+        "post": "post_id",
+        "comment": "comment_id",
+        "field_report": "field_report_id",
+    }[target_kind]
+    return report.get(target_id_field)
+
+
 @st.dialog("System Diagnostics & Raw Telemetry", width="large")
 def show_diagnostics_dialog(health: dict) -> None:
     """Popup modal dialog for deep diagnostics without page scrolling."""
@@ -738,7 +747,7 @@ def render_admin() -> None:
                             if col.button(label, key=f"comm_rep_{report['id']}_{act}"):
                                 res = api_client.moderate_community_content({
                                     "target_kind": target_kind,
-                                    "target_id": report.get("comment_id") or report.get("post_id"),
+                                    "target_id": _community_report_target_id(report, target_kind),
                                     "action": act,
                                     "report_id": report["id"],
                                     "report_action": "dismissed" if act == "dismiss" else "resolved",
