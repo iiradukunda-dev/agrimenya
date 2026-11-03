@@ -488,6 +488,21 @@ def _request(method: str, path: str, *, payload: dict | None = None):
     return response.json() if response.content else {}
 
 
+def _community_comments_for_posts(posts: list[dict], token: str) -> list[dict]:
+    post_ids = [str(post["id"]) for post in posts if post.get("id")]
+    if not post_ids:
+        return []
+    response = request_api(
+        "GET",
+        "/community/comments",
+        params=[("post_ids", post_id) for post_id in post_ids],
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=12,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
 @st.cache_data(ttl=60, show_spinner=False)
 def _google_sign_in_status() -> bool:
     response = request_api("GET", "/community/auth/google/status", timeout=5)
@@ -1370,14 +1385,10 @@ def render_community() -> None:
         comments_by_post = {}
         if posts:
             try:
-                response = request_api(
-                    f"{API_BASE_URL}/community/comments",
-                    params=[("post_ids", str(post["id"])) for post in posts if post.get("id")],
-                    headers={"Authorization": f"Bearer {st.session_state['community_access_token']}"},
-                    timeout=12,
+                comments = _community_comments_for_posts(
+                    posts, st.session_state["community_access_token"]
                 )
-                response.raise_for_status()
-                for comment in response.json():
+                for comment in comments:
                     comments_by_post.setdefault(str(comment.get("post_id")), []).append(comment)
             except requests.RequestException as exc:
                 st.error(_error_message(exc, language))

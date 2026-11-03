@@ -49,6 +49,25 @@ def test_community_username_conflict_is_localized_in_french():
     assert message == community.COPY["fr"]["profile_conflict"]
 
 
+def test_discussion_replies_use_the_shared_api_request_contract():
+    posts = [{"id": "post-one"}, {"id": "post-two"}, {"title": "missing id"}]
+    response = MagicMock()
+    response.json.return_value = [{"post_id": "post-one", "body": "Hello"}]
+
+    with patch.object(community, "request_api", return_value=response) as request:
+        comments = community._community_comments_for_posts(posts, "community-token")
+
+    assert comments == response.json.return_value
+    request.assert_called_once_with(
+        "GET",
+        "/community/comments",
+        params=[("post_ids", "post-one"), ("post_ids", "post-two")],
+        headers={"Authorization": "Bearer community-token"},
+        timeout=12,
+    )
+    response.raise_for_status.assert_called_once_with()
+
+
 def test_google_sign_in_status_retries_after_transient_api_failure():
     response = MagicMock()
     response.json.return_value = {"enabled": True}
