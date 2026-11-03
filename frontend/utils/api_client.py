@@ -260,35 +260,49 @@ def start_api_warmup() -> Future[bool]:
 def ensure_api_awake() -> None:
     """Wait for the sleeping API and database before submitting authentication."""
     with st.status(
-        "Starting the server. Keep this page open; after inactivity this can take a minute or two.",
+        "Connecting to the server. This may take a few minutes after inactivity.",
         expanded=True,
     ) as status:
-        try:
-            response = request_api(
-                "GET",
-                "/health/deep",
-                timeout=10,
-                show_retry_status=False,
-            )
-            health = response.json()
-        except requests.RequestException:
-            status.update(
-                label="The server is still waking up. Please wait a moment and try again.",
-                state="error",
-            )
-            raise
-        except ValueError as exc:
-            status.update(label="The server returned an invalid health response.", state="error")
-            raise requests.ConnectionError("The backend health response was invalid.") from exc
+        deadline = time.monotonic() + 180
+        while True:
+            try:
+                response = request_api(
+                    "GET",
+                    "/health/deep",
+                    timeout=10,
+                    retry_on_transient=False,
+                    show_retry_status=False,
+                )
+                health = response.json()
+            except requests.HTTPError as exc:
+                if exc.response is None or exc.response.status_code not in _TRANSIENT_API_STATUSES:
+                    status.update(
+                        label="The server could not complete its readiness check.",
+                        state="error",
+                    )
+                    raise
+            except (requests.ConnectionError, requests.Timeout):
+                pass
+            except ValueError as exc:
+                status.update(label="The server returned an invalid health response.", state="error")
+                raise requests.ConnectionError("The backend health response was invalid.") from exc
+            else:
+                if isinstance(health, dict) and health.get("status") == "healthy":
+                    status.update(label="Server ready. Continuing sign-in.", state="complete")
+                    return
 
-        if not isinstance(health, dict) or health.get("status") != "healthy":
-            status.update(
-                label="The server is awake but its database is not ready. Please try again shortly.",
-                state="error",
-            )
-            raise requests.ConnectionError("The backend database is not ready.")
+            if time.monotonic() >= deadline:
+                status.update(
+                    label="The server is taking longer than expected to start. Please try signing in again shortly.",
+                    state="error",
+                )
+                raise requests.ConnectionError("The backend did not become ready within 180 seconds.")
 
-        status.update(label="Server ready. Continuing sign-in.", state="complete")
+            status.update(
+                label="Waiting for the server and database to become ready...",
+                state="running",
+            )
+            time.sleep(5)
 
 
 def _get_api(

@@ -5,6 +5,7 @@ import logging
 import time
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
+from components.browser_keepalive import render_api_keepalive
 from utils.api_client import start_api_warmup
 from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
@@ -105,6 +106,7 @@ def _render_api_warmup() -> None:
 
 def render_navbar(show_sidebar: bool = False) -> None:
     """Render the unified centered floating pill navigation styled with agrimenya theme tokens."""
+    render_api_keepalive()
     _render_api_warmup()
     style = """
       <style>

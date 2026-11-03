@@ -260,6 +260,7 @@ class TestApiClientExtended(unittest.TestCase):
             "GET",
             "/health/deep",
             timeout=10,
+            retry_on_transient=False,
             show_retry_status=False,
         )
         status.update.assert_called_once_with(
@@ -275,13 +276,38 @@ class TestApiClientExtended(unittest.TestCase):
 
         with patch.object(api_client, "request_api", return_value=response), patch.object(
             api_client.st, "status", return_value=status_context
+        ), patch.object(api_client.time, "sleep"), patch.object(
+            api_client.time, "monotonic", side_effect=[0, 181]
         ):
             with self.assertRaises(requests.ConnectionError):
                 api_client.ensure_api_awake()
 
-        status.update.assert_called_once_with(
-            label="The server is awake but its database is not ready. Please try again shortly.",
-            state="error",
+        self.assertEqual(status.update.call_args.kwargs["state"], "error")
+        self.assertIn("taking longer than expected", status.update.call_args.kwargs["label"])
+
+    def test_authentication_retries_database_readiness_until_it_recovers(self):
+        unavailable = MagicMock()
+        unavailable.status_code = 503
+        waking_response = MagicMock()
+        waking_response.response = unavailable
+        ready_response = MagicMock()
+        ready_response.json.return_value = {"status": "healthy", "database": "reachable"}
+        status = MagicMock()
+        status_context = MagicMock()
+        status_context.__enter__.return_value = status
+
+        with patch.object(
+            api_client,
+            "request_api",
+            side_effect=[requests.HTTPError(response=unavailable), ready_response],
+        ) as request, patch.object(api_client.st, "status", return_value=status_context), patch.object(
+            api_client.time, "sleep"
+        ):
+            api_client.ensure_api_awake()
+
+        self.assertEqual(request.call_count, 2)
+        status.update.assert_called_with(
+            label="Server ready. Continuing sign-in.", state="complete"
         )
 
     @patch("utils.api_client.time.sleep")

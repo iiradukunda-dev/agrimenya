@@ -45,7 +45,11 @@ requiring a custom domain or a cookie shared across `onrender.com` hostnames.
 
 The root `render.yaml` defines two free Docker web services in Frankfurt. Free
 services can spin down after inactivity, delaying the first request while they
-start again. The GitHub Actions workflow at
+start again. While a visitor has the app open, the browser now requests the
+API liveness endpoint every five minutes to prevent the API from idling during
+active use. Authentication also waits for the API and database readiness check
+to pass before sending credentials. When nobody has the app open, the free
+services can still spin down; the GitHub Actions workflow at
 `.github/workflows/keep-alive.yml` sends concurrent health checks to both the
 API and Streamlit every 10 minutes, but scheduled runs are best-effort and do
 not guarantee that Free services stay awake. For consistently available
