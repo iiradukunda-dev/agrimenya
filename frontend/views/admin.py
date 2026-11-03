@@ -523,6 +523,8 @@ def render_admin() -> None:
                                 st.rerun()
                             else:
                                 st.error(api_client.get_admin_api_error("/communication/alerts") or "Failed to create alert.")
+                elif api_client.get_admin_api_error("/admin/zones"):
+                    st.error(f"Could not load zones for alert targeting: {api_client.get_admin_api_error('/admin/zones')}")
                 else:
                     st.error("Please register at least one agricultural zone before creating alerts.")
 
@@ -716,7 +718,11 @@ def render_admin() -> None:
             # Subtab 1: Open Reports
             with mod_tabs[0]:
                 if not reports:
-                    st.info("Zero open community reports. All content is clear.")
+                    error = api_client.get_admin_api_error("/community/moderation/reports")
+                    if error:
+                        st.error(f"Community reports could not load: {error}")
+                    else:
+                        st.info("Zero open community reports. All content is clear.")
                 for report in reports:
                     target_kind = (
                         "field_report" if report.get("field_report_id")
@@ -761,7 +767,11 @@ def render_admin() -> None:
             # Subtab 2: Field Observations
             with mod_tabs[1]:
                 if not field_reports:
-                    st.caption("No field observations submitted yet.")
+                    error = api_client.get_admin_api_error("/community/moderation/field-reports")
+                    if error:
+                        st.error(f"Field observations could not load: {error}")
+                    else:
+                        st.caption("No field observations submitted yet.")
                 for freport in field_reports:
                     reporter = freport.get("reporter") or {}
                     with st.container(border=True):
@@ -774,12 +784,17 @@ def render_admin() -> None:
                                 st.success("Observation deleted.")
                                 st.rerun()
                             else:
-                                st.error("Failed to delete observation.")
+                                path = f"/community/moderation/field-reports/{freport['id']}"
+                                st.error(api_client.get_admin_api_error(path) or "Failed to delete observation.")
 
             # Subtab 3: Discussions
             with mod_tabs[2]:
                 if not all_posts:
-                    st.caption("No community discussions yet.")
+                    error = api_client.get_admin_api_error("/community/moderation/posts")
+                    if error:
+                        st.error(f"Community discussions could not load: {error}")
+                    else:
+                        st.caption("No community discussions yet.")
                 for post in all_posts:
                     author = post.get("author") or {}
                     status_val = post.get("status")
@@ -805,7 +820,11 @@ def render_admin() -> None:
             # Subtab 4: Farmer Accounts
             with mod_tabs[3]:
                 if not comm_accounts:
-                    st.caption("No registered farmer community accounts yet.")
+                    error = api_client.get_admin_api_error("/community/moderation/accounts")
+                    if error:
+                        st.error(f"Farmer accounts could not load: {error}")
+                    else:
+                        st.caption("No registered farmer community accounts yet.")
                 for c_acc in comm_accounts:
                     with st.container(border=True):
                         c_info, c_action = st.columns([4, 1.2])

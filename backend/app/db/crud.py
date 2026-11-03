@@ -283,7 +283,7 @@ def create_community_report(reporter_id: str, *, reason: str,
 def list_community_reports(limit: int = 100) -> list[dict]:
     return _exec_query_get_data(
         get_supabase().table("community_reports")
-        .select("id,reporter_id,post_id,comment_id,reason,status,created_at,"
+        .select("id,reporter_id,post_id,comment_id,field_report_id,reason,status,created_at,"
                 "post:community_posts(title,body,author:community_accounts(display_name)),"
                 "comment:community_comments(body,author:community_accounts(display_name)),"
                 "field_report:field_reports(id,crop,district,observed_on,symptoms,notes,"

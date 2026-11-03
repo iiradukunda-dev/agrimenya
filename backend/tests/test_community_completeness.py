@@ -87,6 +87,25 @@ def test_community_field_report_filters_are_bounded_and_passed_to_crud(monkeypat
     assert invalid.status_code == 422
 
 
+def test_admin_report_list_includes_field_report_target_id(monkeypatch):
+    query = Mock()
+    for method in ("select", "eq", "order", "limit"):
+        getattr(query, method).return_value = query
+    query.execute.return_value.data = [{
+        "id": REPORT_ID,
+        "field_report_id": FIELD_REPORT_ID,
+        "field_report": {"id": FIELD_REPORT_ID},
+    }]
+    supabase = Mock()
+    supabase.table.return_value = query
+    monkeypatch.setattr(crud, "get_supabase", lambda: supabase)
+
+    reports = crud.list_community_reports()
+
+    assert reports[0]["field_report_id"] == FIELD_REPORT_ID
+    assert "field_report_id" in query.select.call_args.args[0]
+
+
 def test_community_notifications_are_scoped_to_the_signed_in_account(monkeypatch):
     headers = community_headers(monkeypatch)
     list_notifications = Mock(return_value=[{"id": "notification-id"}])
