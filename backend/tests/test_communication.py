@@ -119,6 +119,7 @@ def test_contact_message_reports_unavailable_without_smtp(monkeypatch):
 def test_contact_message_sends_to_support_inbox(monkeypatch):
     from app.core.config import settings
 
+    monkeypatch.setattr(settings, "APP_ENV", "production")
     monkeypatch.setattr(settings, "EMAIL_PROVIDER", "smtp")
     monkeypatch.setattr(settings, "SMTP_HOST", "smtp.example.com")
     monkeypatch.setattr(settings, "SMTP_PORT", 587)
@@ -144,6 +145,31 @@ def test_contact_message_sends_to_support_inbox(monkeypatch):
     message = smtp.send_message.call_args.args[0]
     assert message["To"] == "support@example.com"
     assert message["Reply-To"] == "farmer@example.com"
+
+
+def test_contact_message_remains_rate_limited_without_authentication(monkeypatch):
+    from app.core.config import settings
+    from app.routers import communication
+
+    monkeypatch.setattr(settings, "APP_ENV", "production")
+    communication._request_times.clear()
+
+    payload = {
+        "name": "A Farmer",
+        "email": "farmer@example.com",
+        "subject": "Help",
+        "message": "Please call me.",
+    }
+
+    with patch("app.routers.communication.email_delivery_configured", return_value=True), \
+         patch("app.routers.communication.send_email_message"):
+        responses = [
+            client.post("/communication/contact", json=payload)
+            for _ in range(communication._REQUESTS_PER_MINUTE + 1)
+        ]
+
+    assert all(response.status_code == 200 for response in responses[:communication._REQUESTS_PER_MINUTE])
+    assert responses[-1].status_code == 429
 
 
 def test_smtp_implicit_tls_does_not_starttls(monkeypatch):

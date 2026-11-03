@@ -403,8 +403,8 @@ def email_status(_: dict = Depends(require_user)) -> dict[str, Any]:
 
 
 @router.post("/contact")
-def submit_contact_message(payload: ContactMessageRequest, request: Request, _: dict = Depends(require_user)):
-    """Deliver the contact form to the configured support inbox."""
+def submit_contact_message(payload: ContactMessageRequest, request: Request):
+    """Deliver anonymous or signed-in feedback to the configured support inbox."""
     _limit_client_requests(request)
     if not email_delivery_configured() or not settings.DEFAULT_NOTIFICATION_EMAIL:
         raise HTTPException(

@@ -99,6 +99,10 @@ def test_production_validation_accepts_resend_without_smtp():
 
     production.validate_production()
 
+    production.JWT_SECRET = "replace-with-a-different-random-jwt-secret-at-least-32-characters"
+    with pytest.raises(RuntimeError, match="JWT_SECRET"):
+        production.validate_production()
+
 
 def test_gmail_smtp_requires_app_password_and_matching_sender(monkeypatch):
     monkeypatch.setattr(settings, "EMAIL_PROVIDER", "smtp")

@@ -17,7 +17,7 @@ DEFAULT_USER = {
 
 PUBLIC_PAGES = {
     "Home.py", "dashboard.py", "3_Dashboard.py", "9_Communication.py",
-    "12_Community.py", "1_About.py", "",
+    "11_Contact.py", "12_Community.py", "1_About.py", "",
 }
 
 
@@ -63,8 +63,8 @@ def get_current_page_file() -> str:
 def check_page_access() -> bool:
     """
     Enforce page access rules.
-    Unauthenticated users are allowed only on the public landing/navigation pages:
-    Home, Overview, Updates (Communication), and About.
+    Unauthenticated users are allowed on public landing, navigation, feedback,
+    and community pages.
     """
     if is_authenticated():
         return True
@@ -102,7 +102,7 @@ def check_page_access() -> bool:
         </div>
         <h2 style="color: #0f172a; font-size: 1.45rem; font-weight: 800; margin-bottom: 0.4rem;">Access Restricted</h2>
         <p style="color: #475569; font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem;">
-            This page is reserved for authenticated agricultural officers. Unauthenticated access is limited to <strong>Home</strong>, <strong>Overview</strong>, <strong>Updates</strong>, and <strong>About</strong>.
+            This page is reserved for authenticated agricultural officers. Unauthenticated access is limited to public pages such as <strong>Home</strong>, <strong>Overview</strong>, <strong>Updates</strong>, <strong>Feedback</strong>, and <strong>About</strong>.
         </p>
     </div>
     """, unsafe_allow_html=True)

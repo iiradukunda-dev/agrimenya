@@ -166,7 +166,12 @@ class Settings:
             missing.append("SUPABASE_SERVICE_ROLE_KEY (required for server-side database writes)")
         if len(self.USER_API_KEY) < 32:
             missing.append("USER_API_KEY (use a randomly generated value of at least 32 characters)")
-        if not self.JWT_SECRET or len(self.JWT_SECRET) < 32 or self.JWT_SECRET == "dev-secret-change-me":
+        jwt_secret = self.JWT_SECRET.strip()
+        if (
+            len(jwt_secret) < 32
+            or jwt_secret.lower() == "dev-secret-change-me"
+            or jwt_secret.lower().startswith(("replace-with-", "change-me", "changeme", "your-"))
+        ):
             missing.append("JWT_SECRET (use a randomly generated value of at least 32 characters)")
         if (not self.ALLOWED_ORIGINS or "*" in self.ALLOWED_ORIGINS or
                 any("localhost" in origin or "127.0.0.1" in origin for origin in self.ALLOWED_ORIGINS)):
