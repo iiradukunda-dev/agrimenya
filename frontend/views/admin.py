@@ -18,6 +18,15 @@ from utils.i18n import t
 logger = logging.getLogger(__name__)
 
 
+def _community_report_target_id(report: dict[str, Any], target_kind: str) -> Any:
+    target_id_field = {
+        "post": "post_id",
+        "comment": "comment_id",
+        "field_report": "field_report_id",
+    }[target_kind]
+    return report.get(target_id_field)
+
+
 @st.dialog("System Diagnostics & Raw Telemetry", width="large")
 def show_diagnostics_dialog(health: dict) -> None:
     """Popup modal dialog for deep diagnostics without page scrolling."""
@@ -514,6 +523,8 @@ def render_admin() -> None:
                                 st.rerun()
                             else:
                                 st.error(api_client.get_admin_api_error("/communication/alerts") or "Failed to create alert.")
+                elif api_client.get_admin_api_error("/admin/zones"):
+                    st.error(f"Could not load zones for alert targeting: {api_client.get_admin_api_error('/admin/zones')}")
                 else:
                     st.error("Please register at least one agricultural zone before creating alerts.")
 
@@ -707,25 +718,42 @@ def render_admin() -> None:
             # Subtab 1: Open Reports
             with mod_tabs[0]:
                 if not reports:
-                    st.info("Zero open community reports. All content is clear.")
+                    error = api_client.get_admin_api_error("/community/moderation/reports")
+                    if error:
+                        st.error(f"Community reports could not load: {error}")
+                    else:
+                        st.info("Zero open community reports. All content is clear.")
                 for report in reports:
-                    target_kind = "comment" if report.get("comment_id") else "post"
+                    target_kind = (
+                        "field_report" if report.get("field_report_id")
+                        else "comment" if report.get("comment_id") else "post"
+                    )
                     target = report.get(target_kind) or {}
-                    author = target.get("author") or {}
+                    author = target.get("author") or target.get("reporter") or {}
                     with st.container(border=True):
                         st.markdown(f"**Report Reason:** <span style='color:#f87171;'>{escape(str(report.get('reason', '')))}</span>", unsafe_allow_html=True)
                         st.caption(f"{target_kind.title()} by {author.get('display_name', 'Community Member')} &bull; Submitted {report.get('created_at', '')}")
                         if target_kind == "post":
                             st.markdown(f"**{target.get('title', 'Untitled')}**")
-                        st.write(target.get("body", ""))
+                        elif target_kind == "field_report":
+                            st.markdown(
+                                f"**{target.get('crop', 'Unknown crop')} · "
+                                f"{target.get('district', 'Unknown district')} · "
+                                f"{target.get('observed_on', '')}**"
+                            )
+                        st.write(target.get("body") or target.get("symptoms") or target.get("notes") or "")
 
                         action_cols = st.columns([1, 1, 1, 2])
-                        actions = [("Hide Content", "hide"), ("Delete Content", "delete"), ("Dismiss Report", "dismiss")]
+                        actions = (
+                            [("Delete Observation", "delete"), ("Dismiss Report", "dismiss")]
+                            if target_kind == "field_report"
+                            else [("Hide Content", "hide"), ("Delete Content", "delete"), ("Dismiss Report", "dismiss")]
+                        )
                         for col, (label, act) in zip(action_cols[:3], actions):
                             if col.button(label, key=f"comm_rep_{report['id']}_{act}"):
                                 res = api_client.moderate_community_content({
                                     "target_kind": target_kind,
-                                    "target_id": report.get("comment_id") or report.get("post_id"),
+                                    "target_id": _community_report_target_id(report, target_kind),
                                     "action": act,
                                     "report_id": report["id"],
                                     "report_action": "dismissed" if act == "dismiss" else "resolved",
@@ -739,7 +767,11 @@ def render_admin() -> None:
             # Subtab 2: Field Observations
             with mod_tabs[1]:
                 if not field_reports:
-                    st.caption("No field observations submitted yet.")
+                    error = api_client.get_admin_api_error("/community/moderation/field-reports")
+                    if error:
+                        st.error(f"Field observations could not load: {error}")
+                    else:
+                        st.caption("No field observations submitted yet.")
                 for freport in field_reports:
                     reporter = freport.get("reporter") or {}
                     with st.container(border=True):
@@ -752,12 +784,17 @@ def render_admin() -> None:
                                 st.success("Observation deleted.")
                                 st.rerun()
                             else:
-                                st.error("Failed to delete observation.")
+                                path = f"/community/moderation/field-reports/{freport['id']}"
+                                st.error(api_client.get_admin_api_error(path) or "Failed to delete observation.")
 
             # Subtab 3: Discussions
             with mod_tabs[2]:
                 if not all_posts:
-                    st.caption("No community discussions yet.")
+                    error = api_client.get_admin_api_error("/community/moderation/posts")
+                    if error:
+                        st.error(f"Community discussions could not load: {error}")
+                    else:
+                        st.caption("No community discussions yet.")
                 for post in all_posts:
                     author = post.get("author") or {}
                     status_val = post.get("status")
@@ -783,7 +820,11 @@ def render_admin() -> None:
             # Subtab 4: Farmer Accounts
             with mod_tabs[3]:
                 if not comm_accounts:
-                    st.caption("No registered farmer community accounts yet.")
+                    error = api_client.get_admin_api_error("/community/moderation/accounts")
+                    if error:
+                        st.error(f"Farmer accounts could not load: {error}")
+                    else:
+                        st.caption("No registered farmer community accounts yet.")
                 for c_acc in comm_accounts:
                     with st.container(border=True):
                         c_info, c_action = st.columns([4, 1.2])

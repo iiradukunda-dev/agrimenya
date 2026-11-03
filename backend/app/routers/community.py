@@ -16,6 +16,7 @@ from urllib.parse import urlencode, urlparse
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile, status
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field, field_validator
+from postgrest import exceptions as postgrest_exceptions
 
 from app.core.auth import create_token, require_admin, require_community, verify_token
 from app.core.audit import audit_admin_action
@@ -441,7 +442,7 @@ class ReportCreate(BaseModel):
 
 
 class ModerationUpdate(BaseModel):
-    target_kind: Literal["post", "comment"]
+    target_kind: Literal["post", "comment", "field_report"]
     target_id: UUID
     action: Literal["hide", "restore", "delete", "dismiss"]
     report_id: UUID | None = None
@@ -450,6 +451,30 @@ class ModerationUpdate(BaseModel):
 
 class CommunityAccountStatus(BaseModel):
     is_active: bool
+
+
+class FieldObservationReport(BaseModel):
+    reason: str = Field(min_length=3, max_length=500)
+
+    @field_validator("reason")
+    @classmethod
+    def reason_clean(cls, value: str) -> str:
+        value = _clean_text(value)
+        if len(value) < 3:
+            raise ValueError("A reason of at least three characters is required")
+        return value
+
+
+class CommunityProfileUpdate(BaseModel):
+    display_name: str = Field(min_length=3, max_length=30)
+
+    @field_validator("display_name")
+    @classmethod
+    def display_name_clean(cls, value: str) -> str:
+        value = _clean_text(value).lower()
+        if not re.fullmatch(r"[a-z0-9_]{3,30}", value):
+            raise ValueError("Username must be 3-30 characters using letters, numbers, and underscores")
+        return value
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
@@ -648,10 +673,15 @@ def comments_for_feed(post_ids: list[UUID] = Query(min_length=1, max_length=50),
 
 @router.get("/field-reports")
 def community_field_reports(limit: int = Query(default=10, ge=1, le=20),
+                           offset: int = Query(default=0, ge=0, le=10000),
+                           district: str | None = Query(default=None, max_length=80),
+                           crop: str | None = Query(default=None, max_length=50),
                            _: dict = Depends(require_community)):
     """Recent farmer observations, explicitly separate from official statistics."""
     try:
-        reports = crud.list_community_field_reports(limit)
+        reports = crud.list_community_field_reports(
+            limit, offset, district=district, crop=crop
+        )
         storage = crud.get_supabase().storage.from_(settings.COMMUNITY_PHOTO_BUCKET)
         for report in reports:
             path = report.pop("photo_path", None)
@@ -666,6 +696,27 @@ def community_field_reports(limit: int = Query(default=10, ge=1, le=20),
     except Exception as exc:
         logger.exception("Field observations could not be loaded")
         raise HTTPException(status_code=503, detail="Field observations are temporarily unavailable") from exc
+
+
+@router.post("/field-reports/{report_id}/report", status_code=status.HTTP_201_CREATED)
+def report_community_field_report(
+    report_id: UUID,
+    payload: FieldObservationReport,
+    account: dict = Depends(require_community),
+):
+    _rate_limit(_write_attempts, f"report:{account['account_id']}", 10, 86400)
+    report = crud.get_community_field_report(str(report_id))
+    if not report:
+        raise HTTPException(status_code=404, detail="Field observation not found")
+    if str(report.get("reporter_id")) == account["account_id"]:
+        raise HTTPException(status_code=400, detail="You cannot report your own field observation")
+    try:
+        return crud.create_community_report(
+            account["account_id"], reason=payload.reason, field_report_id=str(report_id)
+        )
+    except Exception as exc:
+        logger.exception("Field observation report could not be saved")
+        raise HTTPException(status_code=409, detail="This field observation may already have been reported") from exc
 
 
 @router.post("/field-reports", status_code=status.HTTP_201_CREATED)
@@ -759,6 +810,56 @@ def create_post(payload: PostCreate, account: dict = Depends(require_community))
     except Exception as exc:
         logger.exception("Community post could not be created")
         raise HTTPException(status_code=503, detail="Post could not be saved") from exc
+
+
+@router.patch("/profile")
+def update_community_profile(
+    payload: CommunityProfileUpdate,
+    account: dict = Depends(require_community),
+):
+    _rate_limit(_write_attempts, f"profile:{account['account_id']}", 10, 3600)
+    existing = crud.get_community_account_by_username(payload.display_name)
+    if existing and str(existing.get("id")) != account["account_id"]:
+        raise HTTPException(status_code=409, detail="That username is already in use")
+    try:
+        updated = crud.update_community_account_display_name(
+            account["account_id"], payload.display_name
+        )
+        if not updated:
+            raise HTTPException(status_code=404, detail="Community account not found")
+        return {"account": updated}
+    except HTTPException:
+        raise
+    except postgrest_exceptions.APIError as exc:
+        if getattr(exc, "code", None) == "23505":
+            raise HTTPException(status_code=409, detail="That username is already in use") from exc
+        logger.exception("Community profile could not be updated")
+        raise HTTPException(status_code=503, detail="Profile could not be updated") from exc
+    except Exception as exc:
+        logger.exception("Community profile could not be updated")
+        raise HTTPException(status_code=503, detail="Profile could not be updated") from exc
+
+
+@router.get("/notifications")
+def community_notifications(
+    limit: int = Query(default=10, ge=1, le=50),
+    account: dict = Depends(require_community),
+):
+    try:
+        return crud.list_community_notifications(account["account_id"], limit)
+    except Exception as exc:
+        logger.exception("Community notifications could not be loaded")
+        raise HTTPException(status_code=503, detail="Notifications are temporarily unavailable") from exc
+
+
+@router.post("/notifications/read")
+def mark_community_notifications_read(account: dict = Depends(require_community)):
+    try:
+        count = crud.mark_community_notifications_read(account["account_id"])
+        return {"marked_read": count}
+    except Exception as exc:
+        logger.exception("Community notifications could not be marked read")
+        raise HTTPException(status_code=503, detail="Notifications could not be updated") from exc
 
 
 @router.get("/posts/{post_id}/comments")
@@ -905,16 +1006,43 @@ def moderation_account_status(account_id: UUID, payload: CommunityAccountStatus,
 @router.patch("/moderation")
 def moderate(payload: ModerationUpdate, request: Request,
              admin: dict = Depends(require_admin)):
+    report = None
+    if payload.report_id:
+        report = crud.get_community_report(str(payload.report_id))
+        if not report or report.get("status") != "open":
+            raise HTTPException(status_code=404, detail="Open report not found")
+        reported_target_id = report.get(f"{payload.target_kind}_id")
+        if reported_target_id != str(payload.target_id):
+            raise HTTPException(status_code=400, detail="Report does not match the selected content")
+
     if payload.action == "dismiss":
         if not payload.report_id:
             raise HTTPException(status_code=400, detail="A report is required to dismiss")
         status_value = "unchanged"
+    elif payload.target_kind == "field_report":
+        if payload.action != "delete":
+            raise HTTPException(status_code=400, detail="Field observations can only be deleted or dismissed")
+        if not payload.report_id:
+            raise HTTPException(status_code=400, detail="A report is required to delete a field observation")
+        deleted = crud.delete_community_field_report(str(payload.target_id))
+        if not deleted:
+            raise HTTPException(status_code=404, detail="Field observation not found")
+        if deleted.get("photo_path"):
+            try:
+                crud.get_supabase().storage.from_(settings.COMMUNITY_PHOTO_BUCKET).remove(
+                    [deleted["photo_path"]]
+                )
+            except Exception:
+                logger.warning("Moderated field observation was deleted but its photo could not be removed")
+        status_value = "deleted"
     else:
         status_value = {"hide": "hidden", "restore": "published", "delete": "deleted"}[payload.action]
         if not crud.moderate_community_content(target_kind=payload.target_kind,
                                                target_id=str(payload.target_id), status=status_value):
             raise HTTPException(status_code=404, detail="Content not found")
-    if payload.report_id:
+    if payload.report_id and not (
+        payload.target_kind == "field_report" and payload.action == "delete"
+    ):
         if not crud.resolve_community_report(str(payload.report_id), admin.get("account_id"), payload.report_action):
             raise HTTPException(status_code=404, detail="Open report not found")
     audit_admin_action("community_moderation", "community_content", {

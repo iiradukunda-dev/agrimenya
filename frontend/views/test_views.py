@@ -9,10 +9,45 @@ from views.dashboard import render_dashboard
 from views.decide import render_decide
 from views.plan import render_plan
 from views.segment import render_segment
-from views.zones import render_zones
+from views.zones import _render_zone_weather, render_zones
 
 
 class TestViews(unittest.TestCase):
+
+    @patch("views.zones.render_browser_weather")
+    @patch("views.zones.st")
+    def test_zone_weather_uses_browser_fallback_when_server_weather_is_unavailable(
+        self, mock_st, mock_browser_weather
+    ):
+        _render_zone_weather("Musanze", {"source": "unavailable", "temperature_c": None})
+
+        mock_browser_weather.assert_called_once_with(
+            "Musanze", (-1.4995, 29.6335)
+        )
+        mock_st.metric.assert_not_called()
+
+    @patch("views.zones.render_browser_weather")
+    @patch("views.zones.st")
+    def test_zone_weather_does_not_replace_missing_precipitation_with_zero(
+        self, mock_st, mock_browser_weather
+    ):
+        mock_st.columns.return_value = [MagicMock(), MagicMock(), MagicMock()]
+        _render_zone_weather(
+            "Musanze",
+            {
+                "source": "open-meteo",
+                "temperature_c": 22.0,
+                "rainfall_mm": None,
+                "humidity_pct": 65,
+                "updated_at": "2026-10-30T12:00",
+                "timezone": "Africa/Kigali",
+            },
+        )
+
+        mock_st.columns.return_value[1].metric.assert_called_once_with(
+            "Precipitation", "Not available"
+        )
+        mock_browser_weather.assert_not_called()
 
     @patch("views.dashboard.st")
     @patch("views.dashboard.api_client")

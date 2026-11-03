@@ -22,7 +22,9 @@ def test_fetch_weather_requests_wind_speed_in_kilometers_per_hour():
             "precipitation": 0.0,
             "wind_speed_10m": 12.5,
             "time": "2026-10-30T12:00",
+            "interval": 900,
         },
+        "timezone": "Africa/Kigali",
         "daily": {
             "time": ["2026-10-30"],
             "temperature_2m_max": [25.0],
@@ -36,6 +38,10 @@ def test_fetch_weather_requests_wind_speed_in_kilometers_per_hour():
         weather = fetch_weather(district="Bugesera")
 
     assert weather["wind_kph"] == 12.5
+    assert weather["source"] == "open-meteo"
+    assert weather["interval_minutes"] == 15
+    assert weather["timezone"] == "Africa/Kigali"
+    assert "Model-based" in weather["summary"]
     assert get_weather.call_args.kwargs["params"]["wind_speed_unit"] == "kmh"
 
 

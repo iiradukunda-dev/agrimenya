@@ -25,7 +25,7 @@ EMAIL_FROM=<the same sending Gmail address>
 ```
 
 For the current Free Render deployment, configure `EMAIL_PROVIDER=resend`, a Resend API key, and a sender such as `no-reply@<your-verified-domain>` in the backend service. Add the DNS records Resend provides and wait for domain verification before sending. Save the variables and wait for redeploy; the Admin System Health tab reports configuration problems without revealing credentials. Then request a setup link from **Forgot password?** for the already-created administrator account.
-- Optional Google Community sign-in: set backend-only `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, `GOOGLE_OAUTH_REDIRECT_URI`, and `COMMUNITY_GOOGLE_CALLBACK_URL`. Register the redirect URI exactly in Google Cloud Console. With Docker Compose or the Render configuration below, route the OAuth start and callback through the frontend hostname and use the Community page on that same hostname; leave the cookie domain unset. Apply migrations `0016` through `0018` in numeric order before enabling the updated API. Google-verified emails can create a farmer account; an existing account is automatically linked only when Google controls the email domain (Gmail or a matching Google Workspace hosted domain). Leave credentials unset to hide the Google button.
+- Optional Google Community sign-in: set backend-only `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, `GOOGLE_OAUTH_REDIRECT_URI`, and `COMMUNITY_GOOGLE_CALLBACK_URL`. Register the redirect URI exactly in Google Cloud Console. With Docker Compose or the Render configuration below, route the OAuth start and callback through the frontend hostname and use the Community page on that same hostname; leave the cookie domain unset. Apply migrations `0016` through `0018` for Google sign-in and `0019` before enabling the current Community profile, reply-notification, and field-report moderation features. Google-verified emails can create a farmer account; an existing account is automatically linked only when Google controls the email domain (Gmail or a matching Google Workspace hosted domain). Leave credentials unset to hide the Google button.
 - `ALLOWED_ORIGINS`: exact allowed browser origins, including scheme and port.
 - `ALLOWED_HOSTS`: exact API hostnames accepted by the service. Include the service hostname and `127.0.0.1` for the container health probe.
 - `GROQ_API_KEY` and `LLM_PROVIDER=groq`: configure the optional Groq chat provider on the backend only. The default model is `openai/gpt-oss-20b`; the grounded local responder remains active if the key is absent or the API is unavailable. Do not expose the provider key to Streamlit or the browser.
@@ -43,9 +43,26 @@ paths to the API service. The browser uses the Streamlit hostname for the whole
 login flow, keeping the short-lived HttpOnly handoff cookie on one origin without
 requiring a custom domain or a cookie shared across `onrender.com` hostnames.
 
-The root `render.yaml` defines two free Docker web services in Frankfurt. From
-the Render Dashboard, choose **New > Blueprint**, connect this repository, and
-select the deployment branch. The Blueprint will prompt for backend-only
+The root `render.yaml` defines two free Docker web services in Frankfurt. Free
+services can spin down after inactivity, delaying the first request while they
+start again. While a visitor has the app open, the browser now requests the
+API liveness endpoint every five minutes to prevent the API from idling during
+active use. Authentication also waits for the API and database readiness check
+to pass before sending credentials. When nobody has the app open, the free
+services can still spin down; the GitHub Actions workflow at
+`.github/workflows/keep-alive.yml` sends concurrent health checks to both the
+API and Streamlit every 10 minutes, but scheduled runs are best-effort and do
+not guarantee that Free services stay awake. For consistently available
+services without idle spin-down, upgrade both services to a paid Render plan.
+
+The keep-alive workflow requires the `BACKEND_URL` GitHub Actions secret. To
+enable its automatic API restart when health checks fail, also configure
+`RENDER_API_KEY` and `RENDER_SERVICE_ID`. Its Streamlit health URL is the
+deployed frontend URL; update it in the workflow if the frontend service name
+changes.
+
+From the Render Dashboard, choose **New > Blueprint**, connect this repository,
+and select the deployment branch. The Blueprint will prompt for backend-only
 Supabase and Resend credentials, sender identity, and Google OAuth credentials.
 Enter secrets directly in Render; they are not stored in `render.yaml`. Render
 generates separate `USER_API_KEY` and `JWT_SECRET` values and securely references
@@ -65,14 +82,14 @@ The Google Community callback is
 `https://agrimenya-app-20261030.onrender.com/Community`.
 
 Before enabling Google sign-in, apply migrations `0016` through `0018` to the
-intended Supabase project. Verify account registration, Google sign-in, email
-verification, password recovery, and Supabase writes after deployment. Keep
+intended Supabase project. Apply migration `0019_community_completeness.sql`
+before using Community profile edits, in-app reply notifications, field-report
+filters, or field-observation moderation. Verify account registration, Google
+sign-in, email verification, password recovery, and Community writes after
+deployment. Keep
 `WHATSAPP_MODE=mock` unless live Meta credentials and webhooks have been
 configured and tested. The API service remains publicly addressable on its
 Render URL, so retain its authentication and API-key protections.
-
-Render's free web services can spin down when idle, so the first request after
-inactivity may take longer; this setup does not remove that free-tier limitation.
 
 ## Start with the production Compose stack
 
@@ -126,7 +143,7 @@ provider credentials. Keep the environment file readable only by the
 deployment operator. Back it up only through an approved encrypted
 secret-management process.
 
-For Google sign-in, register `https://<APP_DOMAIN>/community/auth/google/callback` as the exact authorized redirect URI in Google Cloud Console. Apply migrations through `0018` to the intended Supabase project before deploying the matching code. For a new database, apply all migrations in numeric order. After deployment, test sign-in in a fresh browser session.
+For Google sign-in, register `https://<APP_DOMAIN>/community/auth/google/callback` as the exact authorized redirect URI in Google Cloud Console. Apply migrations through `0019` to the intended Supabase project before deploying the matching code. For a new database, apply all migrations in numeric order. After deployment, test sign-in in a fresh browser session.
 
 ## Operational notes
 
@@ -136,9 +153,10 @@ For Google sign-in, register `https://<APP_DOMAIN>/community/auth/google/callbac
 - Put the API behind an HTTPS reverse proxy and set `ALLOWED_HOSTS` to the externally visible API host.
 - Serve the frontend through the root Compose `pwa-gateway` on port 8501. Terminate public TLS at the ingress/reverse proxy and preserve `X-Forwarded-Proto: https` to the gateway. The gateway must serve `/sw.js`, `/manifest.json`, and `/offline.html` from the frontend static assets on the same origin; do not expose the Streamlit port directly for PWA use. iOS Add to Home Screen and Chromium install prompts require a secure public HTTPS origin.
 - Back up Supabase data and validate RLS policies before deploying schema or credential changes.
-- Before launch, run all applicable migrations through `0018`, verify service-role execution and RLS behavior in staging, test verification/reset mail to a controlled inbox, confirm an HTTPS browser/API flow, and record a successful Supabase backup plus restore drill. `/health` cannot prove backups, DNS, email delivery, or Meta approval.
+- Before launch, run all applicable migrations through `0019`, verify service-role execution and RLS behavior in staging, test verification/reset mail to a controlled inbox, confirm an HTTPS browser/API flow, and record a successful Supabase backup plus restore drill. `/health` cannot prove backups, DNS, email delivery, or Meta approval.
 - Apply `app/db/migrations/0008_admin_accounts.sql` and `0009_farmer_community.sql` using the Supabase SQL editor or deployment migration runner. Provision the first administrator from a trusted backend host with `cd backend` then `python scripts/create_admin.py`; the script prompts for the password without echoing it. After that, use Admin → Access Management to invite or disable accounts. Lost administrator passwords are recovered through a 30-minute, single-use email link; reset increments the account session version and invalidates existing sessions. Administrator routes use named accounts; do not configure or rely on a shared `ADMIN_API_KEY`.
 - Community registration requires a one-time email verification link, expires after 24 hours, and sign-in is denied until verified. Existing accounts must request a verification email after migration `0015`; confirm mail delivery before applying it to a live community. Password recovery uses a 30-minute, single-use email link. Community throttles use Supabase-backed shared fixed windows across API workers; retain edge-level controls as a second boundary. Roles remain self-reported and need independent verification for any privileged service. Publish community standards/privacy notices before public launch. Satellite imagery is not currently shown because the reviewed public mosaic had limited, undated coverage. See `satellite_and_community.md`.
+- Community profile, reply notifications, and observation reports require migration `0019_community_completeness.sql`. Reply notifications are in-app and appear only while a member is signed in; they are not email or push notifications. Community field observations remain separate from official NISR data, and only member-submitted observations are exposed in the Community feed.
 - Authentication currently uses short-lived bearer tokens held in Streamlit server session state. Secure persistent `HttpOnly` cookie sign-in is not implemented: the browser talks to Streamlit while Streamlit makes server-side API requests, so API cookies would not automatically accompany those requests. Do not extend token lifetime or persist bearer tokens in browser storage as a workaround. Persistent sign-in requires an intentional same-origin session/BFF design with CSRF protection and a deployment proxy.
 - Live WhatsApp stays unavailable until the business sender is approved, webhook verification and delivery callbacks work over public HTTPS, approved templates are configured, and an opt-in test is confirmed end to end. Keep `WHATSAPP_MODE=mock` until those external checks are complete.
 - If the recovery mailbox is unavailable, an operator with trusted shell access and server-side database credentials can run `python scripts/reset_admin_password.py admin@example.org`; it also revokes existing sessions. Apply rate limits for `/auth/admin/*` at the HTTPS proxy as well, because the API's emergency local throttle is per process.

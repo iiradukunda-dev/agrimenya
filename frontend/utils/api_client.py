@@ -27,7 +27,7 @@ _BUNDLED_NISR_PATH = (
 )
 _API_WARMUP_EXECUTOR = ThreadPoolExecutor(max_workers=8)
 _TRANSIENT_API_STATUSES = {502, 503, 504}
-_RETRY_BACKOFF_SECONDS = (2, 4, 8, 10, 10, 10, 10)
+_RETRY_BACKOFF_SECONDS = (2, 4)
 
 
 class _ZoneDataUnavailable(RuntimeError):
@@ -42,6 +42,7 @@ def _authenticate_admin_session(widget_key: str) -> None:
         st.session_state["admin_login_error"] = "Enter both your administrator email and password."
         return
     try:
+        ensure_api_awake()
         response = request_api(
             "POST",
             "/auth/admin/login",
@@ -55,6 +56,11 @@ def _authenticate_admin_session(widget_key: str) -> None:
         st.session_state["admin_identity"] = result.get("admin", {})
         st.session_state.pop("admin_login_error", None)
     except requests.RequestException as exc:
+        if exc.response is None:
+            st.session_state["admin_login_error"] = (
+                "The server is waking up or not ready. Wait a little, then try signing in again."
+            )
+            return
         detail = None
         if exc.response is not None:
             try:
@@ -145,7 +151,7 @@ def request_api(
     method: str,
     path: str,
     *,
-    timeout: int = 10,
+    timeout: int | tuple[int, int] = 10,
     headers: dict[str, str] | None = None,
     retry_on_transient: bool = True,
     show_retry_status: bool = True,
@@ -153,7 +159,7 @@ def request_api(
 ) -> requests.Response:
     """Make a shared backend request with Render cold-start recovery."""
     method = method.upper()
-    attempts = 8 if retry_on_transient else 1
+    attempts = 3 if retry_on_transient else 1
     api_base_url = API_BASE_URL.rstrip("/")
     url = (
         path
@@ -164,7 +170,11 @@ def request_api(
     retry_status = None
 
     for attempt in range(attempts):
-        request_timeout = timeout if isinstance(timeout, tuple) else (10, 30)
+        request_timeout = (
+            timeout
+            if isinstance(timeout, tuple) or attempt == 0
+            else max(timeout, 60)
+        )
         try:
             if method == "GET":
                 response = requests.get(url, headers=request_headers, timeout=request_timeout, **kwargs)
@@ -188,7 +198,7 @@ def request_api(
                     retry_status.update(label="Backend request failed", state="error")
                 raise
         except requests.ConnectionError:
-            should_retry = method in {"GET", "POST"}
+            should_retry = method == "GET"
             if not should_retry or attempt + 1 >= attempts:
                 if retry_status is not None:
                     retry_status.update(label="Backend request failed", state="error")
@@ -210,11 +220,11 @@ def request_api(
         if show_retry_status:
             if retry_status is None:
                 retry_status = st.status(
-                    "Waking up the server, this can take up to a minute...",
+                    "Waking up the server; this may take a couple of minutes...",
                     expanded=True,
                 )
             retry_status.update(
-                label=("Waking up the server, this can take up to a minute... "
+                label=("Waking up the server; this may take a couple of minutes... "
                        f"Attempt {attempt + 2}/{attempts}"),
                 state="running",
             )
@@ -245,6 +255,54 @@ def warm_api_connection() -> bool:
 def start_api_warmup() -> Future[bool]:
     """Schedule an API warm-up on a shared worker thread."""
     return _API_WARMUP_EXECUTOR.submit(warm_api_connection)
+
+
+def ensure_api_awake() -> None:
+    """Wait for the sleeping API and database before submitting authentication."""
+    with st.status(
+        "Connecting to the server. This may take a few minutes after inactivity.",
+        expanded=True,
+    ) as status:
+        deadline = time.monotonic() + 180
+        while True:
+            try:
+                response = request_api(
+                    "GET",
+                    "/health/deep",
+                    timeout=10,
+                    retry_on_transient=False,
+                    show_retry_status=False,
+                )
+                health = response.json()
+            except requests.HTTPError as exc:
+                if exc.response is None or exc.response.status_code not in _TRANSIENT_API_STATUSES:
+                    status.update(
+                        label="The server could not complete its readiness check.",
+                        state="error",
+                    )
+                    raise
+            except (requests.ConnectionError, requests.Timeout):
+                pass
+            except ValueError as exc:
+                status.update(label="The server returned an invalid health response.", state="error")
+                raise requests.ConnectionError("The backend health response was invalid.") from exc
+            else:
+                if isinstance(health, dict) and health.get("status") == "healthy":
+                    status.update(label="Server ready. Continuing sign-in.", state="complete")
+                    return
+
+            if time.monotonic() >= deadline:
+                status.update(
+                    label="The server is taking longer than expected to start. Please try signing in again shortly.",
+                    state="error",
+                )
+                raise requests.ConnectionError("The backend did not become ready within 180 seconds.")
+
+            status.update(
+                label="Waiting for the server and database to become ready...",
+                state="running",
+            )
+            time.sleep(5)
 
 
 def _get_api(
@@ -1302,8 +1360,11 @@ def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
         ]
         temp = current.get("temperature_2m")
         hum = current.get("relative_humidity_2m")
-        precip = current.get("precipitation") if current.get("precipitation") is not None else current.get("rain", 0.0)
+        precip = current.get("precipitation")
+        if precip is None:
+            precip = current.get("rain")
         wind = current.get("wind_speed_10m")
+        interval = current.get("interval")
         return {
             "district": district,
             "source": "Open-Meteo Live API",
@@ -1314,7 +1375,9 @@ def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
             "rainfall_mm": precip,
             "wind_kph": wind,
             "weather_code": current.get("weather_code"),
-            "summary": f"Live weather snapshot for {district}",
+            "interval_minutes": interval / 60 if isinstance(interval, (int, float)) else None,
+            "timezone": payload.get("timezone"),
+            "summary": f"Open-Meteo model-based weather estimate for {district} district centre.",
             "updated_at": current.get("time") or time.strftime("%Y-%m-%d %H:%M"),
             "forecast": forecast,
         }
@@ -1325,10 +1388,14 @@ def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
 
 @st.cache_data(ttl=120, show_spinner=False)
 def get_weather(district: str) -> dict[str, Any] | None:
-    """Live weather data for a district with seamless backend & direct Open-Meteo fallback."""
+    """Fetch district weather, using Open-Meteo directly if the backend cannot."""
     data = None
     try:
-        data = _get_api(f"/live/weather/{quote(district, safe='')}", timeout=5)
+        data = _get_api(
+            f"/live/weather/{quote(district, safe='')}",
+            timeout=5,
+            retry_on_transient=False,
+        )
     except Exception:
         data = None
 

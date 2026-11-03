@@ -41,7 +41,9 @@ class TestApiClientExtended(unittest.TestCase):
                 "wind_speed_10m": 12.5,
                 "weather_code": 1,
                 "time": "2026-10-30T12:00",
+                "interval": 900,
             },
+            "timezone": "Africa/Kigali",
             "daily": {
                 "time": ["2026-10-30"],
                 "temperature_2m_max": [25.0],
@@ -58,7 +60,10 @@ class TestApiClientExtended(unittest.TestCase):
             weather = api_client.get_weather("Bugesera")
             self.assertEqual(weather["wind_kph"], 12.5)
             self.assertEqual(weather["source"], "Open-Meteo Live API")
+            self.assertEqual(weather["interval_minutes"], 15)
+            self.assertEqual(weather["timezone"], "Africa/Kigali")
             self.assertEqual(mock_get.call_args.kwargs["params"]["wind_speed_unit"], "kmh")
+            self.assertFalse(mock_api.call_args.kwargs["retry_on_transient"])
         finally:
             api_client.get_weather.clear()
 
@@ -239,6 +244,72 @@ class TestApiClientExtended(unittest.TestCase):
             retry_on_transient=False,
         )
 
+    def test_authentication_waits_for_backend_and_database_readiness(self):
+        response = MagicMock()
+        response.json.return_value = {"status": "healthy", "database": "reachable"}
+        status = MagicMock()
+        status_context = MagicMock()
+        status_context.__enter__.return_value = status
+
+        with patch.object(api_client, "request_api", return_value=response) as request, patch.object(
+            api_client.st, "status", return_value=status_context
+        ):
+            api_client.ensure_api_awake()
+
+        request.assert_called_once_with(
+            "GET",
+            "/health/deep",
+            timeout=10,
+            retry_on_transient=False,
+            show_retry_status=False,
+        )
+        status.update.assert_called_once_with(
+            label="Server ready. Continuing sign-in.", state="complete"
+        )
+
+    def test_authentication_wait_reports_database_not_ready(self):
+        response = MagicMock()
+        response.json.return_value = {"status": "unhealthy", "database": "unreachable"}
+        status = MagicMock()
+        status_context = MagicMock()
+        status_context.__enter__.return_value = status
+
+        with patch.object(api_client, "request_api", return_value=response), patch.object(
+            api_client.st, "status", return_value=status_context
+        ), patch.object(api_client.time, "sleep"), patch.object(
+            api_client.time, "monotonic", side_effect=[0, 181]
+        ):
+            with self.assertRaises(requests.ConnectionError):
+                api_client.ensure_api_awake()
+
+        self.assertEqual(status.update.call_args.kwargs["state"], "error")
+        self.assertIn("taking longer than expected", status.update.call_args.kwargs["label"])
+
+    def test_authentication_retries_database_readiness_until_it_recovers(self):
+        unavailable = MagicMock()
+        unavailable.status_code = 503
+        waking_response = MagicMock()
+        waking_response.response = unavailable
+        ready_response = MagicMock()
+        ready_response.json.return_value = {"status": "healthy", "database": "reachable"}
+        status = MagicMock()
+        status_context = MagicMock()
+        status_context.__enter__.return_value = status
+
+        with patch.object(
+            api_client,
+            "request_api",
+            side_effect=[requests.HTTPError(response=unavailable), ready_response],
+        ) as request, patch.object(api_client.st, "status", return_value=status_context), patch.object(
+            api_client.time, "sleep"
+        ):
+            api_client.ensure_api_awake()
+
+        self.assertEqual(request.call_count, 2)
+        status.update.assert_called_with(
+            label="Server ready. Continuing sign-in.", state="complete"
+        )
+
     @patch("utils.api_client.time.sleep")
     @patch("utils.api_client.requests.get")
     def test_transient_api_failure_retries_with_cold_start_timeout(
@@ -249,10 +320,46 @@ class TestApiClientExtended(unittest.TestCase):
         response.raise_for_status = MagicMock()
         mock_get.side_effect = [requests.Timeout("Render cold start"), response]
 
-        self.assertEqual(api_client._get_api("/health", timeout=10), {"status": "ok"})
+        with patch.object(api_client.st, "status", return_value=MagicMock()):
+            self.assertEqual(api_client._get_api("/health", timeout=10), {"status": "ok"})
         self.assertEqual(
             [call.kwargs["timeout"] for call in mock_get.call_args_list],
             [10, 60],
+        )
+
+    @patch("utils.api_client.requests.post", side_effect=requests.ConnectionError("response lost"))
+    def test_post_connection_error_is_not_retried(self, mock_post):
+        with self.assertRaises(requests.ConnectionError):
+            api_client.request_api("POST", "/community/register", json={"email": "farmer@example.com"})
+
+        mock_post.assert_called_once()
+
+    @patch("utils.api_client.requests.get")
+    def test_request_api_honors_tuple_timeouts(self, mock_get):
+        response = MagicMock()
+        response.raise_for_status = MagicMock()
+        mock_get.return_value = response
+
+        api_client.request_api(
+            "GET",
+            "/health",
+            timeout=(2, 5),
+            retry_on_transient=False,
+        )
+
+        self.assertEqual(mock_get.call_args.kwargs["timeout"], (2, 5))
+
+    @patch("utils.api_client.time.sleep")
+    @patch("utils.api_client.requests.get", side_effect=requests.Timeout("API unavailable"))
+    def test_transient_api_retry_window_is_bounded(self, mock_get, _mock_sleep):
+        with patch.object(api_client.st, "status", return_value=MagicMock()):
+            with self.assertRaises(requests.Timeout):
+                api_client.request_api("GET", "/health")
+
+        self.assertEqual(mock_get.call_count, 3)
+        self.assertEqual(
+            [call.kwargs["timeout"] for call in mock_get.call_args_list],
+            [10, 60, 60],
         )
 
     def test_recommendations_use_backend_saved_assessments_and_action_guidance(self):

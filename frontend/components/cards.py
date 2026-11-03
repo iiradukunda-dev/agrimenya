@@ -300,6 +300,13 @@ def centralized_login_container(max_width: int = 460):
             yield
 
 
+def _show_community_auth_error(exc: requests.RequestException, message: str) -> None:
+    if exc.response is None or exc.response.status_code in {502, 503, 504}:
+        st.error("The server is waking up. Wait a little, then try again.")
+    else:
+        st.error(message)
+
+
 def render_centralized_login_card(
     portal: str = "unified",
     key_prefix: str = "auth",
@@ -484,14 +491,20 @@ def render_centralized_login_card(
                     comm_sub = st.form_submit_button("Sign In →", type="primary", use_container_width=True)
                 if comm_sub:
                     try:
-                        resp = requests.post(f"{api_base_url}/community/login", json={"email": comm_email, "password": comm_pw}, timeout=15)
+                        api_client.ensure_api_awake()
+                        resp = api_client.request_api(
+                            "POST", "/community/login",
+                            json={"email": comm_email, "password": comm_pw}, timeout=15,
+                        )
                         resp.raise_for_status()
                         res_data = resp.json()
                         st.session_state["community_access_token"] = res_data["access_token"]
                         st.session_state["community_account"] = res_data.get("account", {})
                         st.rerun()
-                    except requests.RequestException:
-                        st.error("Sign-in failed. Please verify your email and password.")
+                    except requests.RequestException as exc:
+                        _show_community_auth_error(
+                            exc, "Sign-in failed. Please verify your email and password."
+                        )
             with tab_create:
                 with st.form(f"{key_prefix}_comm_register"):
                     reg_name = st.text_input("Full Name or Handle", placeholder="e.g. Jean_Gasabo", max_chars=80)
@@ -503,8 +516,9 @@ def render_centralized_login_card(
                         st.error("Password must contain at least 12 characters.")
                     else:
                         try:
-                            resp = requests.post(
-                                f"{api_base_url}/community/register",
+                            api_client.ensure_api_awake()
+                            resp = api_client.request_api(
+                                "POST", "/community/register",
                                 json={"display_name": reg_name.strip(), "email": reg_email.strip(), "password": reg_pw},
                                 timeout=15,
                             )
@@ -513,8 +527,10 @@ def render_centralized_login_card(
                             st.session_state["community_access_token"] = res_data["access_token"]
                             st.session_state["community_account"] = res_data.get("account", {})
                             st.rerun()
-                        except requests.RequestException:
-                            st.error("Account creation failed. Please check that this email is not already registered.")
+                        except requests.RequestException as exc:
+                            _show_community_auth_error(
+                                exc, "Account creation failed. Please check that this email is not already registered."
+                            )
             st.markdown(
                 '<div style="text-align:center;margin-top:0.75rem;font-size:0.82rem;color:#94a3b8;">Administrator or agronomist? <a href="/Admin" style="color:#38bdf8;font-weight:700;text-decoration:none;">Go to Administrator Portal →</a></div>',
                 unsafe_allow_html=True,
@@ -577,14 +593,20 @@ def render_centralized_login_card(
                         c_sub = st.form_submit_button("Sign In to Community →", type="primary", use_container_width=True)
                     if c_sub:
                         try:
-                            resp = requests.post(f"{api_base_url}/community/login", json={"email": c_email, "password": c_pw}, timeout=15)
+                            api_client.ensure_api_awake()
+                            resp = api_client.request_api(
+                                "POST", "/community/login",
+                                json={"email": c_email, "password": c_pw}, timeout=15,
+                            )
                             resp.raise_for_status()
                             res_data = resp.json()
                             st.session_state["community_access_token"] = res_data["access_token"]
                             st.session_state["community_account"] = res_data.get("account", {})
                             st.rerun()
-                        except requests.RequestException:
-                            st.error("Sign-in failed. Please verify your email and password.")
+                        except requests.RequestException as exc:
+                            _show_community_auth_error(
+                                exc, "Sign-in failed. Please verify your email and password."
+                            )
                 with tab_reg:
                     with st.form(f"{key_prefix}_uni_comm_reg"):
                         r_name = st.text_input("Full Name or Handle", placeholder="e.g. Jean_Gasabo", max_chars=80)
@@ -596,8 +618,9 @@ def render_centralized_login_card(
                             st.error("Password must contain at least 12 characters.")
                         else:
                             try:
-                                resp = requests.post(
-                                    f"{api_base_url}/community/register",
+                                api_client.ensure_api_awake()
+                                resp = api_client.request_api(
+                                    "POST", "/community/register",
                                     json={"display_name": r_name.strip(), "email": r_email.strip(), "password": r_pw},
                                     timeout=15,
                                 )
@@ -606,8 +629,10 @@ def render_centralized_login_card(
                                 st.session_state["community_access_token"] = res_data["access_token"]
                                 st.session_state["community_account"] = res_data.get("account", {})
                                 st.rerun()
-                            except requests.RequestException:
-                                st.error("Account creation failed. Please check that this email is not already registered.")
+                            except requests.RequestException as exc:
+                                _show_community_auth_error(
+                                    exc, "Account creation failed. Please check that this email is not already registered."
+                                )
             security_trust_footer(message="256-bit TLS encrypted session", session_info="Unified Role-based Access Control")
             return api_client.admin_session_authenticated() or bool(st.session_state.get("community_access_token"))
 

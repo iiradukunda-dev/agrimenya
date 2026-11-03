@@ -6,12 +6,66 @@ import requests
 import views.community as community
 
 
+def test_community_auth_request_waits_for_backend_before_posting():
+    response = MagicMock()
+    response.content = b'{"access_token":"test"}'
+    response.json.return_value = {"access_token": "test"}
+    mock_st = _mock_streamlit({})
+
+    with (
+        patch.object(community, "st", mock_st),
+        patch("utils.api_client.ensure_api_awake") as ensure_awake,
+        patch.object(community, "request_api", return_value=response) as request,
+    ):
+        community._request("POST", "/community/login", payload={"email": "farmer@example.com"})
+
+    ensure_awake.assert_called_once_with()
+    request.assert_called_once()
+
+
 def _mock_streamlit(query_params: dict) -> MagicMock:
     mock_st = MagicMock()
     mock_st.session_state = {}
     mock_st.query_params = query_params
     mock_st.button.return_value = False
     return mock_st
+
+
+def test_community_translations_cover_every_supported_language():
+    english_keys = set(community.COPY["en"])
+    assert set(community.COPY["rw"]) == english_keys
+    assert set(community.COPY["fr"]) == english_keys
+
+
+def test_community_username_conflict_is_localized_in_french():
+    response = requests.Response()
+    response.status_code = 409
+    response._content = b'{"detail":"That username is already in use"}'
+
+    message = community._error_message(
+        requests.HTTPError(response=response), "fr",
+    )
+
+    assert message == community.COPY["fr"]["profile_conflict"]
+
+
+def test_discussion_replies_use_the_shared_api_request_contract():
+    posts = [{"id": "post-one"}, {"id": "post-two"}, {"title": "missing id"}]
+    response = MagicMock()
+    response.json.return_value = [{"post_id": "post-one", "body": "Hello"}]
+
+    with patch.object(community, "request_api", return_value=response) as request:
+        comments = community._community_comments_for_posts(posts, "community-token")
+
+    assert comments == response.json.return_value
+    request.assert_called_once_with(
+        "GET",
+        "/community/comments",
+        params=[("post_ids", "post-one"), ("post_ids", "post-two")],
+        headers={"Authorization": "Bearer community-token"},
+        timeout=12,
+    )
+    response.raise_for_status.assert_called_once_with()
 
 
 def test_google_sign_in_status_retries_after_transient_api_failure():

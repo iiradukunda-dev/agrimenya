@@ -338,12 +338,20 @@ def _local_grounded_response(prompt: str, context: str) -> str:
         weather = data.get("weather") or {}
         weather_source = weather.get("source")
         current_parts = []
-        for key, label, unit in (
+        measurements = [
             ("temperature_c", "temperature", "°C"),
             ("rainfall_mm", "current precipitation", "mm"),
             ("humidity_pct", "relative humidity", "%"),
             ("wind_kph", "wind speed", "km/h"),
-        ):
+        ]
+        interval = weather.get("interval_minutes")
+        if isinstance(interval, (int, float)):
+            measurements[1] = (
+                "rainfall_mm",
+                f"precipitation over the last {interval:g} minutes",
+                "mm",
+            )
+        for key, label, unit in measurements:
             raw_value = weather.get(key)
             try:
                 number = float(raw_value)
@@ -356,7 +364,16 @@ def _local_grounded_response(prompt: str, context: str) -> str:
             answer = (f"I couldn't retrieve a current weather snapshot for {district}, so I can't verify local rainfall or forecast conditions. "
                       "Use a current local forecast and extension advice for planting decisions; district yield records are not a rainfall forecast.")
             return json.dumps({"answer": answer, "numbers_used": [], "sources": []}, ensure_ascii=False)
-        answer = f"For {district}, the latest weather snapshot reports " + ", ".join(current_parts) + "."
+        updated_at = weather.get("updated_at")
+        timezone = weather.get("timezone")
+        freshness = f" as of {updated_at}" if updated_at else ""
+        if updated_at and timezone:
+            freshness += f" ({timezone})"
+        answer = (
+            f"For {district}, the latest weather snapshot{freshness} reports "
+            + ", ".join(current_parts)
+            + "."
+        )
         if forecast_rows:
             next_day = forecast_rows[0]
             forecast_parts = []
@@ -377,10 +394,13 @@ def _local_grounded_response(prompt: str, context: str) -> str:
                     forecast_parts.append(f"{label} {number:g} {unit}")
             if forecast_parts:
                 answer += " (" + ", ".join(forecast_parts) + ")."
-        answer += (f" Source: {weather_source}. This uses an approximate district-centre location and a short forecast window; "
-                   "it is not a farm-specific or seasonal outlook. Check field conditions before scheduling planting or irrigation.")
+        answer += (
+            f" Source: {weather_source}, a model-based estimate for an approximate district-centre location. "
+            "It is not a local station observation or farm-specific or seasonal outlook. "
+            "Check field conditions before scheduling planting or irrigation."
+        )
         return json.dumps({"answer": answer, "numbers_used": _extract_numbers(answer),
-                           "sources": [weather_source]}, ensure_ascii=False)
+                           "sources": [weather_source]}, ensure_ascii=False, default=str)
     if any(term in question for term in (
         "soil", "fertilizer", "fertiliser", "compost", "pest", "disease", "rainfall",
         "rain", "dry spell", "water shortage", "irrigation", "improve my yield", "increase yield",
@@ -608,7 +628,11 @@ def _get_weather_context(district: str) -> dict:
     key = district.casefold()
     with _weather_cache_lock:
         cached = _weather_context_cache.get(key)
-        if cached and now - cached[0] < 900:
+        if (
+            cached
+            and cached[1].get("source") != "unavailable"
+            and now - cached[0] < 900
+        ):
             return cached[1]
     from app.services.weather_service import fetch_weather
 
@@ -618,14 +642,20 @@ def _get_weather_context(district: str) -> dict:
         "source": weather.get("source", "unavailable"),
         "location_basis": "approximate district centroid",
         "updated_at": weather.get("updated_at"),
+        "timezone": weather.get("timezone"),
+        "interval_minutes": weather.get("interval_minutes"),
         "temperature_c": weather.get("temperature_c"),
         "rainfall_mm": weather.get("rainfall_mm"),
         "humidity_pct": weather.get("humidity_pct"),
         "wind_kph": weather.get("wind_kph"),
         "forecast": (weather.get("forecast") or [])[:5],
     }
-    with _weather_cache_lock:
-        _weather_context_cache[key] = (now, compact)
+    if compact["source"] != "unavailable":
+        with _weather_cache_lock:
+            _weather_context_cache[key] = (now, compact)
+    else:
+        with _weather_cache_lock:
+            _weather_context_cache.pop(key, None)
     return compact
 
 
@@ -1034,7 +1064,7 @@ def _assistant_system_prompt() -> str:
         "For a question about the Decisions page or its selected district comparison, use DATA.decision_comparison as the exact source for its crop reference, difference, rank, record count, and comparable-season change. Explain a below-reference result as a screening signal for local verification, never as proof of a farm problem or cause. Do not substitute DATA.benchmark for DATA.decision_comparison.crop_reference_kg_ha; they are different statistics. If decision_comparison is null, state that no matching decision comparison is available. "
         "When a crop record source is NISR SAS baseline, describe it as a pooled historical yield baseline, not a current field observation. A yield-per-hectare ranking does not establish total production or how much land is planted with each crop. "
         "When DATA.crop or DATA.season is null, do not treat that as a reason to refuse or ask the user to choose first. Answer broad questions from DATA.crop_yield_records, summarize the recorded crops and seasons when relevant, and ask a focused follow-up only after giving the useful answer. If there are no crop records, state that evidence gap plainly. "
-        "Use DATA.weather only for the short current snapshot and forecast it contains. It is based on an approximate district centroid and is not a seasonal rainfall or soil forecast. Mention freshness/source and its short time horizon when relevant. "
+        "Use DATA.weather only for the short current snapshot and forecast it contains. Open-Meteo values are model-based estimates for an approximate district centroid, not local station observations or seasonal rainfall/soil forecasts. Mention the timestamp/timezone, source, and precipitation interval when present and relevant. "
         "Help the user make progress: summarize what the records support, distinguish observation from inference, and clearly identify missing information such as soil, seasonal rainfall, water access, or market data. Do not send the user away when the data can answer part of the question. "
         "Never invent district-specific facts, yields, prices, weather, or survey observations. Do not claim a cause from district associations or treat district survey statistics as farm measurements. Explain when a value is a baseline average, model estimate, proxy, historical observation, thin evidence, or missing. "
         "State district and the relevant crop, season, and source when reporting agricultural numbers. For weather numbers, state district, observation/forecast date when present, and weather source. Every number in the answer must appear in DATA; for general guidance, avoid unsupported numeric rates, doses, or precise schedules. "

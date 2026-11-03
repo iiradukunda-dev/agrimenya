@@ -1,6 +1,63 @@
 """Unit tests verifying navbar and tabs styling integrity (no black backgrounds)."""
+from concurrent.futures import Future
 from unittest.mock import MagicMock, patch
 import pytest
+
+
+def test_api_warmup_starts_in_background_and_does_not_duplicate_pending_request():
+    from components.navbar import _render_api_warmup
+
+    session = {}
+    future = Future()
+    with patch("components.navbar.st.session_state", session), patch(
+        "components.navbar.start_api_warmup", return_value=future
+    ) as start, patch("components.navbar.time.monotonic", return_value=100):
+        _render_api_warmup()
+        _render_api_warmup()
+
+    start.assert_called_once_with()
+    assert session["api_warmup_future"] is future
+    assert session["api_warmup_last_started"] == 100
+
+
+def test_api_warmup_retries_failed_request_on_later_browse():
+    from components.navbar import _render_api_warmup
+
+    failed_future = Future()
+    failed_future.set_result(False)
+    next_future = Future()
+    session = {
+        "api_warmup_future": failed_future,
+        "api_warmup_last_started": 100,
+    }
+    with patch("components.navbar.st.session_state", session), patch(
+        "components.navbar.start_api_warmup", return_value=next_future
+    ) as start, patch("components.navbar.time.monotonic", return_value=131):
+        _render_api_warmup()
+
+    start.assert_called_once_with()
+    assert session["api_warmup_future"] is next_future
+    assert session["api_warmup_last_started"] == 131
+
+
+def test_api_warmup_refreshes_after_service_idle_interval():
+    from components.navbar import _render_api_warmup
+
+    successful_future = Future()
+    successful_future.set_result(True)
+    next_future = Future()
+    session = {
+        "api_warmup_future": successful_future,
+        "api_warmup_last_started": 100,
+    }
+    with patch("components.navbar.st.session_state", session), patch(
+        "components.navbar.start_api_warmup", return_value=next_future
+    ) as start, patch("components.navbar.time.monotonic", return_value=341):
+        _render_api_warmup()
+
+    start.assert_called_once_with()
+    assert session["api_warmup_future"] is next_future
+    assert session["api_warmup_last_started"] == 341
 
 
 def test_navbar_css_has_no_black_background_on_buttons():
@@ -119,8 +176,13 @@ def test_navbar_account_and_language_controls_match_the_visual_layout():
     assert '[data-testid="stPopoverButton"]' in css
     assert "width: min(100%, 820px) !important;" in css
     assert ".st-key-lang_cycle_btn button" in css
-    assert "position: sticky !important;" in css
     assert "max-width: 840px" in css
+    assert '.st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button' in css
+    assert "width: auto !important;" in css
+    assert "max-width: fit-content !important;" in css
+    assert ".st-key-ag_navbar .st-key-lang_cycle_btn button" in css
+    assert "position: sticky !important;" in css
+    assert "@media (max-width: 840px)" in css
     assert any(
         call.args[0] == " " and call.kwargs.get("help") == "More"
         for call in mock_st.popover.call_args_list
@@ -228,6 +290,33 @@ def test_desktop_menu_hides_default_expand_icon_and_language_icon_remains_visibl
     assert '.st-key-ag_navbar [data-testid="stPopover"] button * {' not in css_found
 
 
+def test_mobile_menu_button_uses_the_hamburger_icon():
+    """Keep the mobile navigation control compact with the current hamburger icon."""
+    from components.navbar import render_navbar
+
+    mock_st = MagicMock()
+    mock_st.columns.side_effect = [
+        [MagicMock() for _ in range(7)],
+        [MagicMock() for _ in range(2)],
+    ]
+    with patch("components.navbar.st", mock_st), \
+         patch("components.navbar.render_floating_ai_widget"), \
+         patch("components.navbar.render_pwa_support"), \
+         patch("components.navbar.render_language_selector"):
+        render_navbar()
+
+    css_found = "".join(
+        str(call[0][0])
+        for call in mock_st.markdown.call_args_list
+        if "<style>" in str(call[0][0])
+    )
+    assert any(
+        call.args[0] == "☰" and call.kwargs.get("help") == "Open navigation menu"
+        for call in mock_st.popover.call_args_list
+    )
+    assert '.st-key-ag_mobile_navbar [data-testid="stPopover"] button::after' not in css_found
+
+
 def test_user_session_and_page_access_control():
     """Verify anonymous visitors can use public pages and restricted pages redirect home."""
     from components.navbar import init_user_session, is_authenticated, check_page_access
@@ -307,3 +396,7 @@ def test_logged_out_account_link_is_in_mobile_menu_not_standalone_navbar():
     mock_st.columns.assert_any_call([1, 1], vertical_alignment="center")
     assert 'a[href*="Community"]:hover' in css
     assert "transform: none !important" in css
+    assert '.st-key-ag_mobile_navbar a[href*="Community"] [data-testid="stIconMaterial"]' in css
+    assert '.st-key-ag_mobile_navbar [data-testid="stPageLink"]:has(a[href*="Community"])' in css
+    assert "visibility: visible !important" in css
+    assert "width: 2.25rem !important" in css

@@ -17,7 +17,7 @@ def render_browser_weather(district: str, coordinates: tuple[float, float]) -> N
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;">
               <div class="weather-card"><small>TEMPERATURE</small><strong id="temperature"></strong></div>
               <div class="weather-card"><small>RELATIVE HUMIDITY</small><strong id="humidity"></strong></div>
-              <div class="weather-card"><small>PRECIPITATION</small><strong id="precipitation"></strong></div>
+              <div class="weather-card"><small id="precipitation-label">PRECIPITATION</small><strong id="precipitation"></strong></div>
               <div class="weather-card"><small>WIND SPEED</small><strong id="wind"></strong></div>
             </div>
             <p id="weather-updated" style="font-size:.82rem;color:#64748b;margin:.75rem 0 0;"></p>
@@ -37,6 +37,8 @@ def render_browser_weather(district: str, coordinates: tuple[float, float]) -> N
         const latitude = {latitude_json};
         const longitude = {longitude_json};
         const statusNode = document.getElementById("weather-status");
+        const controller = new AbortController();
+        const requestTimeout = window.setTimeout(() => controller.abort(), 12000);
         const showError = () => {{
           statusNode.textContent = "Live weather is temporarily unavailable. Refresh the page to try again.";
           statusNode.style.color = "#b45309";
@@ -47,7 +49,9 @@ def render_browser_weather(district: str, coordinates: tuple[float, float]) -> N
           daily: "temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum",
           wind_speed_unit: "kmh", forecast_days: "5", timezone: "auto"
         }});
-        fetch("https://api.open-meteo.com/v1/forecast?" + params.toString())
+        fetch("https://api.open-meteo.com/v1/forecast?" + params.toString(), {{
+          signal: controller.signal
+        }})
           .then(response => {{
             if (!response.ok) throw new Error("Weather request failed: " + response.status);
             return response.json();
@@ -55,29 +59,45 @@ def render_browser_weather(district: str, coordinates: tuple[float, float]) -> N
           .then(data => {{
             const current = data.current;
             if (!current || current.temperature_2m == null) throw new Error("Weather values are unavailable");
-            document.getElementById("temperature").textContent = current.temperature_2m.toFixed(1) + " °C";
-            document.getElementById("humidity").textContent = current.relative_humidity_2m + "%";
-            document.getElementById("precipitation").textContent = current.precipitation.toFixed(1) + " mm";
-            document.getElementById("wind").textContent = current.wind_speed_10m.toFixed(1) + " km/h";
-            const updated = current.time ? new Date(current.time).toLocaleString() : "time not reported";
+            window.clearTimeout(requestTimeout);
+            const format = (value, digits, unit) =>
+              typeof value === "number" && Number.isFinite(value)
+                ? value.toFixed(digits) + unit
+                : "Not available";
+            document.getElementById("temperature").textContent = format(current.temperature_2m, 1, " °C");
+            document.getElementById("humidity").textContent = format(current.relative_humidity_2m, 0, "%");
+            document.getElementById("precipitation").textContent = format(current.precipitation, 1, " mm");
+            document.getElementById("wind").textContent = format(current.wind_speed_10m, 1, " km/h");
+            if (typeof current.interval === "number" && current.interval > 0) {{
+              document.getElementById("precipitation-label").textContent =
+                "PRECIPITATION · LAST " + Math.round(current.interval / 60) + " MIN";
+            }}
+            const updated = current.time
+              ? current.time + " (" + (data.timezone || "provider time") + ")"
+              : "time not reported";
             document.getElementById("weather-updated").textContent =
-              district + " · Open-Meteo · Updated " + updated;
+              district + " · Open-Meteo model estimate · District centre · Updated " + updated;
             const daily = data.daily || {{}};
             const forecast = document.getElementById("weather-forecast");
             (daily.time || []).forEach((date, index) => {{
+              const max = daily.temperature_2m_max?.[index];
+              const min = daily.temperature_2m_min?.[index];
+              const rainChance = daily.precipitation_probability_max?.[index];
+              const maxText = typeof max === "number" ? max + "°" : "N/A";
+              const minText = typeof min === "number" ? min + "°" : "N/A";
+              const rainText = typeof rainChance === "number" ? rainChance + "%" : "N/A";
               const card = document.createElement("div");
               card.className = "forecast-card";
               card.textContent = new Date(date + "T12:00:00").toLocaleDateString(undefined, {{
                 weekday: "short", month: "short", day: "numeric"
-              }}) + " · " + daily.temperature_2m_max[index] + "° / " +
-                daily.temperature_2m_min[index] + "° · rain " +
-                daily.precipitation_probability_max[index] + "%";
+              }}) + " · " + maxText + " / " + minText + " · rain " + rainText;
               forecast.appendChild(card);
             }});
             statusNode.style.display = "none";
             document.getElementById("weather-data").style.display = "block";
           }})
           .catch(error => {{
+            window.clearTimeout(requestTimeout);
             console.error("Open-Meteo browser request failed for " + district, error);
             showError();
           }});
