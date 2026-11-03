@@ -41,7 +41,9 @@ class TestApiClientExtended(unittest.TestCase):
                 "wind_speed_10m": 12.5,
                 "weather_code": 1,
                 "time": "2026-10-30T12:00",
+                "interval": 900,
             },
+            "timezone": "Africa/Kigali",
             "daily": {
                 "time": ["2026-10-30"],
                 "temperature_2m_max": [25.0],
@@ -58,7 +60,10 @@ class TestApiClientExtended(unittest.TestCase):
             weather = api_client.get_weather("Bugesera")
             self.assertEqual(weather["wind_kph"], 12.5)
             self.assertEqual(weather["source"], "Open-Meteo Live API")
+            self.assertEqual(weather["interval_minutes"], 15)
+            self.assertEqual(weather["timezone"], "Africa/Kigali")
             self.assertEqual(mock_get.call_args.kwargs["params"]["wind_speed_unit"], "kmh")
+            self.assertFalse(mock_api.call_args.kwargs["retry_on_transient"])
         finally:
             api_client.get_weather.clear()
 

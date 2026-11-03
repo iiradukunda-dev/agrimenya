@@ -94,7 +94,13 @@ def fetch_weather(district: str | None = None, latitude: float | None = None, lo
             "rainfall_mm": current.get("precipitation") if current.get("precipitation") is not None else current.get("rain"),
             "humidity_pct": current.get("relative_humidity_2m"),
             "wind_kph": current.get("wind_speed_10m"),
-            "summary": "Live weather snapshot from Open-Meteo.",
+            "interval_minutes": (
+                current["interval"] / 60
+                if isinstance(current.get("interval"), (int, float))
+                else None
+            ),
+            "timezone": payload.get("timezone"),
+            "summary": "Model-based weather snapshot from Open-Meteo for an approximate district-centre location.",
             "updated_at": current.get("time"),
             "forecast": forecast,
         }

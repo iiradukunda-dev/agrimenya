@@ -1306,8 +1306,11 @@ def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
         ]
         temp = current.get("temperature_2m")
         hum = current.get("relative_humidity_2m")
-        precip = current.get("precipitation") if current.get("precipitation") is not None else current.get("rain", 0.0)
+        precip = current.get("precipitation")
+        if precip is None:
+            precip = current.get("rain")
         wind = current.get("wind_speed_10m")
+        interval = current.get("interval")
         return {
             "district": district,
             "source": "Open-Meteo Live API",
@@ -1318,7 +1321,9 @@ def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
             "rainfall_mm": precip,
             "wind_kph": wind,
             "weather_code": current.get("weather_code"),
-            "summary": f"Live weather snapshot for {district}",
+            "interval_minutes": interval / 60 if isinstance(interval, (int, float)) else None,
+            "timezone": payload.get("timezone"),
+            "summary": f"Open-Meteo model-based weather estimate for {district} district centre.",
             "updated_at": current.get("time") or time.strftime("%Y-%m-%d %H:%M"),
             "forecast": forecast,
         }
@@ -1329,10 +1334,14 @@ def _fetch_direct_open_meteo(district: str) -> dict[str, Any] | None:
 
 @st.cache_data(ttl=120, show_spinner=False)
 def get_weather(district: str) -> dict[str, Any] | None:
-    """Live weather data for a district with seamless backend & direct Open-Meteo fallback."""
+    """Fetch district weather, using Open-Meteo directly if the backend cannot."""
     data = None
     try:
-        data = _get_api(f"/live/weather/{quote(district, safe='')}", timeout=5)
+        data = _get_api(
+            f"/live/weather/{quote(district, safe='')}",
+            timeout=5,
+            retry_on_transient=False,
+        )
     except Exception:
         data = None
 

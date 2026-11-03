@@ -191,6 +191,81 @@ def test_accepts_fully_grounded_json_answer():
     assert assistant.validate_model_response(raw, context) == "Gasabo yield is 1200 (NISR SAS)."
 
 
+def test_weather_answer_must_use_the_supplied_value_and_provider():
+    context = json.dumps({
+        "district": "Gasabo",
+        "weather": {
+            "source": "open-meteo",
+            "temperature_c": 24.2,
+            "updated_at": "2026-10-30T12:00",
+            "timezone": "Africa/Kigali",
+        },
+        "basis": {},
+        "alerts": [],
+    })
+    grounded = json.dumps({
+        "answer": "Gasabo is 24.2 °C in the latest open-meteo model estimate.",
+        "numbers_used": [24.2],
+        "sources": ["open-meteo"],
+    })
+    invented = json.dumps({
+        "answer": "Gasabo is 45 °C in the latest open-meteo model estimate.",
+        "numbers_used": [45],
+        "sources": ["open-meteo"],
+    })
+
+    assert assistant.validate_model_response(grounded, context) == json.loads(grounded)["answer"]
+    assert assistant.validate_model_response(invented, context) is None
+
+
+def test_local_weather_answer_identifies_source_freshness_and_estimate_basis():
+    context = json.dumps({
+        "district": "Gasabo",
+        "weather": {
+            "source": "open-meteo",
+            "temperature_c": 24.2,
+            "rainfall_mm": 0.1,
+            "interval_minutes": 15,
+            "updated_at": "2026-10-30T12:00",
+            "timezone": "Africa/Kigali",
+            "forecast": [],
+        },
+        "basis": {},
+        "alerts": [],
+    })
+
+    raw = assistant._local_grounded_response("What is the current weather?", context)
+    answer = assistant.validate_model_response(raw, context)
+
+    assert answer is not None
+    assert "2026-10-30T12:00 (Africa/Kigali)" in answer
+    assert "precipitation over the last 15 minutes 0.1 mm" in answer
+    assert "open-meteo" in answer
+    assert "model-based estimate" in answer
+
+
+def test_unavailable_weather_is_not_cached_for_assistant(monkeypatch):
+    key = "test-weather-cache-district"
+    assistant._weather_context_cache.pop(key, None)
+    unavailable = {
+        "district": key,
+        "source": "unavailable",
+        "temperature_c": None,
+        "rainfall_mm": None,
+        "humidity_pct": None,
+        "wind_kph": None,
+        "forecast": [],
+    }
+
+    with patch("app.services.weather_service.fetch_weather", return_value=unavailable) as fetch:
+        first = assistant._get_weather_context(key)
+        second = assistant._get_weather_context(key)
+
+    assert first["source"] == second["source"] == "unavailable"
+    assert fetch.call_count == 2
+    assert key not in assistant._weather_context_cache
+
+
 def test_rejects_model_answer_that_blocks_unselected_crop_question_when_records_exist():
     context = json.dumps({
         "district": "Musanze", "crop": None,

@@ -4,6 +4,7 @@ from typing import Any
 import requests
 import streamlit as st
 from components.badges import priority_badge, status_badge
+from components.browser_weather import render_browser_weather
 from components.charts import render_zone_portfolio_chart
 from components.errors import error_boundary, render_error_page
 from components.icons import render_icon_subheader, render_icon_title
@@ -30,6 +31,40 @@ EXPORT_EVIDENCE = {
     "buyer_contract_or_order": "Buyer contract or order",
     "certification_records": "Certification records",
 }
+
+
+def _render_zone_weather(district: str, weather: dict[str, Any] | None) -> None:
+    if (
+        isinstance(weather, dict)
+        and weather.get("source") != "unavailable"
+        and weather.get("temperature_c") is not None
+    ):
+        w1, w2, w3 = st.columns(3)
+        w1.metric("Temp", f"{float(weather['temperature_c']):.1f} °C")
+        interval = weather.get("interval_minutes")
+        rain_label = (
+            f"Rain ({interval:g} min)" if isinstance(interval, (int, float))
+            else "Precipitation"
+        )
+        rain = weather.get("rainfall_mm")
+        w2.metric(rain_label, f"{float(rain):.1f} mm" if rain is not None else "Not available")
+        humidity = weather.get("humidity_pct")
+        w3.metric("Humidity", f"{float(humidity):.0f}%" if humidity is not None else "Not available")
+        updated_at = weather.get("updated_at") or "time not reported"
+        timezone = weather.get("timezone")
+        updated_label = f"{updated_at} ({timezone})" if timezone else updated_at
+        st.caption(
+            f"{weather.get('source', 'Weather provider')} model estimate · "
+            f"Approximate district-centre location · Updated {updated_label}"
+        )
+        return
+
+    coordinates = api_client.RWANDA_DISTRICT_COORDS.get(district.strip().casefold())
+    if coordinates is not None:
+        st.caption("Server-side weather is unavailable; trying a direct browser connection.")
+        render_browser_weather(district, coordinates)
+    else:
+        st.warning(f"Weather is unavailable for {district}; no district location is configured.")
 
 
 @st.dialog("Register Field / Zone", width="large")
@@ -419,15 +454,9 @@ def render_zones() -> None:
 
         with c_right:
             with st.container(border=True):
-                st.markdown(f"**Weather: {selected_zone.get('district', '')}**")
-                weather = api_client.get_weather(selected_zone.get("district", "Musanze"))
-                if weather:
-                    w1, w2, w3 = st.columns(3)
-                    w1.metric("Temp", f"{weather.get('temperature_c', 'N/A')} °C")
-                    w2.metric("Rain", f"{weather.get('rainfall_mm', 'N/A')} mm")
-                    w3.metric("Humidity", f"{weather.get('humidity_pct', 'N/A')}%")
-                else:
-                    st.caption("Weather telemetry unavailable.")
+                district = selected_zone.get("district", "Musanze")
+                st.markdown(f"**Weather: {district}**")
+                _render_zone_weather(district, api_client.get_weather(district))
 
     except requests.exceptions.RequestException as e:
         logger.error("Network error in zones view: %s", e)
