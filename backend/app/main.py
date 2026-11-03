@@ -178,23 +178,11 @@ def system_health_status():
 
 @app.get("/health/deep")
 def deep_health_check():
-    import psycopg
-
-    if not settings.SUPABASE_DB_URL:
-        logging.getLogger(__name__).warning("Deep health database probe is not configured")
-        return JSONResponse(
-            status_code=503,
-            content={"status": "unhealthy", "database": "unreachable"},
-        )
-
     try:
-        with psycopg.connect(
-            settings.SUPABASE_DB_URL,
-            connect_timeout=5,
-            options="-c statement_timeout=5000",
-        ) as connection:
-            connection.execute("SELECT 1").fetchone()
-    except psycopg.Error as exc:
+        from app.core.supabase_client import get_supabase
+
+        get_supabase().table("zones").select("id").limit(1).execute()
+    except Exception as exc:
         logging.getLogger(__name__).warning(
             "Deep health database probe failed: %s", type(exc).__name__
         )
