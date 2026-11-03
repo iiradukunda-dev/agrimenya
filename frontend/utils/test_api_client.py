@@ -249,10 +249,46 @@ class TestApiClientExtended(unittest.TestCase):
         response.raise_for_status = MagicMock()
         mock_get.side_effect = [requests.Timeout("Render cold start"), response]
 
-        self.assertEqual(api_client._get_api("/health", timeout=10), {"status": "ok"})
+        with patch.object(api_client.st, "status", return_value=MagicMock()):
+            self.assertEqual(api_client._get_api("/health", timeout=10), {"status": "ok"})
         self.assertEqual(
             [call.kwargs["timeout"] for call in mock_get.call_args_list],
             [10, 60],
+        )
+
+    @patch("utils.api_client.requests.post", side_effect=requests.ConnectionError("response lost"))
+    def test_post_connection_error_is_not_retried(self, mock_post):
+        with self.assertRaises(requests.ConnectionError):
+            api_client.request_api("POST", "/community/register", json={"email": "farmer@example.com"})
+
+        mock_post.assert_called_once()
+
+    @patch("utils.api_client.requests.get")
+    def test_request_api_honors_tuple_timeouts(self, mock_get):
+        response = MagicMock()
+        response.raise_for_status = MagicMock()
+        mock_get.return_value = response
+
+        api_client.request_api(
+            "GET",
+            "/health",
+            timeout=(2, 5),
+            retry_on_transient=False,
+        )
+
+        self.assertEqual(mock_get.call_args.kwargs["timeout"], (2, 5))
+
+    @patch("utils.api_client.time.sleep")
+    @patch("utils.api_client.requests.get", side_effect=requests.Timeout("API unavailable"))
+    def test_transient_api_retry_window_is_bounded(self, mock_get, _mock_sleep):
+        with patch.object(api_client.st, "status", return_value=MagicMock()):
+            with self.assertRaises(requests.Timeout):
+                api_client.request_api("GET", "/health")
+
+        self.assertEqual(mock_get.call_count, 3)
+        self.assertEqual(
+            [call.kwargs["timeout"] for call in mock_get.call_args_list],
+            [10, 60, 60],
         )
 
     def test_recommendations_use_backend_saved_assessments_and_action_guidance(self):

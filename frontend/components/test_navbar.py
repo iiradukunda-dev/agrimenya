@@ -116,14 +116,16 @@ def test_navbar_account_and_language_controls_match_the_visual_layout():
         if "<style>" in str(call[0][0])
     )
     assert '[data-testid="stPopoverButton"]' in css
-    assert ".st-key-ag_profile_menu [data-testid=\"stPopoverButton\"]" in css
-    assert "width: min(95vw, 1360px) !important;" in css
-    assert "min-height: 7.25rem !important;" in css
-    assert ".st-key-lang_cycle_btn button" in css
-    assert "position: fixed !important;" in css
-    assert "max-width: 840px" in css
-    assert any(call.kwargs.get("icon") == ":material/person:" for call in mock_st.popover.call_args_list)
-    assert any(call.args[0] == "Menu" for call in mock_st.popover.call_args_list)
+    assert '.st-key-ag_navbar [data-testid="stHorizontalBlock"] [data-testid="stPopover"] button' in css
+    assert "width: auto !important;" in css
+    assert "max-width: fit-content !important;" in css
+    assert ".st-key-ag_navbar .st-key-lang_cycle_btn button" in css
+    assert "position: sticky !important;" in css
+    assert "@media (max-width: 840px)" in css
+    assert any(
+        call.args[0] == " " and call.kwargs.get("help") == "More"
+        for call in mock_st.popover.call_args_list
+    )
 
 
 def test_mobile_menu_button_shows_only_the_hamburger():
@@ -226,8 +228,8 @@ def test_desktop_menu_hides_default_expand_icon_and_language_icon_remains_visibl
     assert '.st-key-ag_navbar [data-testid="stPopover"] button * {' not in css_found
 
 
-def test_mobile_menu_button_shows_more_label():
-    """Keep the hamburger menu identifiable as the More menu on small screens."""
+def test_mobile_menu_button_uses_the_hamburger_icon():
+    """Keep the mobile navigation control compact with the current hamburger icon."""
     from components.navbar import render_navbar
 
     mock_st = MagicMock()
@@ -246,9 +248,11 @@ def test_mobile_menu_button_shows_more_label():
         for call in mock_st.markdown.call_args_list
         if "<style>" in str(call[0][0])
     )
-    assert '.st-key-ag_mobile_navbar [data-testid="stPopover"] button::after' in css_found
-    assert 'content: "More" !important' in css_found
-    assert "min-width: 5.4rem !important" in css_found
+    assert any(
+        call.args[0] == "☰" and call.kwargs.get("help") == "Open navigation menu"
+        for call in mock_st.popover.call_args_list
+    )
+    assert '.st-key-ag_mobile_navbar [data-testid="stPopover"] button::after' not in css_found
 
 
 def test_user_session_and_page_access_control():
@@ -294,7 +298,7 @@ def test_logged_out_navbar_keeps_account_icon_visible_without_hover_effects():
     mock_st = MagicMock()
     mock_st.columns.side_effect = [
         [MagicMock() for _ in range(7)],
-        [MagicMock() for _ in range(3)],
+        [MagicMock() for _ in range(2)],
     ]
     with patch("components.navbar.st", mock_st), \
          patch("components.navbar.is_authenticated", return_value=False), \
@@ -317,13 +321,7 @@ def test_logged_out_navbar_keeps_account_icon_visible_without_hover_effects():
     ]
     assert account_links
     assert all(call.kwargs.get("icon") == ":material/account_circle:" for call in account_links)
-    assert 'a[href*="12_Community"] [data-testid="stIconMaterial"]' in css
-    assert '[data-testid="stPageLink-NavLink"]:not(:has(a[href*="12_Community"]))' in css
-    assert '.st-key-ag_mobile_navbar [data-testid="stPageLink"]:has(a[href*="12_Community"])' in css
-    assert ".st-key-ag_mobile_account [data-testid=\"stPageLink-NavLink\"]" in css
-    assert any(
-        call.kwargs.get("key") == "ag_mobile_account"
-        for call in mock_st.container.call_args_list
-    )
-    assert 'a[href*="12_Community"]:hover' in css
-    assert "transform: none !important" in css
+    assert '.st-key-ag_mobile_navbar a[href*="Community"] [data-testid="stIconMaterial"]' in css
+    assert '.st-key-ag_mobile_navbar [data-testid="stPageLink"]:has(a[href*="Community"])' in css
+    assert "visibility: visible !important" in css
+    assert "width: 2.25rem !important" in css

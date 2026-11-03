@@ -27,7 +27,7 @@ _BUNDLED_NISR_PATH = (
 )
 _API_WARMUP_EXECUTOR = ThreadPoolExecutor(max_workers=8)
 _TRANSIENT_API_STATUSES = {502, 503, 504}
-_RETRY_BACKOFF_SECONDS = (2, 4, 8, 10, 10, 10, 10)
+_RETRY_BACKOFF_SECONDS = (2, 4)
 
 
 class _ZoneDataUnavailable(RuntimeError):
@@ -145,7 +145,7 @@ def request_api(
     method: str,
     path: str,
     *,
-    timeout: int = 10,
+    timeout: int | tuple[int, int] = 10,
     headers: dict[str, str] | None = None,
     retry_on_transient: bool = True,
     show_retry_status: bool = True,
@@ -153,7 +153,7 @@ def request_api(
 ) -> requests.Response:
     """Make a shared backend request with Render cold-start recovery."""
     method = method.upper()
-    attempts = 8 if retry_on_transient else 1
+    attempts = 3 if retry_on_transient else 1
     api_base_url = API_BASE_URL.rstrip("/")
     url = (
         path
@@ -164,7 +164,11 @@ def request_api(
     retry_status = None
 
     for attempt in range(attempts):
-        request_timeout = timeout if isinstance(timeout, tuple) else (10, 30)
+        request_timeout = (
+            timeout
+            if isinstance(timeout, tuple) or attempt == 0
+            else max(timeout, 60)
+        )
         try:
             if method == "GET":
                 response = requests.get(url, headers=request_headers, timeout=request_timeout, **kwargs)
@@ -188,7 +192,7 @@ def request_api(
                     retry_status.update(label="Backend request failed", state="error")
                 raise
         except requests.ConnectionError:
-            should_retry = method in {"GET", "POST"}
+            should_retry = method == "GET"
             if not should_retry or attempt + 1 >= attempts:
                 if retry_status is not None:
                     retry_status.update(label="Backend request failed", state="error")
@@ -210,11 +214,11 @@ def request_api(
         if show_retry_status:
             if retry_status is None:
                 retry_status = st.status(
-                    "Waking up the server, this can take up to a minute...",
+                    "Waking up the server; this may take a couple of minutes...",
                     expanded=True,
                 )
             retry_status.update(
-                label=("Waking up the server, this can take up to a minute... "
+                label=("Waking up the server; this may take a couple of minutes... "
                        f"Attempt {attempt + 2}/{attempts}"),
                 state="running",
             )
