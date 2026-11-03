@@ -1,6 +1,63 @@
 """Unit tests verifying navbar and tabs styling integrity (no black backgrounds)."""
+from concurrent.futures import Future
 from unittest.mock import MagicMock, patch
 import pytest
+
+
+def test_api_warmup_starts_in_background_and_does_not_duplicate_pending_request():
+    from components.navbar import _render_api_warmup
+
+    session = {}
+    future = Future()
+    with patch("components.navbar.st.session_state", session), patch(
+        "components.navbar.start_api_warmup", return_value=future
+    ) as start, patch("components.navbar.time.monotonic", return_value=100):
+        _render_api_warmup()
+        _render_api_warmup()
+
+    start.assert_called_once_with()
+    assert session["api_warmup_future"] is future
+    assert session["api_warmup_last_started"] == 100
+
+
+def test_api_warmup_retries_failed_request_on_later_browse():
+    from components.navbar import _render_api_warmup
+
+    failed_future = Future()
+    failed_future.set_result(False)
+    next_future = Future()
+    session = {
+        "api_warmup_future": failed_future,
+        "api_warmup_last_started": 100,
+    }
+    with patch("components.navbar.st.session_state", session), patch(
+        "components.navbar.start_api_warmup", return_value=next_future
+    ) as start, patch("components.navbar.time.monotonic", return_value=131):
+        _render_api_warmup()
+
+    start.assert_called_once_with()
+    assert session["api_warmup_future"] is next_future
+    assert session["api_warmup_last_started"] == 131
+
+
+def test_api_warmup_refreshes_after_service_idle_interval():
+    from components.navbar import _render_api_warmup
+
+    successful_future = Future()
+    successful_future.set_result(True)
+    next_future = Future()
+    session = {
+        "api_warmup_future": successful_future,
+        "api_warmup_last_started": 100,
+    }
+    with patch("components.navbar.st.session_state", session), patch(
+        "components.navbar.start_api_warmup", return_value=next_future
+    ) as start, patch("components.navbar.time.monotonic", return_value=341):
+        _render_api_warmup()
+
+    start.assert_called_once_with()
+    assert session["api_warmup_future"] is next_future
+    assert session["api_warmup_last_started"] == 341
 
 
 def test_navbar_css_has_no_black_background_on_buttons():

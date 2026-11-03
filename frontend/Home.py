@@ -1,13 +1,11 @@
 import os
 
-import requests
 import streamlit as st
 from components.errors import error_boundary
 from components.footer import render_footer
 from components.home_hero import render_home_hero
 from components.navbar import render_navbar
 from utils.i18n import t
-from utils import api_client
 from utils.theme import load_theme
 from utils.timezone import setup_system_timezone
 
@@ -80,17 +78,6 @@ def _render_home_feedback_link() -> None:
 
 
 def main():
-    with st.container(border=True):
-        st.markdown("**Using the free hosted server?**")
-        st.caption("It may pause after inactivity. Start it here before signing in.")
-        if st.button("Start / reconnect to server", type="primary"):
-            try:
-                api_client.ensure_api_awake()
-            except requests.RequestException:
-                st.error("The server is not ready yet. Wait a little, then select Start / reconnect again.")
-            else:
-                st.success("Server ready. You can now sign in or continue browsing.")
-
     # Animated command-center hero section
     render_home_hero()
 

@@ -1,11 +1,17 @@
 """Unified centered floating pill navigation tailored to the agrimenya theme."""
 from concurrent.futures import Future
 import inspect
+import logging
+import time
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
 from utils.api_client import start_api_warmup
 from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
+
+logger = logging.getLogger(__name__)
+_API_WARMUP_INTERVAL_SECONDS = 4 * 60
+_API_WARMUP_RETRY_SECONDS = 30
 
 
 PUBLIC_PAGES = {
@@ -72,12 +78,29 @@ def check_page_access() -> bool:
 
 
 def _render_api_warmup() -> None:
-    """Start the backend warm-up without adding a blocking banner to the page."""
+    """Keep the backend waking in the background while pages are being browsed."""
     future = st.session_state.get("api_warmup_future")
     if future is not None and not isinstance(future, Future):
-        return
-    if future is None:
-        st.session_state["api_warmup_future"] = start_api_warmup()
+        logger.warning("Discarding invalid API warm-up state from the Streamlit session")
+        st.session_state.pop("api_warmup_future", None)
+        future = None
+
+    now = time.monotonic()
+    last_started = st.session_state.get("api_warmup_last_started", 0.0)
+    if isinstance(future, Future):
+        if not future.done():
+            return
+        try:
+            succeeded = future.result()
+        except Exception:
+            logger.exception("Background API warm-up task failed")
+            succeeded = False
+        cooldown = _API_WARMUP_INTERVAL_SECONDS if succeeded else _API_WARMUP_RETRY_SECONDS
+        if now - last_started < cooldown:
+            return
+
+    st.session_state["api_warmup_future"] = start_api_warmup()
+    st.session_state["api_warmup_last_started"] = now
 
 
 def render_navbar(show_sidebar: bool = False) -> None:
