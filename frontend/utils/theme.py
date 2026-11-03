@@ -469,20 +469,50 @@ def load_theme(show_sidebar: bool = False) -> None:
 
     /* Custom Executive KPI Card */
     .ag-kpi-card {{
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
       background: var(--ag-card-bg);
       border: 1px solid var(--ag-card-border);
       border-radius: var(--ag-radius-md);
-      padding: 1.1rem 1.25rem;
+      padding: clamp(0.65rem, 1vw, 0.95rem);
       box-shadow: var(--ag-card-shadow);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       height: 100%;
-      min-height: 140px;
+      min-height: 7rem;
       position: relative;
       overflow: hidden;
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
       animation: ag-dashboard-enter 0.48s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }}
+    .st-key-dashboard_kpis .ag-kpi-header {{
+      min-width: 0;
+      gap: 0.35rem;
+      margin-bottom: 0.35rem;
+    }}
+    .st-key-dashboard_kpis .ag-kpi-title {{
+      min-width: 0;
+      font-size: clamp(0.66rem, 0.75vw, 0.8rem);
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }}
+    .st-key-dashboard_kpis .ag-kpi-icon {{
+      flex: 0 0 auto;
+    }}
+    .st-key-dashboard_kpis .ag-kpi-body {{
+      min-width: 0;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }}
+    .st-key-dashboard_kpis .ag-kpi-value {{
+      min-width: 0;
+      font-size: clamp(1.15rem, 1.7vw, 1.65rem);
+      overflow-wrap: anywhere;
+    }}
+    .st-key-dashboard_kpis .ag-kpi-sparkline {{
+      max-width: 4rem;
     }}
     .ag-kpi-card:hover {{
       transform: translateY(-2px);
@@ -543,14 +573,14 @@ def load_theme(show_sidebar: bool = False) -> None:
     .ag-weather-row {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 0.65rem;
-      margin: 0.75rem 0 1rem;
+      gap: 0.5rem;
+      margin: 0.5rem 0 0.75rem;
     }}
     .ag-weather-card {{
       background: var(--ag-surface);
       border: 1px solid var(--ag-card-border);
       border-radius: var(--ag-radius-md);
-      padding: 0.85rem 0.75rem;
+      padding: 0.7rem 0.6rem;
       text-align: center;
       box-shadow: var(--ag-card-shadow);
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -689,6 +719,24 @@ def load_theme(show_sidebar: bool = False) -> None:
       min-height: 40px;
       border-radius: 10px !important;
       box-shadow: none !important;
+    }}
+    @media (max-width: 1100px) {{
+      .st-key-dashboard_kpis [data-testid="stHorizontalBlock"] {{
+        flex-wrap: wrap !important;
+        align-items: stretch !important;
+        gap: 0.55rem !important;
+      }}
+      .st-key-dashboard_kpis [data-testid="stHorizontalBlock"] > [data-testid="column"] {{
+        flex: 1 1 calc(33.333% - 0.4rem) !important;
+        min-width: min(100%, 12rem) !important;
+        width: auto !important;
+      }}
+    }}
+    @media (max-width: 768px) {{
+      .st-key-dashboard_kpis [data-testid="stHorizontalBlock"] > [data-testid="column"] {{
+        flex-basis: calc(50% - 0.35rem) !important;
+        min-width: min(100%, 10rem) !important;
+      }}
     }}
     [data-testid="stDataFrame"],
     [data-testid="stTable"] {{

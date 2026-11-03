@@ -47,6 +47,18 @@ class TestTheme(unittest.TestCase):
         self.assertEqual(mock_st.session_state["ag_theme_mode"], "light")
 
     @patch("utils.theme.st")
+    def test_dashboard_kpis_reflow_without_horizontal_overflow(self, mock_st):
+        mock_st.session_state = {"ag_theme_mode": "light"}
+        load_theme()
+
+        css = mock_st.html.call_args[0][0]
+        self.assertIn(".st-key-dashboard_kpis [data-testid=\"stHorizontalBlock\"]", css)
+        self.assertIn("@media (max-width: 1100px)", css)
+        self.assertIn("@media (max-width: 768px)", css)
+        self.assertIn("min-width: min(100%, 12rem)", css)
+        self.assertIn("overflow-wrap: anywhere", css)
+
+    @patch("utils.theme.st")
     def test_disease_action_buttons_use_triage_style(self, mock_st):
         mock_st.session_state = {"ag_theme_mode": "light"}
         load_theme()

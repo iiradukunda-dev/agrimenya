@@ -188,7 +188,8 @@ def render_dashboard() -> None:
                     filtered.drop(filtered[~searchable.apply(lambda column: column.str.contains(dashboard_search, regex=False)).any(axis=1)].index, inplace=True)
 
         # ── 4. Executive KPI Grid with Sparklines ──────────────────────
-        kpi_c1, kpi_c2, kpi_c3, kpi_c4, kpi_c5 = st.columns(5)
+        with st.container(key="dashboard_kpis"):
+            kpi_c1, kpi_c2, kpi_c3, kpi_c4, kpi_c5 = st.columns(5, gap="small")
 
         total_records = len(filtered_metrics_df)
         total_production = filtered_metrics_df["Production (MT)"].sum(min_count=1) if "Production (MT)" in filtered_metrics_df else None
@@ -237,8 +238,6 @@ def render_dashboard() -> None:
             icon=icon_map,
             badge_color="#10b981",
         )
-
-        st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
 
         # ── 5. Spatial Priority Map + Analytics ───────────────────────
         map_col = st.container()
