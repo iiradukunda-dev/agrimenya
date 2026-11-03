@@ -68,6 +68,25 @@ def test_pwa_gateway_serves_root_worker_and_manifest_with_required_headers():
     assert "proxy_set_header Connection $connection_upgrade;" in content
 
 
+def test_offline_hub_links_use_the_gateway_route():
+    frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    with open(os.path.join(frontend_dir, "pwa-proxy.conf"), "r", encoding="utf-8") as f:
+        proxy_config = f.read()
+    assert "location = /offline.html" in proxy_config
+
+    import re
+
+    for path in (
+        os.path.join(frontend_dir, "components", "navbar.py"),
+        os.path.join(frontend_dir, "utils", "pwa.py"),
+    ):
+        with open(path, "r", encoding="utf-8") as f:
+            source = f.read()
+        assert re.search(r'href=["\']/offline\.html["\']', source)
+        assert "/app/static/offline.html" not in source
+
+
 def test_offline_hub_page():
     frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     offline_path = os.path.join(frontend_dir, "static", "offline.html")
@@ -153,7 +172,10 @@ def test_ai_widget_rendering_and_positioning():
     from components.ai_widget import render_floating_ai_widget
 
     rendered_markdown = []
-    with patch("streamlit.markdown", side_effect=lambda md, **kwargs: rendered_markdown.append(md)):
+    with patch("streamlit.markdown", side_effect=lambda md, **kwargs: rendered_markdown.append(md)), \
+         patch("streamlit.container") as container, \
+         patch("streamlit.page_link"):
+        container.return_value.__enter__.return_value = None
         render_floating_ai_widget()
 
     assert len(rendered_markdown) == 1, "render_floating_ai_widget must output markdown"
@@ -165,8 +187,40 @@ def test_ai_widget_rendering_and_positioning():
 
     # Verify target=_self and AI Assistant link
     assert "fab.target = '_self'" in md
-    assert "/AI_Assistant" in md
+    assert "ai_widget_route" in md
+    assert "link.click()" in md
+    assert "/AI_Assistant" not in md
     assert "wireFabClick" in md
     assert "background: #ffffff !important;" in md
     assert "color: #0284c7 !important;" in md
     assert "background: #041622 !important;" not in md
+
+
+def test_streamlit_page_links_reference_existing_pages():
+    import ast
+
+    frontend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    missing_pages = []
+    excluded_directories = {"__pycache__", "venv", ".venv", "node_modules"}
+    for directory, subdirectories, filenames in os.walk(frontend_dir):
+        subdirectories[:] = [name for name in subdirectories if name not in excluded_directories]
+        for filename in filenames:
+            if not filename.endswith(".py"):
+                continue
+            source_path = os.path.join(directory, filename)
+            with open(source_path, "r", encoding="utf-8") as source_file:
+                tree = ast.parse(source_file.read(), filename=source_path)
+            for node in ast.walk(tree):
+                if (
+                    isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "page_link"
+                    and node.args
+                    and isinstance(node.args[0], ast.Constant)
+                    and isinstance(node.args[0].value, str)
+                ):
+                    target_path = os.path.join(frontend_dir, node.args[0].value)
+                    if not os.path.isfile(target_path):
+                        missing_pages.append(f"{source_path}:{node.lineno} -> {node.args[0].value}")
+
+    assert not missing_pages, "Broken Streamlit page links:\n" + "\n".join(missing_pages)

@@ -316,7 +316,7 @@ def render_pwa_support() -> None:
                 Live connection to the agrimenya server was interrupted. Cached Rwanda district baselines, seasonal crop calendars, and emergency field tools remain ready.
               </p>
               <div style="display:flex;flex-direction:column;gap:0.75rem;width:100%;">
-                <a href="/app/static/offline.html" target="_self" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;text-decoration:none;font-weight:700;font-size:0.92rem;box-shadow:0 4px 16px rgba(16,185,129,0.35);transition:all 0.2s;">
+                <a href="/offline.html" target="_self" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;text-decoration:none;font-weight:700;font-size:0.92rem;box-shadow:0 4px 16px rgba(16,185,129,0.35);transition:all 0.2s;">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
                   <span>Open Offline Field Hub</span>
                 </a>
@@ -418,7 +418,7 @@ def render_pwa_support() -> None:
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                   <span>Reload agrimenya</span>
                 </button>
-                <a href="/app/static/offline.html" target="_self" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:rgba(16,185,129,0.12);border:1.5px solid rgba(16,185,129,0.35);color:#34d399;text-decoration:none;font-weight:700;font-size:0.92rem;transition:all 0.2s;">
+                <a href="/offline.html" target="_self" style="display:flex;align-items:center;justify-content:center;gap:0.55rem;padding:0.75rem 1.4rem;border-radius:12px;background:rgba(16,185,129,0.12);border:1.5px solid rgba(16,185,129,0.35);color:#34d399;text-decoration:none;font-weight:700;font-size:0.92rem;transition:all 0.2s;">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
                   <span>Open Offline Field Hub</span>
                 </a>

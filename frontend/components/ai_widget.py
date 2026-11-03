@@ -49,7 +49,13 @@ def render_floating_ai_widget() -> None:
         icon_html = svg_icon
         js_img_markup = svg_icon
 
+    with st.container(key="ai_widget_route"):
+        st.page_link("pages/7_AI_Assistant.py", label=ask_ai_text)
+
     css_rules = """
+    .st-key-ai_widget_route {
+        display: none !important;
+    }
     .ag-floating-ai-fab {
         position: fixed !important;
         bottom: 24px !important;
@@ -157,7 +163,7 @@ def render_floating_ai_widget() -> None:
     <style>
     {css_rules}
     </style>
-    <a id="ag-persistent-ai-fab" class="ag-floating-ai-fab" href="/AI_Assistant" target="_self" aria-label="{ask_ai_text}" title="{ask_ai_text}">
+    <a id="ag-persistent-ai-fab" class="ag-floating-ai-fab" target="_self" aria-label="{ask_ai_text}" title="{ask_ai_text}">
         {icon_html}
         <div class="ag-floating-ai-tooltip">
             {ask_ai_text}
@@ -168,17 +174,24 @@ def render_floating_ai_widget() -> None:
         try {{
             const parentDoc = window.parent.document || document;
             if (!parentDoc) return;
+            const routeLink = parentDoc.querySelector('.st-key-ai_widget_route [data-testid="stPageLink"] a[href]');
             function wireFabClick(element) {{
                 if (!element || element.__ag_fab_click_attached) return;
                 element.__ag_fab_click_attached = true;
                 element.addEventListener('click', function(e) {{
                     e.preventDefault();
-                    window.parent.location.href = '/AI_Assistant';
+                    const link = parentDoc.querySelector('.st-key-ai_widget_route [data-testid="stPageLink"] a[href]');
+                    if (link) {{
+                        link.click();
+                    }} else {{
+                        console.error('AI Assistant page link is unavailable.');
+                    }}
                 }});
             }}
             let fab = parentDoc.getElementById('ag-persistent-ai-fab');
             if (fab) {{
                 fab.target = '_self';
+                if (routeLink) fab.href = routeLink.href;
                 wireFabClick(fab);
             }}
         }} catch(e) {{}}
@@ -193,6 +206,7 @@ def render_floating_ai_widget() -> None:
         try {{
             const parentDoc = window.parent.document || document;
             if (!parentDoc) return;
+            const routeLink = parentDoc.querySelector('.st-key-ai_widget_route [data-testid="stPageLink"] a[href]');
 
             // Ensure styles are injected into parent document head
             if (!parentDoc.getElementById('ag-persistent-ai-fab-style')) {{
@@ -208,17 +222,17 @@ def render_floating_ai_widget() -> None:
                 element.__ag_fab_click_attached = true;
                 element.addEventListener('click', function(e) {{
                     e.preventDefault();
-                    const currentPath = (window.parent.location.pathname || '') + (window.parent.location.search || '');
-                    if (currentPath.toLowerCase().includes('ai_assistant') || currentPath.toLowerCase().includes('7_ai_assistant')) {{
+                    const link = parentDoc.querySelector('.st-key-ai_widget_route [data-testid="stPageLink"] a[href]');
+                    if (!link) {{
+                        console.error('AI Assistant page link is unavailable.');
+                        return;
+                    }}
+                    const targetPath = new URL(link.href, window.parent.location.href).pathname;
+                    if (targetPath === window.parent.location.pathname) {{
                         window.parent.scrollTo({{ top: 0, behavior: 'smooth' }});
                         return;
                     }}
-                    const internalLink = parentDoc.querySelector('a[href*="AI_Assistant"], a[href*="7_AI_Assistant"], [data-testid="stPageLink"] a[href*="Assistant"]');
-                    if (internalLink) {{
-                        internalLink.click();
-                    }} else {{
-                        window.parent.location.href = '/AI_Assistant';
-                    }}
+                    link.click();
                 }});
             }}
 
@@ -226,7 +240,6 @@ def render_floating_ai_widget() -> None:
             if (!fab) {{
                 fab = parentDoc.createElement('a');
                 fab.id = 'ag-persistent-ai-fab';
-                fab.href = '/AI_Assistant';
                 fab.target = '_self';
                 fab.className = 'ag-floating-ai-fab';
                 fab.setAttribute('aria-label', '{ask_ai_text}');
@@ -250,6 +263,14 @@ def render_floating_ai_widget() -> None:
                 if (tt) {{
                     tt.textContent = '{ask_ai_text}';
                 }}
+            }}
+            if (routeLink) {{
+                fab.href = routeLink.href;
+                fab.removeAttribute('aria-disabled');
+            }} else {{
+                fab.removeAttribute('href');
+                fab.setAttribute('aria-disabled', 'true');
+                console.error('AI Assistant page link is unavailable.');
             }}
             wireFabClick(fab);
         }} catch(e) {{
