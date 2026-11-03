@@ -70,6 +70,39 @@ COPY = {
         "verify_sent": "If your account needs verification, a new link will be sent.", "verify_dev_link": "Open the local verification link",
         "verify_dev_error": "Could not prepare the verification link. Check the backend and database connection.",
         "register_sent": "Account created. Check your email to verify it before signing in.",
+        "welcome_back": "Welcome back", "signin_subtitle": "Sign in to your account to continue.",
+        "password_minimum": "At least 12 characters", "field_form_help": "Add a location, crop, date, and a brief note. Photos are optional; observations are not verified diagnoses.",
+        "crop_example": "e.g. Maize", "symptoms_hint": "Describe what you saw, where it appears, and when it started.",
+        "district_filter": "Filter by district", "crop_filter": "Filter by crop", "filter_value_hint": "Type an exact value; leave blank to show all.",
+        "all_districts": "All districts",
+        "newer_posts": "Newer posts", "older_posts": "Older posts",
+        "older_observations": "Older observations", "newer_observations": "Newer observations",
+        "profile_title": "Community profile", "profile_username": "Username", "profile_help": "Your username appears beside your posts and observations.",
+        "save_profile": "Save profile", "profile_saved": "Username updated.", "profile_conflict": "That username is already in use.",
+        "notification_title": "Replies to your discussions", "notification_empty": "No new replies.",
+        "notification_item": "{actor} replied to “{title}”.", "mark_notifications_read": "Mark all as read",
+        "notification_read": "Notifications marked as read.", "report_observation": "Report observation",
+        "report_observation_help": "Tell administrators why this observation should be reviewed.",
+        "report_required": "Enter a reason of at least 3 characters.",
+        "post_body_hint": "What did you notice? What would you like help with?",
+        "topic_hint": "Optional — a short title helps others scan the feed",
+        "discussion_search": "Search these discussions", "discussion_search_hint": "Search titles, updates, or usernames",
+        "discussion_search_scope": "Search covers the posts on this page. Use Older posts to browse further.",
+        "discussion_no_match": "No discussions match this search.", "write_before_posting": "Write an update or question before posting.",
+        "write_before_reply": "Write a reply before sending.", "report_content": "Report content",
+        "report_reason": "Reason (required)", "send_to_admins": "Send to administrators",
+        "report_sent_confirmation": "Report sent for administrator review.",
+        "community_retry": "Retry", "server_starting": "The server is still starting up. Please try again in a moment.",
+        "server_unreachable": "Cannot reach the server. Check the backend connection and try again.",
+        "server_error": "The server returned an error. Please try again.",
+        "request_error": "The server could not complete that request. Please try again.",
+        "session_expired": "Your community session expired. Sign in again to continue.",
+        "password_min_error": "Password must be at least 12 characters.",
+        "username_invalid": "Use a username of 3–30 letters, numbers, or underscores.",
+        "email_invalid": "Enter a valid email address.", "verify_link_subtitle": "Open the one-time link sent to your email, then verify it here.",
+        "reset_link_subtitle": "Use at least 12 characters. The reset link can be used once and expires after 30 minutes.",
+        "admin_portal_link": "Administrator or agronomist? Go to Administrator Portal",
+        "report_target_missing": "This field observation could not be found.",
     },
     "rw": {
         "title": "Umuryango w'abahinzi", "intro": "Sangiza abandi ubunararibonye, ubaze ibibazo kandi wungurane ubumenyi.",
@@ -129,6 +162,39 @@ COPY = {
         "verify_sent": "Niba konti yawe itaremezwa, umurongo mushya uraza koherezwa.", "verify_dev_link": "Fungura umurongo wo kwemeza kuri mudasobwa yawe",
         "verify_dev_error": "Ntibyashobotse gutegura umurongo wo kwemeza. Reba backend na database.",
         "register_sent": "Konti yafunguwe. Reba imeyili yawe uyemeze mbere yo kwinjira.",
+        "welcome_back": "Ongera uze neza", "signin_subtitle": "Injira muri konti yawe ukomeze.",
+        "password_minimum": "Inyuguti nibura 12", "field_form_help": "Ongeraho aho umurima uherereye, igihingwa, itariki n'ibisobanuro bigufi. Ifoto si ngombwa; aya makuru si isuzuma ryemejwe.",
+        "crop_example": "Urugero: Ibigori", "symptoms_hint": "Sobanura ibyo wabonye, aho biri n'igihe byatangiriye.",
+        "district_filter": "Shakisha hakurikijwe akarere", "crop_filter": "Shakisha hakurikijwe igihingwa", "filter_value_hint": "Andika agaciro nyako; siga ubusa kugira ngo werekane byose.",
+        "all_districts": "Uturere twose",
+        "newer_posts": "Inyandiko nshya", "older_posts": "Inyandiko zishaje",
+        "older_observations": "Amakuru ashaje", "newer_observations": "Amakuru mashya",
+        "profile_title": "Konti y'umuryango", "profile_username": "Izina ukoresha", "profile_help": "Izina ryawe rigaragara ku nyandiko n'amakuru utanga.",
+        "save_profile": "Bika konti", "profile_saved": "Izina ukoresha ryahinduwe.", "profile_conflict": "Iri zina risanzwe rikoreshwa.",
+        "notification_title": "Ibisubizo ku biganiro byawe", "notification_empty": "Nta bisubizo bishya.",
+        "notification_item": "{actor} yasubije “{title}”.", "mark_notifications_read": "Shyira byose mu byasomwe",
+        "notification_read": "Amakuru mashya yashyizwe mu byasomwe.", "report_observation": "Tanga ikirego ku makuru",
+        "report_observation_help": "Sobanurira abayobozi impamvu aya makuru akwiye gusuzumwa.",
+        "report_required": "Andika impamvu ifite inyuguti nibura 3.",
+        "post_body_hint": "Wabonye iki? Ni iki wifuza ko abandi bagufashamo?",
+        "topic_hint": "Si ngombwa — umutwe mugufi worohereza abandi gusoma",
+        "discussion_search": "Shakisha mu biganiro", "discussion_search_hint": "Shakisha imitwe, amakuru cyangwa amazina",
+        "discussion_search_scope": "Gushakisha bikorerwa ku nyandiko ziri kuri uru rupapuro. Kanda ku zishaje kugira ngo urebe izindi.",
+        "discussion_no_match": "Nta biganiro bihuye n'ibyo washakishije.", "write_before_posting": "Andika amakuru cyangwa ikibazo mbere yo gusangiza abandi.",
+        "write_before_reply": "Andika igisubizo mbere yo kohereza.", "report_content": "Tanga ikirego ku makuru",
+        "report_reason": "Impamvu (ni ngombwa)", "send_to_admins": "Ohereza ku bayobozi",
+        "report_sent_confirmation": "Ikirego cyoherejwe ku bayobozi kugira ngo bagisuzume.",
+        "community_retry": "Ongera ugerageze", "server_starting": "Seriveri iracyatangira. Ongera ugerageze mu kanya.",
+        "server_unreachable": "Ntibishobotse kugera kuri seriveri. Reba backend wongere ugerageze.",
+        "server_error": "Seriveri yagaragaje ikosa. Ongera ugerageze.",
+        "request_error": "Seriveri ntiyashoboye kurangiza ubu busabe. Ongera ugerageze.",
+        "session_expired": "Igihe cya konti y'umuryango cyarangiye. Ongera winjire ukomeze.",
+        "password_min_error": "Ijambo ry'ibanga rigomba kugira inyuguti nibura 12.",
+        "username_invalid": "Koresha inyuguti 3–30 zigizwe n'inyuguti, imibare cyangwa _.",
+        "email_invalid": "Andika imeyili yemewe.", "verify_link_subtitle": "Fungura umurongo woherejwe kuri imeyili yawe, hanyuma ubyemeze hano.",
+        "reset_link_subtitle": "Koresha inyuguti nibura 12. Umurongo ukoreshwa rimwe kandi urangira nyuma y'iminota 30.",
+        "admin_portal_link": "Uri umuyobozi cyangwa umuhanga mu buhinzi? Fungura urubuga rw'abayobozi",
+        "report_target_missing": "Aya makuru yo mu murima ntabonetse.",
     },
     "fr": {
         "title": "Communauté des agriculteurs", "intro": "Partagez votre expérience pratique, posez des questions et apprenez d'autres producteurs.",
@@ -154,6 +220,80 @@ COPY = {
         "discussion_tab": "Discussions", "field_tab": "Observations de terrain", "reply_count": "Réponses",
         "delete_observation": "Supprimer mon observation", "observation_deleted": "Observation de terrain supprimée.",
         "observation_delete_confirm": "Supprimer cette observation de terrain et sa photo ? Cette action est irréversible.",
+        "wa_title": "Utiliser Agri-Menya sur WhatsApp",
+        "wa_intro": "Ouvrez une conversation pour accéder aux données agricoles par district et aux outils d'alerte sans vous connecter au site.",
+        "wa_commands": "Envoyez HELP pour afficher le menu. Essayez DISTRICT <nom>, RANK <culture>, SUBSCRIBE <district> [culture], STATUS, ALERTS ou LANG RW. Envoyez START uniquement pour recevoir des alertes WhatsApp ; STOP permet de se désinscrire.",
+        "wa_pending": "Le service WhatsApp n'est pas encore activé pour les utilisateurs. Les services du site restent disponibles.",
+        "wa_unavailable": "La disponibilité de WhatsApp n'a pas pu être vérifiée. Vous pouvez continuer sur le site.",
+        "wa_open": "Ouvrir la conversation WhatsApp Agri-Menya",
+        "confirm_password": "Confirmer le nouveau mot de passe", "email_accepted": "Le serveur de messagerie a accepté le message, sans garantir sa livraison. Vérifiez votre boîte de réception et les courriers indésirables, ou utilisez le lien local ci-dessous.",
+        "email_failed": "L'envoi du courriel a échoué dans cet environnement de développement. Utilisez le lien local à usage unique ci-dessous.",
+        "email_not_configured": "L'envoi de courriels n'est pas configuré dans cet environnement de développement. Utilisez le lien local à usage unique ci-dessous.",
+        "email_separator": "ou connectez-vous par e-mail", "forgot_password": "Mot de passe oublié ?",
+        "google_error_account_conflict": "Cette adresse e-mail est déjà associée à un autre compte Google.",
+        "google_error_account_link_required": "Cette adresse e-mail a déjà un compte communautaire. Connectez-vous avec la méthode existante ; Google ne peut associer automatiquement le compte que si Google contrôle le domaine de cette adresse.",
+        "google_error_account_unavailable": "Ce compte communautaire est indisponible. Contactez un administrateur si vous pensez qu'il s'agit d'une erreur.",
+        "google_error_cancelled": "La connexion Google a été annulée.",
+        "google_error_expired": "Cette demande de connexion Google a expiré. Recommencez.",
+        "google_error_generic": "La connexion Google n'a pas abouti. Veuillez réessayer.",
+        "google_error_invalid_identity": "Google n'a pas pu vérifier cette connexion. Recommencez.",
+        "google_error_invalid_state": "Cette demande de connexion Google n'a pas pu être vérifiée. Recommencez.",
+        "google_error_unavailable": "La connexion Google n'a pas abouti. Veuillez réessayer.",
+        "google_error_unverified_email": "Google doit vérifier votre adresse e-mail avant son utilisation ici.",
+        "google_new_account_note": "La connexion Google peut créer un compte agriculteur. Votre adresse Google doit être vérifiée.",
+        "google_signin": "Continuer avec Google", "password_mismatch": "Les mots de passe ne correspondent pas.",
+        "password_updated": "Mot de passe mis à jour. Connectez-vous avec le nouveau mot de passe.",
+        "register_sent": "Compte créé. Vérifiez votre adresse e-mail avant de vous connecter.",
+        "reset_dev_error": "Impossible de créer le lien de réinitialisation. Vérifiez l'accès du serveur à la base de données.",
+        "reset_dev_link": "Ouvrir le lien de réinitialisation à usage unique",
+        "reset_password": "Choisir un nouveau mot de passe", "reset_requested": "Si un compte correspond à cette adresse, un lien de réinitialisation sera envoyé.",
+        "save_password": "Mettre à jour le mot de passe", "send_reset": "Envoyer le lien de réinitialisation",
+        "verify_button": "Vérifier l'e-mail", "verify_dev_error": "Impossible de préparer le lien de vérification. Vérifiez le serveur et la base de données.",
+        "verify_dev_link": "Ouvrir le lien local de vérification", "verify_help": "Ouvrez le lien à usage unique envoyé à votre adresse, puis vérifiez-la ici.",
+        "verify_resend": "Renvoyer le courriel de vérification", "verify_resend_help": "Saisissez votre adresse e-mail pour recevoir un nouveau lien de vérification.",
+        "verify_sent": "Si votre compte doit être vérifié, un nouveau lien sera envoyé.",
+        "verify_success": "Adresse e-mail vérifiée. Vous pouvez maintenant vous connecter.",
+        "verify_title": "Vérifier votre adresse e-mail",
+        "welcome_back": "Bon retour", "signin_subtitle": "Connectez-vous pour continuer.",
+        "password_minimum": "12 caractères minimum",
+        "field_form_help": "Ajoutez un lieu, une culture, une date et une brève note. La photo est facultative ; ces observations ne sont pas des diagnostics vérifiés.",
+        "crop_example": "Ex. : Maïs", "symptoms_hint": "Décrivez ce que vous avez observé, où cela apparaît et depuis quand.",
+        "district_filter": "Filtrer par district", "crop_filter": "Filtrer par culture", "filter_value_hint": "Saisissez une valeur exacte ; laissez vide pour tout afficher.",
+        "all_districts": "Tous les districts",
+        "newer_posts": "Publications plus récentes", "older_posts": "Publications précédentes",
+        "older_observations": "Observations précédentes", "newer_observations": "Observations plus récentes",
+        "profile_title": "Profil communautaire", "profile_username": "Nom d'utilisateur",
+        "profile_help": "Votre nom d'utilisateur apparaît avec vos publications et observations.",
+        "save_profile": "Enregistrer le profil", "profile_saved": "Nom d'utilisateur mis à jour.",
+        "profile_conflict": "Ce nom d'utilisateur est déjà utilisé.",
+        "notification_title": "Réponses à vos discussions", "notification_empty": "Aucune nouvelle réponse.",
+        "notification_item": "{actor} a répondu à « {title} ».", "mark_notifications_read": "Tout marquer comme lu",
+        "notification_read": "Notifications marquées comme lues.", "report_observation": "Signaler l'observation",
+        "report_observation_help": "Expliquez aux administrateurs pourquoi cette observation doit être examinée.",
+        "report_required": "Saisissez un motif d'au moins 3 caractères.",
+        "post_body_hint": "Qu'avez-vous observé ? De quelle aide avez-vous besoin ?",
+        "topic_hint": "Facultatif — un titre court facilite la lecture du fil",
+        "discussion_search": "Rechercher dans les discussions", "discussion_search_hint": "Rechercher des titres, publications ou noms d'utilisateur",
+        "discussion_search_scope": "La recherche porte sur les publications de cette page. Utilisez Publications précédentes pour continuer.",
+        "discussion_no_match": "Aucune discussion ne correspond à cette recherche.",
+        "write_before_posting": "Rédigez une actualité ou une question avant de publier.",
+        "write_before_reply": "Rédigez une réponse avant de l'envoyer.",
+        "report_content": "Signaler le contenu", "report_reason": "Motif (obligatoire)",
+        "send_to_admins": "Envoyer aux administrateurs",
+        "report_sent_confirmation": "Signalement envoyé pour examen administratif.",
+        "community_retry": "Réessayer",
+        "server_starting": "Le serveur démarre encore. Veuillez réessayer dans un instant.",
+        "server_unreachable": "Impossible de joindre le serveur. Vérifiez la connexion au backend et réessayez.",
+        "server_error": "Le serveur a rencontré une erreur. Veuillez réessayer.",
+        "request_error": "Le serveur n'a pas pu traiter cette demande. Veuillez réessayer.",
+        "session_expired": "Votre session communautaire a expiré. Reconnectez-vous pour continuer.",
+        "password_min_error": "Le mot de passe doit comporter au moins 12 caractères.",
+        "username_invalid": "Utilisez un nom de 3 à 30 lettres, chiffres ou traits de soulignement.",
+        "email_invalid": "Saisissez une adresse e-mail valide.",
+        "verify_link_subtitle": "Ouvrez le lien à usage unique envoyé à votre adresse, puis vérifiez-la ici.",
+        "reset_link_subtitle": "Utilisez au moins 12 caractères. Le lien est à usage unique et expire après 30 minutes.",
+        "admin_portal_link": "Administrateur ou agronome ? Accéder au portail administrateur",
+        "report_target_missing": "Cette observation de terrain est introuvable.",
     },
 }
 
@@ -185,12 +325,12 @@ def _field_reports(token: str, language: str) -> None:
             label = f"{location or 'Location not recorded'} · {str(item['id'])[-8:]}"
             zone_by_label[label] = item
         with st.popover(c["report_help"], use_container_width=True):
-            st.caption("Add a location, crop, date, and a brief note. A photo is optional; reports remain community observations, not verified diagnoses.")
+            st.caption(c["field_form_help"])
             with st.form("community_field_observation", clear_on_submit=True):
                 selected_zone_label = st.selectbox(c["district"], list(zone_by_label))
-                crop = st.text_input(c["crop"], max_chars=50, placeholder="e.g. Maize / Ibigori")
+                crop = st.text_input(c["crop"], max_chars=50, placeholder=c["crop_example"])
                 observed_on = st.date_input(c["date"], value=date.today())
-                symptoms = st.text_area(c["symptoms"], max_chars=500, height=110, placeholder="Describe what you saw, where it appears, and when it started.")
+                symptoms = st.text_area(c["symptoms"], max_chars=500, height=110, placeholder=c["symptoms_hint"])
                 notes = st.text_area(c["notes"], max_chars=1000, height=90)
                 photo = st.file_uploader(c["photo"], type=["jpg", "jpeg", "png", "webp"], accept_multiple_files=False)
                 submit = st.form_submit_button(c["save_report"], type="primary", use_container_width=True)
@@ -227,8 +367,38 @@ def _field_reports(token: str, language: str) -> None:
                             st.rerun()
                         except requests.RequestException as exc:
                             st.error(_error_message(exc, language))
+    district_options = sorted({
+        str(item.get("district")).strip()
+        for item in zones
+        if item.get("district") and str(item.get("district")).strip()
+    })
+    selected_district = st.selectbox(
+        c["district_filter"], ["", *district_options],
+        format_func=lambda value: value or c["all_districts"],
+        key="community_field_district_filter",
+    )
+    crop_filter = st.text_input(
+        c["crop_filter"], placeholder=c["filter_value_hint"],
+        key="community_field_crop_filter",
+    ).strip()
+    filter_values = (
+        selected_district,
+        crop_filter,
+    )
+    if st.session_state.get("community_field_report_filters") != filter_values:
+        st.session_state["community_field_report_filters"] = filter_values
+        st.session_state["community_field_report_offset"] = 0
+    report_offset = int(st.session_state.get("community_field_report_offset", 0))
+    report_params = {"limit": 10, "offset": report_offset}
+    if filter_values[0]:
+        report_params["district"] = filter_values[0]
+    if filter_values[1]:
+        report_params["crop"] = filter_values[1]
     try:
-        response = request_api("GET", f"{API_BASE_URL}/community/field-reports?limit=10", headers={"Authorization": f"Bearer {token}"}, timeout=10)
+        response = request_api(
+            "GET", f"{API_BASE_URL}/community/field-reports", params=report_params,
+            headers={"Authorization": f"Bearer {token}"}, timeout=10,
+        )
         response.raise_for_status()
         reports = response.json()
     except requests.RequestException as exc:
@@ -266,6 +436,35 @@ def _field_reports(token: str, language: str) -> None:
                             st.rerun()
                         except requests.RequestException as exc:
                             st.error(_error_message(exc, language))
+            else:
+                with st.popover(c["report_observation"]):
+                    st.caption(c["report_observation_help"])
+                    with st.form(f"report_field_observation_{report.get('id')}"):
+                        reason = st.text_input(c["report_reason"], max_chars=500)
+                        report_submit = st.form_submit_button(c["send_to_admins"])
+                    if report_submit:
+                        if len(reason.strip()) < 3:
+                            st.warning(c["report_required"])
+                        else:
+                            try:
+                                _request(
+                                    "POST",
+                                    f"/community/field-reports/{report['id']}/report",
+                                    payload={"reason": reason.strip()},
+                                )
+                                st.success(c["report_sent_confirmation"])
+                            except requests.RequestException as exc:
+                                st.error(_error_message(exc, language))
+
+    report_page_cols = st.columns(2)
+    with report_page_cols[0]:
+        if report_offset > 0 and st.button(c["newer_observations"], key="community_field_reports_newer"):
+            st.session_state["community_field_report_offset"] = max(0, report_offset - 10)
+            st.rerun()
+    with report_page_cols[1]:
+        if len(reports) == 10 and st.button(c["older_observations"], key="community_field_reports_older"):
+            st.session_state["community_field_report_offset"] = report_offset + 10
+            st.rerun()
 
 
 def _request(method: str, path: str, *, payload: dict | None = None):
@@ -330,39 +529,43 @@ def _clear_community_session(*, expired: bool = False) -> None:
 
 
 def _error_message(exc: requests.RequestException, language: str = "en") -> str:
+    c = COPY.get(language, COPY["en"])
     if exc.response is None:
         if isinstance(exc, (requests.Timeout, requests.ConnectionError)):
-            return "The server is still starting up. Please try again in a moment."
-        return "Cannot reach the server. Check the backend connection and try again."
+            return c["server_starting"]
+        return c["server_unreachable"]
     if exc.response.status_code >= 500:
-        return "The server returned an error. Please try again."
+        return c["server_error"]
     if exc.response is not None:
         try:
             detail = exc.response.json().get("detail")
             if isinstance(detail, str):
-                return detail
+                translations = {
+                    "That username is already in use": c["profile_conflict"],
+                    "Field observation not found": c["report_target_missing"],
+                }
+                if detail in translations:
+                    return translations[detail]
+                return detail if language == "en" else c["request_error"]
             if isinstance(detail, list):
                 locations = {str(item.get("loc", [""])[-1]): item.get("type", "") for item in detail if isinstance(item, dict)}
                 if "password" in locations:
-                    return ("Password must be at least 12 characters." if language == "en"
-                            else "Ijambo ry'ibanga rigomba kugira inyuguti nibura 12.")
+                    return c["password_min_error"]
                 if "display_name" in locations:
-                    return ("Use a username of 3–30 letters, numbers, or underscores." if language == "en"
-                            else "Koresha izina rigizwe n'inyuguti, imibare cyangwa _, hagati ya 3 na 30.")
+                    return c["username_invalid"]
                 if "email" in locations:
-                    return ("Enter a valid email address." if language == "en"
-                            else "Andika imeyili yemewe.")
+                    return c["email_invalid"]
                 messages = [str(item.get("msg", "")) for item in detail if isinstance(item, dict) and item.get("msg")]
                 if messages:
                     return " ".join(messages)
         except (ValueError, AttributeError):
             pass
-    return "The server could not complete that request. Please try again."
+    return c["request_error"]
 
 
 def _show_request_error(exc: requests.RequestException, language: str, key: str) -> None:
     st.error(_error_message(exc, language))
-    if st.button("Retry", key=key, use_container_width=True):
+    if st.button(COPY.get(language, COPY["en"])["community_retry"], key=key, use_container_width=True):
         st.rerun()
 
 
@@ -425,7 +628,7 @@ def render_community() -> None:
         with centralized_login_container():
             login_card_header(
                 title=c["reset_password"],
-                subtitle="Use at least 12 characters. The reset link can be used once and expires after 30 minutes." if language == "en" else "Koresha inyuguti nibura 12. Umurongo ukoreshwa rimwe kandi urangira nyuma y'iminota 30.",
+                subtitle=c["reset_link_subtitle"],
                 badge_text="SECURITY RECOVERY",
                 accent_color="#10b981",
             )
@@ -435,7 +638,7 @@ def render_community() -> None:
                 submit_reset = st.form_submit_button(c["save_password"], type="primary", use_container_width=True)
             if submit_reset:
                 if len(new_password) < 12:
-                    st.error("Password must be at least 12 characters." if language == "en" else "Ijambo ry'ibanga rigomba kugira inyuguti nibura 12.")
+                    st.error(c["password_min_error"])
                 elif new_password != confirmation:
                     st.error(c["password_mismatch"])
                 else:
@@ -458,7 +661,7 @@ def render_community() -> None:
     if community_token and (community_expiry is not None and time.time() >= community_expiry):
         _clear_community_session(expired=True)
     if st.session_state.pop("community_session_expired", False):
-        st.info("Your community session expired. Sign in again to continue." if language == "en" else "Igihe cya konti y'umuryango cyarangiye. Ongera winjire ukomeze.")
+        st.info(c["session_expired"])
 
     # 5. Unauthenticated State: Centralized Executive Login Card
     if not st.session_state.get("community_access_token"):
@@ -914,8 +1117,8 @@ def render_community() -> None:
             </svg>"""
             badge_title = "GROWER NETWORK" if language == "en" else "UMURYANGO W'ABAHINZI" if language == "rw" else "RÉSEAU AGRICOLE"
             login_card_header(
-                title="Welcome back" if language == "en" else c["title"],
-                subtitle=("Sign in to your account to continue." if language == "en" else c["intro"]),
+                title=c["welcome_back"],
+                subtitle=c["signin_subtitle"],
                 badge_text=badge_title,
                 icon=sprout_icon,
                 accent_color="#10b981",
@@ -999,9 +1202,9 @@ def render_community() -> None:
                     display_name = st.text_input(c["name"], placeholder="e.g. Jean_Gasabo", max_chars=80)
                     email = st.text_input(c["email"], placeholder="farmer@cooperative.rw", key="community_register_email")
                     password = st.text_input(
-                        c["password"] + (" (at least 12 characters)" if language == "en" else " (inyuguti nibura 12)"),
+                        c["password"] + f" ({c['password_minimum']})",
                         type="password",
-                        placeholder="Min. 12 characters",
+                        placeholder=c["password_minimum"],
                         key="community_register_password",
                     )
                     submit = st.form_submit_button(c["create_farmer"], type="primary", use_container_width=True)
@@ -1021,7 +1224,7 @@ def render_community() -> None:
                         st.error(_error_message(exc, language))
 
             st.markdown(
-                '<div style="text-align:center;margin-top:0.35rem;font-size:0.48rem;color:#94a3b8;">Administrator or agronomist? <a href="/Admin" style="color:#0875d1;font-weight:700;text-decoration:none;">Go to Administrator Portal →</a></div>',
+                f'<div style="text-align:center;margin-top:0.35rem;font-size:0.48rem;color:#94a3b8;">{c["admin_portal_link"]} <a href="/Admin" style="color:#0875d1;font-weight:700;text-decoration:none;">→</a></div>',
                 unsafe_allow_html=True,
             )
         return
@@ -1039,26 +1242,84 @@ def render_community() -> None:
         _clear_community_session()
         st.rerun()
 
+    with st.popover(c["profile_title"]):
+        st.caption(c["profile_help"])
+        with st.form("community_profile_update"):
+            updated_name = st.text_input(
+                c["profile_username"], value=display_name, max_chars=30,
+                key="community_profile_display_name",
+            )
+            profile_submit = st.form_submit_button(c["save_profile"], type="primary")
+        if profile_submit:
+            try:
+                result = _request(
+                    "PATCH", "/community/profile",
+                    payload={"display_name": updated_name.strip()},
+                )
+                st.session_state["community_account"] = {
+                    **account, **result.get("account", {}),
+                }
+                st.session_state["community_profile_saved"] = True
+                st.rerun()
+            except requests.RequestException as exc:
+                st.error(_error_message(exc, language))
+    if st.session_state.pop("community_profile_saved", False):
+        st.success(c["profile_saved"])
+
+    try:
+        notifications = _request("GET", "/community/notifications")
+    except requests.RequestException as exc:
+        st.error(_error_message(exc, language))
+    else:
+        with st.expander(
+            f"{c['notification_title']} ({len(notifications)})",
+            expanded=bool(notifications),
+        ):
+            if not notifications:
+                st.caption(c["notification_empty"])
+            for notification in notifications:
+                post = notification.get("post") or {}
+                st.write(c["notification_item"].format(
+                    actor=notification.get("actor_display_name", c["reply_author"]),
+                    title=post.get("title", c["new_post"]),
+                ))
+            if notifications and st.button(
+                c["mark_notifications_read"], key="community_notifications_read",
+            ):
+                try:
+                    _request("POST", "/community/notifications/read")
+                    st.session_state["community_notifications_marked_read"] = True
+                    st.rerun()
+                except requests.RequestException as exc:
+                    st.error(_error_message(exc, language))
+    if st.session_state.pop("community_notifications_marked_read", False):
+        st.success(c["notification_read"])
+
     # WhatsApp Bot Access Banner
     try:
         whatsapp_info = request_api(
             "GET", "/communication/whatsapp-info", timeout=5
         )
-        if whatsapp_info.status_code == 200:
-            wa_data = whatsapp_info.json()
-            if wa_data.get("enabled"):
-                with st.container(border=True):
-                    st.markdown(f"**{c.get('wa_title', 'Use Agri-Menya on WhatsApp')}**")
-                    st.write(c.get("wa_intro", "Open a chat to access district crop evidence and alert tools without signing in to the website."))
-                    st.caption(c.get("wa_commands", ""))
-                    wa_url = wa_data.get("chat_url") or (f"https://wa.me/{wa_data.get('phone_e164', '').lstrip('+')}" if wa_data.get("phone_e164") else None)
-                    if wa_url:
-                        st.link_button(c.get("wa_open", "Open Agri-Menya WhatsApp chat"), wa_url)
-    except Exception:
-        pass
+        whatsapp_info.raise_for_status()
+        wa_data = whatsapp_info.json()
+        if wa_data.get("enabled"):
+            with st.container(border=True):
+                st.markdown(f"**{c['wa_title']}**")
+                st.write(c["wa_intro"])
+                st.caption(c["wa_commands"])
+                wa_url = wa_data.get("chat_url") or (
+                    f"https://wa.me/{wa_data.get('phone_e164', '').lstrip('+')}"
+                    if wa_data.get("phone_e164") else None
+                )
+                if wa_url:
+                    st.link_button(c["wa_open"], wa_url)
+        else:
+            st.info(c["wa_pending"])
+    except requests.RequestException:
+        st.info(c["wa_unavailable"])
 
     selected_section = st.radio(
-        "Community feed", [c["discussion_tab"], c["field_tab"]],
+        c["title"], [c["discussion_tab"], c["field_tab"]],
         horizontal=True, label_visibility="collapsed", key="community_feed_section",
     )
     if selected_section == c["field_tab"]:
@@ -1067,12 +1328,12 @@ def render_community() -> None:
         with st.container(border=True):
             st.subheader(c["new_post"])
             with st.form("community_new_post", clear_on_submit=True):
-                body = st.text_area(c["post_body"], max_chars=5000, height=130, placeholder="What did you notice? What would you like help with?")
-                title = st.text_input(c["topic"], max_chars=140, placeholder="Optional — a short title helps others scan the feed")
+                body = st.text_area(c["post_body"], max_chars=5000, height=130, placeholder=c["post_body_hint"])
+                title = st.text_input(c["topic"], max_chars=140, placeholder=c["topic_hint"])
                 submit = st.form_submit_button(c["publish"], type="primary", use_container_width=True)
             if submit:
                 if not body.strip():
-                    st.warning("Write an update or question before posting.")
+                    st.warning(c["write_before_posting"])
                 else:
                     post_title = title.strip() or body.strip().splitlines()[0][:137]
                     if len(post_title) < 3:
@@ -1093,7 +1354,7 @@ def render_community() -> None:
 
         page_post_count = len(posts)
         feed_search = st.text_input(
-            "Search these discussions", placeholder="Search titles, updates, or usernames",
+            c["discussion_search"], placeholder=c["discussion_search_hint"],
             key="community_feed_search",
         ).strip().casefold()
         if feed_search:
@@ -1101,10 +1362,10 @@ def render_community() -> None:
                 str(post.get("title") or ""), str(post.get("body") or ""),
                 str((post.get("author") or {}).get("display_name") or ""),
             )).casefold()]
-            st.caption("Search covers the posts on this page. Use Older posts to browse further.")
+            st.caption(c["discussion_search_scope"])
 
         if not posts:
-            st.info("No discussions match this search." if feed_search else c["empty"])
+            st.info(c["discussion_no_match"] if feed_search else c["empty"])
 
         comments_by_post = {}
         if posts:
@@ -1136,12 +1397,29 @@ def render_community() -> None:
                         comment_author = comment.get("author") or {}
                         st.markdown(f"**{comment_author.get('display_name', c['reply_author'])}** · {comment_author.get('role', c['role_farmer'])}")
                         st.write(comment.get("body", ""))
+                        if str(comment.get("author_id")) != str(account.get("id")):
+                            with st.popover(c["report_content"]):
+                                with st.form(f"report_comment_{comment.get('id')}"):
+                                    reason = st.text_input(c["report_reason"], max_chars=500)
+                                    report_comment = st.form_submit_button(c["send_to_admins"])
+                                if report_comment:
+                                    if len(reason.strip()) < 3:
+                                        st.warning(c["report_required"])
+                                    else:
+                                        try:
+                                            _request(
+                                                "POST", f"/community/posts/{post_id}/report",
+                                                payload={"reason": reason.strip(), "comment_id": comment["id"]},
+                                            )
+                                            st.success(c["report_sent_confirmation"])
+                                        except requests.RequestException as exc:
+                                            st.error(_error_message(exc, language))
                 with st.form(f"community_comment_{post_id}", clear_on_submit=True):
                     reply = st.text_area(c["reply"], max_chars=1500, key=f"reply_{post_id}")
                     reply_submit = st.form_submit_button(c["send_reply"], type="primary")
                 if reply_submit:
                     if not reply.strip():
-                        st.warning("Write a reply before sending.")
+                        st.warning(c["write_before_reply"])
                     else:
                         try:
                             _request("POST", f"/community/posts/{post_id}/comments", payload={"body": reply})
@@ -1160,23 +1438,26 @@ def render_community() -> None:
                             except requests.RequestException as exc:
                                 st.error(_error_message(exc, language))
                 else:
-                    with action_cols[0].popover("Report content"):
+                    with action_cols[0].popover(c["report_content"]):
                         with st.form(f"report_post_{post_id}"):
-                            reason = st.text_input("Reason (required)", max_chars=500)
-                            report = st.form_submit_button("Send to administrators")
+                            reason = st.text_input(c["report_reason"], max_chars=500)
+                            report = st.form_submit_button(c["send_to_admins"])
                         if report:
-                            try:
-                                _request("POST", f"/community/posts/{post_id}/report", payload={"reason": reason})
-                                st.success("Report sent for administrator review.")
-                            except requests.RequestException as exc:
-                                st.error(_error_message(exc, language))
+                            if len(reason.strip()) < 3:
+                                st.warning(c["report_required"])
+                            else:
+                                try:
+                                    _request("POST", f"/community/posts/{post_id}/report", payload={"reason": reason.strip()})
+                                    st.success(c["report_sent_confirmation"])
+                                except requests.RequestException as exc:
+                                    st.error(_error_message(exc, language))
 
         page_cols = st.columns([1, 1, 4])
         with page_cols[0]:
-            if feed_offset > 0 and st.button("Newer posts", key="community_feed_newer"):
+            if feed_offset > 0 and st.button(c["newer_posts"], key="community_feed_newer"):
                 st.session_state["community_feed_offset"] = max(0, feed_offset - 15)
                 st.rerun()
         with page_cols[1]:
-            if page_post_count == 15 and st.button("Older posts", key="community_feed_older"):
+            if page_post_count == 15 and st.button(c["older_posts"], key="community_feed_older"):
                 st.session_state["community_feed_offset"] = feed_offset + 15
                 st.rerun()

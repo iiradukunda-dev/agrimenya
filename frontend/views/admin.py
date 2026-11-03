@@ -709,18 +709,31 @@ def render_admin() -> None:
                 if not reports:
                     st.info("Zero open community reports. All content is clear.")
                 for report in reports:
-                    target_kind = "comment" if report.get("comment_id") else "post"
+                    target_kind = (
+                        "field_report" if report.get("field_report_id")
+                        else "comment" if report.get("comment_id") else "post"
+                    )
                     target = report.get(target_kind) or {}
-                    author = target.get("author") or {}
+                    author = target.get("author") or target.get("reporter") or {}
                     with st.container(border=True):
                         st.markdown(f"**Report Reason:** <span style='color:#f87171;'>{escape(str(report.get('reason', '')))}</span>", unsafe_allow_html=True)
                         st.caption(f"{target_kind.title()} by {author.get('display_name', 'Community Member')} &bull; Submitted {report.get('created_at', '')}")
                         if target_kind == "post":
                             st.markdown(f"**{target.get('title', 'Untitled')}**")
-                        st.write(target.get("body", ""))
+                        elif target_kind == "field_report":
+                            st.markdown(
+                                f"**{target.get('crop', 'Unknown crop')} · "
+                                f"{target.get('district', 'Unknown district')} · "
+                                f"{target.get('observed_on', '')}**"
+                            )
+                        st.write(target.get("body") or target.get("symptoms") or target.get("notes") or "")
 
                         action_cols = st.columns([1, 1, 1, 2])
-                        actions = [("Hide Content", "hide"), ("Delete Content", "delete"), ("Dismiss Report", "dismiss")]
+                        actions = (
+                            [("Delete Observation", "delete"), ("Dismiss Report", "dismiss")]
+                            if target_kind == "field_report"
+                            else [("Hide Content", "hide"), ("Delete Content", "delete"), ("Dismiss Report", "dismiss")]
+                        )
                         for col, (label, act) in zip(action_cols[:3], actions):
                             if col.button(label, key=f"comm_rep_{report['id']}_{act}"):
                                 res = api_client.moderate_community_content({

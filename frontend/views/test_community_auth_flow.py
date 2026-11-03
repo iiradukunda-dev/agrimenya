@@ -31,6 +31,24 @@ def _mock_streamlit(query_params: dict) -> MagicMock:
     return mock_st
 
 
+def test_community_translations_cover_every_supported_language():
+    english_keys = set(community.COPY["en"])
+    assert set(community.COPY["rw"]) == english_keys
+    assert set(community.COPY["fr"]) == english_keys
+
+
+def test_community_username_conflict_is_localized_in_french():
+    response = requests.Response()
+    response.status_code = 409
+    response._content = b'{"detail":"That username is already in use"}'
+
+    message = community._error_message(
+        requests.HTTPError(response=response), "fr",
+    )
+
+    assert message == community.COPY["fr"]["profile_conflict"]
+
+
 def test_google_sign_in_status_retries_after_transient_api_failure():
     response = MagicMock()
     response.json.return_value = {"enabled": True}

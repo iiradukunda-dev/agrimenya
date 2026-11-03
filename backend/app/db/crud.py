@@ -158,6 +158,14 @@ def list_community_accounts(limit: int = 200) -> list[dict]:
     )
 
 
+def update_community_account_display_name(account_id: str, display_name: str) -> dict | None:
+    result = get_supabase().table("community_accounts").update({
+        "display_name": display_name,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", account_id).select("id,display_name,role").execute()
+    return result.data[0] if result.data else None
+
+
 def list_active_community_emails(limit: int = 10000) -> list[str]:
     maximum = max(1, min(int(limit), 100000))
     rows = []
@@ -263,10 +271,11 @@ def list_community_comments_for_posts(post_ids: list[str], limit: int = 500) -> 
 
 
 def create_community_report(reporter_id: str, *, reason: str,
-                            post_id: str | None = None, comment_id: str | None = None) -> dict:
+                            post_id: str | None = None, comment_id: str | None = None,
+                            field_report_id: str | None = None) -> dict:
     result = get_supabase().table("community_reports").insert({
         "reporter_id": reporter_id, "reason": reason,
-        "post_id": post_id, "comment_id": comment_id,
+        "post_id": post_id, "comment_id": comment_id, "field_report_id": field_report_id,
     }).execute()
     return result.data[0]
 
@@ -276,9 +285,36 @@ def list_community_reports(limit: int = 100) -> list[dict]:
         get_supabase().table("community_reports")
         .select("id,reporter_id,post_id,comment_id,reason,status,created_at,"
                 "post:community_posts(title,body,author:community_accounts(display_name)),"
-                "comment:community_comments(body,author:community_accounts(display_name))")
+                "comment:community_comments(body,author:community_accounts(display_name)),"
+                "field_report:field_reports(id,crop,district,observed_on,symptoms,notes,"
+                "reporter:community_accounts(display_name))")
         .eq("status", "open").order("created_at").limit(max(1, min(int(limit), 200)))
     )
+
+
+def get_community_report(report_id: str) -> dict | None:
+    rows = _exec_query_get_data(
+        get_supabase().table("community_reports")
+        .select("id,status,post_id,comment_id,field_report_id")
+        .eq("id", report_id).limit(1)
+    )
+    return rows[0] if rows else None
+
+
+def list_community_notifications(recipient_id: str, limit: int = 10) -> list[dict]:
+    return _exec_query_get_data(
+        get_supabase().table("community_notifications")
+        .select("id,actor_display_name,post_id,comment_id,created_at,post:community_posts(title)")
+        .eq("recipient_id", recipient_id).is_("read_at", "null")
+        .order("created_at", desc=True).limit(max(1, min(int(limit), 50)))
+    )
+
+
+def mark_community_notifications_read(recipient_id: str) -> int:
+    result = get_supabase().table("community_notifications").update({
+        "read_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("recipient_id", recipient_id).is_("read_at", "null").select("id").execute()
+    return len(result.data or [])
 
 
 def moderate_community_content(*, target_kind: str, target_id: str, status: str) -> bool:
@@ -1422,12 +1458,30 @@ def list_field_reports(zone_id: UUID, limit: int = 20) -> list[dict]:
     return _exec_query_get_data(query)
 
 
-def list_community_field_reports(limit: int = 20) -> list[dict]:
+def get_community_field_report(report_id: str) -> dict | None:
+    rows = _exec_query_get_data(
+        get_supabase().table("field_reports")
+        .select("id,reporter_id,crop,district,symptoms,notes")
+        .eq("id", report_id).not_.is_("reporter_id", "null").limit(1)
+    )
+    return rows[0] if rows else None
+
+
+def list_community_field_reports(
+    limit: int = 20, offset: int = 0, district: str | None = None, crop: str | None = None,
+) -> list[dict]:
     query = (get_supabase().table("field_reports")
              .select("id,zone_id,district,crop,observed_on,photo_path,symptoms,notes,submitted_at,"
                      "zone:zones(district),reporter:community_accounts(id,display_name)")
-             .order("submitted_at", desc=True).limit(max(1, min(int(limit), 50))))
-    return _exec_query_get_data(query)
+             .not_.is_("reporter_id", "null")
+             .order("submitted_at", desc=True).order("id", desc=True))
+    if district:
+        query = query.ilike("district", district.strip())
+    if crop:
+        query = query.ilike("crop", crop.strip())
+    start = max(0, int(offset))
+    size = max(1, min(int(limit), 50))
+    return _exec_query_get_data(query.range(start, start + size - 1))
 
 
 def delete_community_field_report(report_id: str, reporter_id: str | None = None) -> dict | None:
