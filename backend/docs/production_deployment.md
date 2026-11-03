@@ -43,9 +43,22 @@ paths to the API service. The browser uses the Streamlit hostname for the whole
 login flow, keeping the short-lived HttpOnly handoff cookie on one origin without
 requiring a custom domain or a cookie shared across `onrender.com` hostnames.
 
-The root `render.yaml` defines two free Docker web services in Frankfurt. From
-the Render Dashboard, choose **New > Blueprint**, connect this repository, and
-select the deployment branch. The Blueprint will prompt for backend-only
+The root `render.yaml` defines two free Docker web services in Frankfurt. Free
+services can spin down after inactivity, delaying the first request while they
+start again. The GitHub Actions workflow at
+`.github/workflows/keep-alive.yml` sends concurrent health checks to both the
+API and Streamlit every 10 minutes, but scheduled runs are best-effort and do
+not guarantee that Free services stay awake. For consistently available
+services without idle spin-down, upgrade both services to a paid Render plan.
+
+The keep-alive workflow requires the `BACKEND_URL` GitHub Actions secret. To
+enable its automatic API restart when health checks fail, also configure
+`RENDER_API_KEY` and `RENDER_SERVICE_ID`. Its Streamlit health URL is the
+deployed frontend URL; update it in the workflow if the frontend service name
+changes.
+
+From the Render Dashboard, choose **New > Blueprint**, connect this repository,
+and select the deployment branch. The Blueprint will prompt for backend-only
 Supabase and Resend credentials, sender identity, and Google OAuth credentials.
 Enter secrets directly in Render; they are not stored in `render.yaml`. Render
 generates separate `USER_API_KEY` and `JWT_SECRET` values and securely references
@@ -70,9 +83,6 @@ verification, password recovery, and Supabase writes after deployment. Keep
 `WHATSAPP_MODE=mock` unless live Meta credentials and webhooks have been
 configured and tested. The API service remains publicly addressable on its
 Render URL, so retain its authentication and API-key protections.
-
-Render's free web services can spin down when idle, so the first request after
-inactivity may take longer; this setup does not remove that free-tier limitation.
 
 ## Start with the production Compose stack
 
