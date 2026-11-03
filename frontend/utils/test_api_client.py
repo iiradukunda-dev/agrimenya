@@ -244,6 +244,46 @@ class TestApiClientExtended(unittest.TestCase):
             retry_on_transient=False,
         )
 
+    def test_authentication_waits_for_backend_and_database_readiness(self):
+        response = MagicMock()
+        response.json.return_value = {"status": "healthy", "database": "reachable"}
+        status = MagicMock()
+        status_context = MagicMock()
+        status_context.__enter__.return_value = status
+
+        with patch.object(api_client, "request_api", return_value=response) as request, patch.object(
+            api_client.st, "status", return_value=status_context
+        ):
+            api_client.ensure_api_awake()
+
+        request.assert_called_once_with(
+            "GET",
+            "/health/deep",
+            timeout=10,
+            show_retry_status=False,
+        )
+        status.update.assert_called_once_with(
+            label="Server ready. Continuing sign-in.", state="complete"
+        )
+
+    def test_authentication_wait_reports_database_not_ready(self):
+        response = MagicMock()
+        response.json.return_value = {"status": "unhealthy", "database": "unreachable"}
+        status = MagicMock()
+        status_context = MagicMock()
+        status_context.__enter__.return_value = status
+
+        with patch.object(api_client, "request_api", return_value=response), patch.object(
+            api_client.st, "status", return_value=status_context
+        ):
+            with self.assertRaises(requests.ConnectionError):
+                api_client.ensure_api_awake()
+
+        status.update.assert_called_once_with(
+            label="The server is awake but its database is not ready. Please try again shortly.",
+            state="error",
+        )
+
     @patch("utils.api_client.time.sleep")
     @patch("utils.api_client.requests.get")
     def test_transient_api_failure_retries_with_cold_start_timeout(

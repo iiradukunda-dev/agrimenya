@@ -42,6 +42,7 @@ def _authenticate_admin_session(widget_key: str) -> None:
         st.session_state["admin_login_error"] = "Enter both your administrator email and password."
         return
     try:
+        ensure_api_awake()
         response = request_api(
             "POST",
             "/auth/admin/login",
@@ -55,6 +56,11 @@ def _authenticate_admin_session(widget_key: str) -> None:
         st.session_state["admin_identity"] = result.get("admin", {})
         st.session_state.pop("admin_login_error", None)
     except requests.RequestException as exc:
+        if exc.response is None:
+            st.session_state["admin_login_error"] = (
+                "The server is waking up or not ready. Wait a little, then try signing in again."
+            )
+            return
         detail = None
         if exc.response is not None:
             try:
@@ -249,6 +255,40 @@ def warm_api_connection() -> bool:
 def start_api_warmup() -> Future[bool]:
     """Schedule an API warm-up on a shared worker thread."""
     return _API_WARMUP_EXECUTOR.submit(warm_api_connection)
+
+
+def ensure_api_awake() -> None:
+    """Wait for the sleeping API and database before submitting authentication."""
+    with st.status(
+        "Starting the server. Keep this page open; after inactivity this can take a minute or two.",
+        expanded=True,
+    ) as status:
+        try:
+            response = request_api(
+                "GET",
+                "/health/deep",
+                timeout=10,
+                show_retry_status=False,
+            )
+            health = response.json()
+        except requests.RequestException:
+            status.update(
+                label="The server is still waking up. Please wait a moment and try again.",
+                state="error",
+            )
+            raise
+        except ValueError as exc:
+            status.update(label="The server returned an invalid health response.", state="error")
+            raise requests.ConnectionError("The backend health response was invalid.") from exc
+
+        if not isinstance(health, dict) or health.get("status") != "healthy":
+            status.update(
+                label="The server is awake but its database is not ready. Please try again shortly.",
+                state="error",
+            )
+            raise requests.ConnectionError("The backend database is not ready.")
+
+        status.update(label="Server ready. Continuing sign-in.", state="complete")
 
 
 def _get_api(

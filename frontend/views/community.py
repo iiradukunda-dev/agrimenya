@@ -271,6 +271,17 @@ def _field_reports(token: str, language: str) -> None:
 def _request(method: str, path: str, *, payload: dict | None = None):
     token = st.session_state.get("community_access_token", "")
     headers = {"Authorization": f"Bearer {token}"} if token else {}
+    if method.upper() == "POST" and path in {
+        "/community/login",
+        "/community/register",
+        "/community/password/forgot",
+        "/community/password/reset",
+        "/community/email/verify",
+        "/community/email/verification/resend",
+    }:
+        from utils.api_client import ensure_api_awake
+
+        ensure_api_awake()
     response = request_api(
         method, f"{API_BASE_URL}{path}", json=payload, headers=headers, timeout=20
     )
@@ -320,7 +331,7 @@ def _clear_community_session(*, expired: bool = False) -> None:
 
 def _error_message(exc: requests.RequestException, language: str = "en") -> str:
     if exc.response is None:
-        if isinstance(exc, requests.Timeout):
+        if isinstance(exc, (requests.Timeout, requests.ConnectionError)):
             return "The server is still starting up. Please try again in a moment."
         return "Cannot reach the server. Check the backend connection and try again."
     if exc.response.status_code >= 500:

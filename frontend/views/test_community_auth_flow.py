@@ -6,6 +6,23 @@ import requests
 import views.community as community
 
 
+def test_community_auth_request_waits_for_backend_before_posting():
+    response = MagicMock()
+    response.content = b'{"access_token":"test"}'
+    response.json.return_value = {"access_token": "test"}
+    mock_st = _mock_streamlit({})
+
+    with (
+        patch.object(community, "st", mock_st),
+        patch("utils.api_client.ensure_api_awake") as ensure_awake,
+        patch.object(community, "request_api", return_value=response) as request,
+    ):
+        community._request("POST", "/community/login", payload={"email": "farmer@example.com"})
+
+    ensure_awake.assert_called_once_with()
+    request.assert_called_once()
+
+
 def _mock_streamlit(query_params: dict) -> MagicMock:
     mock_st = MagicMock()
     mock_st.session_state = {}
