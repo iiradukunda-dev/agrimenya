@@ -1,70 +1,170 @@
 # Agri-Menya
 
-Agri-Menya is a Rwanda-focused agricultural decision and planning support
-system. The Streamlit frontend calls a FastAPI backend, which reads and writes
-application data in Supabase. Yield estimates use validated NISR observations
-stored in the database. WhatsApp is an optional access and notification
-channel; mock mode is the default until Meta credentials and approved message
-templates are configured.
+### Practical agricultural insight, rooted in Rwanda.
 
-## Project layout
+Agri-Menya is an agricultural decision-support platform for exploring
+district- and crop-level evidence, comparing zones, and planning field
+activities. Its Streamlit interface works with a FastAPI service and Supabase;
+yield estimates are grounded in validated National Institute of Statistics of
+Rwanda (NISR) observations.
 
-- `frontend/` — Streamlit application for farmers, planners, cooperative
-  leaders, and administrators.
-- `backend/app/` — FastAPI routes, services, database access, and yield logic.
-- `backend/app/db/migrations/` — ordered SQL migrations for the Supabase
-  schema.
-- `backend/scripts/` — administrator provisioning, NISR data preparation, and
-  offline evaluation tools.
-- `backend/docs/` — deployment, data import, retraining, model, and WhatsApp
-  operating notes.
-- `data/` — submission notes pointing to the project datasets in `backend/data/`.
-- `demo/` — instructions for the short product walkthrough recording.
-- `student_cards/` — instructions for handling official eligibility documents;
-  personal documents should be submitted through an approved private channel.
+| Explore | Technology |
+| --- | --- |
+| [Open the live application](https://agrimenya-app-20261030.onrender.com/) | Streamlit · Python |
+| [View the product walkthrough](https://drive.google.com/file/d/17Ko3W0DCiL7RJbVDtnvmJQp4RtiH60uL/view) | FastAPI · Supabase |
 
-## Project submission materials
+> **Walkthrough access:** Set the Google Drive file's General access to “Anyone
+> with the link” if reviewers need to view it. The video at
+> `frontend/assets/landing video.mp4` is a site asset, not the product demo.
 
-Agri-Menya communicates district- and crop-level agricultural evidence,
-including NISR yield observations and seasonal context, to help users explore
-zones, compare crop information, review recommendations, and plan field
-activities. Users navigate the Streamlit interface, select a district or crop,
-inspect maps and evidence, and use the available planning and field-reporting
-workflows. The floating bulb opens the AI assistant for agricultural questions
-and decision support. The live application uses a Streamlit frontend, a FastAPI
-backend, and Supabase for application records; see
-[`backend/docs/frontend_backend_handoff.md`](backend/docs/frontend_backend_handoff.md)
-for the API integration details.
-If the API is unavailable, the AI Assistant can still show historical NISR
-district-yield context from the bundled dataset. This offline fallback is not an
-AI-generated answer, disease diagnosis, or zone-specific action; those require
-the live API.
+## System architecture
 
-The repository already includes the README, application scripts, and project
-datasets. Data inventory and source notes are in [`data/README.md`](data/README.md).
-The live application is available at
-<https://agrimenya-app-20261030.onrender.com/>. The product walkthrough is
-[shared on Google Drive](https://drive.google.com/file/d/17Ko3W0DCiL7RJbVDtnvmJQp4RtiH60uL/view).
-Set the Drive file's General access to "Anyone with the link" so reviewers can
-open it. The frontend's `frontend/assets/landing video.mp4` is a site asset,
-not the product demonstration.
+The application separates its user interface, API, business logic, and
+persistent data. Render hosts the frontend and API as separate web services;
+Docker Compose can instead run both behind the optional Nginx PWA gateway.
 
-Reviewer administrator credentials are not published in this repository.
-Provide the account email and password only through an organizer-approved
-private channel, and use a dedicated demo account rather than production
-administrator credentials.
+<!-- mermaid-checked: no \n, no em-dash/en-dash, no {} in labels, subgraphs are id["label"], arrows are -->|"label"|, all subgraphs closed by end, ids unique -->
+```mermaid
+flowchart TD
+    subgraph Client["Client Layer - Streamlit Frontend"]
+        Member["Member and Farmer Workflows"]
+        Admin["Admin Dashboard"]
+        APIClient["Shared Frontend API Client"]
+        PWA["PWA Offline Hub"]
+    end
+    subgraph Backend["Backend Layer - FastAPI"]
+        Security["Security Middleware"]
+        Routes["API Routers"]
+        Services["Domain Services"]
+        ML["Yield and Decision Logic"]
+        DataAccess["CRUD and Supabase Client"]
+    end
+    subgraph Data["Data Layer"]
+        Database[("Supabase PostgreSQL")]
+        NISRData[("Bundled NISR Historical Data")]
+    end
+    subgraph External["External Services"]
+        NISRGIS["NISR GIS Boundaries"]
+        Maps["Google Maps Tiles"]
+        Weather["Open-Meteo Weather"]
+        OAuth["Google OAuth"]
+        WhatsApp["Meta WhatsApp"]
+        Email["Email Provider"]
+        AI["Groq or Anthropic AI"]
+        FAO["FAO Crop Calendar"]
+    end
 
-Dependencies are separated by service: install
-[`backend/requirements.txt`](backend/requirements.txt) for the API or
-[`frontend/requirements.txt`](frontend/requirements.txt) for the Streamlit app.
-See the local development section below to set up both services.
+    Member -->|"use features"| APIClient
+    Admin -->|"use admin tools"| APIClient
+    APIClient -->|"HTTPS REST requests"| Security
+    Security -->|"validated requests"| Routes
+    Routes -->|"dispatch operations"| Services
+    Services -->|"prediction and priority calculations"| ML
+    ML -->|"historical evidence fallback"| NISRData
+    Services -->|"query and update records"| DataAccess
+    DataAccess -->|"Supabase SDK"| Database
+    Member -->|"offline notes"| PWA
+    APIClient -->|"load map boundaries"| NISRGIS
+    Member -->|"map tiles"| Maps
+    Services -->|"weather requests"| Weather
+    Routes -->|"OAuth exchange"| OAuth
+    Services -->|"optional message delivery"| WhatsApp
+    Services -->|"email delivery"| Email
+    Services -->|"AI requests"| AI
+    Services -->|"crop calendar data"| FAO
+```
 
-Eligibility documents are personal records. The `student_cards/` folder is
-intentionally a safe placeholder; do not commit student cards or identity
-documents to this public repository. Submit the minimum official evidence
-through the organizers' approved private channel. If the organizers explicitly
-require repository submission, first confirm an approved restricted repository
-and handling procedure.
+| Layer | Technology | Role |
+|---|---|---|
+| Client | Streamlit and Python | Member, farmer, and admin workflows; maps, charts, and PWA entry points |
+| API security and routing | FastAPI middleware and routers | Validate and dispatch HTTPS REST requests |
+| Business logic | Python services and ML modules | Recommendations, planning, yield and risk logic, and integrations |
+| Data access | CRUD layer and Supabase client | Centralized application reads and writes |
+| Persistence | Supabase PostgreSQL | Zones, observations, plans, alerts, accounts, and imported NISR records |
+| Deployment | Render or Docker Compose with Nginx | Separate hosted services or optional same-origin PWA gateway |
+
+Supabase is the persistent application store; the bundled NISR dataset provides
+historical yield evidence when needed and remains separate from farmer field
+observations. NISR GIS, Open-Meteo, Google Maps/OAuth, AI, and email integrations
+are external services. WhatsApp remains in mock mode unless live configuration
+and approved templates are supplied. Offline support covers the PWA hub and
+cached static assets, not live dashboards or backend operations.
+
+The frontend guides users through evidence, maps, recommendations, planning,
+and field-reporting workflows. The floating bulb opens the agricultural AI
+assistant. If the API is unavailable, the assistant can still display
+historical NISR district-yield context from a bundled dataset; this offline
+fallback is not an AI-generated answer, disease diagnosis, or zone-specific
+action. WhatsApp starts in mock mode and requires Meta credentials and approved
+message templates before live messaging is available.
+
+## Project map
+
+```text
+agrimenya/
+├── frontend/                 Streamlit app and user-facing experience
+│   ├── Home.py                App entry point
+│   ├── pages/                 Streamlit page entry points
+│   ├── views/                 Page-level workflows
+│   ├── components/            Reusable UI, maps, charts, and widgets
+│   ├── utils/                 API client, configuration, and shared helpers
+│   ├── deployment/            Render startup and proxy configuration
+│   └── data/                  Bundled offline NISR yield evidence
+├── backend/
+│   ├── app/
+│   │   ├── main.py            FastAPI application
+│   │   ├── routers/           HTTP endpoints
+│   │   ├── services/          Application and provider integrations
+│   │   ├── models/            API and domain models
+│   │   ├── db/migrations/     Ordered Supabase schema changes
+│   │   ├── ml/                Yield and decision-support logic
+│   │   └── core/              Authentication, configuration, logging
+│   ├── tests/                 Backend test suite
+│   ├── scripts/               Admin, data, and evaluation utilities
+│   ├── data/                  Source, training, and evaluation datasets
+│   └── docs/                  Backend operations and technical guidance
+├── data/                      Dataset inventory and source notes
+├── docs/                      Product and repository guidance
+├── demo/                      Product walkthrough notes
+├── student_cards/             Safe placeholder; never store personal records
+├── render.yaml                Render service definitions
+├── docker-compose.yml         Root-level Compose configuration
+└── README.md                  Setup and project guide
+```
+
+For detailed component relationships and responsibilities, see the
+[architecture diagram](.github/modernize/assessment/engines/facts/architecture-diagram.md).
+For frontend/API integration details, see
+[`backend/docs/frontend_backend_handoff.md`](backend/docs/frontend_backend_handoff.md).
+Dataset inventory and source notes are in [`data/README.md`](data/README.md).
+Dependencies are kept separate for each service:
+[`backend/requirements.txt`](backend/requirements.txt) for the API and
+[`frontend/requirements.txt`](frontend/requirements.txt) for the app.
+
+### Data and account safety
+
+Reviewer administrator credentials are not published here. Share account
+details only through an organizer-approved private channel, and use a
+dedicated demo account rather than production administrator credentials.
+
+The `student_cards/` folder is intentionally a safe placeholder. Do not commit
+student cards or identity documents to this public repository. Submit only the
+minimum required evidence through an approved private channel. If repository
+submission is explicitly required, first confirm an approved restricted
+repository and handling procedure.
+
+## Quick navigation
+
+- [Requirements](#requirements)
+- [Team handoff](#team-b-handoff)
+- [Run both services with Docker Compose](#run-both-services-with-docker-compose)
+- [Production Docker deployment](#production-docker-deployment)
+- [Local development without Docker](#local-development-without-docker)
+- [Database setup](#database-setup)
+- [Administrator access and recovery](#administrator-access-and-recovery)
+- [NISR yield data](#nisr-yield-data)
+- [Users, WhatsApp, and production readiness](#users-whatsapp-and-production-readiness)
+- [Validation](#validation)
 
 ## Requirements
 
