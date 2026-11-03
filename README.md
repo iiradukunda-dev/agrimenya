@@ -48,7 +48,6 @@ flowchart TD
         Maps["Google Maps Tiles"]
         Weather["Open-Meteo Weather"]
         OAuth["Google OAuth"]
-        WhatsApp["Meta WhatsApp"]
         Email["Email Provider"]
         AI["Groq or Anthropic AI"]
         FAO["FAO Crop Calendar"]
@@ -68,7 +67,6 @@ flowchart TD
     Member -->|"map tiles"| Maps
     Services -->|"weather requests"| Weather
     Routes -->|"OAuth exchange"| OAuth
-    Services -->|"optional message delivery"| WhatsApp
     Services -->|"email delivery"| Email
     Services -->|"AI requests"| AI
     Services -->|"crop calendar data"| FAO
@@ -86,17 +84,15 @@ flowchart TD
 Supabase is the persistent application store; the bundled NISR dataset provides
 historical yield evidence when needed and remains separate from farmer field
 observations. NISR GIS, Open-Meteo, Google Maps/OAuth, AI, and email integrations
-are external services. WhatsApp remains in mock mode unless live configuration
-and approved templates are supplied. Offline support covers the PWA hub and
-cached static assets, not live dashboards or backend operations.
+are external services. Offline support covers the PWA hub and cached static
+assets, not live dashboards or backend operations.
 
 The frontend guides users through evidence, maps, recommendations, planning,
 and field-reporting workflows. The floating bulb opens the agricultural AI
 assistant. If the API is unavailable, the assistant can still display
 historical NISR district-yield context from a bundled dataset; this offline
 fallback is not an AI-generated answer, disease diagnosis, or zone-specific
-action. WhatsApp starts in mock mode and requires Meta credentials and approved
-message templates before live messaging is available.
+action.
 
 ## Project map
 
@@ -163,7 +159,7 @@ repository and handling procedure.
 - [Database setup](#database-setup)
 - [Administrator access and recovery](#administrator-access-and-recovery)
 - [NISR yield data](#nisr-yield-data)
-- [Users, WhatsApp, and production readiness](#users-whatsapp-and-production-readiness)
+- [Users and production readiness](#users-and-production-readiness)
 - [Validation](#validation)
 
 ## Requirements
@@ -200,16 +196,16 @@ docker compose up --build
 ```
 
 Open the app at `http://localhost:8501` and the API health page at
-`http://localhost:8000/health`. The shared branch runs WhatsApp in mock mode;
-live WhatsApp and AI-provider behavior require their own backend credentials.
-The setup and local development instructions below cover non-Docker options.
+`http://localhost:8000/health`. Live AI-provider behavior requires backend
+credentials. The setup and local development instructions below cover
+non-Docker options.
 
 For a populated, isolated synthetic environment to explore the product, use
 [`backend/docs/interactive_demo_data.md`](backend/docs/interactive_demo_data.md).
 The demo seed is guarded, repeatable, and must only target a separate demo
 Supabase project.
 
-Never commit `.env` files, service-role keys, WhatsApp/email/LLM credentials,
+Never commit `.env` files, service-role keys, email/LLM provider credentials,
 passwords, or local logs. The backend service-role key must stay in the
 backend environment; do not copy it to Streamlit or the browser.
 
@@ -298,8 +294,8 @@ operations. Restart the relevant service after changing environment values.
 
 Apply the SQL files in `backend/app/db/migrations/` to Supabase in numeric
 order, `0001` through `0018`, using the Supabase SQL editor or your migration
-runner. Migrations `0005` and `0006` add WhatsApp contacts, message tracking,
-consent, and alert approval; `0007` enables versioned NISR yield imports; and
+runner. Migrations `0005` and `0006` add contact, message tracking, consent,
+and alert approval records; `0007` enables versioned NISR yield imports; and
 `0008` adds named administrator accounts and password recovery tokens; `0009`
 adds individually authenticated farmer discussions and moderation reports; `0010`
 adds dated farmer field observations with optional private, compressed photos;
@@ -373,7 +369,7 @@ handled according to their source and access terms. See
 [`backend/docs/retraining.md`](backend/docs/retraining.md) before creating
 training artifacts.
 
-## Users, WhatsApp, and production readiness
+## Users and production readiness
 
 The frontend presents role-oriented experiences for citizens/farmers,
 planners, cooperative leaders, and administrators. Administrator access uses
@@ -391,14 +387,10 @@ coverage and did not support dependable crop monitoring. See
 [`backend/docs/satellite_and_community.md`](backend/docs/satellite_and_community.md)
 for data limitations and safeguards.
 
-WhatsApp starts in mock mode. Live messaging requires Meta Cloud API
-credentials, verified webhooks, opt-in records, and approved templates. Keep
-all provider credentials in the backend environment. Configure production
+Keep provider credentials in the backend environment. Configure production
 secrets, HTTPS origins, allowed hostnames, email recovery, and operational
 backups as described in
 [`backend/docs/production_deployment.md`](backend/docs/production_deployment.md).
-For the Meta account, app, webhook, and test-to-live setup sequence, see
-[`backend/docs/whatsapp_meta_cloud_api_setup.md`](backend/docs/whatsapp_meta_cloud_api_setup.md).
 
 ## Validation
 
