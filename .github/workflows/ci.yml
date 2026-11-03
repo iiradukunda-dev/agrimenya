@@ -2,9 +2,9 @@ name: backend-ci
 
 on:
   push:
-    branches: [main, master, develop]
+    branches: [main, master, develop, dev, deploy/render-20261030]
   pull_request:
-    branches: [main, master, develop]
+    branches: [main, master, develop, dev, deploy/render-20261030]
 
 jobs:
   test:
@@ -41,4 +41,28 @@ jobs:
 
       - name: Run backend tests
         run: |
-          python -m pytest tests -q
+          python -m pytest tests -q --basetemp=tests/.pytest_tmp
+
+  frontend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: frontend/requirements.txt
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: |
+          python -m pytest -q
