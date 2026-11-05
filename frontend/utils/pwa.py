@@ -127,7 +127,22 @@ def render_pwa_support() -> None:
           }
         });
 
-        // 3. Inject Apple Touch Icon
+        // 3. Set the browser tab icon independently of Streamlit's page icon.
+        const faviconHref = '/app/static/favicon.png?v=2';
+        let faviconLinks = parentDoc.querySelectorAll('link[rel~="icon"]');
+        if (!faviconLinks.length) {
+          const favicon = parentDoc.createElement('link');
+          favicon.rel = 'icon';
+          parentDoc.head.appendChild(favicon);
+          faviconLinks = [favicon];
+        }
+        faviconLinks.forEach(favicon => {
+          favicon.type = 'image/png';
+          favicon.sizes = '32x32';
+          favicon.href = faviconHref;
+        });
+
+        // 4. Inject Apple Touch Icon
         let appleIcon = parentDoc.querySelector('link[rel="apple-touch-icon"]');
         if (!appleIcon) {
           appleIcon = parentDoc.createElement('link');
@@ -136,7 +151,7 @@ def render_pwa_support() -> None:
           parentDoc.head.appendChild(appleIcon);
         }
 
-        // 4. Inject Dynamic Global Styles for Modals and Animations
+        // 5. Inject Dynamic Global Styles for Modals and Animations
         if (!parentDoc.getElementById('ag-dynamic-runtime-styles')) {
           const styleEl = parentDoc.createElement('style');
           styleEl.id = 'ag-dynamic-runtime-styles';

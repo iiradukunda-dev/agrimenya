@@ -10,9 +10,8 @@ from utils.i18n import t
 from utils.theme import load_theme
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
-LOGO_PATH = os.path.join(ASSETS_DIR, "ai_assistant_bulb.png")
-
-st.set_page_config(page_title="agrimenya", page_icon=LOGO_PATH, layout="wide", initial_sidebar_state="collapsed")
+FAVICON_PATH = os.path.join(ASSETS_DIR, "..", "static", "favicon.png")
+st.set_page_config(page_title="agrimenya", page_icon=FAVICON_PATH, layout="wide", initial_sidebar_state="collapsed")
 load_theme()
 render_navbar()
 
@@ -91,4 +90,3 @@ with error_boundary("Feedback & Support"):
                     st.error(t("contact.err_send", "Feedback could not be submitted. Please try again when the service is available."))
 
 render_footer()
-

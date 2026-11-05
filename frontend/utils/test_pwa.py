@@ -146,6 +146,9 @@ def test_same_tab_enforcement_in_pwa_script():
     assert "register('/sw.js', { scope: '/' })" in script
     assert "fallbackSwUrl" not in script
     assert "manifest.href = '/manifest.json'" in script
+    assert "const faviconHref = '/app/static/favicon.png?v=2';" in script
+    assert "parentDoc.querySelectorAll('link[rel~=\"icon\"]')" in script
+    assert "favicon.href = faviconHref;" in script
 
 
 def test_ai_widget_rendering_and_positioning():
