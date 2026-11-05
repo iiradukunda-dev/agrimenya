@@ -19,7 +19,8 @@ from .config import API_BASE_URL, USE_MOCK_DATA, USER_API_KEY
 from . import mock_data
 
 logger = logging.getLogger(__name__)
-ADMIN_SESSION_SECONDS = 30 * 60
+AUTH_SESSION_SECONDS = 7 * 24 * 60 * 60
+ADMIN_SESSION_SECONDS = AUTH_SESSION_SECONDS
 _BUNDLED_NISR_PATH = (
     Path(__file__).resolve().parents[1]
     / "data"
@@ -90,6 +91,20 @@ def admin_sign_out() -> None:
     st.session_state.pop("admin_identity", None)
     st.session_state.pop("admin_login_error", None)
     st.session_state.pop("admin_api_errors", None)
+
+
+def sign_out_user_session() -> None:
+    """Clear every authenticated identity from the current app session."""
+    admin_sign_out()
+    for key in (
+        "community_access_token",
+        "community_access_token_expires_at",
+        "community_account",
+        "community_session_expired",
+        "authenticated",
+        "user_profile",
+    ):
+        st.session_state.pop(key, None)
 
 
 def render_admin_login(key_prefix: str = "admin") -> bool:

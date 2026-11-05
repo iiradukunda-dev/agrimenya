@@ -59,6 +59,17 @@ class TestTheme(unittest.TestCase):
         self.assertIn("overflow-wrap: anywhere", css)
 
     @patch("utils.theme.st")
+    def test_mobile_glass_surfaces_are_scoped_to_responsive_breakpoint(self, mock_st):
+        mock_st.session_state = {"ag_theme_mode": "light"}
+        load_theme()
+
+        css = mock_st.html.call_args[0][0]
+        mobile_styles = css.split("@media (max-width: 768px) {")[-1]
+        self.assertIn('[data-testid="stVerticalBlockBorderWrapper"]', mobile_styles)
+        self.assertIn('[data-testid="stMetric"]', mobile_styles)
+        self.assertIn("backdrop-filter: blur(14px) saturate(145%)", mobile_styles)
+
+    @patch("utils.theme.st")
     def test_disease_action_buttons_use_triage_style(self, mock_st):
         mock_st.session_state = {"ag_theme_mode": "light"}
         load_theme()

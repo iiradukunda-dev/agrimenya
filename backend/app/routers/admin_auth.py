@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 import httpx
 from pydantic import BaseModel, Field, field_validator
 
-from app.core.auth import create_token, require_role
+from app.core.auth import APPLICATION_SESSION_TTL_SECONDS, create_token, require_role
 from app.core.audit import audit_admin_action
 from app.core.config import settings
 from app.db import crud
@@ -146,11 +146,11 @@ def login(payload: AdminLogin, request: Request) -> dict[str, Any]:
         crud.record_admin_login(str(account["id"]))
     except Exception:
         logger.exception("Could not record administrator sign-in")
-    token = create_token("admin", expires_in_seconds=1800, claims={
+    token = create_token("admin", expires_in_seconds=APPLICATION_SESSION_TTL_SECONDS, claims={
         "sub": str(account["id"]), "ver": int(account.get("session_version", 1)),
     })
     return {
-        "access_token": token, "token_type": "bearer", "expires_in": 1800,
+        "access_token": token, "token_type": "bearer", "expires_in": APPLICATION_SESSION_TTL_SECONDS,
         "admin": {"id": str(account["id"]), "email": account["email"], "display_name": account["display_name"]},
     }
 

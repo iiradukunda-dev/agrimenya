@@ -11,6 +11,23 @@ from utils import api_client
 
 class TestApiClientExtended(unittest.TestCase):
 
+    def test_sign_out_clears_all_auth_state_but_preserves_unrelated_state(self):
+        session_state = {
+            "admin_access_token": "admin-token",
+            "admin_session_expires_at": 123,
+            "admin_identity": {"email": "admin@example.com"},
+            "community_access_token": "community-token",
+            "community_access_token_expires_at": 456,
+            "community_account": {"display_name": "Farmer"},
+            "authenticated": True,
+            "user_profile": {"name": "Farmer"},
+            "language": "en",
+        }
+        with patch.object(api_client.st, "session_state", session_state):
+            api_client.sign_out_user_session()
+
+        self.assertEqual(session_state, {"language": "en"})
+
     def test_zone_api_failure_is_not_cached_as_empty_data(self):
         zone = {"id": "zone-1", "district": "Huye"}
         api_client.clear_zones_cache()

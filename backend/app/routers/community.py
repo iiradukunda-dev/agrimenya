@@ -18,7 +18,13 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field, field_validator
 from postgrest import exceptions as postgrest_exceptions
 
-from app.core.auth import create_token, require_admin, require_community, verify_token
+from app.core.auth import (
+    APPLICATION_SESSION_TTL_SECONDS,
+    create_token,
+    require_admin,
+    require_community,
+    verify_token,
+)
 from app.core.audit import audit_admin_action
 from app.core.config import settings
 from app.db import crud
@@ -149,14 +155,14 @@ def _google_oauth_enabled() -> bool:
 
 
 def _community_session(account: dict) -> dict:
-    token = create_token("community", 3600, {
+    token = create_token("community", APPLICATION_SESSION_TTL_SECONDS, {
         "sub": str(account["id"]),
         "ver": int(account.get("session_version", 1)),
     })
     return {
         "access_token": token,
         "token_type": "bearer",
-        "expires_in": 3600,
+        "expires_in": APPLICATION_SESSION_TTL_SECONDS,
         "account": {
             "id": str(account["id"]),
             "display_name": account["display_name"],
@@ -571,10 +577,7 @@ def login(payload: CommunityLogin, request: Request):
         raise HTTPException(status_code=401, detail="Email or password is incorrect")
     if not account.get("email_verified_at"):
         raise HTTPException(status_code=403, detail="Verify your email before signing in. Request a new verification link if needed.")
-    token = create_token("community", 3600, {"sub": str(account["id"]), "ver": int(account.get("session_version", 1))})
-    return {"access_token": token, "token_type": "bearer", "expires_in": 3600,
-            "account": {"id": str(account["id"]), "display_name": account["display_name"],
-                        "role": account["role"]}}
+    return _community_session(account)
 
 
 @router.post("/password/forgot")

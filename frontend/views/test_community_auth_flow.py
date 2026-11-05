@@ -23,6 +23,15 @@ def test_community_auth_request_waits_for_backend_before_posting():
     request.assert_called_once()
 
 
+def test_community_session_uses_server_expiry_and_seven_day_fallback():
+    mock_st = _mock_streamlit({})
+    with patch.object(community, "st", mock_st), patch.object(community.time, "time", return_value=1000):
+        community._store_community_session({"access_token": "token"})
+
+    assert mock_st.session_state["community_access_token"] == "token"
+    assert mock_st.session_state["community_access_token_expires_at"] == 1000 + 7 * 24 * 60 * 60
+
+
 def _mock_streamlit(query_params: dict) -> MagicMock:
     mock_st = MagicMock()
     mock_st.session_state = {}

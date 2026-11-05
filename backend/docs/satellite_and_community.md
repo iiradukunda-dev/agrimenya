@@ -40,8 +40,9 @@ Apply migrations `0009_farmer_community.sql`, `0010_field_observations.sql`,
 `0011_community_unique_usernames.sql`, and `0015_community_verification_and_shared_rate_limits.sql`
 after migrations `0001` through `0008`. Community members register with a unique username, email, and password;
 accounts currently default to the farmer role. Passwords are stored as scrypt
-hashes, sessions expire after one hour, and the community API checks account
-status and session version on each request. Rate limits apply to registration,
+hashes, sign-in sessions expire seven days after authentication regardless of
+activity, and the community API checks account status and session version on
+each request. Signing out clears the app's active session. Rate limits apply to registration,
 login, posts, comments, and reports. Users can report posts or comments;
 administrators review reports and hide, restore, or soft-delete content from
 the Admin panel. Community tables have RLS enabled and no public policies;

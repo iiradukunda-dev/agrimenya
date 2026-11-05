@@ -757,6 +757,15 @@ def load_theme(show_sidebar: bool = False) -> None:
 
     /* Phone and tablet layouts: preserve usable controls without horizontal overflow. */
     @media (max-width: 768px) {{
+      [data-testid="stVerticalBlockBorderWrapper"],
+      [data-testid="stMetric"] {{
+        background: rgba(255, 255, 255, 0.74) !important;
+        border: 1px solid rgba(255, 255, 255, 0.82) !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(145%);
+        backdrop-filter: blur(14px) saturate(145%);
+      }}
       [data-testid="stMainBlockContainer"],
       [data-testid="stAppViewBlockContainer"],
       .main .block-container {{

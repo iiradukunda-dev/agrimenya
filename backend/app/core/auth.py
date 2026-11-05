@@ -9,6 +9,8 @@ from fastapi import HTTPException, Request
 
 from app.core.config import settings
 
+APPLICATION_SESSION_TTL_SECONDS = 7 * 24 * 60 * 60
+
 
 def _b64url_encode(data: bytes) -> str:
     return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")

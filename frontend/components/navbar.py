@@ -6,7 +6,7 @@ import time
 import streamlit as st
 from components.ai_widget import render_floating_ai_widget
 from components.browser_keepalive import render_api_keepalive
-from utils.api_client import start_api_warmup
+from utils.api_client import admin_session_authenticated, sign_out_user_session, start_api_warmup
 from utils.i18n import render_language_selector, t
 from utils.pwa import render_pwa_support
 
@@ -37,10 +37,20 @@ def is_authenticated() -> bool:
     """Check if the current session is authenticated."""
     init_user_session()
     try:
+        community_token = st.session_state.get("community_access_token")
+        community_expiry = st.session_state.get("community_access_token_expires_at")
+        community_authenticated = bool(community_token)
+        now = time.time()
+        if community_authenticated and community_expiry is not None and now >= community_expiry:
+            st.session_state.pop("community_access_token", None)
+            st.session_state.pop("community_access_token_expires_at", None)
+            st.session_state.pop("community_account", None)
+            st.session_state["community_session_expired"] = True
+            community_authenticated = False
         return bool(
             st.session_state.get("authenticated", False)
-            or st.session_state.get("community_access_token")
-            or st.session_state.get("admin_access_token")
+            or community_authenticated
+            or admin_session_authenticated()
         )
     except Exception:
         return True
@@ -188,12 +198,13 @@ def render_navbar(show_sidebar: bool = False) -> None:
           margin: 0 !important;
           padding: 6px 12px !important;
           gap: 8px !important;
-          background: transparent !important;
-          border: none !important;
-          border-radius: 0 !important;
-          box-shadow: none !important;
-          backdrop-filter: none !important;
-          -webkit-backdrop-filter: none !important;
+          background: rgba(255, 255, 255, 0.76) !important;
+          border: 1px solid rgba(255, 255, 255, 0.88) !important;
+          border-radius: 18px !important;
+          box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1),
+                      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+          backdrop-filter: blur(16px) saturate(150%) !important;
+          -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
         }
         .st-key-ag_mobile_navbar [data-testid="column"],
         .st-key-ag_mobile_navbar [data-testid="stColumn"] {
@@ -1473,7 +1484,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                         )
                         st.divider()
                         if st.button(t("nav.sign_out", "Sign out"), key="navbar_signout_action_btn", use_container_width=True):
-                            st.session_state["authenticated"] = False
+                            sign_out_user_session()
                             st.rerun()
 
                 with c_sep:
@@ -1515,7 +1526,7 @@ def render_navbar(show_sidebar: bool = False) -> None:
                     st.page_link("pages/12_Community.py", label=t("nav.community_short", "community"))
                     st.page_link("pages/1_About.py", label=t("nav.about_short", "about"))
                     if st.button(t("nav.sign_out", "Sign out"), key="mobile_nav_signout_btn", use_container_width=True):
-                        st.session_state["authenticated"] = False
+                        sign_out_user_session()
                         st.rerun()
                 else:
                     st.page_link("pages/9_Communication.py", label=t("nav.updates", "Updates"))

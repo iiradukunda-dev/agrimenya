@@ -7,7 +7,7 @@ import requests
 import streamlit as st
 from components.errors import error_boundary
 from utils.config import API_BASE_URL
-from utils.api_client import request_api
+from utils.api_client import AUTH_SESSION_SECONDS, request_api
 from utils.i18n import get_current_language
 
 
@@ -531,7 +531,9 @@ def _show_development_mail_status(result: dict, language: str) -> None:
 
 def _store_community_session(response: dict) -> None:
     st.session_state["community_access_token"] = response["access_token"]
-    st.session_state["community_access_token_expires_at"] = time.time() + int(response.get("expires_in", 3600))
+    st.session_state["community_access_token_expires_at"] = time.time() + int(
+        response.get("expires_in", AUTH_SESSION_SECONDS)
+    )
     st.session_state["community_account"] = response.get("account", {})
 
 

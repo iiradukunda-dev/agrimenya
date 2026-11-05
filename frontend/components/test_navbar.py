@@ -183,6 +183,7 @@ def test_navbar_account_and_language_controls_match_the_visual_layout():
     assert ".st-key-ag_navbar .st-key-lang_cycle_btn button" in css
     assert "position: sticky !important;" in css
     assert "@media (max-width: 840px)" in css
+    assert "-webkit-backdrop-filter: blur(16px) saturate(150%) !important;" in css
     assert any(
         call.args[0] == " " and call.kwargs.get("help") == "More"
         for call in mock_st.popover.call_args_list
@@ -353,6 +354,32 @@ def test_user_session_and_page_access_control():
             mock_st.markdown.assert_not_called()
             mock_st.button.assert_not_called()
             mock_st.page_link.assert_not_called()
+
+
+def test_is_authenticated_clears_an_expired_community_session():
+    from components.navbar import is_authenticated
+
+    session = {
+        "authenticated": False,
+        "user_profile": {},
+        "community_access_token": "expired-token",
+        "community_access_token_expires_at": 99,
+        "community_account": {"display_name": "Farmer"},
+    }
+    mock_st = MagicMock()
+    mock_st.session_state = session
+
+    with (
+        patch("components.navbar.st", mock_st),
+        patch("components.navbar.time.time", return_value=100),
+        patch("components.navbar.admin_session_authenticated", return_value=False),
+    ):
+        assert is_authenticated() is False
+
+    assert "community_access_token" not in session
+    assert "community_access_token_expires_at" not in session
+    assert "community_account" not in session
+    assert session["community_session_expired"] is True
 
 
 def test_logged_out_account_link_is_in_mobile_menu_not_standalone_navbar():

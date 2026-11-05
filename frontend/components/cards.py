@@ -391,6 +391,7 @@ def render_centralized_login_card(
         email = str(account.get("email") or "")
         if authenticated_session_badge(display_name=display_name, email=email, role="Grower Network", key_prefix=f"{key_prefix}_comm"):
             st.session_state.pop("community_access_token", None)
+            st.session_state.pop("community_access_token_expires_at", None)
             st.session_state.pop("community_account", None)
             st.rerun()
         if portal == "community":
@@ -452,7 +453,7 @@ def render_centralized_login_card(
             )
             security_trust_footer(
                 message="256-bit TLS encrypted session",
-                session_info="30-minute auto-expiry timeout",
+                session_info="7-day session; sign out anytime",
             )
             return api_client.admin_session_authenticated()
 
