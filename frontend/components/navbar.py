@@ -185,8 +185,16 @@ def render_navbar(show_sidebar: bool = False) -> None:
           top: 0.25rem !important;
           z-index: 999990 !important;
           width: 100% !important;
+          box-sizing: border-box !important;
           margin: 0 auto 0.45rem !important;
           padding: 0 0.25rem !important;
+          background: rgba(255, 255, 255, 0.76) !important;
+          border: 1px solid rgba(255, 255, 255, 0.88) !important;
+          border-radius: 18px !important;
+          box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1),
+                      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+          backdrop-filter: blur(16px) saturate(150%) !important;
+          -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
         }
         .st-key-ag_mobile_navbar [data-testid="stHorizontalBlock"] {
           display: flex !important;
@@ -198,13 +206,10 @@ def render_navbar(show_sidebar: bool = False) -> None:
           margin: 0 !important;
           padding: 6px 12px !important;
           gap: 8px !important;
-          background: rgba(255, 255, 255, 0.76) !important;
-          border: 1px solid rgba(255, 255, 255, 0.88) !important;
-          border-radius: 18px !important;
-          box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1),
-                      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-          backdrop-filter: blur(16px) saturate(150%) !important;
-          -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+          background: transparent !important;
+          border: 0 !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
         }
         .st-key-ag_mobile_navbar [data-testid="column"],
         .st-key-ag_mobile_navbar [data-testid="stColumn"] {

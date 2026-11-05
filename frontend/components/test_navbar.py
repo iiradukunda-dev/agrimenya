@@ -183,6 +183,9 @@ def test_navbar_account_and_language_controls_match_the_visual_layout():
     assert ".st-key-ag_navbar .st-key-lang_cycle_btn button" in css
     assert "position: sticky !important;" in css
     assert "@media (max-width: 840px)" in css
+    assert ".st-key-ag_mobile_navbar {" in css
+    assert "background: rgba(255, 255, 255, 0.76) !important;" in css
+    assert "backdrop-filter: blur(16px) saturate(150%) !important;" in css
     assert "-webkit-backdrop-filter: blur(16px) saturate(150%) !important;" in css
     assert any(
         call.args[0] == " " and call.kwargs.get("help") == "More"
